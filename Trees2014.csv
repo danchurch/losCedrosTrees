@@ -1,0 +1,122 @@
+Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
+60,Cyatheaceae,Alsophila cuspidata (Kunze) D.S. Conant ,Alsophila,cuspidata,1,10,1.8
+72,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,1,0.5
+85,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,1,1.3
+107,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,1.4,1.2
+117,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,0.8,0.8
+84,Araceae,Anthurium sp.,Anthurium,sp,3,1.5,1.7
+12,Begoniaceae,Begonia parviflora Poepp. & Endl.,Begonia,parviflora,4,3,2
+73,Gesneriaceae,Gasteranthus corallinus (Fritsch) Wiehler ,Gasteranthus,corallinus,5,2,0.8
+74,Gesneriaceae,Gasteranthus corallinus (Fritsch) Wiehler ,Gasteranthus,corallinus,5,1,0.6
+82,Gesneriaceae,Gasteranthus corallinus (Fritsch) Wiehler ,Gasteranthus,corallinus,5,1.4,0.7
+104,Gesneriaceae,Gasteranthus corallinus (Fritsch) Wiehler ,Gasteranthus,corallinus,5,0.5,0.4
+71,Heliconiaceae,Heliconia aff. fragilis Abalo & G. Morales ,Heliconia,fragilis_AFF,6,2,1.6
+18,Euphorbiaceae,Acalypha diversifolia Jacq.,Acalypha,diversifolia,7,3,1.5
+44,Euphorbiaceae,Acalypha diversifolia Jacq.,Acalypha,diversifolia,7,1,1.2
+58,Euphorbiaceae,Acalypha diversifolia Jacq.,Acalypha,diversifolia,7,2.5,1.9
+118,Euphorbiaceae,Acalypha diversifolia Jacq.,Acalypha,diversifolia,7,0.5,1.25
+25,Rubiaceae,Condaminea corymbosa (Ruiz & Pav.) DC.,Condaminea,corymbosa,8,1.5,3
+32,Melastomataceae,Miconia cf. gracilis Triana ,Miconia,gracilis_CF,9,2,0.8
+93,Melastomataceae,Miconia cf. gracilis Triana ,Miconia,gracilis_CF,9,0.4,0.66
+103,Melastomataceae,Miconia cf. gracilis Triana ,Miconia,gracilis_CF,9,1,0.8
+6,Melastomataceae,Miconia floribunda (Bonpl.) DC.,Miconia,floribunda,10,8,1.2
+41,Melastomataceae,Miconia floribunda (Bonpl.) DC.,Miconia,floribunda,10,3,1
+29,Melastomataceae,Ossaea micrantha (Sw.) Macfad. ex Cogn.,Ossaea,micrantha,11,1,1.5
+42,Melastomataceae,Ossaea micrantha (Sw.) Macfad. ex Cogn.,Ossaea,micrantha,11,1,1.25
+49,Melastomataceae,Ossaea micrantha (Sw.) Macfad. ex Cogn.,Ossaea,micrantha,11,0.8,0.5
+110,Melastomataceae,Ossaea micrantha (Sw.) Macfad. ex Cogn.,Ossaea,micrantha,11,6,2.6
+14,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,3.5,2
+69,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,1,2
+83,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,1.3,1.65
+108,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,0.7,1.15
+19,Piperaceae,Piper obliquum Ruiz & Pav.,Piper,obliquum,13,4,2
+79,Piperaceae,Piper obliquum Ruiz & Pav.,Piper,obliquum,13,0.5,0.97
+106,Piperaceae,Piper spoliatum Trel. & Yunck.,Piper,spoliatum,14,3,1.8
+16,Solanaceae,Solanum leptopodum Van Heurck & Müll. Arg.,Solanum,leptopdoum,15,1,1
+88,Solanaceae,Solanum leptopodum Van Heurck & Müll. Arg.,Solanum,leptopdoum,15,5,2.25
+99,Solanaceae,Solanum leptopodum Van Heurck & Müll. Arg.,Solanum,leptopdoum,15,1,1.5
+102,Solanaceae,Solanum leptopodum Van Heurck & Müll. Arg.,Solanum,leptopdoum,15,0.5,0.7
+116,Solanaceae,Solanum leptopodum Van Heurck & Müll. Arg.,Solanum,leptopdoum,15,4,1.2
+77,Lauraceae,Caryodaphnopsis theobromifolia (A.H. Gentry) van der Werff & H.G. Richt.,Caryodaphnopsis,theobromifolia,16,1.5,0.6
+80,Lauraceae,Caryodaphnopsis theobromifolia (A.H. Gentry) van der Werff & H.G. Richt.,Caryodaphnopsis,theobromifolia,16,1.5,0.6
+45,Cardiopteridaceae ,Citronella cf. ilicifolia (Sleumer) R.A. Howard ,Citronella ,ilicifolia_CF,17,16,9
+59,Moraceae,Clarisia biflora Ruiz & Pav.,Clarisia ,biflora,18,10,5.5
+21,Burseraceae,Dacryodes peruviana (Loes.) H.J. Lam ,Dacryodes,peruviana,19,20,10
+22,Burseraceae,Dacryodes peruviana (Loes.) H.J. Lam ,Dacryodes,peruviana,19,7,6.5
+120,Burseraceae,Dacryodes peruviana (Loes.) H.J. Lam ,Dacryodes,peruviana,19,4.5,2.3
+109,Moraceae,Ficus cuatrecasiana Dugand ,Ficus,cuatrecasiana,20,24,7.5
+5,Primulaceae,Geissanthus cf. longistamineus (A.C. Sm.) Pipoly ,Geissanthus,longistamineus_CF,21,20,6
+78,Moraceae,Helicostylis tovarensis (Klotzsch & H. Karst.) C.C. Berg ,Helicostylis,tovarensis,22,0.4,0.25
+87,Moraceae,Helicostylis tovarensis (Klotzsch & H. Karst.) C.C. Berg ,Helicostylis,tovarensis,22,0.4,0.25
+98,Moraceae,Helicostylis tovarensis (Klotzsch & H. Karst.) C.C. Berg ,Helicostylis,tovarensis,22,3,2.6
+115,Moraceae,Helicostylis tovarensis (Klotzsch & H. Karst.) C.C. Berg ,Helicostylis,tovarensis,22,0.5,0.6
+31,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,17,11
+33,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,1,1.2
+46,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,2,2
+61,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,6,6
+95,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,5,6
+91,Fabaceae,Inga,Inga,sp,24,1,0.6
+8,Fabaceae,Inga aff. sapindoides Willd.,Inga,sapindoides_AFF,25,5,2
+12,Fabaceae,Inga aff. sapindoides Willd.,Inga,sapindoides_AFF,25,2,2
+3,Fabaceae,Inga sp. 1,Inga,sp,26,2.5,1.7
+26,Fabaceae,Inga sp.2,Inga,sp,27,2,2.5
+11,Sabiaceae,Meliosma aff. occidentalis Cuatrec.,Meliosma,occidentalis,28,0.5,0.9
+35,Melastomataceae,Meriania tomentosa (Cogn.) Wurdack ,Meriania,tomentosa,29,14,2.5
+51,Melastomataceae,Miconia brevitheca Gleason ,Miconia,brevitheca,30,6.5,5.5
+70,Melastomataceae,Miconia brevitheca Gleason ,Miconia,brevitheca,30,1.5,2.2
+54,Lauraceae,Nectandra lineatifolia (Ruiz & Pav.) Mez ,Nectandra,lineatifolia,31,3,2.5
+111,Lauraceae,Nectandra lineatifolia (Ruiz & Pav.) Mez ,Nectandra,lineatifolia,31,7,3.25
+113,Lauraceae,Nectandra lineatifolia (Ruiz & Pav.) Mez ,Nectandra,lineatifolia,31,1,1.8
+37,Lauraceae,Persea pseudofasciculata L.E. Kopp ,Persea,pseudofasciculata,32,17,2.2
+57,Lauraceae,Persea pseudofasciculata L.E. Kopp ,Persea,pseudofasciculata,32,4,2.7
+86,Malvaceae,Quararibea casasecae Fern. Alonso & Castrov.,Quararibea,casasecae,33,1,0.6
+1,Lauraceae,Rhodostemonodaphne cf. cyclops Madriñán ,Rhodostemonodaphne,cyclops_CF,34,8,5
+48,Lauraceae,Rhodostemonodaphne cf. cyclops Madriñán ,Rhodostemonodaphne,cyclops_CF,34,1,1.5
+13,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,4.5,2.5
+17,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,2.5,3
+66,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,7,5
+68,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,0.7,1.8
+96,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,1.6,3.3
+119,Sapindaceae,Allophylus sp.,Allophylus,sp,36,5,5.3
+63,Clusiaceae,Garcinia madruno (Kunth) Hammel ,Garcinia ,madruno,37,7,3.8
+94,Clusiaceae,Garcinia madruno (Kunth) Hammel ,Garcinia ,madruno,37,1.5,0.8
+34,Olaceae,Heisteria concinna Standl.,Heisteria,concinna,38,5,3
+36,Olaceae,Heisteria concinna Standl.,Heisteria,concinna,38,1,1.1
+53,Olaceae,Heisteria concinna Standl.,Heisteria,concinna,38,3.5,1.95
+105,Moraceae,Naucleopsis ulei (Warb.) Ducke ,Naucleopsis,ulei,39,3,0.7
+4,Thymelaeaceae,Daphnopsis grandis Nevling & Barringer ,Daphnopsis,grandis,40,4,2.5
+2,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,4,2.6
+7,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,1.3
+10,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,1
+15,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,4,1.1
+23,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,8,6
+24,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,2.3
+28,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,1.5
+30,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,5,6
+39,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,1.3
+40,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,1.9
+47,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,0.55
+50,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.8,1
+52,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,1.5
+55,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,2.2
+62,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,7,5
+64,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1.5,1.7
+65,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.8,0.7
+67,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,1.7
+75,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.6,0.5
+76,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.5,0.3
+81,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,0.6
+89,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,8,3.5
+90,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,0.8
+92,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1.7,0.55
+97,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.4,0.5
+101,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,4,2
+112,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,2.15
+9,Myrtaceae,Myrcia fallax (Rich.) DC. ,Myrcia,fallax,42,3,2.2
+27,Myrtaceae,Myrcia fallax (Rich.) DC. ,Myrcia,fallax,42,3.5,2
+38,Myrtaceae,Myrcia fallax (Rich.) DC. ,Myrcia,fallax,42,9,4
+56,Myrtaceae,Myrcia fallax (Rich.) DC. ,Myrcia,fallax,42,1.5,1.3
+114,Myrtaceae,Myrcia fallax (Rich.) DC. ,Myrcia,fallax,42,4,1.25
+20,Rubiaceae,Pentagonia sp.,Pentagonia,sp,43,1,1.6
+43,Rubiaceae,Pentagonia sp.,Pentagonia,sp,43,1.5,2.1
+100,Rubiaceae,Pentagonia sp.,Pentagonia,sp,43,2,0.6

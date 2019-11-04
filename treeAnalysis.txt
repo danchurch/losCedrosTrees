@@ -1,0 +1,183 @@
+## okay, let's see if we can get Danilo's data into a dataframe:
+
+import os
+import pandas as pd
+
+os.chdir("/home/daniel/Documents/grants/permenantPlot/rufford/daniloData")
+
+trees = pd.read_csv('Trees2014.csv')
+
+
+## looks good. did we assign the right number of otus?
+
+len(trees.NombreCientífico.unique())
+## 43
+
+trees.OTU.max()
+## 43
+
+### okay, so how do we a species accumulation code out of this?
+
+## we want a graph, x-axis is number of trees identified examined, 
+## y is number of species 
+
+## x-values (number of trees identified) is simple: 1 to 120
+
+## y-axis is the size of the set of species as they are "discovered" 
+
+## so the alogorithm is pretty simple, but has somebody already done this?
+
+## meh. can't be puritanical right now... let's go over to R/vegan. 
+
+
+
+
+## the example data and tutorial do something like this:
+
+## https://biological-complexity.blogspot.com/2018/01/on-species-accumulation-curves.html
+
+library("vegan")
+
+data(BCI)
+
+sp1 <- specaccum(BCI, method = "exact")
+sp2 <- specaccum(BCI, method = "random")
+
+par(mfrow = c(1,2))
+plot(sp1, 
+    col = "black", 
+    lwd = 3, 
+    xlab = "Samples", 
+    ylab = "Richness", 
+    main = "Exact")
+plot(sp2, 
+    col = "black", 
+    lwd = 3, 
+    xlab = "Samples", 
+    ylab = "Richness", 
+    main = "Exact")
+
+par(mfrow = c(1,1))
+
+## that's pretty simple. Can we do this with Danilo's data?
+## do it by otu?
+
+############ our data: ############
+
+library("vegan")
+library("reshape")
+
+
+trees = read.csv('Trees2014.csv')
+
+## there's a duplicate plot. One of them is herbaceous. 
+trees[trees$Numero == 12 & trees$Genus == "Begonia",] 
+## delete this:
+trees <- trees[-7,]
+## check it:
+trees[trees$Genus == "Begonia",] 
+## clear
+## okay, fix rows:
+trees <- trees[ order(trees$Numero),]
+rownames(trees) <- trees$Numero
+## think that worked...
+## that probably screwed up our otu numbers...
+trees$NombreCientifico <- droplevels(trees$NombreCientifico)
+
+## how can we get these level indices as OTU numbers?
+
+## sanity check:
+which(levels(trees$NombreCientifico) == trees[6,3])
+
+trees[6,]
+
+levels(trees$NombreCientifico)[30]
+
+levs <- vector() 
+for (i in 1:nrow(trees)){
+a <- which(levels(trees$NombreCientifico) == trees[i,3])
+levs <- c(levs, a)
+}
+trees$OTU <- levs
+## there has to be a better way. anyway...
+
+## now we need to make a community matrix out of this. 
+## each species gets its own column.
+
+################################################################################
+#
+### look at an example of recasting a matrix
+### https://www.r-bloggers.com/r-for-ecologists-creating-a-site-x-species-matrix/
+#
+#Year <- c("2012","2012","2012")
+#Plot <- c(1,1,1)
+#Quad <- c(1,1,2)
+#Species <- c("V. dentatum","R. phoenicolasius","V. notdentatum")
+#Cover <- c(1,20,2)
+#Patch.Cover <- data.frame(Year, Plot, Quad, Species, Cover)
+##site.sp.quad <- cast(Patch.Cover, Year + Plot + Quad ~ Species, value='Cover', FUN=mean)
+#site.sp.quad <- cast(Patch.Cover, Year + Plot + Quad ~ Species, value='Cover', FUN=identity)
+#site.sp.quad[is.na(site.sp.quad)] <- 0
+#
+### sort of works...we still might have to create dummy variables?
+#
+################################################################################
+
+## with our data:
+## not sure how to skip this: make a dummy variable
+
+trees$presence <- rep(1,120)
+
+comMat <- cast(trees, Numero ~ OTU, value = 'presence', FUN=identity)
+comMat[is.na(comMat)] <- 0
+
+## sanity check: plot one should have OTU41, plot 120 should have OTU10
+
+trees[1,]
+trees[120,]
+
+## looks good. 
+
+
+
+################################
+
+## diversity stuff
+
+SACotus <- specaccum(comMat, method = "exact")
+plot(SACotus)
+
+## cool. can we get a chao off this?
+
+chao1(SACotus, taxa.row = FALSE)
+
+specpool(comMat)
+
+chao1(x, taxa.row = TRUE)
+
+
+## rank abundance plot
+
+specSums <- colSums(comMat)
+RankAbun <- radfit(specSums)
+
+plot(RankAbun)
+
+#pdf(file="modelComparisonDaniloData.pdf")
+radlattice(RankAbun, log="")
+#dev.off()
+
+## this last weights the log-normal, zipf, and mandelbrot models
+## pretty much the same...
+
+## to me the log-normal looks the best:
+
+RankAbunLog <- rad.lognormal(specSums)
+
+pdf(file="logNormalDaniloData.pdf")
+plot(RankAbunLog)
+dev.off()
+
+## okay, what else?
+
+## gotta look at their data next.
