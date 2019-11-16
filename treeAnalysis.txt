@@ -144,8 +144,10 @@ trees[120,]
 
 ## diversity stuff
 
+pdf(file = "SACdanilo.pdf")
 SACotus <- specaccum(comMat, method = "exact")
 plot(SACotus)
+dev.off()
 
 ## cool. can we get a chao off this?
 
