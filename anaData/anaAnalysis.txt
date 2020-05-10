@@ -1,0 +1,270 @@
+###############
+
+## clean gps points
+
+## Ana's GPS points are not working for me. Going to keep some notes on what I think is going on here, 
+## and what I do to try to fix.
+
+## problem: when I load the first page of Ana's spread entitled "GPSpointsCedros.xls", 
+## the points are far away from where I think they should be. 
+
+## They sort of appear like they are UTM zone 17S, but I think perhaps that (1) E and N are flipped, 
+## and (2) that the E column is off by 10^7 meters.
+
+## #2 may be due to the use of a different UTM zone, not sure. But we'll try bringin them into a 
+## range that makes sense here by adding 10^7 to all of them 
+
+## #1 we'll just try flipping these axes, E becomes N, vice versa. 
+
+
+### works! we're in business. 
+
+################################################
+
+## Ana's data is too big for me to see with my 
+## spreadsheet software
+## Get ana's data out the xls files. Maybe if we can 
+## get it into individual sheets, we can manage 
+## a little better with our software.
+## or even better, get the various sheets into 
+## dataframes
+
+sudo pip3 install openpyxl
+
+## py
+
+python3
+import os
+import openpyxl
+import pandas as pd
+
+## read one of the wkbks in:
+
+wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
+sheet = wb['Base dat final 6 29 2012']
+
+
+wb.sheetnames
+sheet['A1'].value
+
+## alternatively:
+
+sheet.cell(row=1, column=2).value
+
+## are we missing data?
+sheet.max_row
+sheet.max_column
+
+openpyxl.utils.get_column_letter(40)
+
+## doesn't look like it. Can we go to a pandas dataframe?
+
+## probably best to delete header, for this exercise
+
+sheet['A1'].value
+
+sheet.delete_rows(1)
+
+sheet['A22'].value
+
+## looks okay. convert to a df?
+
+df = pd.DataFrame(sheet.values)
+df.columns = df.iloc[0]
+df.drop(0,0, inplace=True)
+
+## yup looks good. 
+
+### try this with the larger excel document 
+
+wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
+wb.sheetnames
+sheet = wb['Cedros bosq Circ plots']
+
+sheet.max_row
+sheet.max_column
+
+df2 = pd.DataFrame(sheet.values)
+
+df2.columns = df2.iloc[0]
+df2.drop(0,0, inplace=True)
+
+## definitely more reliable than the spreadsheet gui, libreoffice. 
+## something really funny is going on with the libreoffice software on this. 
+## anyway now  we gotta start really studying what Ana did...
+
+## it's messy, a big pile of spreadsheets. If I had more time I'd 
+## maybe try to make a proper database out of all this...
+
+## but I don't
+## so, what did they do?
+
+########################################################
+
+## what I can understand about Ana's spreadsheets:
+
+####### BaseDeDatosCedrosEnvaSarah7012012.xlsx ########
+
+#### Sheet 1 - Cedros bosq Circ plots ####
+
+wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
+
+sheet = wb['Cedros bosq Circ plots']
+cbcpDF = pd.DataFrame(sheet.values)
+cbcpDF.columns = cbcpDF.iloc[0]
+cbcpDF.drop(0,0, inplace=True)
+
+## this looks like trees, shrubs, woody stuff. Each species is given a count, 
+
+## all species unique? Any repeats?
+
+cbcpDF.ESPECIE.duplicated()
+
+## yup, most. So what does the count indicate?  
+## those are not counts. "No de individuo" is a unique identifier for
+## each tree 
+## good, that will make the SAC easier
+
+## can we isolate this into a single workbook? Then libreoffice might 
+## digest it a little better...
+
+cbcpDF.to_csv('CedrosBosqCircPlots.csv')
+## works, libreoffice wasn't loading the full sheet originally. 
+## okay, so the circular plots are basically the "large woody plants" data,
+## for one of the forest plots? But which type of forest?
+## from Ana's report, it seems like there should be one for 
+## bosques cerrados and bosques secandarios
+## so there should also be a sheet for the gaps and the other type of forest...
+## the habitat column all says "BC", so this is probably the 
+## closed forest tree data.
+
+cbcpDF.columns
+
+cbcpDF.Hábitat.unique()
+
+cbcpDF.Hábitat.duplicated()
+
+cbcpDF.Hábitat.duplicated()
+
+cbcpAllSpp
+
+## check for number of unique species
+## to do this for real, we'll need to deal with all the random white spaces
+cbcpAllSpp = cbcpDF['Genero '] + " " + cbcpDF['Especie']
+len(cbcpAllSpp.unique())  ## ~139 spp
+
+######## sheet 2, "Cedros reg circ plots " #######
+
+wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
+wb.sheetnames
+sheet = wb["Cedros reg circ plots "] ## note they included a space in this name
+crcpDF = pd.DataFrame(sheet.values)
+crcpDF.columns = crcpDF.iloc[0]
+crcpDF.drop(0,0, inplace=True)
+
+## whoah, this has 1216 rows... that's a lot of plants...
+
+crcpDF.to_csv("CedrosRegCircPlots.csv") 
+
+crcpDF.Hábitat == "RG"
+
+crcpDF.Hábitat == "BC"
+
+crcpDF.Hábitat.unique()
+
+## the habitat column indicates just two values, "RG" and "RCA"
+## what do these mean?
+
+crcpAllSpp = crcpDF['Genero '] + " " + crcpDF['Especie']
+len(crcpAllSpp.unique())  ## 197
+
+######## sheet 3, "Cedros Arb juv bosq" ####################
+
+wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
+sheet = wb["Cedros Arb juv bosq"]
+
+cajbDF = pd.DataFrame(sheet.values)
+cajbDF.columns = cajbDF.iloc[0]
+cajbDF.drop(0,0, inplace=True)
+cajbDF.to_csv("CedrosArbJuvBosq.csv") 
+cajbDF.shape 
+## 657 rows, 26 columns, different data
+## spreadsheet only picks up ~509 rows
+## all of these are from bosque cerrado
+
+cajbDF.Hábitat.unique()
+
+## all "BC"
+
+## so this is the juvenile trees from closed forests, methinks
+
+## it seems like these are botanical collections
+## according to Ana's report, collections of juvenile trees 
+## were only made in the inner, 5m x 5m parcels. 
+## so it seems like this is the 5x5 closed forest plant collections.
+
+cajbAllSpp = cajbDF['Genero '] + " " + cajbDF['Especie']
+len(cajbAllSpp.unique())  ## 92
+
+######## sheet 4, "Cedros Arb juv reg " ####################
+
+## again, note the space in the name
+
+wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
+wb.sheetnames
+sheet = wb["Cedros Arb juv reg "] ## note they included a space in this name
+cajr
+cajrDF = pd.DataFrame(sheet.values)
+cajrDF.columns = cajrDF.iloc[0]
+cajrDF.drop(0,0, inplace=True)
+cajrDF.to_csv("CedrosArbJuvReg.csv") 
+
+## this looks like the complement to the above (the juvenile trees 
+## from the closed forest). It looks like the unique identifiers 
+## for parcel are continuous:
+
+cajrDF.columns
+
+## six regular parcels
+cajrDF['Parcela/Plot'].unique() ## 1,2,3,4,5,10
+cajbDF['Parcela/Plot'].unique() ## 7,6,8,9
+
+cajrDF['Genero ']  ## fucking spaces. I will clean all these up if I do this project
+
+## can we check for number of unique species?
+## to do this for real, we'll need to deal with all the random white spaces
+
+
+
+cajrAllSpp = cajrDF['Genero '] + " " + cajrDF['Especie']
+len(cajrAllSpp.unique()) ## 89
+
+
+######## sheet 5, "Cedros Arb juv reg " ####################
+
+## this is not a data. But some good stuff here. The habitat types are
+## explained:
+
+## RG = regeneracion gramalote
+## BC = Bosque
+
+
+## can we estimate the total unique tree species collected/observed?
+
+help(pd.concat)
+
+pd.concat
+
+spp = [
+cbcpAllSpp,
+crcpAllSpp,
+cajbAllSpp,
+cajrAllSpp
+]
+
+sppC = pd.concat(spp)
+
+len(sppC.unique())
+
+type(sppC)
+len(sppC)
