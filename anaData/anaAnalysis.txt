@@ -34,9 +34,11 @@ sudo pip3 install openpyxl
 ## py
 
 python3
+
 import os
 import openpyxl
 import pandas as pd
+import numpy as np
 
 ## read one of the wkbks in:
 
@@ -128,7 +130,8 @@ cbcpDF.ESPECIE.duplicated()
 ## can we isolate this into a single workbook? Then libreoffice might 
 ## digest it a little better...
 
-cbcpDF.to_csv('CedrosBosqCircPlots.csv')
+#cbcpDF.to_csv('CedrosBosqCircPlots.csv')
+
 ## works, libreoffice wasn't loading the full sheet originally. 
 ## okay, so the circular plots are basically the "large woody plants" data,
 ## for one of the forest plots? But which type of forest?
@@ -186,7 +189,7 @@ sheet = wb["Cedros Arb juv bosq"]
 cajbDF = pd.DataFrame(sheet.values)
 cajbDF.columns = cajbDF.iloc[0]
 cajbDF.drop(0,0, inplace=True)
-cajbDF.to_csv("CedrosArbJuvBosq.csv") 
+#cajbDF.to_csv("CedrosArbJuvBosq.csv") 
 cajbDF.shape 
 ## 657 rows, 26 columns, different data
 ## spreadsheet only picks up ~509 rows
@@ -213,11 +216,10 @@ len(cajbAllSpp.unique())  ## 92
 wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
 wb.sheetnames
 sheet = wb["Cedros Arb juv reg "] ## note they included a space in this name
-cajr
 cajrDF = pd.DataFrame(sheet.values)
 cajrDF.columns = cajrDF.iloc[0]
 cajrDF.drop(0,0, inplace=True)
-cajrDF.to_csv("CedrosArbJuvReg.csv") 
+#cajrDF.to_csv("CedrosArbJuvReg.csv") 
 
 ## this looks like the complement to the above (the juvenile trees 
 ## from the closed forest). It looks like the unique identifiers 
@@ -242,12 +244,18 @@ len(cajrAllSpp.unique()) ## 89
 
 ######## sheet 5, "Cedros Arb juv reg " ####################
 
-## this is not a data. But some good stuff here. The habitat types are
+## this is not a data. But some good stuff here. Some of the habitat types are
 ## explained:
 
-## RG = regeneracion gramalote
-## BC = Bosque
+## 'RG', 'RCA', 'CLB', 'BS', 'BC'
 
+## BC Bosque cerrado
+## BS Bosque secundario
+## CLB Claro de bosque
+## RG regeneración fincas agricultura y ganadería
+## RCA Regeneración cañaveral
+
+########## combine observations from 
 
 ## can we estimate the total unique tree species collected/observed?
 
@@ -268,3 +276,158 @@ len(sppC.unique())
 
 type(sppC)
 len(sppC)
+
+## 315 species of tree recorded from these plots. 
+
+## we need to start thinking about the proper unit for 
+## construct sampling effort curves...
+
+####### other workbook: "CedrosFinalReview.7022012.xlsx" #######
+
+wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
+sheet = wb['Base dat final 6 29 2012']
+bdfDF = pd.DataFrame(sheet.values)
+bdfDF.columns = bdfDF.iloc[0]
+bdfDF.drop(0,0, inplace=True)
+#bdfDF.to_csv("CedrosFinalReview.csv") 
+
+bdfDF.columns
+
+## number of unique species here?
+
+bdfSG = bdfDF['Genero '] + ' ' + bdfDF['ESPECIE']
+
+len(bdfSG.unique()) ##337
+
+
+len(bdfDF.ESPECIE.unique()) ##337
+
+bdfDF.Hábitat.unique() 
+
+## 'RG', 'RCA', 'CLB', 'BS', 'BC'
+
+bdfDF['Final site '].unique()
+
+bdfDF['Parcela'].unique()
+
+bdfDF['Subparcela'].unique()
+
+## pretty similar to above. 
+
+## so again, how do we make a SAC out of this? What are our rows?
+
+## I'm going to guess that the most useful sample unit here is the 30x30
+## plot, of which there should be 27, according to the report from 
+## Mika. 
+
+## how/where are these labeled in the spreadsheet?
+
+## actually, it looks more like there are 61 sub-parcel/plot
+
+## to get a unique id for these, we need to index both 
+## plot and subplot together.
+
+## but what are these sub-plots? the terminology is loose in the 
+## explanation, but it looks like a "subplot" corresponds to one
+## of the 30x30 events, with both of its smaller, nested plots. 
+
+## I don't understand the placement of the plots. When I color code
+## by sub-block, they mostly group together spatially but not 
+## entirely. A few random points are far removed in each group.
+
+## doesn't matter for the sac, but it will haunt us later if we don't
+## figure that out, methinks.  
+
+## for the moment, let's create a unique ID column and go to vegan
+
+bdfDF.head(2)
+
+PsubP = bdfDF.Parcela.astype(str) + "." + bdfDF.Subparcela.astype(str)
+
+bdfDF['PsubP'] = PsubP
+
+bdfDF.head(2)
+
+## now, we need a simple community matrix, where rows are 
+## unique IDs from this PsubP, and columns are the ESPECIE column.
+
+## so maybe let's drop to these, ESPECIE and PsubP:
+
+bdfDF['PsubP']
+
+smallbdf = bdfDF[['PsubP','ESPECIE']]
+
+bdfGroup = smallbdf.groupby('PsubP')
+bdfGroup.agg(np.size)
+## neat, that's basically the species richness of each subparcel
+
+
+bdfDummy = pd.get_dummies(smallbdf['ESPECIE'])
+## wow, that was easy.
+
+## sanity checks
+bdfDummy.iloc[0,] ## yup
+
+bdfDummy['Leandra subseriata (Naudin) Cong.'][0:5] ##yup
+bdfDummy.iloc[0:3,0:5]
+
+bdfDummy['Turpinia occidentalis (Sw.) G. Don '][2347:2351] 
+bdfDummy.iloc[2347:2351,0:5]
+
+## there are some serious whitespace issues with this data. 
+## will need some time to clean up species names, etc.
+## but for now, let's just get a curve for folks to look at.
+
+## okay, add our PsubP back in there, make it our first column
+
+##bdfDummy['PsubP'] = PsubP
+## better:
+bdfDummy.insert(0, 'PsubP', PsubP)
+
+## ugh, my head has been out of pandas for a long time...I think we 
+## need the grouby function, check this site:
+## <https://www.tutorialspoint.com/python_pandas/python_pandas_groupby.htm>
+
+bdfDummyGroup = bdfDummy.groupby('PsubP')
+
+subParcelComm = bdfDummyGroup.agg(np.sum)
+
+##subParcelComm.to_csv("subParcelComm.csv")
+
+## looks promising. 
+## to vegan!
+
+
+
+###################################
+
+## R/vegan
+
+R
+
+library(vegan)
+
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+
+## fix rownames 
+rownames(subParcelComm) <- subParcelComm$PsubP
+subParcelComm <- subParcelComm[,-1]
+
+
+anaSAC <- specaccum(subParcelComm, method = "exact")
+
+pdf(file="anaSubparcelSAC.pdf")
+plot(anaSAC)
+dev.off()
+
+
+specpool(subParcelComm)
+
+speciesObserved, chao,chao.se,jack1,jack1.se,jack2,boot,boot.se,nSites
+336,493.7356,36.6706,467.8387,20.46877,544.211,394.0061,10.144,62
+
+## neat. lots of tree species
+
+################
+
+##
