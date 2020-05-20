@@ -430,4 +430,49 @@ speciesObserved, chao,chao.se,jack1,jack1.se,jack2,boot,boot.se,nSites
 
 ################
 
-##
+## what do want out of this data set?
+
+## what is ana's hypothesis/goal
+## what is mine?
+
+## next steps:
+
+## 1 - clean data 
+## 2 - ordination - does gap/forest-age explain community?
+## 2 - create vegetation zones
+## 3 - show community turnover. This will be perhaps the most important,
+##     because the cloudforest will probably 
+## 4 - compare to other places
+
+#####################
+
+## clean data ##
+
+## what spreadsheets do we need? 
+
+## so far, it looks like we can do with just the 
+## 2012 data sheet: "Base dat final 6 29 2012"
+
+wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
+sheet = wb['Base dat final 6 29 2012']
+bdfDF = pd.DataFrame(sheet.values)
+bdfDF.columns = bdfDF.iloc[0]
+bdfDF.drop(0,0, inplace=True)
+
+## basically, we need to hunt for white space. 
+
+bdfDF.columns
+
+## typos here:
+
+## 'Final site ' 
+## 'N. Actual '
+## 'N. anterior '
+## 'Genero '
+
+## from this data, we want to retain:
+
+aa = bdfDF[['ELEVACIÓN', 'Hábitat', 'Final site ', 'Parcela', 'Subparcela', 'Familia', 'Genero ', 'ESPECIE', 'Hábito']]
+
+aa = bdfDF[['Final site ', 'Parcela', 'Subparcela', 'Familia', 'Genero ', 'ESPECIE', 'Hábito', 'ELEVACIÓN', 'Hábitat', ]]
+
