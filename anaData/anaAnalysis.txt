@@ -1,4 +1,3 @@
-###############
 
 ## clean gps points
 
@@ -39,6 +38,7 @@ import os
 import openpyxl
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 ## read one of the wkbks in:
 
@@ -368,7 +368,12 @@ bdfDummy = pd.get_dummies(smallbdf['ESPECIE'])
 ## sanity checks
 bdfDummy.iloc[0,] ## yup
 
-bdfDummy['Leandra subseriata (Naudin) Cong.'][0:5] ##yup
+bdfDummy.loc[:,'vs. Perebea angustifolia'] ## yup
+
+bdfDummy['Leandra subseriata']
+
+[0:5] ##yup
+
 bdfDummy.iloc[0:3,0:5]
 
 bdfDummy['Turpinia occidentalis (Sw.) G. Don '][2347:2351] 
@@ -420,13 +425,16 @@ pdf(file="anaSubparcelSAC.pdf")
 plot(anaSAC)
 dev.off()
 
-
 specpool(subParcelComm)
 
-speciesObserved, chao,chao.se,jack1,jack1.se,jack2,boot,boot.se,nSites
-336,493.7356,36.6706,467.8387,20.46877,544.211,394.0061,10.144,62
+##########
+    Species     chao  chao.se    jack1 jack1.se    jack2     boot  boot.se  n
+All     343 516.3946 39.15056 483.6557 21.60728 566.8038 404.4403 10.54889 61
+##########
 
 ## neat. lots of tree species
+
+## what about some sort of turnover chart?
 
 ################
 
@@ -438,11 +446,16 @@ speciesObserved, chao,chao.se,jack1,jack1.se,jack2,boot,boot.se,nSites
 ## next steps:
 
 ## 1 - clean data 
+
+## and then, not necessarily in this order:
+
 ## 2 - ordination - does gap/forest-age explain community?
-## 2 - create vegetation zones
-## 3 - show community turnover. This will be perhaps the most important,
+## 3 - create vegetation zones 
+## 4 - show community turnover. This will be perhaps the most important,
+## this is pretty much just BC by distance classes. 
+## also some sort of mantal's r correlogram
 ##     because the cloudforest will probably 
-## 4 - compare to other places
+## 5 - compare to other places
 
 #####################
 
@@ -472,7 +485,133 @@ bdfDF.columns
 
 ## from this data, we want to retain:
 
-aa = bdfDF[['ELEVACIÓN', 'Hábitat', 'Final site ', 'Parcela', 'Subparcela', 'Familia', 'Genero ', 'ESPECIE', 'Hábito']]
+specObs = bdfDF[['Final site ', 'Parcela', 'Subparcela', 'Familia', 'Genero ', 'Especie', 'Hábito', 'ELEVACIÓN', 'Hábitat', ]]
+##rename, without white spaces in the names
+specObs.columns = ['site', 'parcela', 'subparcela', 'familia', 'genero', 'especie', 'habito', 'elevacion', 'habitat']
+specObs.head(1)
 
-aa = bdfDF[['Final site ', 'Parcela', 'Subparcela', 'Familia', 'Genero ', 'ESPECIE', 'Hábito', 'ELEVACIÓN', 'Hábitat', ]]
+## we got some empty rows. Can we get rid of these?
+specObs.tail(3)
 
+aa = specObs.dropna(how='all', axis=0)
+aa.shape
+## drops 11 rows, is that right? 
+## looks right, keep it:
+
+specObs.shape
+specObs.tail(15)
+
+specObs.dropna(how='all', axis=0, inplace=True)
+specObs.shape
+specObs.tail(10)
+
+## how do we search our columns for white space?
+
+## can we apply strip to all the elements of Df?
+ 
+specObs.genero.str.strip()
+
+
+## that seems to work okay. do this for all string columns
+
+strCols=["familia", "genero", "especie", "habito", "habitat"]
+for j in strCols:
+    print(j)
+    specObs[j] = specObs[j].str.strip()
+
+
+specObs.head(5)
+specObs.head(5)
+
+## looks good. 
+## we may need to get rid of accents, etc, in the text,
+## but let's wait and see if they cause problems
+
+## let's make a clean species/genus column, and see if our 
+## old numbers still match, or if we had a bunch of duplicates
+## that typos were making unique:
+
+
+
+## what next? we want a physical distance matrix, and a 
+## a BC distance matrix. 
+
+specObs['genusSpecies'] = specObs.genero + " " + specObs.especie
+
+specObs.head(2)
+
+specObs['genusSpecies'].unique().shape
+
+## yup, lost like thirty species. 
+
+## this is getting complicated...
+## let's get all the specObs creation commands here, at once:
+wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
+sheet = wb['Base dat final 6 29 2012']
+bdfDF = pd.DataFrame(sheet.values)
+bdfDF.columns = bdfDF.iloc[0]
+bdfDF.drop(0,0, inplace=True)
+specObs = bdfDF[['Final site ', 'Parcela', 'Subparcela', 'Familia', 'Genero ', 'Especie', 'Hábito', 'ELEVACIÓN', 'Hábitat', ]]
+specObs.columns = ['site', 'parcela', 'subparcela', 'familia', 'genero', 'especie', 'habito', 'elevacion', 'habitat']
+specObs.dropna(how='all', axis=0, inplace=True)
+strCols=["familia", "genero", "especie", "habito", "habitat"]
+for j in strCols:
+    print(j)
+    specObs[j] = specObs[j].str.strip()
+
+specObs.especie[specObs.especie.isnull()] = ""
+specObs['genusSpecies'] = specObs.familia + " " + specObs.genero + " " + specObs.especie
+specObs['genusSpecies'] = specObs['genusSpecies'].str.strip()
+specObs['PsubP'] = specObs.parcela.astype('str') + "." + specObs.subparcela.astype('str')
+specObs = specObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
+
+#specObs.to_csv('specObs.csv')
+
+specObs.familia.isnull().any() ## nope
+specObs.genero.isnull().any() ## also no empty genero cells. The problem is with the names of species
+
+
+## we need to 
+
+## there is a species that starts with "vs. "
+## wtf?
+
+## okay, let's regenerate our site x species matrix
+## with the cleaned data:
+
+smallSpecObs = specObs[['PsubP','genusSpecies']]
+smallSpecObsGrouped = smallbdf.groupby('PsubP')
+spRich=smallSpecObsGrouped.agg(np.size)
+## ugh, keeps abbreviating, want to look at all the values
+## looks like a max of 86 species at one subparcel
+## can we plot this?
+
+plt.ion()
+plt.bar(spRich.index, spRich.iloc[:,0])
+spRich.iloc[:,0].max() ## 86
+spRich.iloc[:,0].min() ## 11
+## we'll want to group that by gap/regen groups
+
+
+## make matrix for SAC
+smallSpecObs['genusSpecies']
+bdfDummy = pd.get_dummies(smallSpecObs['genusSpecies'])
+bdfDummy.insert(0, 'PsubP', PsubP)
+bdfDummyGroup = bdfDummy.groupby('PsubP')
+subParcelComm = bdfDummyGroup.agg(np.sum)
+#subParcelComm.to_csv("subParcelComm.csv")
+
+## tomorrow, for turnover plot, get position data for 
+## all the PsubP values
+
+
+########################################
+
+## new data works. SAC redrawn, new chao estimators, etc
+
+## while we're at it, can we do the beta diversity stuff? 
+## some kind of bray curtis vs distance graph?
+
+## for this we need the x,y of all the plots...
+
+spDF <- read.csv('GPSpointsCedrosHoja1.csv') 
