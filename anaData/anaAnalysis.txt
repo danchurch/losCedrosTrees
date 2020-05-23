@@ -39,6 +39,7 @@ import openpyxl
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 ## read one of the wkbks in:
 
@@ -566,6 +567,7 @@ specObs['PsubP'] = specObs.parcela.astype('str') + "." + specObs.subparcela.asty
 specObs = specObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
 
 #specObs.to_csv('specObs.csv')
+specObs.to_pickle('specObs.p')
 
 specObs.familia.isnull().any() ## nope
 specObs.genero.isnull().any() ## also no empty genero cells. The problem is with the names of species
@@ -580,7 +582,8 @@ specObs.genero.isnull().any() ## also no empty genero cells. The problem is with
 ## with the cleaned data:
 
 smallSpecObs = specObs[['PsubP','genusSpecies']]
-smallSpecObsGrouped = smallbdf.groupby('PsubP')
+smallSpecObsGrouped = smallSpecObs.groupby('PsubP')
+
 spRich=smallSpecObsGrouped.agg(np.size)
 ## ugh, keeps abbreviating, want to look at all the values
 ## looks like a max of 86 species at one subparcel
@@ -595,18 +598,91 @@ spRich.iloc[:,0].min() ## 11
 
 ## make matrix for SAC
 smallSpecObs['genusSpecies']
+
 bdfDummy = pd.get_dummies(smallSpecObs['genusSpecies'])
-bdfDummy.insert(0, 'PsubP', PsubP)
+bdfDummy.insert(0, 'PsubP', smallSpecObs.PsubP)
 bdfDummyGroup = bdfDummy.groupby('PsubP')
 subParcelComm = bdfDummyGroup.agg(np.sum)
 #subParcelComm.to_csv("subParcelComm.csv")
+#subParcelComm.to_pickle('subParcelComm.p')
 
-## tomorrow, for turnover plot, get position data for 
-## all the PsubP values
+####### find x,y for all the PsubP values ##########
+
+## read in the csv for the gps data:
+
+spDF = pd.read_csv('GPSpointsCedrosHoja1.csv', parse_dates=True)
+
+## for now, we only want a PsubP column, and N, E coordinates
+
+spDF['PsubP'] = spDF['Parcela/Plot'].astype('str') + "." + spDF['Subparcela  /Subplot'].astype('str') 
+spDF = spDF[['PsubP', 'E', 'N']]
+spDF.set_index('PsubP', inplace=True)
+
+## does that match? 
+
+#subParcelComm = pd.read_csv("subParcelComm.csv")
+
+subParcelComm = pd.read_pickle("subParcelComm.p")
+
+spDF.reset_index(inplace=True)
+subParcelComm.reset_index(inplace=True)
+## indices are not in same order...
+
+
+spDF.sort_index(inplace=True)
+subParcelComm.sort_index(inplace=True)
+
+## check matching order
+
+spDF.index == subParcelComm.index
+spDF.reset_index(inplace=True)
+subParcelComm.reset_index(inplace=True)
+pd.concat([spDF.PsubP, subParcelComm.PsubP], axis=1)
+spDF.set_index('PsubP', inplace=True)
+subParcelComm.set_index('PsubP', inplace=True)
+len(subParcelComm.PsubP)
+len(spDF.PsubP)
+## looks okay. 
+spDF.to_csv('subParcelSpatial.csv')
+spDF.to_pickle('subParcelSpatial.p')
+
+## to R? or can we do our BC distances without vegan, here in python?
+
+import scipy.spatial as sp
+
+spDF.head(2)
+subParcelComm.head(2)
+
+## this is really what we need, I think:
+physDist = sp.distance.pdist(spDF, metric='euclidean')
+
+sqPhysDist = sp.distance.squareform(physDist)
+
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+
+physDist.shape
+bcDist.shape
+
+## plot these?
+
+plt.scatter(physDist, bcDist)
+
+## do a simple linear regression, though lots of assumptions are
+## violated...independence, normality, 
+
+from sklearn.linear_model import LinearRegression
+
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+
+
+plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
 
 
 ########################################
 
+### R #####
+
+## repeat above SAC code with new cleaner data
 ## new data works. SAC redrawn, new chao estimators, etc
 
 ## while we're at it, can we do the beta diversity stuff? 
