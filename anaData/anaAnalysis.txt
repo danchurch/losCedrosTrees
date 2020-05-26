@@ -677,17 +677,142 @@ X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
 
 plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
 
+## okay, that's cool. 
+## we should see if it is more dramatic if we focus 
+## on the primary forest plots only
 
 ########################################
 
-### R #####
+#### adding to Bitty's list ####
 
-## repeat above SAC code with new cleaner data
-## new data works. SAC redrawn, new chao estimators, etc
+## Bitty maintains a plant list for Los Cedros.
+## let's see how many of these are new 
+## species for los Cedros
 
-## while we're at it, can we do the beta diversity stuff? 
-## some kind of bray curtis vs distance graph?
+## read in Bitty's spreadsheet:
 
-## for this we need the x,y of all the plots...
+wb = openpyxl.load_workbook("BittyLosCedrosPlants.xlsx")
+wb.sheetnames
+sheet = wb["Plants"]
+bittyDF = pd.DataFrame(sheet.values)
 
-spDF <- read.csv('GPSpointsCedrosHoja1.csv') 
+## it looks like we only need the scientific name and family from this. 
+## go to just these:
+
+bittyDF = pd.DataFrame(sheet.values)
+bittyDF.columns = bittyDF.iloc[0,:]
+bittyDF.drop(0,0, inplace=True) 
+bittyDF[['Scientific name', 'Family']].head()
+bittyDF=bittyDF[['Scientific name', 'Family']]
+bittyDF.dropna(how='all', axis=0, inplace=True)
+
+## check the unique values:
+
+len(bittyDF['Scientific name'].unique())
+bittyDF.shape
+
+## how do we compare the Ana data to this?
+
+specObs['genero'].unique()
+
+## this is going to be an imperfect process. But can we whittle the problem 
+## down to something manageable?
+
+## split up bitty's scientific name into genus and species:
+
+aa = bittyDF['Scientific name']
+bitGen = aa.str.split(pat=' ', expand=True).iloc[:,0]
+
+bitGen.isin(specObs['genero'].unique())
+
+sum(bitGen.isin(specObs['genero'].unique())) ## ~100 genera that are in Bitty's data are in Ana's?
+
+## What are they?
+
+mask = bitGen.isin(specObs['genero'].unique())
+len(bitGen[mask])
+bitGen[mask]
+
+## and vice versa?
+anaGen = pd.Series(specObs['genero'].unique())
+
+## can we get rid of 'sp.' genera?
+
+mask = anaGen.str.contains("sp. *[0-9]+", case=False, regex=True)
+anaGen[mask]
+
+## that regex may be useful above for cleaning...
+
+## how to edit this in place...
+anaGen = anaGen.str.replace("sp. *[0-9]+", "unidentified", regex=True)
+
+## kick out the unIDs
+anaGen = pd.Series(anaGen.unique())
+
+## okay, so are there genera that are represented in Bitty's data?
+anaGen.isin(bitGen)
+
+sum(anaGen.isin(bitGen)) ## 64 genera that are in Ana's data are in Bit
+
+## 
+~anaGen.isin(bitGen)
+
+sum(~anaGen.isin(bitGen)) ## 74 more genera? can that be true?
+
+## sanity checks
+mask = (~anaGen.isin(bitGen)) 
+#anaGen[mask]
+anaGenNotBit = anaGen[mask]
+anaGenNotBit.reset_index(inplace=True, drop=True)
+
+## so we now for certain that all species within these are not on bitty's list.
+
+## now we need to recover the full scientific name and family from Ana's list, 
+## and family, and add these to Bitty's data, or at least put it in a form that 
+## is easy to add.
+
+## for now, keep it separate to make this easier for her?
+
+specObs[recNotBit] ## NOT in bitty's genera, but yes in ana's
+
+specObs[~recNotBit] ## in bitty's genera and ana's
+
+## how to recover the full records from ana data by genus name:
+
+recNotBit = (~specObs['genero'].isin(bitGen))
+newGen = specObs[recNotBit]
+
+## cleanout the genera with just "sp." values:
+mask = ~(newGen['genero'].str.contains("sp. *[0-9]*", case=False, regex=True))
+newGen[mask].shape
+newGen = newGen[mask]
+
+## so this the spreadsheet of new genera, 
+## with all of the species within these.
+
+## check 
+## this should be ana's but not Bitty's
+"Conostegia" in specObs.genero.values
+"Conostegia" in bitGen.values
+"Conostegia" in newGen.genero.values
+
+## this should be in both
+"Dacryodes" in specObs.genero.values
+"Dacryodes" in bitGen.values
+"Dacryodes" in newGen.genero.values
+
+## seems to work. From newGen, we need the family, genus, species columns:
+newGen = newGen[['familia', 'genero', 'especie']]
+
+## how to we subset to just unique species values?
+
+newGenGrouped = newGen.groupby(['genero','especie']).agg(pd.Series.unique)
+
+newGen.head()
+newGenGrouped.head()
+newGenGrouped.shape
+
+## what does a csv look like if we use this?
+
+
+newGenGrouped.to_csv('newGeneraForBitty.csv')
