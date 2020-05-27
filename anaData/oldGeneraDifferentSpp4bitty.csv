@@ -1,0 +1,135 @@
+,familia,genero,especie,GenSpec
+3,Flacourtiaceae,Banara,guianensis,Banara guianensis
+4,Flacourtiaceae,Banara,regia,Banara regia
+6,Lauraceae,Beilschmiedia,aff. costaricensis,Beilschmiedia aff. costaricensis
+7,Lauraceae,Beilschmiedia,alloiophylla,Beilschmiedia alloiophylla
+9,Flacourtiaceae,Casearia,cajambrensis,Casearia cajambrensis
+10,Flacourtiaceae,Casearia,sylvestris,Casearia sylvestris
+11,Cecropiaceae,Cecropia,aff. andina,Cecropia aff. andina
+12,Cecropiaceae,Cecropia,aff. reticulata,Cecropia aff. reticulata
+13,Cecropiaceae,Cecropia,andina,Cecropia andina
+14,Cecropiaceae,Cecropia,ficifolia,Cecropia ficifolia
+19,Clusiaceae,Chrysochlamys,aff. dependens,Chrysochlamys aff. dependens
+22,Lauraceae,Cinnamomum,triplinerve,Cinnamomum triplinerve
+24,Clusiaceae,Clusia,aff. hydrogera,Clusia aff. hydrogera
+25,Clusiaceae,Clusia,dixonii,Clusia dixonii
+27,Clusiaceae,Clusia,trochimorfis,Clusia trochimorfis
+30,Boraginaceae,Cordia,aff. mexiana,Cordia aff. mexiana
+32,Boraginaceae,Cordia,mexicana,Cordia mexicana
+35,Sapindaceae,Cupania,aff. cinerea,Cupania aff. cinerea
+36,Cyatheaceae,Cyathea,caracasana,Cyathea caracasana
+37,Cyatheaceae,Cyathea,halonata,Cyathea halonata
+38,Burseraceae,Dacryodes,cf. cupularis,Dacryodes cf. cupularis
+40,Lauraceae,Endlicheria,cf. chalisea,Endlicheria cf. chalisea
+41,Lauraceae,Endlicheria,cf. sericea,Endlicheria cf. sericea
+42,Lauraceae,Endlicheria,cf. tessmannii,Endlicheria cf. tessmannii
+43,Lauraceae,Endlicheria,formosa,Endlicheria formosa
+44,Lauraceae,Endlicheria,klugii,Endlicheria klugii
+46,Fab-Faboideae,Erythrina,schimpffii,Erythrina schimpffii
+49,Lecythidaceae,Eschweilera,integrifolia,Eschweilera integrifolia
+50,Lecythidaceae,Eschweilera,rimbachii,Eschweilera rimbachii
+51,Myrtaceae,Eugenia,florida,Eugenia florida
+52,Rubiaceae,Faramea,fragans,Faramea fragans
+56,Moraceae,Ficus,andicola,Ficus andicola
+58,Moraceae,Ficus,cf. caldasiana,Ficus cf. caldasiana
+59,Moraceae,Ficus,cotopaxiensis,Ficus cotopaxiensis
+62,Moraceae,Ficus,macbridei,Ficus macbridei
+63,Moraceae,Ficus,maxima,Ficus maxima
+64,Moraceae,Ficus,mutisii,Ficus mutisii
+65,Moraceae,Ficus,sibundoya,Ficus sibundoya
+67,Moraceae,Ficus,subandina,Ficus subandina
+68,Moraceae,Ficus,tonduzii,Ficus tonduzii
+69,Moraceae,Ficus,trianae,Ficus trianae
+71,Myrsinaceae,Geissanthus,aff. longistamineus,Geissanthus aff. longistamineus
+72,Myrsinaceae,Geissanthus,aff. pinchinchana,Geissanthus aff. pinchinchana
+73,Meliaceae,Guarea,aff. macrophylla,Guarea aff. macrophylla
+74,Meliaceae,Guarea,cartaguenya,Guarea cartaguenya
+75,Meliaceae,Guarea,cf. pubescens,Guarea cf. pubescens
+76,Meliaceae,Guarea,cf. subandina,Guarea cf. subandina
+78,Annonaceae,Guatteria,cf. megalophylla,Guatteria cf. megalophylla
+79,Annonaceae,Guatteria,megalophylla,Guatteria megalophylla
+84,Rubiaceae,Hoffmannia,cf. parviflora,Hoffmannia cf. parviflora
+86,Aquifoliaceae,Ilex,cf. yurumanguinis,Ilex cf. yurumanguinis
+87,Aquifoliaceae,Ilex,laurina,Ilex laurina
+88,Fab-Mimosoideae,Inga,aff. lallensis,Inga aff. lallensis
+89,Fab-Mimosoideae,Inga,aff. nobilis,Inga aff. nobilis
+91,Fab-Mimosoideae,Inga,aff. villosissima,Inga aff. villosissima
+92,Fab-Mimosoideae,Inga,lallensis,Inga lallensis
+93,Fab-Mimosoideae,Inga,oerstediana,Inga oerstediana
+94,Fab-Mimosoideae,Inga,punctata,Inga punctata
+96,Fab-Mimosoideae,Inga,villosissima,Inga villosissima
+97,Chrysobalanaceae,Licania,durifolia,Licania durifolia
+100,Sabiaceae,Meliosma,occidentalis,Meliosma occidentalis
+101,Melastomataceae,Meriania,finicola,Meriania finicola
+102,Melastomataceae,Meriania,maxima,Meriania maxima
+104,Melastomataceae,Miconia,aff. brevitheca,Miconia aff. brevitheca
+105,Melastomataceae,Miconia,aggregata,Miconia aggregata
+106,Melastomataceae,Miconia,cf. subnodosa,Miconia cf. subnodosa
+107,Melastomataceae,Miconia,dapsiliflora,Miconia dapsiliflora
+108,Melastomataceae,Miconia,loveyoides,Miconia loveyoides
+110,Myrtaceae,Myrcia,aff. aliena,Myrcia aff. aliena
+111,Myrtaceae,Myrcia,aff. fallax,Myrcia aff. fallax
+112,Myrtaceae,Myrcia,cf. fallax,Myrcia cf. fallax
+116,Lauraceae,Nectandra,aff. Purpurea,Nectandra aff. Purpurea
+117,Lauraceae,Nectandra,aff. guadaripo,Nectandra aff. guadaripo
+118,Lauraceae,Nectandra,aff. laurel,Nectandra aff. laurel
+119,Lauraceae,Nectandra,aff. membranacea,Nectandra aff. membranacea
+120,Lauraceae,Nectandra,aff. parviflora,Nectandra aff. parviflora
+121,Lauraceae,Nectandra,guadaripo,Nectandra guadaripo
+122,Lauraceae,Nectandra,membranacea,Nectandra membranacea
+123,Lauraceae,Nectandra,obtusata,Nectandra obtusata
+128,Lauraceae,Ocotea,aff. floccifera,Ocotea aff. floccifera
+129,Lauraceae,Ocotea,aff. heterochroma,Ocotea aff. heterochroma
+130,Lauraceae,Ocotea,aff. oblonga,Ocotea aff. oblonga
+131,Lauraceae,Ocotea,floccifera,Ocotea floccifera
+133,Lauraceae,Ocotea,macrophylla,Ocotea macrophylla
+134,Lauraceae,Ocotea,oblonga,Ocotea oblonga
+137,Lauraceae,Ocotea,stenoneura,Ocotea stenoneura
+138,Melastomataceae,Ossaea,cf. micrantha,Ossaea cf. micrantha
+140,Melastomataceae,Ossaea,robusta,Ossaea robusta
+142,Rubiaceae,Palicourea,acanthacea,Palicourea acanthacea
+143,Rubiaceae,Palicourea,amethystina,Palicourea amethystina
+144,Rubiaceae,Palicourea,cf. stipularis,Palicourea cf. stipularis
+145,Rubiaceae,Palicourea,chimboracensis,Palicourea chimboracensis
+146,Rubiaceae,Palicourea,gentryi,Palicourea gentryi
+147,Rubiaceae,Palicourea,gibbosa,Palicourea gibbosa
+148,Rubiaceae,Palicourea,stipularis,Palicourea stipularis
+149,Rubiaceae,Palicourea,thyrsiflora,Palicourea thyrsiflora
+150,Rubiaceae,Pentagonia,macrophylla,Pentagonia macrophylla
+151,Moraceae,Perebea,aff. xanthochyma,Perebea aff. xanthochyma
+152,Lauraceae,Persea,aff. areolatocostae,Persea aff. areolatocostae
+153,Lauraceae,Persea,aff. pseudofasciculata,Persea aff. pseudofasciculata
+154,Lauraceae,Persea,povedae,Persea povedae
+156,Lauraceae,Persea,rigens,Persea rigens
+157,Piperaceae,Piper,aduncum,Piper aduncum
+158,Piperaceae,Piper,aff. nudibracteatun,Piper aff. nudibracteatun
+159,Piperaceae,Piper,cf. imperiale,Piper cf. imperiale
+160,Piperaceae,Piper,fuliginosum,Piper fuliginosum
+161,Piperaceae,Piper,imperiale,Piper imperiale
+163,Lauraceae,Pleurothyrium,aff. giganthum,Pleurothyrium aff. giganthum
+164,Lauraceae,Pleurothyrium,cinereum,Pleurothyrium cinereum
+165,Lauraceae,Pleurothyrium,giganthum,Pleurothyrium giganthum
+166,Lauraceae,Pleurothyrium,glabritepalum,Pleurothyrium glabritepalum
+168,Burseraceae,Protium,ecuadorense,Protium ecuadorense
+170,Ericaceae,Psammisia,aberrans,Psammisia aberrans
+171,Ericaceae,Psammisia,sodiroi,Psammisia sodiroi
+172,Moraceae,Pseudolmedia,macrophylla,Pseudolmedia macrophylla
+174,Rubiaceae,Psychotria,cf. steyermarkii,Psychotria cf. steyermarkii
+175,Rubiaceae,Psychotria,flaviflora,Psychotria flaviflora
+176,Rubiaceae,Psychotria,gentryi,Psychotria gentryi
+177,Rubiaceae,Psychotria,paeonia,Psychotria paeonia
+178,Bombacaceae,Quararibea,aff. asterolepis,Quararibea aff. asterolepis
+179,Lauraceae,Rhodostemonodaphne,cyclops,Rhodostemonodaphne cyclops
+180,Annonaceae,Rollinia,aff. dolichopetala,Rollinia aff. dolichopetala
+183,Solanaceae,Solanum,aff. circinatum,Solanum aff. circinatum
+184,Solanaceae,Solanum,aff. cucullatum,Solanum aff. cucullatum
+185,Solanaceae,Solanum,cf. circinatum,Solanum cf. circinatum
+186,Solanaceae,Solanum,cucullatum,Solanum cucullatum
+187,Solanaceae,Solanum,lepidotum,Solanum lepidotum
+189,Myrsinaceae,Stylogyne,ambigua,Stylogyne ambigua
+190,Euphorbiaceae,Tetrorchidium,andinum,Tetrorchidium andinum
+191,Euphorbiaceae,Tetrorchidium,macrophyllum,Tetrorchidium macrophyllum
+192,Meliaceae,Trichilia,aff. septentrionalis,Trichilia aff. septentrionalis
+193,Meliaceae,Trichilia,septentrionalis,Trichilia septentrionalis
+195,Arecaceae,Wettinia,aff. oxycarpa,Wettinia aff. oxycarpa
+196,Arecaceae,Wettinia,quinaria,Wettinia quinaria

@@ -705,6 +705,8 @@ bittyDF.drop(0,0, inplace=True)
 bittyDF[['Scientific name', 'Family']].head()
 bittyDF=bittyDF[['Scientific name', 'Family']]
 bittyDF.dropna(how='all', axis=0, inplace=True)
+bittyDF['Scientific name'] = bittyDF['Scientific name'].str.strip()
+bittyDF['Family'] = bittyDF['Family'].str.strip()
 
 ## check the unique values:
 
@@ -722,7 +724,6 @@ specObs['genero'].unique()
 
 aa = bittyDF['Scientific name']
 bitGen = aa.str.split(pat=' ', expand=True).iloc[:,0]
-
 bitGen.isin(specObs['genero'].unique())
 
 sum(bitGen.isin(specObs['genero'].unique())) ## ~100 genera that are in Bitty's data are in Ana's?
@@ -814,5 +815,80 @@ newGenGrouped.shape
 
 ## what does a csv look like if we use this?
 
-
 newGenGrouped.to_csv('newGeneraForBitty.csv')
+
+#### ok, so how do we get the other plants? #####
+
+## these other species will not be in the new genera, 
+## so we need to look in the genera that are already
+## covered. 
+
+## This gets messy, probably, but the start is simple:
+
+## these are the records that are of genera that are 
+## in both Bitty's plant list and Ana's:
+
+sharedGen = specObs[~recNotBit] 
+
+
+## subset to family, genus, species
+sharedGen = sharedGen[['familia', 'genero', 'especie']]
+
+## collapse it:
+sharedGen = sharedGen.groupby(['genero','especie']).agg(pd.Series.unique)
+
+## now how to avoid duplicates with bitty's list?
+
+## let's try joining our genus+species column, and matching to
+## Bitty's scientific names:
+
+sharedGen = sharedGen.reset_index()[["familia","genero","especie"]]
+
+sharedGen['GenSpec'] = sharedGen.genero.str.cat(sharedGen.especie, sep=' ')
+
+## search Bitty's df:
+
+sharedGen['GenSpec'].isin(bittyDF['Scientific name'])
+
+sum(sharedGen['GenSpec'].isin(bittyDF['Scientific name'])) ## initially 44 matches.
+
+sum(~sharedGen['GenSpec'].isin(bittyDF['Scientific name'])) ## initially 153 spp not listed in Bitty's list
+
+## sanity checks
+"Rhodostemonodaphne cyclops" in bittyDF['Scientific name'].values
+"Trichilia glabra" in bittyDF['Scientific name'].values
+
+## okay, so how do we subset specObs to these?
+newSpp = sharedGen[(~sharedGen['GenSpec'].isin(bittyDF['Scientific name']))]
+mask = ~(newSpp['GenSpec'].str.contains("sp. *[0-9]*", case=False, regex=True))
+newSpp = newSpp[mask]
+
+## I think this is what bitty needs?
+
+newSpp.to_csv('oldGeneraDifferentSpp4bitty.csv')
+
+
+############## ridgetop paper data ########################
+
+## there was an additional paper about biodiversity at los Cedros,
+## and elsewhere, Wilson and Rhemtulla (2018).
+
+## their data is public, let's look at it:
+
+wb = openpyxl.load_workbook("doi_10.5061_dryad.3nr41__v1/prescence_abscence.xlsx")
+
+wb.sheetnames
+sheet = wb["Sheet1"]
+ridgeDF = pd.DataFrame(sheet.values)
+ridgeDF.rename(columns=ridgeDF.iloc[1,:], inplace=True)
+ridgeDF.drop(ridgeDF.index[0], inplace=True)
+ridgeDF.drop(ridgeDF.index[0], inplace=True)
+ridgeDF.reset_index(inplace=True, drop=True)
+
+
+ridgeDF.columns
+
+ridgeDF.columns[0]='Family'
+
+## figure out which is LC
+
