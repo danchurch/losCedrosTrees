@@ -944,20 +944,102 @@ subParcelComm = pd.read_pickle("subParcelComm.p")
 aa = subParcelComm.index.isin(oldForestObs.PsubP)
 oldForestComm = subParcelComm[aa]
 
-oldForestObs.PsubP.unique() ## looks right
+## any rows all-zeros?
 
-## okay, now what? follow the above pipeline
+(oldForestComm == 0).all(axis=0) ## lots of species that are not present in any of these plots
+sum((oldForestComm == 0).all(axis=0)) ## 190, out of 343, species not represented in these
+## but that's not bad, considering the ratio, this is just 1/5 of all plots, but 45% of tree spp
+(oldForestComm == 0).all(axis=1) 
+## no rows that have zero in all species. Makes sense, that would mean a 
+## plot with no trees, classified as bosque cerrado
 
-physDist = sp.distance.pdist(oldForestObs[['N','E']], metric='euclidean')
+## I think it makes sense to remove these all-zero species columns:
+
+(oldForestComm == 0).all(axis=0).values
+
+notObserved=~((oldForestComm == 0).all(axis=0).values)
+
+oldForestComm = oldForestComm.iloc[:,notObserved]
+
+oldForestComm.shape ## 12,153 . Makes sense. 
+
+(oldForestComm == 0).all(axis=1).any() ## no species that are not present at least somewhere
+
+## okay, I think we can do our turnover graph
+
+oldForestDF = spDF.loc[oldForestComm.index.values]
+
+## got to get a spatial matrix just for the oldforest..
+
+
+physDist = sp.distance.pdist(oldForestDF, metric='euclidean')
 bcDist = sp.distance.pdist(oldForestComm, metric='brayCurtis')
 
 physDist.shape
 bcDist.shape
 
+plt.ion()
+
 plt.scatter(physDist, bcDist)
+
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
+
+plt.xlabel('distance between subplots')
+plt.ylabel('BC dissimilarity')
+plt.title('old Forest')
+plt.savefig('oldForestTurn.png')
 
 ## do a simple linear regression, though lots of assumptions are
 ## violated...independence, normality, 
 
 X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
 plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
+
+## works. can this be generalized to the other habitat types?
+
+specObs = pd.read_pickle('specObs.p')
+spDF = pd.read_pickle('subParcelSpatial.p')
+subParcelComm = pd.read_pickle("subParcelComm.p")
+soGrouped = specObs.groupby('habitat')
+
+habs = list(soGrouped.groups.keys())
+fig, axes = plt.subplots(nrows=2, ncols=3, sharey=True)
+axes = axes.flatten()
+for h,i in enumerate(habs): 
+    print(i)
+    obs_i = soGrouped.get_group(i)
+    obs_iN = [ spDF.loc[a].N for a in obs_i.PsubP ]
+    obs_iE = [ spDF.loc[a].E for a in obs_i.PsubP ]
+    obs_i['N'] = obs_iN
+    obs_i['E'] = obs_iE
+    subParcelInObs_i = subParcelComm.index.isin(obs_i.PsubP)
+    comm_i = subParcelComm[subParcelInObs_i]
+    notObserved=~((comm_i == 0).all(axis=0).values)
+    comm_i = comm_i.iloc[:,notObserved]
+    spDF_i = spDF.loc[comm_i.index.values]
+    physDist_i = sp.distance.pdist(spDF_i, metric='euclidean')
+    bcDist_i = sp.distance.pdist(comm_i, metric='brayCurtis')
+    axes[h].scatter(physDist_i, bcDist_i)
+    X, Y = physDist_i.reshape(-1,1), bcDist_i.reshape(-1,1)
+    axes[h].plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
+    axes[h].set_xlabel('distance between subplots')
+    axes[h].set_ylabel('BC dissimilarity')
+    axes[h].set_title(f'{i} habitat turnover')
+
+plt.tight_layout()
+plt.savefig('turnoverByHabitat.png')
+
+## well, withing the scale of comparisons that we have,
+## this is not that interesting, except to say, damn, 
+## these habitats are not good predictors of the 
+## massive biodiversity that we are seeing here. 
+
+## is it worth our time to do some mem analysis on this?
+
+## what would be the advantages..?
+
+
+## while we're here, SAC for each, to compare
+## alpha diversity?
+
