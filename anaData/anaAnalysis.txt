@@ -40,6 +40,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+from sklearn.linear_model import LinearRegression
+import scipy.spatial as sp
 
 ## read one of the wkbks in:
 
@@ -547,6 +549,7 @@ specObs['genusSpecies'].unique().shape
 
 ## this is getting complicated...
 ## let's get all the specObs creation commands here, at once:
+
 wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
 sheet = wb['Base dat final 6 29 2012']
 bdfDF = pd.DataFrame(sheet.values)
@@ -567,7 +570,7 @@ specObs['PsubP'] = specObs.parcela.astype('str') + "." + specObs.subparcela.asty
 specObs = specObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
 
 #specObs.to_csv('specObs.csv')
-specObs.to_pickle('specObs.p')
+#specObs.to_pickle('specObs.p')
 
 specObs.familia.isnull().any() ## nope
 specObs.genero.isnull().any() ## also no empty genero cells. The problem is with the names of species
@@ -619,7 +622,6 @@ spDF = spDF[['PsubP', 'E', 'N']]
 spDF.set_index('PsubP', inplace=True)
 
 ## does that match? 
-
 #subParcelComm = pd.read_csv("subParcelComm.csv")
 
 subParcelComm = pd.read_pickle("subParcelComm.p")
@@ -680,6 +682,8 @@ plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
 ## okay, that's cool. 
 ## we should see if it is more dramatic if we focus 
 ## on the primary forest plots only
+
+
 
 ########################################
 
@@ -830,7 +834,6 @@ newGenGrouped.to_csv('newGeneraForBitty.csv')
 
 sharedGen = specObs[~recNotBit] 
 
-
 ## subset to family, genus, species
 sharedGen = sharedGen[['familia', 'genero', 'especie']]
 
@@ -864,8 +867,10 @@ mask = ~(newSpp['GenSpec'].str.contains("sp. *[0-9]*", case=False, regex=True))
 newSpp = newSpp[mask]
 
 ## I think this is what bitty needs?
-
 newSpp.to_csv('oldGeneraDifferentSpp4bitty.csv')
+
+## bitty has noticed a particular record of interest. Get her the full story:
+
 
 
 ############## ridgetop paper data ########################
@@ -880,15 +885,79 @@ wb = openpyxl.load_workbook("doi_10.5061_dryad.3nr41__v1/prescence_abscence.xlsx
 wb.sheetnames
 sheet = wb["Sheet1"]
 ridgeDF = pd.DataFrame(sheet.values)
+
 ridgeDF.rename(columns=ridgeDF.iloc[1,:], inplace=True)
+
 ridgeDF.drop(ridgeDF.index[0], inplace=True)
 ridgeDF.drop(ridgeDF.index[0], inplace=True)
 ridgeDF.reset_index(inplace=True, drop=True)
 
+columns=ridgeDF.iloc[1,:], inplace=True)
 
-ridgeDF.columns
+#aa = ridgeDF.columns.values
+aa = ridgeDF.iloc[1,:], inplace=True)aa[0] = "family"
+aa[1] = "gnusSpecies"
 
 ridgeDF.columns[0]='Family'
 
-## figure out which is LC
+## which is LC?
 
+## and never mind, Bitty just informed me she has done all this work.
+
+######################################
+
+## okay, back to the turnover graphs...
+
+## can we back up and redo the turnover graphs, split out 
+## by habitat type?
+
+## we need to split up both the specObs and spDF dataframes by 
+## habitat. How
+
+spDF = pd.read_pickle('subParcelSpatial.p')
+specObs = pd.read_pickle('specObs.p')
+
+## we want a set of smaller data frames from specObs, based on their habitat:
+soGrouped = specObs.groupby('habitat')
+
+soGrouped.groups.keys()
+
+oldForestObs = soGrouped.get_group('BC')
+
+oldForestObs.head()
+
+oldForestObs.PsubP.unique() ## 12 subparcels of old forest. Is this enough?
+
+## how can we add spatial info?
+ofoN = [ spDF.loc[i].N for i in oldForestObs.PsubP ]
+ofoE = [ spDF.loc[i].E for i in oldForestObs.PsubP ]
+oldForestObs['N'] = ofoN
+oldForestObs['E'] = ofoE
+
+oldForestObs.head()
+
+oldForestObs.tail()
+
+## we need a species matrix for just this set of plots:
+
+subParcelComm = pd.read_pickle("subParcelComm.p")
+aa = subParcelComm.index.isin(oldForestObs.PsubP)
+oldForestComm = subParcelComm[aa]
+
+oldForestObs.PsubP.unique() ## looks right
+
+## okay, now what? follow the above pipeline
+
+physDist = sp.distance.pdist(oldForestObs[['N','E']], metric='euclidean')
+bcDist = sp.distance.pdist(oldForestComm, metric='brayCurtis')
+
+physDist.shape
+bcDist.shape
+
+plt.scatter(physDist, bcDist)
+
+## do a simple linear regression, though lots of assumptions are
+## violated...independence, normality, 
+
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 

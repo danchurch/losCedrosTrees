@@ -1,11 +1,11 @@
 ,site,parcela,subparcela,PsubP,familia,genero,especie,genusSpecies,habito,elevacion,habitat
-1,1,1,1,1.1,Flacourtiaceae,Banara,regia,Flacourtiaceae Banara regia,Árbol,1425,RG
+1,1,1,1,1.1,Flacourtiaceae,Banara ,regia,Flacourtiaceae Banara  regia,Árbol,1425,RG
 2,1,1,1,1.1,Melastomataceae,Leandra,subseriata,Melastomataceae Leandra subseriata,Arbolito,1413,RG
 3,1,1,1,1.1,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1413,RG
 4,1,1,1,1.1,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1413,RG
 5,1,1,1,1.1,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1413,RG
 6,1,1,1,1.1,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1413,RG
-7,1,1,1,1.1,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1413,RG
+7,1,1,1,1.1,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1413,RG
 8,1,1,1,1.1,Myrsinaceae,Geissanthus,aff. longistamineus,Myrsinaceae Geissanthus aff. longistamineus,Arbolito,1413,RG
 9,1,1,1,1.1,Myrsinaceae,Geissanthus,aff. longistamineus,Myrsinaceae Geissanthus aff. longistamineus,Arbolito,1413,RG
 10,1,1,1,1.1,Asteraceae,Vernonanthura,patens,Asteraceae Vernonanthura patens,Arbolito,1413,RG
@@ -35,13 +35,13 @@
 34,1,1,1,1.1,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1413,RG
 35,1,1,1,1.1,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1413,RG
 36,1,1,1,1.1,Fab-Caesalpiniaceae,Senna,dariensis,Fab-Caesalpiniaceae Senna dariensis,Arbolito,1413,RG
-37,1,1,1,1.1,Indeterminado,sp. 11,,Indeterminado sp. 11,Arbolito,1413,RG
+37,1,1,1,1.1,Indeterminado,sp. 11,,,Arbolito,1413,RG
 38,1,1,1,1.1,Melastomataceae,Meriania,tomentosa,Melastomataceae Meriania tomentosa,Árbol,1413,RG
 39,1,1,2,1.2,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1398,RG
 40,1,1,2,1.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1398,RG
 41,1,1,2,1.2,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1398,RG
 42,1,1,2,1.2,Cyatheaceae,Cyathea,halonata,Cyatheaceae Cyathea halonata,Arbolito,1398,RG
-43,1,1,2,1.2,Rubiaceae,sp.3,,Rubiaceae sp.3,Arbusto,1398,RG
+43,1,1,2,1.2,Rubiaceae,sp.3,,,Arbusto,1398,RG
 44,1,1,2,1.2,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1398,RG
 45,1,1,2,1.2,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1398,RG
 46,1,1,2,1.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1398,RG
@@ -148,14 +148,14 @@
 147,1,1,4,1.4,Boraginaceae,Cordia,sp.,Boraginaceae Cordia sp.,Arbolito,1370,RG
 148,1,1,4,1.4,Boraginaceae,Cordia,aff. mexiana,Boraginaceae Cordia aff. mexiana,Árbol,1370,RG
 149,1,1,4,1.4,Melastomataceae,Leandra,subseriata,Melastomataceae Leandra subseriata,Arbolito,1370,RG
-150,1,1,4,1.4,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1370,RG
+150,1,1,4,1.4,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1370,RG
 151,1,1,4,1.4,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1370,RG
 152,1,1,4,1.4,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1370,RG
 153,1,1,5,1.5,Melastomataceae,Meriania,tomentosa,Melastomataceae Meriania tomentosa,Árbol,1362,RG
 154,1,1,5,1.5,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1362,RG
 155,1,1,5,1.5,Fab-Caesalpiniaceae,Senna,dariensis,Fab-Caesalpiniaceae Senna dariensis,Arbolito,1362,RG
 156,1,1,5,1.5,Asteraceae,Critoniopsis,occidentalis,Asteraceae Critoniopsis occidentalis,Árbol,1362,RG
-157,1,1,5,1.5,Piperaceae,Piper,sp.,Piperaceae Piper sp.,Arbusto,1362,RG
+157,1,1,5,1.5,Piperaceae,Piper,sp.  ,Piperaceae Piper sp.,Arbusto,1362,RG
 158,1,1,5,1.5,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1362,RG
 159,1,1,5,1.5,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1362,RG
 160,1,1,5,1.5,Urticaceae,Urera,caracasana,Urticaceae Urera caracasana,Arbolito,1362,RG
@@ -183,7 +183,7 @@
 182,5,2,1,2.1,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1189,RCA
 183,5,2,1,2.1,Rutaceae,Zanthoxylum,mauriifolium,Rutaceae Zanthoxylum mauriifolium,Arbolito,1189,RCA
 184,5,2,1,2.1,Lauraceae,Caryodaphnopsis,theobromifolia,Lauraceae Caryodaphnopsis theobromifolia,Árbol,1189,RCA
-185,5,2,1,2.1,Staphyleaceae,Huertea,glandulosa,Staphyleaceae Huertea glandulosa,Árbol,1189,RCA
+185,5,2,1,2.1,Staphyleaceae,Huertea ,glandulosa,Staphyleaceae Huertea  glandulosa,Árbol,1189,RCA
 186,5,2,1,2.1,Solanaceae,Cestrum,megalophyllum,Solanaceae Cestrum megalophyllum,Árbol,1189,RCA
 187,5,2,1,2.1,Staphyleaceae,Turpinia,occidentalis,Staphyleaceae Turpinia occidentalis,Árbol,1189,RCA
 188,5,2,1,2.1,Staphyleaceae,Turpinia,occidentalis,Staphyleaceae Turpinia occidentalis,Árbol,1189,RCA
@@ -237,7 +237,7 @@
 236,5,2,3,2.3,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1201,RCA
 237,5,2,3,2.3,Sapindaceae,Allophyllus,sp.,Sapindaceae Allophyllus sp.,Árbol,1201,RCA
 238,5,2,3,2.3,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1201,RCA
-239,5,2,3,2.3,Lauraceae,Ocotea,aff. cernua,Lauraceae Ocotea aff. cernua,Árbol,1201,RCA
+239,5,2,3,2.3,Lauraceae,Ocotea ,aff. cernua,Lauraceae Ocotea  aff. cernua,Árbol,1201,RCA
 240,5,2,3,2.3,Urticaceae,Urera,baccifera,Urticaceae Urera baccifera,Arbolito,1201,RCA
 241,5,2,3,2.3,Verbenaceae,Aegiphila,alba,Verbenaceae Aegiphila alba,Árbol,1201,RCA
 242,5,2,3,2.3,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1201,RCA
@@ -318,7 +318,7 @@
 317,6,3,1,3.1,Moraceae,Ficus,sp.,Moraceae Ficus sp.,Hemiepífita,1430,RG
 318,6,3,1,3.1,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1430,RG
 319,6,3,1,3.1,Boraginaceae,Cordia,sp.,Boraginaceae Cordia sp.,Arbolito,1430,RG
-320,6,3,1,3.1,Indeterminado,sp. 12,,Indeterminado sp. 12,Arbolito,1430,RG
+320,6,3,1,3.1,Indeterminado,sp. 12,,,Arbolito,1430,RG
 321,6,3,1,3.1,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1430,RG
 322,6,3,1,3.1,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1430,RG
 323,6,3,1,3.1,Verbenaceae,Aegiphila,alba,Verbenaceae Aegiphila alba,Árbol,1430,RG
@@ -337,7 +337,7 @@
 336,6,3,1,3.1,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1430,RG
 337,6,3,1,3.1,Lauraceae,Nectandra,guadaripo,Lauraceae Nectandra guadaripo,Árbol,1430,RG
 338,6,3,1,3.1,Myrsinaceae,Geissanthus,aff. longistamineus,Myrsinaceae Geissanthus aff. longistamineus,Arbolito,1430,RG
-339,6,3,1,3.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1430,RG
+339,6,3,1,3.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1430,RG
 340,6,3,1,3.1,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1430,RG
 341,6,3,1,3.1,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1430,RG
 342,6,3,1,3.1,Clusiaceae,Vismia,lauriformis,Clusiaceae Vismia lauriformis,Árbol,1430,RG
@@ -392,7 +392,7 @@
 391,6,3,2,3.2,Fab-Mimosoideae,Inga,villosissima,Fab-Mimosoideae Inga villosissima,Árbol,1442,RG
 392,6,3,2,3.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1442,RG
 393,6,3,2,3.2,Meliaceae,Trichilia,sp.,Meliaceae Trichilia sp.,Arbolito,1442,RG
-394,6,3,2,3.2,Melastomataceae,sp.3,,Melastomataceae sp.3,Arbolito,1442,RG
+394,6,3,2,3.2,Melastomataceae,sp.3,,,Arbolito,1442,RG
 395,6,3,2,3.2,Brunelliaceae,Brunellia,acostae,Brunelliaceae Brunellia acostae,Árbol,1442,RG
 396,6,3,2,3.2,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1442,RG
 397,6,3,2,3.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1442,RG
@@ -407,7 +407,7 @@
 406,6,3,2,3.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1442,RG
 407,6,3,2,3.2,Verbenaceae,Aegiphila,alba,Verbenaceae Aegiphila alba,Árbol,1442,RG
 408,6,3,2,3.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1442,RG
-409,6,3,2,3.2,Moraceae,sp.,,Moraceae sp.,Arbolito,1442,RG
+409,6,3,2,3.2,Moraceae,sp. ,,,Arbolito,1442,RG
 410,6,3,2,3.2,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1442,RG
 411,6,3,2,3.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1442,RG
 412,6,3,2,3.2,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1442,RG
@@ -429,7 +429,7 @@
 428,6,3,2,3.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1442,RG
 429,6,3,2,3.2,Brunelliaceae,Brunellia,comocladifolia,Brunelliaceae Brunellia comocladifolia,Árbol,1442,RG
 430,6,3,2,3.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1442,RG
-431,6,3,2,3.2,Staphyleaceae,Huertea,glandulosa,Staphyleaceae Huertea glandulosa,Árbol,1442,RG
+431,6,3,2,3.2,Staphyleaceae,Huertea ,glandulosa,Staphyleaceae Huertea  glandulosa,Árbol,1442,RG
 432,6,3,2,3.2,Solanaceae,Cestrum,megalophyllum,Solanaceae Cestrum megalophyllum,Árbol,1442,RG
 433,6,3,2,3.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1442,RG
 434,6,3,2,3.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1442,RG
@@ -457,7 +457,7 @@
 456,6,3,3,3.3,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1438,RG
 457,6,3,3,3.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1438,RG
 458,6,3,3,3.3,Brunelliaceae,Brunellia,comocladifolia,Brunelliaceae Brunellia comocladifolia,Árbol,1438,RG
-459,6,3,3,3.3,Rubiaceae,sp.2,,Rubiaceae sp.2,Árbol,1438,RG
+459,6,3,3,3.3,Rubiaceae,sp.2,,,Árbol,1438,RG
 460,6,3,3,3.3,Fab-Mimosoideae,Inga,sp.,Fab-Mimosoideae Inga sp.,Árbol,1438,RG
 461,6,3,3,3.3,Verbenaceae,Aegiphila,alba,Verbenaceae Aegiphila alba,Árbol,1438,RG
 462,6,3,3,3.3,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1438,RG
@@ -485,13 +485,13 @@
 484,6,3,3,3.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1438,RG
 485,6,3,3,3.3,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1438,RG
 486,6,3,3,3.3,Arecaceae,Hyospathe,elegans,Arecaceae Hyospathe elegans,Arbusto,1438,RG
-487,6,3,3,3.3,Staphyleaceae,Huertea,glandulosa,Staphyleaceae Huertea glandulosa,Árbol,1438,RG
+487,6,3,3,3.3,Staphyleaceae,Huertea ,glandulosa,Staphyleaceae Huertea  glandulosa,Árbol,1438,RG
 488,6,3,3,3.3,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1438,RG
 489,6,3,3,3.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1438,RG
 490,6,3,3,3.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1438,RG
 491,6,3,3,3.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1438,RG
 492,6,3,3,3.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1438,RG
-493,6,3,3,3.3,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1438,RG
+493,6,3,3,3.3,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1438,RG
 494,6,3,3,3.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1438,RG
 495,6,3,3,3.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1438,RG
 496,6,3,3,3.3,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1438,RG
@@ -512,12 +512,12 @@
 511,6,3,3,3.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1438,RG
 512,6,3,3,3.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1438,RG
 513,6,3,3,3.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1438,RG
-514,6,3,3,3.3,Melastomataceae,sp.1,,Melastomataceae sp.1,Arbolito,1438,RG
+514,6,3,3,3.3,Melastomataceae,sp.1,,,Arbolito,1438,RG
 515,6,3,4,3.4,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1450,RG
 516,6,3,4,3.4,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1450,RG
 517,6,3,4,3.4,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1450,RG
 518,6,3,4,3.4,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1450,RG
-519,6,3,4,3.4,Bombacaceae,sp.,,Bombacaceae sp.,Arbolito,1450,RG
+519,6,3,4,3.4,Bombacaceae,sp. ,,,Arbolito,1450,RG
 520,6,3,4,3.4,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1450,RG
 521,6,3,4,3.4,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1450,RG
 522,6,3,4,3.4,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1450,RG
@@ -530,7 +530,7 @@
 529,6,3,4,3.4,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1450,RG
 530,6,3,4,3.4,Dichapetalaceae,Stephanopodium,longipedicellatum,Dichapetalaceae Stephanopodium longipedicellatum,Árbol,1450,RG
 531,6,3,4,3.4,Dichapetalaceae,Stephanopodium,longipedicellatum,Dichapetalaceae Stephanopodium longipedicellatum,Árbol,1450,RG
-532,6,3,4,3.4,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1450,RG
+532,6,3,4,3.4,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1450,RG
 533,6,3,4,3.4,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1450,RG
 534,6,3,4,3.4,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Arbolito,1450,RG
 535,6,3,4,3.4,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1450,RG
@@ -603,7 +603,7 @@
 602,3,4,1,4.1,Urticaceae,Urera,baccifera,Urticaceae Urera baccifera,Arbolito,1541,RG
 603,3,4,1,4.1,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1541,RG
 604,3,4,1,4.1,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1541,RG
-605,3,4,1,4.1,Melastomataceae,sp.1,,Melastomataceae sp.1,Arbolito,1541,RG
+605,3,4,1,4.1,Melastomataceae,sp.1,,,Arbolito,1541,RG
 606,3,4,1,4.1,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1541,RG
 607,3,4,1,4.1,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1541,RG
 608,3,4,1,4.1,Asteraceae,Piptocoma,discolor,Asteraceae Piptocoma discolor,Árbol,1541,RG
@@ -615,7 +615,7 @@
 614,3,4,1,4.1,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1541,RG
 615,3,4,1,4.1,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1541,RG
 616,3,4,1,4.1,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1541,RG
-617,3,4,1,4.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1541,RG
+617,3,4,1,4.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1541,RG
 618,3,4,1,4.1,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1541,RG
 619,3,4,1,4.1,Meliaceae,Ruagea,glabra,Meliaceae Ruagea glabra,Arbolito,1541,RG
 620,3,4,1,4.1,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1541,RG
@@ -647,7 +647,7 @@
 646,3,4,2,4.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1575,RG
 647,3,4,2,4.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1575,RG
 648,3,4,2,4.2,Violaceae,Gloeospermum,longifolium,Violaceae Gloeospermum longifolium,Arbolito,1575,RG
-649,3,4,2,4.2,Melastomataceae,sp.1,,Melastomataceae sp.1,Arbolito,1575,RG
+649,3,4,2,4.2,Melastomataceae,sp.1,,,Arbolito,1575,RG
 650,3,4,2,4.2,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1575,RG
 651,3,4,2,4.2,Boraginaceae,Cordia,sp.,Boraginaceae Cordia sp.,Arbolito,1575,RG
 652,3,4,2,4.2,Solanaceae,Solanum,cucullatum,Solanaceae Solanum cucullatum,Arbolito,1575,RG
@@ -660,7 +660,7 @@
 659,3,4,2,4.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1575,RG
 660,3,4,2,4.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1575,RG
 661,3,4,2,4.2,Urticaceae,Urera,baccifera,Urticaceae Urera baccifera,Arbolito,1575,RG
-662,3,4,2,4.2,Indeterminado,sp. 13,,Indeterminado sp. 13,Arbolito,1575,RG
+662,3,4,2,4.2,Indeterminado,sp. 13,,,Arbolito,1575,RG
 663,3,4,2,4.2,Arecaceae,Hyospathe,elegans,Arecaceae Hyospathe elegans,Arbusto,1575,RG
 664,3,4,2,4.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1575,RG
 665,3,4,2,4.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1575,RG
@@ -676,8 +676,8 @@
 675,3,4,2,4.2,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1575,RG
 676,3,4,2,4.2,Lecythidaceae,Eschweilera,rimbachii,Lecythidaceae Eschweilera rimbachii,Árbol,1575,RG
 677,3,4,2,4.2,Thymelaeaceae,Schoenobiblus,daphnoides,Thymelaeaceae Schoenobiblus daphnoides,Árbol,1575,RG
-678,3,4,2,4.2,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1575,RG
-679,3,4,2,4.2,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1575,RG
+678,3,4,2,4.2,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1575,RG
+679,3,4,2,4.2,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1575,RG
 680,3,4,2,4.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1575,RG
 681,3,4,2,4.2,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1575,RG
 682,3,4,2,4.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1575,RG
@@ -686,7 +686,7 @@
 685,3,4,3,4.3,Rubiaceae,Elaeagia,karstenii,Rubiaceae Elaeagia karstenii,Árbol,1618,RG
 686,3,4,3,4.3,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1618,RG
 687,3,4,3,4.3,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1618,RG
-688,3,4,3,4.3,Rubiaceae,Palicourea,amethystina,Rubiaceae Palicourea amethystina,Arbolito,1618,RG
+688,3,4,3,4.3,Rubiaceae,Palicourea ,amethystina ,Rubiaceae Palicourea  amethystina,Arbolito,1618,RG
 689,3,4,3,4.3,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1618,RG
 690,3,4,3,4.3,Staphyleaceae,Turpinia,occidentalis,Staphyleaceae Turpinia occidentalis,Árbol,1618,RG
 691,3,4,3,4.3,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1618,RG
@@ -703,12 +703,12 @@
 702,3,4,3,4.3,Araliaceae,Dendropanax,aff. macrophyllum,Araliaceae Dendropanax aff. macrophyllum,Árbol,1618,RG
 703,3,4,3,4.3,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1618,RG
 704,3,4,3,4.3,Ericaceae,Psammisia,sodiroi,Ericaceae Psammisia sodiroi,Arbusto,1618,RG
-705,3,4,3,4.3,Moraceae,sp.,,Moraceae sp.,Arbolito,1618,RG
+705,3,4,3,4.3,Moraceae,sp. ,,,Arbolito,1618,RG
 706,3,4,3,4.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1618,RG
 707,3,4,3,4.3,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1618,RG
 708,3,4,3,4.3,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1618,RG
 709,3,4,3,4.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1618,RG
-710,3,4,3,4.3,Melastomataceae,sp.1,,Melastomataceae sp.1,Arbolito,1618,RG
+710,3,4,3,4.3,Melastomataceae,sp.1,,,Arbolito,1618,RG
 711,3,4,3,4.3,Araliaceae,Dendropanax,aff. macrophyllum,Araliaceae Dendropanax aff. macrophyllum,Árbol,1618,RG
 712,3,4,3,4.3,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1618,RG
 713,3,4,3,4.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1618,RG
@@ -747,7 +747,7 @@
 746,3,4,4,4.4,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1634,RG
 747,3,4,4,4.4,Solanaceae,Solanum,sp.,Solanaceae Solanum sp.,Arbusto,1634,RG
 748,3,4,4,4.4,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1634,RG
-749,3,4,4,4.4,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1634,RG
+749,3,4,4,4.4,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1634,RG
 750,3,4,4,4.4,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1634,RG
 751,2,5,1,5.1,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1673,RG
 752,2,5,1,5.1,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1673,RG
@@ -773,7 +773,7 @@
 772,2,5,1,5.1,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1673,RG
 773,2,5,1,5.1,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1673,RG
 774,2,5,1,5.1,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1673,RG
-775,2,5,1,5.1,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1673,RG
+775,2,5,1,5.1,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1673,RG
 776,2,5,1,5.1,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1673,RG
 777,2,5,1,5.1,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1673,RG
 778,2,5,1,5.1,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1673,RG
@@ -847,7 +847,7 @@
 846,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 847,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 848,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
-849,2,5,2,5.2,Melastomataceae,sp.1,,Melastomataceae sp.1,Arbolito,1714,RG
+849,2,5,2,5.2,Melastomataceae,sp.1,,,Arbolito,1714,RG
 850,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
 851,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 852,2,5,2,5.2,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1714,RG
@@ -860,10 +860,10 @@
 859,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 860,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 861,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
-862,2,5,2,5.2,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1714,RG
+862,2,5,2,5.2,Lauraceae,sp. 1,,,Árbol,1714,RG
 863,2,5,2,5.2,Thymelaeaceae,Schoenobiblus,daphnoides,Thymelaeaceae Schoenobiblus daphnoides,Árbol,1714,RG
 864,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
-865,2,5,2,5.2,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1714,RG
+865,2,5,2,5.2,Lauraceae,sp. 1,,,Árbol,1714,RG
 866,2,5,2,5.2,Urticaceae,Urera,caracasana,Urticaceae Urera caracasana,Arbolito,1714,RG
 867,2,5,2,5.2,Cyatheaceae,Cyathea,halonata,Cyatheaceae Cyathea halonata,Arbolito,1714,RG
 868,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
@@ -878,13 +878,13 @@
 877,2,5,2,5.2,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1714,RG
 878,2,5,2,5.2,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1714,RG
 879,2,5,2,5.2,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1714,RG
-880,2,5,2,5.2,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1714,RG
+880,2,5,2,5.2,Lauraceae,sp. 1,,,Árbol,1714,RG
 881,2,5,2,5.2,Flacourtiaceae,Casearia,cajambrensis,Flacourtiaceae Casearia cajambrensis,Árbol,1714,RG
 882,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 883,2,5,2,5.2,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1714,RG
 884,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 885,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
-886,2,5,2,5.2,Indeterminado,sp. 14,,Indeterminado sp. 14,Arbolito,1714,RG
+886,2,5,2,5.2,Indeterminado,sp. 14,,,Arbolito,1714,RG
 887,2,5,2,5.2,Lauraceae,Pleurothyrium,sp.,Lauraceae Pleurothyrium sp.,Árbol,1714,RG
 888,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
 889,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
@@ -899,7 +899,7 @@
 898,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 899,2,5,2,5.2,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1714,RG
 900,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
-901,2,5,2,5.2,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1714,RG
+901,2,5,2,5.2,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1714,RG
 902,2,5,2,5.2,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1714,RG
 903,2,5,2,5.2,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1714,RG
 904,2,5,2,5.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1714,RG
@@ -915,7 +915,7 @@
 914,2,5,3,5.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1706,RG
 915,2,5,3,5.3,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1706,RG
 916,2,5,3,5.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1706,RG
-917,2,5,3,5.3,Lauraceae,Ocotea,sp.2,Lauraceae Ocotea sp.2,Árbol,1706,RG
+917,2,5,3,5.3,Lauraceae,Ocotea ,sp.2,Lauraceae Ocotea  sp.2,Árbol,1706,RG
 918,2,5,3,5.3,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1706,RG
 919,2,5,3,5.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1706,RG
 920,2,5,3,5.3,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1706,RG
@@ -929,8 +929,8 @@
 928,2,5,3,5.3,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1706,RG
 929,2,5,3,5.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1706,RG
 930,2,5,3,5.3,Cecropiaceae,Cecropia,sp.1,Cecropiaceae Cecropia sp.1,Árbol,1706,RG
-931,2,5,3,5.3,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1706,RG
-932,2,5,3,5.3,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1706,RG
+931,2,5,3,5.3,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1706,RG
+932,2,5,3,5.3,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1706,RG
 933,2,5,3,5.3,Moraceae,Morus,insignis,Moraceae Morus insignis,Árbol,1706,RG
 934,2,5,3,5.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1706,RG
 935,2,5,3,5.3,Cecropiaceae,Cecropia,aff. andina,Cecropiaceae Cecropia aff. andina,Árbol,1706,RG
@@ -947,7 +947,7 @@
 946,2,5,3,5.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1706,RG
 947,2,5,3,5.3,Rubiaceae,Palicourea,gibbosa,Rubiaceae Palicourea gibbosa,Arbolito,1706,RG
 948,2,5,3,5.3,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1706,RG
-949,2,5,3,5.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1706,RG
+949,2,5,3,5.3,Cecropiaceae,Cecropia,andina ,Cecropiaceae Cecropia andina,Árbol,1706,RG
 950,2,5,3,5.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1706,RG
 951,2,5,3,5.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1706,RG
 952,2,5,3,5.3,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1706,RG
@@ -964,7 +964,7 @@
 963,2,5,3,5.3,Myrsinaceae,Geissanthus,aff. longistamineus,Myrsinaceae Geissanthus aff. longistamineus,Arbolito,1706,RG
 964,2,5,3,5.3,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1706,RG
 965,2,5,3,5.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1706,RG
-966,2,5,3,5.3,Moraceae,sp.,,Moraceae sp.,Arbolito,1706,RG
+966,2,5,3,5.3,Moraceae,sp. ,,,Arbolito,1706,RG
 967,2,5,3,5.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1706,RG
 968,2,5,3,5.3,Euphorbiaceae,Plukenetia,volubilis,Euphorbiaceae Plukenetia volubilis,Liana,1706,RG
 969,2,5,3,5.3,Solanaceae,Solanum,sp.,Solanaceae Solanum sp.,Arbusto,1706,RG
@@ -980,7 +980,7 @@
 979,2,5,4,5.4,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1694,RG
 980,2,5,4,5.4,Chrysobalanaceae,Licania,durifolia,Chrysobalanaceae Licania durifolia,Árbol,1694,RG
 981,2,5,4,5.4,Asteraceae,Critoniopsis,occidentalis,Asteraceae Critoniopsis occidentalis,Árbol,1694,RG
-982,2,5,4,5.4,Cyatheaceae,sp.,,Cyatheaceae sp.,Arbolito,1694,RG
+982,2,5,4,5.4,Cyatheaceae,sp.,,,Arbolito,1694,RG
 983,2,5,4,5.4,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1694,RG
 984,2,5,4,5.4,Asteraceae,Critoniopsis,occidentalis,Asteraceae Critoniopsis occidentalis,Árbol,1694,RG
 985,2,5,4,5.4,Meliaceae,Ruagea,glabra,Meliaceae Ruagea glabra,Arbolito,1694,RG
@@ -1024,7 +1024,7 @@
 1023,2,5,4,5.4,Asteraceae,Critoniopsis,occidentalis,Asteraceae Critoniopsis occidentalis,Árbol,1694,RG
 1024,2,5,4,5.4,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1694,RG
 1025,2,5,4,5.4,Asteraceae,Critoniopsis,occidentalis,Asteraceae Critoniopsis occidentalis,Árbol,1694,RG
-1026,2,5,4,5.4,Flacourtiaceae,sp.,,Flacourtiaceae sp.,Arbusto,1694,RG
+1026,2,5,4,5.4,Flacourtiaceae,sp.,,,Arbusto,1694,RG
 1027,2,5,4,5.4,Hippocrataceae,Salacia,cordata,Hippocrataceae Salacia cordata,Liana,1694,RG
 1028,2,5,4,5.4,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1694,RG
 1029,2,6,1,6.1,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1640,CLB
@@ -1048,7 +1048,7 @@
 1047,2,6,1,6.1,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1640,CLB
 1048,2,6,1,6.1,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1640,CLB
 1049,2,6,1,6.1,Melastomataceae,Ossaea,robusta,Melastomataceae Ossaea robusta,Arbusto,1640,CLB
-1050,2,6,1,6.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1640,CLB
+1050,2,6,1,6.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1640,CLB
 1051,2,6,1,6.1,Annonaceae,Guatteria,cf. megalophylla,Annonaceae Guatteria cf. megalophylla,Árbol,1640,CLB
 1052,2,6,2,6.2,Melastomataceae,Conostegia,aff. centronioides,Melastomataceae Conostegia aff. centronioides,Arbolito,1631,BS
 1053,2,6,2,6.2,Araliaceae,Dendropanax,aff. macrophyllum,Araliaceae Dendropanax aff. macrophyllum,Árbol,1631,BS
@@ -1062,7 +1062,7 @@
 1061,2,6,2,6.2,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1631,BS
 1062,2,6,2,6.2,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1631,BS
 1063,2,6,2,6.2,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1631,BS
-1064,2,6,2,6.2,Malphigiaceae,sp.,,Malphigiaceae sp.,Árbol,1631,BS
+1064,2,6,2,6.2,Malphigiaceae,sp.,,,Árbol,1631,BS
 1065,2,6,2,6.2,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1631,BS
 1066,2,6,2,6.2,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1631,BS
 1067,2,6,2,6.2,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1631,BS
@@ -1072,7 +1072,7 @@
 1071,2,6,2,6.2,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1631,BS
 1072,2,6,2,6.2,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1631,BS
 1073,2,6,2,6.2,Melastomataceae,Miconia,dapsiliflora,Melastomataceae Miconia dapsiliflora,Arbusto,1631,BS
-1074,2,6,2,6.2,Rubiaceae,sp.2,,Rubiaceae sp.2,Árbol,1631,BS
+1074,2,6,2,6.2,Rubiaceae,sp.2,,,Árbol,1631,BS
 1075,2,6,2,6.2,Dichapetalaceae,Stephanopodium,angulatum,Dichapetalaceae Stephanopodium angulatum,Árbol,1631,BS
 1076,2,6,2,6.2,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1631,BS
 1077,2,6,2,6.2,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1631,BS
@@ -1090,19 +1090,19 @@
 1089,2,6,2,6.2,Dichapetalaceae,Stephanopodium,longipedicellatum,Dichapetalaceae Stephanopodium longipedicellatum,Árbol,1631,BS
 1090,2,6,2,6.2,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1631,BS
 1091,2,6,2,6.2,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1631,BS
-1092,2,6,2,6.2,Lauraceae,Ocotea,oblonga,Lauraceae Ocotea oblonga,Árbol,1631,BS
+1092,2,6,2,6.2,Lauraceae,Ocotea ,oblonga,Lauraceae Ocotea  oblonga,Árbol,1631,BS
 1093,2,6,3,6.3,Elaeocarpaceae,Sloanea,cf. grandiflora,Elaeocarpaceae Sloanea cf. grandiflora,Árbol,1652,BC
 1094,2,6,3,6.3,Elaeocarpaceae,Sloanea,cf. grandiflora,Elaeocarpaceae Sloanea cf. grandiflora,Árbol,1652,BC
-1095,2,6,3,6.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1652,BC
+1095,2,6,3,6.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1652,BC
 1096,2,6,3,6.3,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1652,BC
 1097,2,6,3,6.3,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1652,BC
 1098,2,6,3,6.3,Lauraceae,Cinnamomum,triplinerve,Lauraceae Cinnamomum triplinerve,Árbol,1652,BC
-1099,2,6,3,6.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1652,BC
+1099,2,6,3,6.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1652,BC
 1100,2,6,3,6.3,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1652,BC
 1101,2,6,3,6.3,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1652,BC
-1102,2,6,3,6.3,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1652,BC
+1102,2,6,3,6.3,Rubiaceae,Faramea,oblongifolia ,Rubiaceae Faramea oblongifolia,Arbusto,1652,BC
 1103,2,6,3,6.3,Moraceae,Ficus,dulciaria,Moraceae Ficus dulciaria,Árbol,1652,BC
-1104,2,6,3,6.3,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1652,BC
+1104,2,6,3,6.3,Rubiaceae,Faramea,oblongifolia ,Rubiaceae Faramea oblongifolia,Arbusto,1652,BC
 1105,2,6,3,6.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1652,BC
 1106,2,6,3,6.3,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1652,BC
 1107,2,6,3,6.3,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1652,BC
@@ -1112,7 +1112,7 @@
 1111,2,6,3,6.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1652,BC
 1112,2,6,3,6.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1652,BC
 1113,2,6,3,6.3,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1652,BC
-1114,2,6,3,6.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1652,BC
+1114,2,6,3,6.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1652,BC
 1115,2,6,3,6.3,Sapotaceae,Chrysophyllum,aff. venezuelanense,Sapotaceae Chrysophyllum aff. venezuelanense,Árbol,1652,BC
 1116,2,6,3,6.3,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1652,BC
 1117,2,6,3,6.3,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1652,BC
@@ -1163,11 +1163,11 @@
 1162,2,6,4,6.4,Cunoniaceae,Weinmannia,balbisiana,Cunoniaceae Weinmannia balbisiana,Árbol,1657,CLB
 1163,1,7,1,7.1,Fab-Mimosoideae,Inga,aff. nobilis,Fab-Mimosoideae Inga aff. nobilis,Árbol,1259,CLB
 1164,1,7,1,7.1,Moraceae,Clarisia,biflora,Moraceae Clarisia biflora,Árbol,1259,CLB
-1165,1,7,1,7.1,Moraceae,sp.,,Moraceae sp.,Arbolito,1259,CLB
+1165,1,7,1,7.1,Moraceae,sp.,,,Arbolito,1259,CLB
 1166,1,7,1,7.1,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1259,CLB
 1167,1,7,1,7.1,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1259,CLB
 1168,1,7,1,7.1,Lauraceae,Pleurothyrium,glabritepalum,Lauraceae Pleurothyrium glabritepalum,Árbol,1259,CLB
-1169,1,7,1,7.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1259,CLB
+1169,1,7,1,7.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1259,CLB
 1170,1,7,1,7.1,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1259,CLB
 1171,1,7,1,7.1,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1259,CLB
 1172,1,7,1,7.1,Sapotaceae,Chrysophyllum,aff. venezuelanense,Sapotaceae Chrysophyllum aff. venezuelanense,Árbol,1259,CLB
@@ -1192,16 +1192,16 @@
 1191,1,7,1,7.1,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1259,CLB
 1192,1,7,2,7.2,Elaeocarpaceae,Sloanea,sp. 1,Elaeocarpaceae Sloanea sp. 1,Árbol,1269,BS
 1193,1,7,2,7.2,Annonaceae,Rollinia,edulis,Annonaceae Rollinia edulis,Árbol,1269,BS
-1194,1,7,2,7.2,Melastomataceae,sp.2,,Melastomataceae sp.2,Arbolito,1269,BS
+1194,1,7,2,7.2,Melastomataceae,sp.2,,,Arbolito,1269,BS
 1195,1,7,2,7.2,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1269,BS
 1196,1,7,2,7.2,Lauraceae,Pleurothyrium,glabritepalum,Lauraceae Pleurothyrium glabritepalum,Árbol,1269,BS
 1197,1,7,2,7.2,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1269,BS
-1198,1,7,2,7.2,Melastomataceae,sp.2,,Melastomataceae sp.2,Arbolito,1269,BS
+1198,1,7,2,7.2,Melastomataceae,sp.2,,,Arbolito,1269,BS
 1199,1,7,2,7.2,Lecythidaceae,Eschweilera,rimbachii,Lecythidaceae Eschweilera rimbachii,Árbol,1269,BS
 1200,1,7,2,7.2,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1269,BS
 1201,1,7,2,7.2,Meliaceae,Trichilia,sp.,Meliaceae Trichilia sp.,Arbolito,1269,BS
 1202,1,7,2,7.2,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1269,BS
-1203,1,7,2,7.2,Lauraceae,Ocotea,stenoneura,Lauraceae Ocotea stenoneura,Árbol,1269,BS
+1203,1,7,2,7.2,Lauraceae,Ocotea ,stenoneura,Lauraceae Ocotea  stenoneura,Árbol,1269,BS
 1204,1,7,2,7.2,Simaroubaceae,Simarouba,amara,Simaroubaceae Simarouba amara,Árbol,1269,BS
 1205,1,7,2,7.2,Meliaceae,Guarea,cf. pubescens,Meliaceae Guarea cf. pubescens,Árbol,1269,BS
 1206,1,7,2,7.2,Annonaceae,Guatteria,sp.,Annonaceae Guatteria sp.,Árbol,1269,BS
@@ -1213,7 +1213,7 @@
 1212,1,7,2,7.2,Ochnaceae,Ouratea,weberbaueri,Ochnaceae Ouratea weberbaueri,Árbol,1269,BS
 1213,1,7,2,7.2,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1269,BS
 1214,1,7,2,7.2,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1269,BS
-1215,1,7,2,7.2,Lauraceae,Ocotea,stenoneura,Lauraceae Ocotea stenoneura,Árbol,1269,BS
+1215,1,7,2,7.2,Lauraceae,Ocotea ,stenoneura,Lauraceae Ocotea  stenoneura,Árbol,1269,BS
 1216,1,7,2,7.2,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1269,BS
 1217,1,7,2,7.2,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1269,BS
 1218,1,7,2,7.2,Lauraceae,Caryodaphnopsis,theobromifolia,Lauraceae Caryodaphnopsis theobromifolia,Árbol,1269,BS
@@ -1230,7 +1230,7 @@
 1229,1,7,2,7.2,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1269,BS
 1230,1,7,2,7.2,Lauraceae,Pleurothyrium,glabritepalum,Lauraceae Pleurothyrium glabritepalum,Árbol,1269,BS
 1231,1,7,2,7.2,Myrtaceae,Eugenia,florida,Myrtaceae Eugenia florida,Árbol,1269,BS
-1232,1,7,2,7.2,Melastomataceae,sp.2,,Melastomataceae sp.2,Arbolito,1269,BS
+1232,1,7,2,7.2,Melastomataceae,sp.2,,,Arbolito,1269,BS
 1233,1,7,2,7.2,Euphorbiaceae,Tetrorchidium,andinum,Euphorbiaceae Tetrorchidium andinum,Arbusto,1269,BS
 1234,1,7,2,7.2,Lauraceae,Pleurothyrium,glabritepalum,Lauraceae Pleurothyrium glabritepalum,Árbol,1269,BS
 1235,1,7,3,7.3,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1330,BC
@@ -1241,20 +1241,20 @@
 1240,1,7,3,7.3,Lauraceae,Pleurothyrium,glabritepalum,Lauraceae Pleurothyrium glabritepalum,Árbol,1330,BC
 1241,1,7,3,7.3,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Árbol,1330,BC
 1242,1,7,3,7.3,Bombacaceae,Pachira,patinoi,Bombacaceae Pachira patinoi,Árbol,1330,BC
-1243,1,7,3,7.3,Indeterminado,sp. 15,,Indeterminado sp. 15,Arbolito,1330,BC
+1243,1,7,3,7.3,Indeterminado,sp. 15,,,Arbolito,1330,BC
 1244,1,7,3,7.3,Styracaceae,Styrax,weberbaueri,Styracaceae Styrax weberbaueri,Árbol,1330,BC
 1245,1,7,3,7.3,Myrtaceae,Eugenia,florida,Myrtaceae Eugenia florida,Árbol,1330,BC
 1246,1,7,3,7.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1330,BC
-1247,1,7,3,7.3,Lauraceae,Ocotea,aff. floccifera,Lauraceae Ocotea aff. floccifera,Árbol,1330,BC
+1247,1,7,3,7.3,Lauraceae,Ocotea ,aff. floccifera,Lauraceae Ocotea  aff. floccifera,Árbol,1330,BC
 1248,1,7,3,7.3,Moraceae,Ficus,subandina,Moraceae Ficus subandina,Hemiepífita,1330,BC
 1249,1,7,3,7.3,Moraceae,Clarisia,biflora,Moraceae Clarisia biflora,Árbol,1330,BC
 1250,1,7,3,7.3,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1330,BC
 1251,1,7,3,7.3,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1330,BC
 1252,1,7,3,7.3,Dichapetalaceae,Stephanopodium,longipedicellatum,Dichapetalaceae Stephanopodium longipedicellatum,Árbol,1330,BC
-1253,1,7,3,7.3,Indeterminado,sp. 15,,Indeterminado sp. 15,Arbolito,1330,BC
+1253,1,7,3,7.3,Indeterminado,sp. 15,,,Arbolito,1330,BC
 1254,1,7,3,7.3,Lecythidaceae,Gustavia,dodsonii,Lecythidaceae Gustavia dodsonii,Árbol,1330,BC
-1255,1,7,3,7.3,Indeterminado,sp. 15,,Indeterminado sp. 15,Arbolito,1330,BC
-1256,1,7,3,7.3,Lauraceae,Ocotea,aff. floccifera,Lauraceae Ocotea aff. floccifera,Árbol,1330,BC
+1255,1,7,3,7.3,Indeterminado,sp. 15,,,Arbolito,1330,BC
+1256,1,7,3,7.3,Lauraceae,Ocotea ,aff. floccifera,Lauraceae Ocotea  aff. floccifera,Árbol,1330,BC
 1257,1,7,3,7.3,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1330,BC
 1258,1,7,3,7.3,Moraceae,Ficus,subandina,Moraceae Ficus subandina,Hemiepífita,1330,BC
 1259,1,7,3,7.3,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1330,BC
@@ -1265,16 +1265,16 @@
 1264,1,7,3,7.3,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1330,BC
 1265,1,7,3,7.3,Flacourtiaceae,Banara,guianensis,Flacourtiaceae Banara guianensis,Árbol,1330,BC
 1266,1,7,3,7.3,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1330,BC
-1267,1,7,3,7.3,Indeterminado,sp. 15,,Indeterminado sp. 15,Arbolito,1330,BC
+1267,1,7,3,7.3,Indeterminado,sp. 15,,,Arbolito,1330,BC
 1268,1,7,3,7.3,Lauraceae,Endlicheria,formosa,Lauraceae Endlicheria formosa,Árbol,1330,BC
-1269,1,7,3,7.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1330,BC
+1269,1,7,3,7.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1330,BC
 1270,1,7,3,7.3,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1330,BC
 1271,1,7,3,7.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1330,BC
-1272,5,10,1,10.1,Fab-Faboideae,Erythrina,megistophylla,Fab-Faboideae Erythrina megistophylla,Árbol,1339,RG
+1272,5,10,1,10.1,Fab-Faboideae,Erythrina ,megistophylla,Fab-Faboideae Erythrina  megistophylla,Árbol,1339,RG
 1273,5,10,1,10.1,Meliaceae,Trichilia,aff. septentrionalis,Meliaceae Trichilia aff. septentrionalis,Arbolito,1339,RG
 1274,5,10,1,10.1,Arecaceae,Chamaedorea,pinnatifrons,Arecaceae Chamaedorea pinnatifrons,Arbolito,1339,RG
 1275,5,10,1,10.1,Melastomataceae,Leandra,subseriata,Melastomataceae Leandra subseriata,Arbolito,1339,RG
-1276,5,10,1,10.1,Asteraceae,sp.,,Asteraceae sp.,Árbol,1339,RG
+1276,5,10,1,10.1,Asteraceae,sp.,,,Árbol,1339,RG
 1277,5,10,1,10.1,Meliaceae,Trichilia,sp.,Meliaceae Trichilia sp.,Arbolito,1339,RG
 1278,5,10,1,10.1,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1339,RG
 1279,5,10,1,10.1,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1339,RG
@@ -1334,7 +1334,7 @@
 1333,5,10,2,10.2,Actinidaceae,Saurauia,sp. 1,Actinidaceae Saurauia sp. 1,Arbolito,1367,RG
 1334,5,10,2,10.2,Solanaceae,Cestrum,megalophyllum,Solanaceae Cestrum megalophyllum,Árbol,1367,RG
 1335,5,10,2,10.2,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1367,RG
-1336,5,10,2,10.2,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1367,RG
+1336,5,10,2,10.2,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1367,RG
 1337,5,10,2,10.2,Staphyleaceae,Turpinia,occidentalis,Staphyleaceae Turpinia occidentalis,Árbol,1367,RG
 1338,5,10,2,10.2,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1367,RG
 1339,5,10,2,10.2,Solanaceae,Solanum,lepidotum,Solanaceae Solanum lepidotum,Arbolito,1367,RG
@@ -1358,9 +1358,9 @@
 1357,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
 1358,5,10,3,10.3,Staphyleaceae,Turpinia,occidentalis,Staphyleaceae Turpinia occidentalis,Árbol,1324,RG
 1359,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
-1360,5,10,3,10.3,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1324,RG
-1361,5,10,3,10.3,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1324,RG
-1362,5,10,3,10.3,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1324,RG
+1360,5,10,3,10.3,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1324,RG
+1361,5,10,3,10.3,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1324,RG
+1362,5,10,3,10.3,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1324,RG
 1363,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
 1364,5,10,3,10.3,Melastomataceae,Miconia,aff. brevitheca,Melastomataceae Miconia aff. brevitheca,Árbol,1324,RG
 1365,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
@@ -1372,12 +1372,12 @@
 1371,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
 1372,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
 1373,5,10,3,10.3,Melastomataceae,Miconia,aff. brevitheca,Melastomataceae Miconia aff. brevitheca,Árbol,1324,RG
-1374,5,10,3,10.3,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1324,RG
+1374,5,10,3,10.3,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1324,RG
 1375,5,10,3,10.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1324,RG
 1376,5,10,3,10.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1324,RG
 1377,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
 1378,5,10,3,10.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1324,RG
-1379,5,10,3,10.3,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1324,RG
+1379,5,10,3,10.3,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1324,RG
 1380,5,10,3,10.3,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1324,RG
 1381,5,10,3,10.3,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1324,RG
 1382,5,10,3,10.3,Melastomataceae,Miconia,aff. brevitheca,Melastomataceae Miconia aff. brevitheca,Árbol,1324,RG
@@ -1434,7 +1434,7 @@
 1433,5,10,4,10.4,Melastomataceae,Miconia,aff. brevitheca,Melastomataceae Miconia aff. brevitheca,Árbol,1335,RG
 1434,5,10,4,10.4,Cecropiaceae,Cecropia,ficifolia,Cecropiaceae Cecropia ficifolia,Árbol,1335,RG
 1435,5,10,4,10.4,Sapindaceae,Cupania,aff. cinerea,Sapindaceae Cupania aff. cinerea,Árbol,1335,RG
-1436,5,10,4,10.4,Rubiaceae,Isertia,laevis,Rubiaceae Isertia laevis,Árbol,1335,RG
+1436,5,10,4,10.4,Rubiaceae,Isertia ,laevis,Rubiaceae Isertia  laevis,Árbol,1335,RG
 1437,5,10,4,10.4,Euphorbiaceae,Tetrorchidium,macrophyllum,Euphorbiaceae Tetrorchidium macrophyllum,Arbusto,1335,RG
 1438,5,10,4,10.4,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1335,RG
 1439,5,10,4,10.4,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1335,RG
@@ -1496,8 +1496,8 @@
 1495,2,6,5,6.5,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1661,BS
 1496,2,6,5,6.5,Myristicaceae,Virola,aff. sebifera,Myristicaceae Virola aff. sebifera,Árbol,1661,BS
 1497,2,6,5,6.5,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1661,BS
-1498,2,6,5,6.5,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1661,BS
-1499,2,6,5,6.5,Annonaceae,Rollinia,aff. dolichopetala,Annonaceae Rollinia aff. dolichopetala,Árbol,1661,BS
+1498,2,6,5,6.5,Lauraceae,sp. 1,,,Árbol,1661,BS
+1499,2,6,5,6.5,Annonaceae,Rollinia,aff. dolichopetala ,Annonaceae Rollinia aff. dolichopetala,Árbol,1661,BS
 1500,2,6,5,6.5,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1661,BS
 1501,2,6,5,6.5,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1661,BS
 1502,2,6,5,6.5,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1661,BS
@@ -1507,7 +1507,7 @@
 1506,2,6,5,6.5,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1661,BS
 1507,2,6,5,6.5,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1661,BS
 1508,2,6,5,6.5,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1661,BS
-1509,2,6,5,6.5,Annonaceae,Rollinia,aff. dolichopetala,Annonaceae Rollinia aff. dolichopetala,Árbol,1661,BS
+1509,2,6,5,6.5,Annonaceae,Rollinia,aff. dolichopetala ,Annonaceae Rollinia aff. dolichopetala,Árbol,1661,BS
 1510,2,6,6,6.6,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1643,BC
 1511,2,6,6,6.6,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1643,BC
 1512,2,6,6,6.6,Sapotaceae,Chrysophyllum,aff. venezuelanense,Sapotaceae Chrysophyllum aff. venezuelanense,Árbol,1643,BC
@@ -1515,11 +1515,11 @@
 1514,2,6,6,6.6,Theophrastaceae,Clavija,membranacea,Theophrastaceae Clavija membranacea,Arbusto,1643,BC
 1515,2,6,6,6.6,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1643,BC
 1516,2,6,6,6.6,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1643,BC
-1517,2,6,6,6.6,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1643,BC
+1517,2,6,6,6.6,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1643,BC
 1518,2,6,6,6.6,Dichapetalaceae,Stephanopodium,angulatum,Dichapetalaceae Stephanopodium angulatum,Árbol,1643,BC
 1519,2,6,6,6.6,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1643,BC
 1520,2,6,6,6.6,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1643,BC
-1521,2,6,6,6.6,Rubiaceae,sp.2,,Rubiaceae sp.2,Árbol,1643,BC
+1521,2,6,6,6.6,Rubiaceae,sp.2,,,Árbol,1643,BC
 1522,2,6,6,6.6,Fab-Mimosoideae,Abarema,sp.,Fab-Mimosoideae Abarema sp.,Árbol,1643,BC
 1523,2,6,6,6.6,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1643,BC
 1524,2,6,6,6.6,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1643,BC
@@ -1531,10 +1531,10 @@
 1530,2,6,6,6.6,Moraceae,Ficus,subandina,Moraceae Ficus subandina,Hemiepífita,1643,BC
 1531,2,6,6,6.6,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1643,BC
 1532,2,6,6,6.6,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1643,BC
-1533,2,6,6,6.6,Sapotaceae,Chrysophyllum,sp.,Sapotaceae Chrysophyllum sp.,Árbol,1643,BC
+1533,2,6,6,6.6,Sapotaceae,Chrysophyllum ,sp.,Sapotaceae Chrysophyllum  sp.,Árbol,1643,BC
 1534,2,6,6,6.6,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1643,BC
 1535,2,6,6,6.6,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1643,BC
-1536,2,6,6,6.6,Indeterminado,sp. 16,,Indeterminado sp. 16,Liana,1643,BC
+1536,2,6,6,6.6,Indeterminado,sp. 16,,,Liana,1643,BC
 1537,2,6,6,6.6,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1643,BC
 1538,2,6,6,6.6,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1643,BC
 1539,2,6,6,6.6,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1643,BC
@@ -1551,7 +1551,7 @@
 1550,2,6,7,6.7,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1558,CLB
 1551,2,6,7,6.7,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1558,CLB
 1552,2,6,7,6.7,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1558,CLB
-1553,2,6,7,6.7,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1558,CLB
+1553,2,6,7,6.7,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1558,CLB
 1554,2,6,7,6.7,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Árbol,1558,CLB
 1555,2,6,7,6.7,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1558,CLB
 1556,2,6,7,6.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Arbolito,1558,CLB
@@ -1567,7 +1567,7 @@
 1566,2,6,7,6.7,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1558,CLB
 1567,2,6,7,6.7,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1558,CLB
 1568,2,6,7,6.7,Aquifoliaceae,Ilex,cf. yurumanguinis,Aquifoliaceae Ilex cf. yurumanguinis,Árbol,1558,CLB
-1569,2,6,7,6.7,Indeterminado,sp. 17,,Indeterminado sp. 17,Arbolito,1558,CLB
+1569,2,6,7,6.7,Indeterminado,sp. 17,,,Arbolito,1558,CLB
 1570,2,6,7,6.7,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1558,CLB
 1571,2,6,7,6.7,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1558,CLB
 1572,2,6,7,6.7,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1558,CLB
@@ -1592,7 +1592,7 @@
 1591,2,6,8,6.8,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1552,BS
 1592,2,6,8,6.8,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1552,BS
 1593,2,6,8,6.8,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1552,BS
-1594,2,6,8,6.8,Lauraceae,Ocotea,aff. heterochroma,Lauraceae Ocotea aff. heterochroma,Árbol,1552,BS
+1594,2,6,8,6.8,Lauraceae,Ocotea ,aff. heterochroma,Lauraceae Ocotea  aff. heterochroma,Árbol,1552,BS
 1595,2,6,8,6.8,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1552,BS
 1596,2,6,8,6.8,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1552,BS
 1597,2,6,8,6.8,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1552,BS
@@ -1606,12 +1606,12 @@
 1605,2,6,8,6.8,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1552,BS
 1606,2,6,8,6.8,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1552,BS
 1607,2,6,8,6.8,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1552,BS
-1608,2,6,8,6.8,Lauraceae,Ocotea,aff. heterochroma,Lauraceae Ocotea aff. heterochroma,Árbol,1552,BS
+1608,2,6,8,6.8,Lauraceae,Ocotea ,aff. heterochroma,Lauraceae Ocotea  aff. heterochroma,Árbol,1552,BS
 1609,2,6,8,6.8,Dichapetalaceae,Stephanopodium,angulatum,Dichapetalaceae Stephanopodium angulatum,Árbol,1552,BS
 1610,2,6,8,6.8,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1552,BS
 1611,2,6,8,6.8,Fab-Mimosoideae,Abarema,sp.,Fab-Mimosoideae Abarema sp.,Árbol,1552,BS
 1612,2,6,8,6.8,Lauraceae,Persea,rigens,Lauraceae Persea rigens,Árbol,1552,BS
-1613,2,6,8,6.8,Lauraceae,Ocotea,sp.2,Lauraceae Ocotea sp.2,Árbol,1552,BS
+1613,2,6,8,6.8,Lauraceae,Ocotea ,sp.2,Lauraceae Ocotea  sp.2,Árbol,1552,BS
 1614,2,6,8,6.8,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1552,BS
 1615,1,7,4,7.4,Dichapetalaceae,Stephanopodium,longipedicellatum,Dichapetalaceae Stephanopodium longipedicellatum,Árbol,1357,CLB
 1616,1,7,4,7.4,Lauraceae,Caryodaphnopsis,theobromifolia,Lauraceae Caryodaphnopsis theobromifolia,Árbol,1357,CLB
@@ -1621,8 +1621,8 @@
 1620,1,7,4,7.4,Lauraceae,Nectandra,obtusata,Lauraceae Nectandra obtusata,Árbol,1357,CLB
 1621,1,7,4,7.4,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Árbol,1357,CLB
 1622,1,7,4,7.4,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1357,CLB
-1623,1,7,4,7.4,Lauraceae,sp. 3,,Lauraceae sp. 3,Árbol,1357,CLB
-1624,1,7,4,7.4,Lauraceae,sp. 3,,Lauraceae sp. 3,Árbol,1357,CLB
+1623,1,7,4,7.4,Lauraceae,sp. 3,,,Árbol,1357,CLB
+1624,1,7,4,7.4,Lauraceae,sp. 3,,,Árbol,1357,CLB
 1625,1,7,4,7.4,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1357,CLB
 1626,1,7,4,7.4,Sabiaceae,Meliosma,aff. occidentalis,Sabiaceae Meliosma aff. occidentalis,Árbol,1357,CLB
 1627,1,7,4,7.4,Sapindaceae,Allophyllus,floribundus,Sapindaceae Allophyllus floribundus,Árbol,1357,CLB
@@ -1636,18 +1636,18 @@
 1635,1,7,4,7.4,Clusiaceae,Clusia,dixonii,Clusiaceae Clusia dixonii,Hemiepífita,1357,CLB
 1636,1,7,4,7.4,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1357,CLB
 1637,1,7,4,7.4,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1357,CLB
-1638,1,7,4,7.4,Lauraceae,sp. 3,,Lauraceae sp. 3,Árbol,1357,CLB
+1638,1,7,4,7.4,Lauraceae,sp. 3,,,Árbol,1357,CLB
 1639,1,7,4,7.4,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Arbolito,1357,CLB
-1640,1,7,4,7.4,Lauraceae,sp. 3,,Lauraceae sp. 3,Árbol,1357,CLB
+1640,1,7,4,7.4,Lauraceae,sp. 3,,,Árbol,1357,CLB
 1641,1,7,4,7.4,Aquifoliaceae,Ilex,cf. yurumanguinis,Aquifoliaceae Ilex cf. yurumanguinis,Árbol,1357,CLB
 1642,1,7,4,7.4,Clusiaceae,Clusia,dixonii,Clusiaceae Clusia dixonii,Hemiepífita,1357,CLB
 1643,1,7,4,7.4,Moraceae,Naucleopsis,naga,Moraceae Naucleopsis naga,Árbol,1357,CLB
 1644,1,7,4,7.4,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1357,CLB
 1645,1,7,4,7.4,Malvaceae,Wercklea,ferox,Malvaceae Wercklea ferox,Arbusto,1357,CLB
 1646,1,7,4,7.4,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1357,CLB
-1647,1,7,4,7.4,Melastomataceae,sp.3,,Melastomataceae sp.3,Arbolito,1357,CLB
+1647,1,7,4,7.4,Melastomataceae,sp.3,,,Arbolito,1357,CLB
 1648,1,7,4,7.4,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1357,CLB
-1649,1,7,4,7.4,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1357,CLB
+1649,1,7,4,7.4,Lauraceae,sp. 1,,,Árbol,1357,CLB
 1650,1,7,4,7.4,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1357,CLB
 1651,1,7,4,7.4,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1357,CLB
 1652,1,7,7,7.7,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1418,CLB
@@ -1674,7 +1674,7 @@
 1673,1,7,7,7.7,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1418,CLB
 1674,1,7,7,7.7,Cunoniaceae,Weinmannia,balbisiana,Cunoniaceae Weinmannia balbisiana,Árbol,1418,CLB
 1675,1,7,7,7.7,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1418,CLB
-1676,1,7,7,7.7,Lauraceae,Ocotea,sp.2,Lauraceae Ocotea sp.2,Árbol,1418,CLB
+1676,1,7,7,7.7,Lauraceae,Ocotea ,sp.2,Lauraceae Ocotea  sp.2,Árbol,1418,CLB
 1677,1,7,7,7.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1418,CLB
 1678,1,7,7,7.7,Styracaceae,Styrax,weberbaueri,Styracaceae Styrax weberbaueri,Árbol,1418,CLB
 1679,1,7,7,7.7,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Árbol,1418,CLB
@@ -1696,13 +1696,13 @@
 1695,2,6,9,6.9,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1627,BC
 1696,2,6,9,6.9,Sapotaceae,Pouteria,torta,Sapotaceae Pouteria torta,Árbol,1627,BC
 1697,2,6,9,6.9,Moraceae,Ficus,dulciaria,Moraceae Ficus dulciaria,Árbol,1627,BC
-1698,2,6,9,6.9,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1627,BC
+1698,2,6,9,6.9,Lauraceae,sp. 1,,,Árbol,1627,BC
 1699,2,6,9,6.9,Euphorbiaceae,Hieronyma,alchorneoides,Euphorbiaceae Hieronyma alchorneoides,Árbol,1627,BC
 1700,2,6,9,6.9,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1627,BC
 1701,2,6,9,6.9,Bombacaceae,Matisia,aff. bolivarii,Bombacaceae Matisia aff. bolivarii,Arbolito,1627,BC
-1702,2,6,9,6.9,Myrtaceae,Calyptranthes,sp.,Myrtaceae Calyptranthes sp.,Árbol,1627,BC
+1702,2,6,9,6.9,Myrtaceae,Calyptranthes,sp. ,Myrtaceae Calyptranthes sp.,Árbol,1627,BC
 1703,2,6,9,6.9,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1627,BC
-1704,2,6,9,6.9,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1627,BC
+1704,2,6,9,6.9,Lauraceae,sp. 1,,,Árbol,1627,BC
 1705,2,6,9,6.9,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1627,BC
 1706,2,6,9,6.9,Moraceae,Ficus,dulciaria,Moraceae Ficus dulciaria,Árbol,1627,BC
 1707,2,6,9,6.9,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1627,BC
@@ -1724,7 +1724,7 @@
 1723,2,6,9,6.9,Meliaceae,Trichilia,sp.,Meliaceae Trichilia sp.,Arbolito,1627,BC
 1724,2,6,9,6.9,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1627,BC
 1725,2,6,9,6.9,Moraceae,vs. Perebea,angustifolia,Moraceae vs. Perebea angustifolia,Árbol,1627,BC
-1726,2,6,9,6.9,Lauraceae,Ocotea,aff. heterochroma,Lauraceae Ocotea aff. heterochroma,Árbol,1627,BC
+1726,2,6,9,6.9,Lauraceae,Ocotea ,aff. heterochroma,Lauraceae Ocotea  aff. heterochroma,Árbol,1627,BC
 1727,2,6,9,6.9,Moraceae,Ficus,dulciaria,Moraceae Ficus dulciaria,Árbol,1627,BC
 1728,2,6,9,6.9,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1627,BC
 1729,2,6,9,6.9,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1627,BC
@@ -1735,7 +1735,7 @@
 1734,2,6,9,6.9,Melastomataceae,Conostegia,aff. centronioides,Melastomataceae Conostegia aff. centronioides,Arbolito,1627,BC
 1735,2,6,9,6.9,Elaeocarpaceae,Sloanea,sp. 1,Elaeocarpaceae Sloanea sp. 1,Árbol,1627,BC
 1736,2,6,9,6.9,Annonaceae,Rollinia,edulis,Annonaceae Rollinia edulis,Árbol,1627,BC
-1737,2,6,9,6.9,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1627,BC
+1737,2,6,9,6.9,Lauraceae,sp. 1,,,Árbol,1627,BC
 1738,1,7,5,7.5,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1357,BS
 1739,1,7,5,7.5,Lecythidaceae,Eschweilera,rimbachii,Lecythidaceae Eschweilera rimbachii,Árbol,1357,BS
 1740,1,7,5,7.5,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1357,BS
@@ -1769,8 +1769,8 @@
 1768,1,7,5,7.5,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1357,BS
 1769,1,7,5,7.5,Dichapetalaceae,Stephanopodium,longipedicellatum,Dichapetalaceae Stephanopodium longipedicellatum,Árbol,1357,BS
 1770,1,7,5,7.5,Lauraceae,Caryodaphnopsis,theobromifolia,Lauraceae Caryodaphnopsis theobromifolia,Árbol,1357,BS
-1771,1,7,5,7.5,Lauraceae,Ocotea,stenoneura,Lauraceae Ocotea stenoneura,Árbol,1357,BS
-1772,1,7,5,7.5,Lauraceae,Ocotea,stenoneura,Lauraceae Ocotea stenoneura,Árbol,1357,BS
+1771,1,7,5,7.5,Lauraceae,Ocotea ,stenoneura,Lauraceae Ocotea  stenoneura,Árbol,1357,BS
+1772,1,7,5,7.5,Lauraceae,Ocotea ,stenoneura,Lauraceae Ocotea  stenoneura,Árbol,1357,BS
 1773,1,7,5,7.5,Sapindaceae,Allophyllus,incanus,Sapindaceae Allophyllus incanus,Árbol,1357,BS
 1774,1,7,5,7.5,Lecythidaceae,Eschweilera,rimbachii,Lecythidaceae Eschweilera rimbachii,Árbol,1357,BS
 1775,1,7,5,7.5,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1357,BS
@@ -1782,7 +1782,7 @@
 1781,1,7,6,7.6,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1413,BC
 1782,1,7,6,7.6,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1413,BC
 1783,1,7,6,7.6,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1413,BC
-1784,1,7,6,7.6,Lauraceae,Nectandra,aff. Purpurea,Lauraceae Nectandra aff. Purpurea,Árbol,1413,BC
+1784,1,7,6,7.6,Lauraceae,Nectandra,aff. Purpurea ,Lauraceae Nectandra aff. Purpurea,Árbol,1413,BC
 1785,1,7,6,7.6,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1413,BC
 1786,1,7,6,7.6,Moraceae,Clarisia,biflora,Moraceae Clarisia biflora,Árbol,1413,BC
 1787,1,7,6,7.6,Moraceae,Clarisia,biflora,Moraceae Clarisia biflora,Árbol,1413,BC
@@ -1846,17 +1846,17 @@
 1845,1,7,9,7.9,Moraceae,Clarisia,biflora,Moraceae Clarisia biflora,Árbol,1401,BC
 1846,1,7,9,7.9,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1401,BC
 1847,1,7,9,7.9,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1401,BC
-1848,1,7,9,7.9,Annonaceae,sp.,,Annonaceae sp.,Arbusto,1401,BC
+1848,1,7,9,7.9,Annonaceae,sp.,,,Arbusto,1401,BC
 1849,1,7,9,7.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1401,BC
 1850,1,7,9,7.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1401,BC
 1851,1,7,9,7.9,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1401,BC
-1852,1,7,9,7.9,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1401,BC
+1852,1,7,9,7.9,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1401,BC
 1853,1,7,9,7.9,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1401,BC
 1854,1,7,9,7.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Arbolito,1401,BC
 1855,1,7,9,7.9,Lecythidaceae,Eschweilera,rimbachii,Lecythidaceae Eschweilera rimbachii,Árbol,1401,BC
 1856,1,7,9,7.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1401,BC
 1857,1,7,9,7.9,Rubiaceae,Faramea,sp.,Rubiaceae Faramea sp.,Arbusto,1401,BC
-1858,1,7,9,7.9,Fab-Faboideae,sp.,,Fab-Faboideae sp.,Árbol,1401,BC
+1858,1,7,9,7.9,Fab-Faboideae,sp.,,,Árbol,1401,BC
 1859,1,7,9,7.9,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1401,BC
 1860,1,7,9,7.9,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1401,BC
 1861,1,7,9,7.9,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1401,BC
@@ -1870,7 +1870,7 @@
 1869,1,7,8,7.8,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Arbolito,1415,BS
 1870,1,7,8,7.8,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1415,BS
 1871,1,7,8,7.8,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1415,BS
-1872,1,7,8,7.8,Lauraceae,sp. 2,,Lauraceae sp. 2,Árbol,1415,BS
+1872,1,7,8,7.8,Lauraceae,sp. 2,,,Árbol,1415,BS
 1873,1,7,8,7.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Arbolito,1415,BS
 1874,1,7,8,7.8,Chrysobalanaceae,Couepia,sp.,Chrysobalanaceae Couepia sp.,Árbol,1415,BS
 1875,1,7,8,7.8,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1415,BS
@@ -1902,7 +1902,7 @@
 1901,1,7,8,7.8,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1415,BS
 1902,1,7,8,7.8,Annonaceae,Rollinia,edulis,Annonaceae Rollinia edulis,Árbol,1415,BS
 1903,1,7,8,7.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1415,BS
-1904,1,7,8,7.8,Indeterminado,sp. 18,,Indeterminado sp. 18,Arbolito,1415,BS
+1904,1,7,8,7.8,Indeterminado,sp. 18,,,Arbolito,1415,BS
 1905,1,7,8,7.8,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1415,BS
 1906,1,7,8,7.8,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1415,BS
 1907,1,7,8,7.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1415,BS
@@ -1930,12 +1930,12 @@
 1929,3,8,1,8.1,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1592,CLB
 1930,3,8,1,8.1,Rubiaceae,Palicourea,amethystina,Rubiaceae Palicourea amethystina,Arbolito,1592,CLB
 1931,3,8,1,8.1,Clusiaceae,Vismia,lauriformis,Clusiaceae Vismia lauriformis,Árbol,1592,CLB
-1932,3,8,1,8.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1592,CLB
+1932,3,8,1,8.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1592,CLB
 1933,3,8,1,8.1,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Arbolito,1592,CLB
-1934,3,8,1,8.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1592,CLB
+1934,3,8,1,8.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1592,CLB
 1935,3,8,1,8.1,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1592,CLB
 1936,3,8,1,8.1,Clusiaceae,Chrysochlamys,aff. dependens,Clusiaceae Chrysochlamys aff. dependens,Árbol,1592,CLB
-1937,3,8,1,8.1,Indeterminado,sp. 4,,Indeterminado sp. 4,Arbolito,1592,CLB
+1937,3,8,1,8.1,Indeterminado,sp. 4,,,Arbolito,1592,CLB
 1938,3,8,1,8.1,Ericaceae,Psammisia,sodiroi,Ericaceae Psammisia sodiroi,Arbusto,1592,CLB
 1939,3,8,1,8.1,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1592,CLB
 1940,3,8,1,8.1,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1592,CLB
@@ -1975,7 +1975,7 @@
 1974,3,8,3,8.3,Lecythidaceae,Eschweilera,rimbachii,Lecythidaceae Eschweilera rimbachii,Árbol,1642,BC
 1975,3,8,3,8.3,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1642,BC
 1976,3,8,3,8.3,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Árbol,1642,BC
-1977,3,8,3,8.3,Indeterminado,sp. 19,,Indeterminado sp. 19,Arbolito,1642,BC
+1977,3,8,3,8.3,Indeterminado,sp. 19,,,Arbolito,1642,BC
 1978,3,8,3,8.3,Melastomataceae,Conostegia,aff. centronioides,Melastomataceae Conostegia aff. centronioides,Arbolito,1642,BC
 1979,3,8,3,8.3,Lauraceae,Endlicheria,formosa,Lauraceae Endlicheria formosa,Árbol,1642,BC
 1980,3,8,3,8.3,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1642,BC
@@ -2027,16 +2027,16 @@
 2026,3,8,2,8.2,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbolito,1654,BS
 2027,3,8,2,8.2,Asteraceae,Critoniopsis,occidentalis,Asteraceae Critoniopsis occidentalis,Árbol,1654,BS
 2028,3,8,2,8.2,Fab-Mimosoideae,Abarema,sp.,Fab-Mimosoideae Abarema sp.,Árbol,1654,BS
-2029,3,8,2,8.2,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1654,BS
+2029,3,8,2,8.2,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1654,BS
 2030,3,8,2,8.2,Boraginaceae,Tournefortia,cf. ramosissima,Boraginaceae Tournefortia cf. ramosissima,Arbusto,1654,BS
 2031,3,8,2,8.2,Melastomataceae,Ossaea,robusta,Melastomataceae Ossaea robusta,Arbusto,1654,BS
 2032,3,8,2,8.2,Bombacaceae,Matisia,aff. bolivarii,Bombacaceae Matisia aff. bolivarii,Arbolito,1654,BS
 2033,3,8,2,8.2,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1654,BS
-2034,3,8,2,8.2,Melastomataceae,sp.3,,Melastomataceae sp.3,Arbolito,1654,BS
+2034,3,8,2,8.2,Melastomataceae,sp.3,,,Arbolito,1654,BS
 2035,3,8,2,8.2,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Árbol,1654,BS
 2036,3,8,2,8.2,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbolito,1654,BS
 2037,3,8,2,8.2,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1654,BS
-2038,3,8,2,8.2,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1654,BS
+2038,3,8,2,8.2,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1654,BS
 2039,3,8,2,8.2,Arecaceae,Hyospathe,elegans,Arecaceae Hyospathe elegans,Arbusto,1654,BS
 2040,3,8,2,8.2,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Árbol,1654,BS
 2041,3,8,4,8.4,Melastomataceae,Conostegia,aff. centronioides,Melastomataceae Conostegia aff. centronioides,Arbolito,1633,CLB
@@ -2055,7 +2055,7 @@
 2054,3,8,4,8.4,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Arbolito,1633,CLB
 2055,3,8,4,8.4,Theophrastaceae,Clavija,eggersiana,Theophrastaceae Clavija eggersiana,Arbusto,1633,CLB
 2056,3,8,4,8.4,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Arbolito,1633,CLB
-2057,3,8,4,8.4,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1633,CLB
+2057,3,8,4,8.4,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1633,CLB
 2058,3,8,4,8.4,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1633,CLB
 2059,3,8,4,8.4,Lauraceae,Endlicheria,formosa,Lauraceae Endlicheria formosa,Árbol,1633,CLB
 2060,3,8,4,8.4,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Árbol,1633,CLB
@@ -2070,7 +2070,7 @@
 2069,3,8,4,8.4,Chrysobalanaceae,Licania,durifolia,Chrysobalanaceae Licania durifolia,Árbol,1633,CLB
 2070,3,8,4,8.4,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1633,CLB
 2071,3,8,4,8.4,Lecythidaceae,Eschweilera,caudiculata,Lecythidaceae Eschweilera caudiculata,Árbol,1633,CLB
-2072,3,8,4,8.4,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1633,CLB
+2072,3,8,4,8.4,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1633,CLB
 2073,3,8,4,8.4,Chrysobalanaceae,Licania,durifolia,Chrysobalanaceae Licania durifolia,Árbol,1633,CLB
 2074,3,8,4,8.4,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1633,CLB
 2075,3,8,4,8.4,Chrysobalanaceae,Licania,durifolia,Chrysobalanaceae Licania durifolia,Árbol,1633,CLB
@@ -2083,11 +2083,11 @@
 2082,3,8,5,8.5,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1542,BS
 2083,3,8,5,8.5,Staphyleaceae,Huertea,glandulosa,Staphyleaceae Huertea glandulosa,Árbol,1542,BS
 2084,3,8,5,8.5,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1542,BS
-2085,3,8,5,8.5,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1542,BS
+2085,3,8,5,8.5,Lauraceae,sp. 1,,,Árbol,1542,BS
 2086,3,8,5,8.5,Moraceae,Pseudolmedia,macrophylla,Moraceae Pseudolmedia macrophylla,Árbol,1542,BS
 2087,3,8,5,8.5,Dicksoniaceae,Dicksonia,sellowiana,Dicksoniaceae Dicksonia sellowiana,Árbol,1542,BS
 2088,3,8,5,8.5,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1542,BS
-2089,3,8,5,8.5,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1542,BS
+2089,3,8,5,8.5,Lauraceae,sp. 1,,,Árbol,1542,BS
 2090,3,8,5,8.5,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1542,BS
 2091,3,8,5,8.5,Rubiaceae,Elaeagia,karstenii,Rubiaceae Elaeagia karstenii,Árbol,1542,BS
 2092,3,8,5,8.5,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Árbol,1542,BS
@@ -2095,7 +2095,7 @@
 2094,3,8,5,8.5,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1542,BS
 2095,3,8,5,8.5,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1542,BS
 2096,3,8,5,8.5,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1542,BS
-2097,3,8,5,8.5,Fab-Mimosoideae,sp.,,Fab-Mimosoideae sp.,Árbol,1542,BS
+2097,3,8,5,8.5,Fab-Mimosoideae,sp.,,,Árbol,1542,BS
 2098,3,8,5,8.5,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1542,BS
 2099,3,8,5,8.5,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Árbol,1542,BS
 2100,3,8,5,8.5,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1542,BS
@@ -2108,10 +2108,10 @@
 2107,3,8,5,8.5,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1542,BS
 2108,3,8,5,8.5,Rubiaceae,Faramea,glandulosa,Rubiaceae Faramea glandulosa,Arbusto,1542,BS
 2109,3,8,5,8.5,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1542,BS
-2110,3,8,5,8.5,Melastomataceae,sp.1,,Melastomataceae sp.1,Arbolito,1542,BS
+2110,3,8,5,8.5,Melastomataceae,sp.1,,,Arbolito,1542,BS
 2111,3,8,5,8.5,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1542,BS
 2112,3,8,5,8.5,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1542,BS
-2113,3,8,5,8.5,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1542,BS
+2113,3,8,5,8.5,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1542,BS
 2114,3,8,5,8.5,Cecropiaceae,Cecropia,aff. reticulata,Cecropiaceae Cecropia aff. reticulata,Árbol,1542,BS
 2115,3,8,5,8.5,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1542,BS
 2116,3,8,5,8.5,Cecropiaceae,Cecropia,aff. reticulata,Cecropiaceae Cecropia aff. reticulata,Árbol,1542,BS
@@ -2131,50 +2131,50 @@
 2130,3,8,5,8.5,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1542,BS
 2131,3,8,6,8.6,Melastomataceae,Miconia,dapsiliflora,Melastomataceae Miconia dapsiliflora,Arbusto,1519,BC
 2132,3,8,6,8.6,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1519,BC
-2133,3,8,6,8.6,Lauraceae,sp. 2,,Lauraceae sp. 2,Árbol,1519,BC
+2133,3,8,6,8.6,Lauraceae,sp. 2,,,Árbol,1519,BC
 2134,3,8,6,8.6,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1519,BC
 2135,3,8,6,8.6,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1519,BC
 2136,3,8,6,8.6,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1519,BC
 2137,3,8,6,8.6,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1519,BC
 2138,3,8,6,8.6,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1519,BC
 2139,3,8,6,8.6,Lauraceae,Nectandra,obtusata,Lauraceae Nectandra obtusata,Árbol,1519,BC
-2140,3,8,6,8.6,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1519,BC
+2140,3,8,6,8.6,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1519,BC
 2141,3,8,6,8.6,Lauraceae,Nectandra,guadaripo,Lauraceae Nectandra guadaripo,Árbol,1519,BC
 2142,3,8,6,8.6,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1519,BC
 2143,3,8,6,8.6,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1519,BC
 2144,3,8,6,8.6,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Árbol,1519,BC
-2145,3,8,6,8.6,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1519,BC
+2145,3,8,6,8.6,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1519,BC
 2146,3,8,6,8.6,Moraceae,Ficus,subandina,Moraceae Ficus subandina,Hemiepífita,1519,BC
 2147,3,8,6,8.6,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1519,BC
-2148,3,8,6,8.6,Fab-Faboideae,Erythrina,sp.,Fab-Faboideae Erythrina sp.,Árbol,1519,BC
+2148,3,8,6,8.6,Fab-Faboideae,Erythrina ,sp.,Fab-Faboideae Erythrina  sp.,Árbol,1519,BC
 2149,3,8,6,8.6,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1519,BC
-2150,3,8,6,8.6,Lauraceae,sp. 2,,Lauraceae sp. 2,Árbol,1519,BC
+2150,3,8,6,8.6,Lauraceae,sp. 2,,,Árbol,1519,BC
 2151,3,8,6,8.6,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1519,BC
 2152,3,8,6,8.6,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1519,BC
 2153,3,8,6,8.6,Fab-Mimosoideae,Abarema,sp.,Fab-Mimosoideae Abarema sp.,Árbol,1519,BC
 2154,3,8,6,8.6,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1519,BC
 2155,3,8,6,8.6,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1519,BC
-2156,3,8,6,8.6,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1519,BC
+2156,3,8,6,8.6,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1519,BC
 2157,3,8,6,8.6,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1519,BC
-2158,3,8,6,8.6,Fab-Faboideae,Erythrina,sp.,Fab-Faboideae Erythrina sp.,Árbol,1519,BC
+2158,3,8,6,8.6,Fab-Faboideae,Erythrina ,sp.,Fab-Faboideae Erythrina  sp.,Árbol,1519,BC
 2159,3,8,6,8.6,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1519,BC
-2160,3,8,6,8.6,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1519,BC
-2161,3,8,6,8.6,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1519,BC
+2160,3,8,6,8.6,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1519,BC
+2161,3,8,6,8.6,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1519,BC
 2162,3,8,6,8.6,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1519,BC
 2163,3,8,6,8.6,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1519,BC
 2164,3,8,6,8.6,Lecythidaceae,Gustavia,dodsonii,Lecythidaceae Gustavia dodsonii,Árbol,1519,BC
 2165,3,8,6,8.6,Ericaceae,Psammisia,sodiroi,Ericaceae Psammisia sodiroi,Arbusto,1519,BC
-2166,3,8,6,8.6,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1519,BC
+2166,3,8,6,8.6,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1519,BC
 2167,3,8,6,8.6,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1519,BC
 2168,3,8,6,8.6,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1519,BC
 2169,3,8,6,8.6,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1519,BC
-2170,3,8,9,8.9,Melastomataceae,sp.3,,Melastomataceae sp.3,Arbolito,1484,BC
+2170,3,8,9,8.9,Melastomataceae,sp.3,,,Arbolito,1484,BC
 2171,3,8,9,8.9,Myrsinaceae,Weigeltia,cf. goudotiana,Myrsinaceae Weigeltia cf. goudotiana,Árbol,1484,BC
 2172,3,8,9,8.9,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1484,BC
-2173,3,8,9,8.9,Meliaceae,sp.2,,Meliaceae sp.2,Árbol,1484,BC
+2173,3,8,9,8.9,Meliaceae,sp.2,,,Árbol,1484,BC
 2174,3,8,9,8.9,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1484,BC
 2175,3,8,9,8.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1484,BC
-2176,3,8,9,8.9,Lauraceae,sp. 4,,Lauraceae sp. 4,Árbol,1484,BC
+2176,3,8,9,8.9,Lauraceae,sp. 4,,,Árbol,1484,BC
 2177,3,8,9,8.9,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1484,BC
 2178,3,8,9,8.9,Arecaceae,Hyospathe,elegans,Arecaceae Hyospathe elegans,Arbusto,1484,BC
 2179,3,8,9,8.9,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1484,BC
@@ -2193,7 +2193,7 @@
 2192,3,8,9,8.9,Melastomataceae,Miconia,dapsiliflora,Melastomataceae Miconia dapsiliflora,Arbusto,1484,BC
 2193,3,8,9,8.9,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1484,BC
 2194,3,8,9,8.9,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1484,BC
-2195,3,8,9,8.9,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1484,BC
+2195,3,8,9,8.9,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1484,BC
 2196,3,8,9,8.9,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1484,BC
 2197,3,8,9,8.9,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1484,BC
 2198,3,8,9,8.9,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1484,BC
@@ -2205,7 +2205,7 @@
 2204,3,8,9,8.9,Rubiaceae,Faramea,fragans,Rubiaceae Faramea fragans,Arbusto,1484,BC
 2205,3,8,9,8.9,Myrsinaceae,Weigeltia,cf. goudotiana,Myrsinaceae Weigeltia cf. goudotiana,Árbol,1484,BC
 2206,3,8,9,8.9,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1484,BC
-2207,3,8,9,8.9,Lauraceae,Ocotea,macrophylla,Lauraceae Ocotea macrophylla,Árbol,1484,BC
+2207,3,8,9,8.9,Lauraceae,Ocotea ,macrophylla,Lauraceae Ocotea  macrophylla,Árbol,1484,BC
 2208,3,8,9,8.9,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1484,BC
 2209,3,8,9,8.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1484,BC
 2210,3,8,9,8.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1484,BC
@@ -2221,7 +2221,7 @@
 2220,3,8,9,8.9,Araliaceae,Oreopanax,ecuadorensis,Araliaceae Oreopanax ecuadorensis,Árbol,1484,BC
 2221,3,8,9,8.9,Myrtaceae,Eugenia,florida,Myrtaceae Eugenia florida,Árbol,1484,BC
 2222,3,8,9,8.9,Anacardiaceae,Tapirira,guianensis,Anacardiaceae Tapirira guianensis,Árbol,1484,BC
-2223,3,8,8,8.8,Indeterminado,sp. 5,,Indeterminado sp. 5,Arbolito,1400,BS
+2223,3,8,8,8.8,Indeterminado,sp. 5,,,Arbolito,1400,BS
 2224,3,8,8,8.8,Myrtaceae,Myrcia,aff. fallax,Myrtaceae Myrcia aff. fallax,Árbol,1400,BS
 2225,3,8,8,8.8,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1400,BS
 2226,3,8,8,8.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1400,BS
@@ -2229,17 +2229,17 @@
 2228,3,8,8,8.8,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1400,BS
 2229,3,8,8,8.8,Lauraceae,Caryodaphnopsis,theobromifolia,Lauraceae Caryodaphnopsis theobromifolia,Árbol,1400,BS
 2230,3,8,8,8.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1400,BS
-2231,3,8,8,8.8,Myrtaceae,Myrcia,aff. aliena,Myrtaceae Myrcia aff. aliena,Árbol,1400,BS
-2232,3,8,8,8.8,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1400,BS
+2231,3,8,8,8.8,Myrtaceae,Myrcia,aff. aliena ,Myrtaceae Myrcia aff. aliena,Árbol,1400,BS
+2232,3,8,8,8.8,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1400,BS
 2233,3,8,8,8.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1400,BS
 2234,3,8,8,8.8,Cecropiaceae,Cecropia,sp.2,Cecropiaceae Cecropia sp.2,Árbol,1400,BS
 2235,3,8,8,8.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1400,BS
 2236,3,8,8,8.8,Rubiaceae,Faramea,fragans,Rubiaceae Faramea fragans,Arbusto,1400,BS
 2237,3,8,8,8.8,Lauraceae,Aniba,cf. hostmanniana,Lauraceae Aniba cf. hostmanniana,Árbol,1400,BS
 2238,3,8,8,8.8,Lauraceae,Aniba,cf. hostmanniana,Lauraceae Aniba cf. hostmanniana,Árbol,1400,BS
-2239,3,8,8,8.8,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1400,BS
+2239,3,8,8,8.8,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1400,BS
 2240,3,8,8,8.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1400,BS
-2241,3,8,8,8.8,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1400,BS
+2241,3,8,8,8.8,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1400,BS
 2242,3,8,8,8.8,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1400,BS
 2243,3,8,8,8.8,Lauraceae,Aniba,cf. hostmanniana,Lauraceae Aniba cf. hostmanniana,Árbol,1400,BS
 2244,3,8,8,8.8,Euphorbiaceae,Alchornea,cf. leptogyna,Euphorbiaceae Alchornea cf. leptogyna,Árbol,1400,BS
@@ -2255,8 +2255,8 @@
 2254,3,8,8,8.8,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1400,BS
 2255,3,8,8,8.8,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1400,BS
 2256,3,8,8,8.8,Lauraceae,Nectandra,guadaripo,Lauraceae Nectandra guadaripo,Árbol,1400,BS
-2257,3,8,8,8.8,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1400,BS
-2258,3,8,8,8.8,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1400,BS
+2257,3,8,8,8.8,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1400,BS
+2258,3,8,8,8.8,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1400,BS
 2259,3,8,8,8.8,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1400,BS
 2260,3,8,8,8.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1400,BS
 2261,3,8,8,8.8,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1400,BS
@@ -2266,7 +2266,7 @@
 2265,3,8,8,8.8,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1400,BS
 2266,3,8,8,8.8,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1400,BS
 2267,3,8,8,8.8,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1400,BS
-2268,3,8,8,8.8,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1400,BS
+2268,3,8,8,8.8,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1400,BS
 2269,3,8,8,8.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1400,BS
 2270,3,8,8,8.8,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1400,BS
 2271,4,9,1,9.1,Piperaceae,Piper,imperiale,Piperaceae Piper imperiale,Arbolito,1680,CLB
@@ -2298,8 +2298,8 @@
 2297,4,9,1,9.1,Clusiaceae,Chrysochlamys,sp.,Clusiaceae Chrysochlamys sp.,Árbol,1680,CLB
 2298,4,9,1,9.1,Sapotaceae,Chrysophyllum,aff. venezuelanense,Sapotaceae Chrysophyllum aff. venezuelanense,Árbol,1680,CLB
 2299,4,9,1,9.1,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1680,CLB
-2300,4,9,1,9.1,Piperaceae,Piper,sp.,Piperaceae Piper sp.,Arbusto,1680,CLB
-2301,4,9,1,9.1,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1680,CLB
+2300,4,9,1,9.1,Piperaceae,Piper,sp.  ,Piperaceae Piper sp.,Arbusto,1680,CLB
+2301,4,9,1,9.1,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1680,CLB
 2302,4,9,1,9.1,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1680,CLB
 2303,4,9,1,9.1,Lauraceae,Endlicheria,cf. chalisea,Lauraceae Endlicheria cf. chalisea,Arbolito,1680,CLB
 2304,4,9,1,9.1,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1680,CLB
@@ -2315,7 +2315,7 @@
 2314,3,8,7,8.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1324,CLB
 2315,3,8,7,8.7,Rubiaceae,Palicourea,cf. stipularis,Rubiaceae Palicourea cf. stipularis,Árbol,1324,CLB
 2316,3,8,7,8.7,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1324,CLB
-2317,3,8,7,8.7,Lauraceae,sp. 3,,Lauraceae sp. 3,Árbol,1324,CLB
+2317,3,8,7,8.7,Lauraceae,sp. 3,,,Árbol,1324,CLB
 2318,3,8,7,8.7,Annonaceae,Rollinia,edulis,Annonaceae Rollinia edulis,Arbusto,1324,CLB
 2319,3,8,7,8.7,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1324,CLB
 2320,3,8,7,8.7,Sapindaceae,Allophyllus,floribundus,Sapindaceae Allophyllus floribundus,Árbol,1324,CLB
@@ -2325,7 +2325,7 @@
 2324,3,8,7,8.7,Lauraceae,Caryodaphnopsis,theobromifolia,Lauraceae Caryodaphnopsis theobromifolia,Árbol,1324,CLB
 2325,3,8,7,8.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1324,CLB
 2326,3,8,7,8.7,Myrsinaceae,Geissanthus,aff. pinchinchana,Myrsinaceae Geissanthus aff. pinchinchana,Árbol,1324,CLB
-2327,3,8,7,8.7,Lauraceae,Ocotea,stenoneura,Lauraceae Ocotea stenoneura,Árbol,1324,CLB
+2327,3,8,7,8.7,Lauraceae,Ocotea ,stenoneura,Lauraceae Ocotea  stenoneura,Árbol,1324,CLB
 2328,3,8,7,8.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1324,CLB
 2329,3,8,7,8.7,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1324,CLB
 2330,3,8,7,8.7,Lauraceae,Nectandra,sp.1,Lauraceae Nectandra sp.1,Árbol,1324,CLB
@@ -2334,7 +2334,7 @@
 2333,3,8,7,8.7,Clusiaceae,Garcinia,macrophylla,Clusiaceae Garcinia macrophylla,Árbol,1324,CLB
 2334,3,8,7,8.7,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1324,CLB
 2335,3,8,7,8.7,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1324,CLB
-2336,3,8,7,8.7,Lauraceae,Ocotea,sp.1,Lauraceae Ocotea sp.1,Árbol,1324,CLB
+2336,3,8,7,8.7,Lauraceae,Ocotea ,sp.1,Lauraceae Ocotea  sp.1,Árbol,1324,CLB
 2337,3,8,7,8.7,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1324,CLB
 2338,3,8,7,8.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1324,CLB
 2339,3,8,7,8.7,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1324,CLB
@@ -2357,7 +2357,7 @@
 2356,4,9,2,9.2,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1637,BS
 2357,4,9,2,9.2,Arecaceae,Wettinia,aff. oxycarpa,Arecaceae Wettinia aff. oxycarpa,Arbolito,1637,BS
 2358,4,9,2,9.2,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1637,BS
-2359,4,9,2,9.2,Indeterminado,sp. 6,,Indeterminado sp. 6,Arbolito,1637,BS
+2359,4,9,2,9.2,Indeterminado,sp. 6,,,Arbolito,1637,BS
 2360,4,9,2,9.2,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1637,BS
 2361,4,9,2,9.2,Rubiaceae,Palicourea,acanthacea,Rubiaceae Palicourea acanthacea,Arbusto,1637,BS
 2362,4,9,2,9.2,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Árbol,1637,BS
@@ -2376,11 +2376,11 @@
 2375,4,9,2,9.2,Arecaceae,Hyospathe,elegans,Arecaceae Hyospathe elegans,Arbusto,1637,BS
 2376,4,9,2,9.2,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1637,BS
 2377,4,9,2,9.2,Melastomataceae,Conostegia,aff. centronioides,Melastomataceae Conostegia aff. centronioides,Arbolito,1637,BS
-2378,4,9,2,9.2,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1637,BS
+2378,4,9,2,9.2,Lauraceae,sp. 1,,,Árbol,1637,BS
 2379,4,9,2,9.2,Rubiaceae,Palicourea,amethystina,Rubiaceae Palicourea amethystina,Arbolito,1637,BS
 2380,4,9,2,9.2,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1637,BS
 2381,4,9,2,9.2,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1637,BS
-2382,4,9,2,9.2,Rubiaceae,sp.2,,Rubiaceae sp.2,Árbol,1637,BS
+2382,4,9,2,9.2,Rubiaceae,sp.2,,,Árbol,1637,BS
 2383,4,9,2,9.2,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1637,BS
 2384,4,9,2,9.2,Rubiaceae,Palicourea,thyrsiflora,Rubiaceae Palicourea thyrsiflora,Arbolito,1637,BS
 2385,4,9,2,9.2,Chloranthaceae,Hedyosmum,cuatrecazanum,Chloranthaceae Hedyosmum cuatrecazanum,Árbol,1637,BS
@@ -2404,18 +2404,18 @@
 2403,4,9,3,9.3,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1665,BC
 2404,4,9,3,9.3,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1665,BC
 2405,4,9,3,9.3,Rubiaceae,Elaeagia,karstenii,Rubiaceae Elaeagia karstenii,Árbol,1665,BC
-2406,4,9,3,9.3,Indeterminado,sp. 1,,Indeterminado sp. 1,Arbolito,1665,BC
+2406,4,9,3,9.3,Indeterminado,sp. 1,,,Arbolito,1665,BC
 2407,4,9,3,9.3,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1665,BC
 2408,4,9,3,9.3,Melastomataceae,Miconia,aggregata,Melastomataceae Miconia aggregata,Arbolito,1665,BC
 2409,4,9,3,9.3,Dicksoniaceae,Dicksonia,sellowiana,Dicksoniaceae Dicksonia sellowiana,Árbol,1665,BC
 2410,4,9,3,9.3,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1665,BC
-2411,4,9,3,9.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1665,BC
+2411,4,9,3,9.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1665,BC
 2412,4,9,3,9.3,Ochnaceae,Ouratea,weberbaueri,Ochnaceae Ouratea weberbaueri,Árbol,1665,BC
-2413,4,9,3,9.3,Indeterminado,sp. 2,,Indeterminado sp. 2,Arbolito,1665,BC
+2413,4,9,3,9.3,Indeterminado,sp. 2,,,Arbolito,1665,BC
 2414,4,9,3,9.3,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1665,BC
 2415,4,9,3,9.3,Flacourtiaceae,Casearia,cajambrensis,Flacourtiaceae Casearia cajambrensis,Arbolito,1665,BC
 2416,4,9,3,9.3,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1665,BC
-2417,4,9,3,9.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1665,BC
+2417,4,9,3,9.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1665,BC
 2418,4,9,3,9.3,Rubiaceae,Tocoyena,pittieri,Rubiaceae Tocoyena pittieri,Arbolito,1665,BC
 2419,4,9,3,9.3,Chrysobalanaceae,Licania,durifolia,Chrysobalanaceae Licania durifolia,Árbol,1665,BC
 2420,4,9,3,9.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1665,BC
@@ -2429,9 +2429,9 @@
 2428,4,9,3,9.3,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1665,BC
 2429,4,9,3,9.3,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1665,BC
 2430,4,9,3,9.3,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1665,BC
-2431,4,9,3,9.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1665,BC
+2431,4,9,3,9.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1665,BC
 2432,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
-2433,4,9,3,9.3,Rubiaceae,sp.2,,Rubiaceae sp.2,Árbol,1665,BC
+2433,4,9,3,9.3,Rubiaceae,sp.2,,,Árbol,1665,BC
 2434,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
 2435,4,9,3,9.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1665,BC
 2436,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
@@ -2439,25 +2439,25 @@
 2438,4,9,3,9.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1665,BC
 2439,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
 2440,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
-2441,4,9,3,9.3,Annonaceae,sp.,,Annonaceae sp.,Árbol,1665,BC
-2442,4,9,3,9.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1665,BC
+2441,4,9,3,9.3,Annonaceae,sp.,,,Árbol,1665,BC
+2442,4,9,3,9.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1665,BC
 2443,4,9,3,9.3,Lauraceae,Nectandra,sp.2,Lauraceae Nectandra sp.2,Árbol,1665,BC
 2444,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
 2445,4,9,3,9.3,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1665,BC
 2446,4,9,3,9.3,Clusiaceae,Clusia,trochimorfis,Clusiaceae Clusia trochimorfis,Árbol,1665,BC
-2447,4,9,3,9.3,Lauraceae,Ocotea,aff. floccifera,Lauraceae Ocotea aff. floccifera,Árbol,1665,BC
+2447,4,9,3,9.3,Lauraceae,Ocotea ,aff. floccifera,Lauraceae Ocotea  aff. floccifera,Árbol,1665,BC
 2448,4,9,3,9.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1665,BC
 2449,4,9,3,9.3,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1665,BC
-2450,4,9,3,9.3,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1665,BC
+2450,4,9,3,9.3,Lauraceae,sp. 1,,,Árbol,1665,BC
 2451,4,9,3,9.3,Sapotaceae,Chrysophyllum,cf. argenteum,Sapotaceae Chrysophyllum cf. argenteum,Árbol,1665,BC
-2452,4,9,3,9.3,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1665,BC
+2452,4,9,3,9.3,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1665,BC
 2453,4,9,3,9.3,Sapotaceae,Chrysophyllum,cf. argenteum,Sapotaceae Chrysophyllum cf. argenteum,Árbol,1665,BC
 2454,4,9,5,9.5,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1645,BS
-2455,4,9,5,9.5,Melastomataceae,sp.3,,Melastomataceae sp.3,Arbolito,1645,BS
+2455,4,9,5,9.5,Melastomataceae,sp.3,,,Arbolito,1645,BS
 2456,4,9,5,9.5,Capparaceae,Capparis,sp.,Capparaceae Capparis sp.,Árbol,1645,BS
-2457,4,9,5,9.5,Indeterminado,sp. 7,,Indeterminado sp. 7,Arbolito,1645,BS
+2457,4,9,5,9.5,Indeterminado,sp. 7,,,Arbolito,1645,BS
 2458,4,9,5,9.5,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1645,BS
-2459,4,9,5,9.5,Myrtaceae,sp.,,Myrtaceae sp.,Arbolito,1645,BS
+2459,4,9,5,9.5,Myrtaceae,sp.,,,Arbolito,1645,BS
 2460,4,9,5,9.5,Rubiaceae,Elaeagia,karstenii,Rubiaceae Elaeagia karstenii,Árbol,1645,BS
 2461,4,9,5,9.5,Fab-Mimosoideae,Inga,oerstediana,Fab-Mimosoideae Inga oerstediana,Árbol,1645,BS
 2462,4,9,5,9.5,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1645,BS
@@ -2472,11 +2472,11 @@
 2471,4,9,5,9.5,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1645,BS
 2472,4,9,5,9.5,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1645,BS
 2473,4,9,5,9.5,Clusiaceae,Vismia,lauriformis,Clusiaceae Vismia lauriformis,Árbol,1645,BS
-2474,4,9,5,9.5,Lauraceae,sp. 1,,Lauraceae sp. 1,Árbol,1645,BS
+2474,4,9,5,9.5,Lauraceae,sp. 1,,,Árbol,1645,BS
 2475,4,9,5,9.5,Brunelliaceae,Brunellia,comocladifolia,Brunelliaceae Brunellia comocladifolia,Árbol,1645,BS
 2476,4,9,5,9.5,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Árbol,1645,BS
 2477,4,9,5,9.5,Melastomataceae,Ossaea,micrantha,Melastomataceae Ossaea micrantha,Arbolito,1645,BS
-2478,4,9,5,9.5,Brunelliaceae,Brunellia,comocladifolia,Brunelliaceae Brunellia comocladifolia,Árbol,1645,BS
+2478,4,9,5,9.5,Brunelliaceae,Brunellia,comocladifolia ,Brunelliaceae Brunellia comocladifolia,Árbol,1645,BS
 2479,4,9,5,9.5,Cecropiaceae,Cecropia,andina,Cecropiaceae Cecropia andina,Árbol,1645,BS
 2480,4,9,5,9.5,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Árbol,1645,BS
 2481,4,9,5,9.5,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1645,BS
@@ -2495,7 +2495,7 @@
 2494,4,9,5,9.5,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1645,BS
 2495,4,9,5,9.5,Melastomataceae,Miconia,aggregata,Melastomataceae Miconia aggregata,Arbolito,1645,BS
 2496,4,9,5,9.5,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1645,BS
-2497,4,9,5,9.5,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1645,BS
+2497,4,9,5,9.5,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1645,BS
 2498,4,9,5,9.5,Fab-Mimosoideae,Inga,oerstediana,Fab-Mimosoideae Inga oerstediana,Árbol,1645,BS
 2499,4,9,5,9.5,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1645,BS
 2500,4,9,5,9.5,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1645,BS
@@ -2508,7 +2508,7 @@
 2507,4,9,5,9.5,Myristicaceae,Otoba,gordoniifolia,Myristicaceae Otoba gordoniifolia,Árbol,1645,BS
 2508,4,9,5,9.5,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1645,BS
 2509,4,9,5,9.5,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1645,BS
-2510,4,9,5,9.5,Meliaceae,sp.1,,Meliaceae sp.1,Arbolito,1645,BS
+2510,4,9,5,9.5,Meliaceae,sp.1,,,Arbolito,1645,BS
 2511,4,9,5,9.5,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1645,BS
 2512,4,9,5,9.5,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1645,BS
 2513,4,9,5,9.5,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1645,BS
@@ -2531,7 +2531,7 @@
 2530,4,9,4,9.4,Rubiaceae,Palicourea,chimboracensis,Rubiaceae Palicourea chimboracensis,Arbusto,1649,CLB
 2531,4,9,4,9.4,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1649,CLB
 2532,4,9,4,9.4,Fab-Mimosoideae,Inga,sp.,Fab-Mimosoideae Inga sp.,Árbol,1649,CLB
-2533,4,9,4,9.4,Rubiaceae,sp.2,,Rubiaceae sp.2,Árbol,1649,CLB
+2533,4,9,4,9.4,Rubiaceae,sp.2,,,Árbol,1649,CLB
 2534,4,9,4,9.4,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1649,CLB
 2535,4,9,4,9.4,Myrsinaceae,Stylogyne,ambigua,Myrsinaceae Stylogyne ambigua,Arbolito,1649,CLB
 2536,4,9,4,9.4,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1649,CLB
@@ -2551,7 +2551,7 @@
 2550,4,9,4,9.4,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1649,CLB
 2551,4,9,4,9.4,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1649,CLB
 2552,4,9,4,9.4,Lauraceae,Rhodostemonodaphne,cyclops,Lauraceae Rhodostemonodaphne cyclops,Árbol,1649,CLB
-2553,4,9,4,9.4,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1649,CLB
+2553,4,9,4,9.4,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1649,CLB
 2554,4,9,4,9.4,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1649,CLB
 2555,4,9,4,9.4,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1649,CLB
 2556,4,9,4,9.4,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1649,CLB
@@ -2570,12 +2570,12 @@
 2569,4,9,6,9.6,Melastomataceae,Conostegia,aff. centronioides,Melastomataceae Conostegia aff. centronioides,Arbolito,1583,BC
 2570,4,9,6,9.6,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1583,BC
 2571,4,9,6,9.6,Ochnaceae,Ouratea,weberbaueri,Ochnaceae Ouratea weberbaueri,Árbol,1583,BC
-2572,4,9,6,9.6,Indeterminado,sp. 8,,Indeterminado sp. 8,Arbolito,1583,BC
+2572,4,9,6,9.6,Indeterminado,sp. 8,,,Arbolito,1583,BC
 2573,4,9,6,9.6,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1583,BC
 2574,4,9,6,9.6,Lauraceae,Persea,pseudofasciculata,Lauraceae Persea pseudofasciculata,Árbol,1583,BC
 2575,4,9,6,9.6,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1583,BC
 2576,4,9,6,9.6,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1583,BC
-2577,4,9,6,9.6,Lauraceae,Ocotea,floccifera,Lauraceae Ocotea floccifera,Árbol,1583,BC
+2577,4,9,6,9.6,Lauraceae,Ocotea ,floccifera,Lauraceae Ocotea  floccifera,Árbol,1583,BC
 2578,4,9,6,9.6,Lauraceae,Beilschmiedia,aff. costaricensis,Lauraceae Beilschmiedia aff. costaricensis,Árbol,1583,BC
 2579,4,9,6,9.6,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1583,BC
 2580,4,9,6,9.6,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1583,BC
@@ -2583,10 +2583,10 @@
 2582,4,9,6,9.6,Clusiaceae,Chrysochlamys,dependens,Clusiaceae Chrysochlamys dependens,Árbol,1583,BC
 2583,4,9,6,9.6,Lauraceae,Beilschmiedia,alloiophylla,Lauraceae Beilschmiedia alloiophylla,Árbol,1583,BC
 2584,4,9,6,9.6,Annonaceae,Guatteria,megalophylla,Annonaceae Guatteria megalophylla,Árbol,1583,BC
-2585,4,9,6,9.6,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1583,BC
+2585,4,9,6,9.6,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1583,BC
 2586,4,9,6,9.6,Cyatheaceae,Cyathea,caracasana,Cyatheaceae Cyathea caracasana,Árbol,1583,BC
 2587,4,9,6,9.6,Euphorbiaceae,Alchornea,cf. grandis,Euphorbiaceae Alchornea cf. grandis,Árbol,1583,BC
-2588,4,9,6,9.6,Meliaceae,sp.2,,Meliaceae sp.2,Árbol,1583,BC
+2588,4,9,6,9.6,Meliaceae,sp.2,,,Árbol,1583,BC
 2589,4,9,6,9.6,Moraceae,Ficus,dulciaria,Moraceae Ficus dulciaria,Árbol,1583,BC
 2590,4,9,6,9.6,Clusiaceae,Clusia,aff. hydrogera,Clusiaceae Clusia aff. hydrogera,Hemiepífita,1583,BC
 2591,4,9,6,9.6,Moraceae,Ficus,cuatrecasana,Moraceae Ficus cuatrecasana,Hemiepífita,1583,BC
@@ -2605,23 +2605,23 @@
 2604,4,9,7,9.7,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1481,CLB
 2605,4,9,7,9.7,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1481,CLB
 2606,4,9,7,9.7,Rubiaceae,Palicourea,gentryi,Rubiaceae Palicourea gentryi,Arbusto,1481,CLB
-2607,4,9,7,9.7,Lauraceae,Ocotea,aff. floccifera,Lauraceae Ocotea aff. floccifera,Árbol,1481,CLB
-2608,4,9,7,9.7,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1481,CLB
+2607,4,9,7,9.7,Lauraceae,Ocotea ,aff. floccifera,Lauraceae Ocotea  aff. floccifera,Árbol,1481,CLB
+2608,4,9,7,9.7,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1481,CLB
 2609,4,9,7,9.7,Lauraceae,Pleurothyrium,cinereum,Lauraceae Pleurothyrium cinereum,Árbol,1481,CLB
 2610,4,9,7,9.7,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1481,CLB
-2611,4,9,7,9.7,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1481,CLB
+2611,4,9,7,9.7,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1481,CLB
 2612,4,9,7,9.7,Rubiaceae,Faramea,glandulosa,Rubiaceae Faramea glandulosa,Arbusto,1481,CLB
 2613,4,9,7,9.7,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1481,CLB
 2614,4,9,7,9.7,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1481,CLB
 2615,4,9,7,9.7,Rubiaceae,Hoffmannia,cf. parviflora,Rubiaceae Hoffmannia cf. parviflora,Arbusto,1481,CLB
-2616,4,9,7,9.7,Rubiaceae,sp.1,,Rubiaceae sp.1,Arbusto,1481,CLB
+2616,4,9,7,9.7,Rubiaceae,sp.1,,,Arbusto,1481,CLB
 2617,4,9,7,9.7,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1481,CLB
 2618,4,9,7,9.7,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1481,CLB
 2619,4,9,7,9.7,Meliaceae,Ruagea,aff. glabra,Meliaceae Ruagea aff. glabra,Arbolito,1481,CLB
 2620,4,9,7,9.7,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1481,CLB
 2621,4,9,7,9.7,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1481,CLB
 2622,4,9,7,9.7,Fab-Mimosoideae,Inga,aff. lallensis,Fab-Mimosoideae Inga aff. lallensis,Árbol,1481,CLB
-2623,4,9,7,9.7,Fab-Faboideae,Erythrina,schimpffii,Fab-Faboideae Erythrina schimpffii,Árbol,1481,CLB
+2623,4,9,7,9.7,Fab-Faboideae,Erythrina ,schimpffii,Fab-Faboideae Erythrina  schimpffii,Árbol,1481,CLB
 2624,4,9,7,9.7,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1481,CLB
 2625,4,9,7,9.7,Cecropiaceae,Cecropia,reticulata,Cecropiaceae Cecropia reticulata,Árbol,1481,CLB
 2626,4,9,7,9.7,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1481,CLB
@@ -2635,24 +2635,24 @@
 2634,4,9,7,9.7,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1481,CLB
 2635,4,9,7,9.7,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1481,CLB
 2636,4,9,7,9.7,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1481,CLB
-2637,4,9,7,9.7,Indeterminado,sp. 9,,Indeterminado sp. 9,Arbolito,1481,CLB
-2638,4,9,7,9.7,Indeterminado,sp. 9,,Indeterminado sp. 9,Arbolito,1481,CLB
+2637,4,9,7,9.7,Indeterminado,sp. 9,,,Arbolito,1481,CLB
+2638,4,9,7,9.7,Indeterminado,sp. 9,,,Arbolito,1481,CLB
 2639,4,9,7,9.7,Fab-Mimosoideae,Cojoba,arborea,Fab-Mimosoideae Cojoba arborea,Árbol,1481,CLB
 2640,4,9,7,9.7,Lecythidaceae,Gustavia,dodsonii,Lecythidaceae Gustavia dodsonii,Árbol,1481,CLB
 2641,4,9,7,9.7,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1481,CLB
-2642,4,9,7,9.7,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1481,CLB
-2643,4,9,7,9.7,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1481,CLB
-2644,4,9,7,9.7,Lauraceae,sp. 2,,Lauraceae sp. 2,Árbol,1481,CLB
+2642,4,9,7,9.7,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1481,CLB
+2643,4,9,7,9.7,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1481,CLB
+2644,4,9,7,9.7,Lauraceae,sp. 2,,,Árbol,1481,CLB
 2645,4,9,7,9.7,Cecropiaceae,Coussapoa,contorta,Cecropiaceae Coussapoa contorta,Árbol,1481,CLB
 2646,4,9,9,9.9,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1408,BC
-2647,4,9,9,9.9,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1408,BC
+2647,4,9,9,9.9,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1408,BC
 2648,4,9,9,9.9,Lauraceae,Nectandra,guadaripo,Lauraceae Nectandra guadaripo,Árbol,1408,BC
 2649,4,9,9,9.9,Anacardiaceae,Mauria,cf. heterophylla,Anacardiaceae Mauria cf. heterophylla,Arbolito,1408,BC
 2650,4,9,9,9.9,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1408,BC
 2651,4,9,9,9.9,Annonaceae,Guatteria,sp.,Annonaceae Guatteria sp.,Arbolito,1408,BC
 2652,4,9,9,9.9,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1408,BC
 2653,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1408,BC
-2654,4,9,9,9.9,Indeterminado,sp. 10,,Indeterminado sp. 10,Arbolito,1408,BC
+2654,4,9,9,9.9,Indeterminado,sp. 10,,,Arbolito,1408,BC
 2655,4,9,9,9.9,Myrtaceae,Myrcia,cf. fallax,Myrtaceae Myrcia cf. fallax,Árbol,1408,BC
 2656,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1408,BC
 2657,4,9,9,9.9,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1408,BC
@@ -2661,8 +2661,8 @@
 2660,4,9,9,9.9,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1408,BC
 2661,4,9,9,9.9,Rubiaceae,Tocoyena,pittieri,Rubiaceae Tocoyena pittieri,Arbolito,1408,BC
 2662,4,9,9,9.9,Moraceae,Pseudolmedia,rigida,Moraceae Pseudolmedia rigida,Árbol,1408,BC
-2663,4,9,9,9.9,Lauraceae,Nectandra,aff. Purpurea,Lauraceae Nectandra aff. Purpurea,Árbol,1408,BC
-2664,4,9,9,9.9,Lauraceae,Ocotea,sp.2,Lauraceae Ocotea sp.2,Árbol,1408,BC
+2663,4,9,9,9.9,Lauraceae,Nectandra,aff. Purpurea ,Lauraceae Nectandra aff. Purpurea,Árbol,1408,BC
+2664,4,9,9,9.9,Lauraceae,Ocotea ,sp.2,Lauraceae Ocotea  sp.2,Árbol,1408,BC
 2665,4,9,9,9.9,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1408,BC
 2666,4,9,9,9.9,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1408,BC
 2667,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Arbolito,1408,BC
@@ -2674,25 +2674,25 @@
 2673,4,9,9,9.9,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1408,BC
 2674,4,9,9,9.9,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1408,BC
 2675,4,9,9,9.9,Cyatheaceae,Alsophila,erinacea,Cyatheaceae Alsophila erinacea,Árbol,1408,BC
-2676,4,9,9,9.9,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1408,BC
+2676,4,9,9,9.9,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1408,BC
 2677,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1408,BC
 2678,4,9,9,9.9,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1408,BC
 2679,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1408,BC
-2680,4,9,9,9.9,Lauraceae,Ocotea,sp.2,Lauraceae Ocotea sp.2,Árbol,1408,BC
-2681,4,9,9,9.9,Indeterminado,sp. 3,,Indeterminado sp. 3,Arbolito,1408,BC
+2680,4,9,9,9.9,Lauraceae,Ocotea ,sp.2,Lauraceae Ocotea  sp.2,Árbol,1408,BC
+2681,4,9,9,9.9,Indeterminado,sp. 3,,,Arbolito,1408,BC
 2682,4,9,9,9.9,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1408,BC
 2683,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1408,BC
 2684,4,9,9,9.9,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1408,BC
 2685,4,9,9,9.9,Moraceae,Ficus,sibundoya,Moraceae Ficus sibundoya,Árbol,1408,BC
 2686,4,9,9,9.9,Euphorbiaceae,Hieronyma,alchorneoides,Euphorbiaceae Hieronyma alchorneoides,Árbol,1408,BC
-2687,4,9,9,9.9,Lauraceae,Ocotea,insularis,Lauraceae Ocotea insularis,Árbol,1408,BC
+2687,4,9,9,9.9,Lauraceae,Ocotea ,insularis,Lauraceae Ocotea  insularis,Árbol,1408,BC
 2688,4,9,9,9.9,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1408,BC
 2689,4,9,8,9.8,Brunelliaceae,Brunellia,acostae,Brunelliaceae Brunellia acostae,Arbolito,1394,BS
 2690,4,9,8,9.8,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1394,BS
 2691,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
 2692,4,9,8,9.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1394,BS
 2693,4,9,8,9.8,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1394,BS
-2694,4,9,8,9.8,Lauraceae,Ocotea,aff. oblonga,Lauraceae Ocotea aff. oblonga,Árbol,1394,BS
+2694,4,9,8,9.8,Lauraceae,Ocotea ,aff. oblonga,Lauraceae Ocotea  aff. oblonga,Árbol,1394,BS
 2695,4,9,8,9.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1394,BS
 2696,4,9,8,9.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1394,BS
 2697,4,9,8,9.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1394,BS
@@ -2704,16 +2704,16 @@
 2703,4,9,8,9.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1394,BS
 2704,4,9,8,9.8,Lecythidaceae,Eschweilera,integrifolia,Lecythidaceae Eschweilera integrifolia,Árbol,1394,BS
 2705,4,9,8,9.8,Melastomataceae,Conostegia,superba,Melastomataceae Conostegia superba,Arbolito,1394,BS
-2706,4,9,8,9.8,Lauraceae,Ocotea,aff. floccifera,Lauraceae Ocotea aff. floccifera,Árbol,1394,BS
+2706,4,9,8,9.8,Lauraceae,Ocotea ,aff. floccifera,Lauraceae Ocotea  aff. floccifera,Árbol,1394,BS
 2707,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
 2708,4,9,8,9.8,Fab-Mimosoideae,Inga,aff. lallensis,Fab-Mimosoideae Inga aff. lallensis,Árbol,1394,BS
-2709,4,9,8,9.8,Lauraceae,Ocotea,aff. floccifera,Lauraceae Ocotea aff. floccifera,Árbol,1394,BS
+2709,4,9,8,9.8,Lauraceae,Ocotea ,aff. floccifera,Lauraceae Ocotea  aff. floccifera,Árbol,1394,BS
 2710,4,9,8,9.8,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1394,BS
 2711,4,9,8,9.8,Melastomataceae,Miconia,cf. subnodosa,Melastomataceae Miconia cf. subnodosa,Arbusto,1394,BS
 2712,4,9,8,9.8,Melastomataceae,Meriania,finicola,Melastomataceae Meriania finicola,Árbol,1394,BS
 2713,4,9,8,9.8,Moraceae,Helicostylis,tovarensis,Moraceae Helicostylis tovarensis,Árbol,1394,BS
 2714,4,9,8,9.8,Myrtaceae,Myrcia,fallax,Myrtaceae Myrcia fallax,Árbol,1394,BS
-2715,4,9,8,9.8,Staphyleaceae,Huertea,glandulosa,Staphyleaceae Huertea glandulosa,Árbol,1394,BS
+2715,4,9,8,9.8,Staphyleaceae,Huertea ,glandulosa,Staphyleaceae Huertea  glandulosa,Árbol,1394,BS
 2716,4,9,8,9.8,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1394,BS
 2717,4,9,8,9.8,Rubiaceae,Psychotria,paeonia,Rubiaceae Psychotria paeonia,Arbusto,1394,BS
 2718,4,9,8,9.8,Rubiaceae,Faramea,oblongifolia,Rubiaceae Faramea oblongifolia,Arbusto,1394,BS
@@ -2722,9 +2722,9 @@
 2721,4,9,8,9.8,Burseraceae,Protium,ecuadorense,Burseraceae Protium ecuadorense,Árbol,1394,BS
 2722,4,9,8,9.8,Moraceae,Ficus,trianae,Moraceae Ficus trianae,Hemiepífita,1394,BS
 2723,4,9,8,9.8,Lauraceae,Aniba,aff. hostmanniana,Lauraceae Aniba aff. hostmanniana,Árbol,1394,BS
-2724,4,9,8,9.8,Lauraceae,Ocotea,macrophylla,Lauraceae Ocotea macrophylla,Árbol,1394,BS
+2724,4,9,8,9.8,Lauraceae,Ocotea ,macrophylla,Lauraceae Ocotea  macrophylla,Árbol,1394,BS
 2725,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
-2726,4,9,8,9.8,Lauraceae,Ocotea,aff. heterochroma,Lauraceae Ocotea aff. heterochroma,Árbol,1394,BS
+2726,4,9,8,9.8,Lauraceae,Ocotea ,aff. heterochroma,Lauraceae Ocotea  aff. heterochroma,Árbol,1394,BS
 2727,4,9,8,9.8,Euphorbiaceae,Hieronyma,asperifolia,Euphorbiaceae Hieronyma asperifolia,Árbol,1394,BS
 2728,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
 2729,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
@@ -2734,5 +2734,5 @@
 2733,4,9,8,9.8,Lauraceae,Persea,aff. pseudofasciculata,Lauraceae Persea aff. pseudofasciculata,Árbol,1394,BS
 2734,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
 2735,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
-2736,4,9,8,9.8,Lauraceae,Ocotea,sp.2,Lauraceae Ocotea sp.2,Árbol,1394,BS
+2736,4,9,8,9.8,Lauraceae,Ocotea ,sp.2,Lauraceae Ocotea  sp.2,Árbol,1394,BS
 2737,4,9,8,9.8,Burseraceae,Dacryodes,cupularis,Burseraceae Dacryodes cupularis,Árbol,1394,BS
