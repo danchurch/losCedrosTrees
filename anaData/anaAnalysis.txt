@@ -568,9 +568,10 @@ specObs['genusSpecies'] = specObs.familia + " " + specObs.genero + " " + specObs
 specObs['genusSpecies'] = specObs['genusSpecies'].str.strip()
 specObs['PsubP'] = specObs.parcela.astype('str') + "." + specObs.subparcela.astype('str')
 specObs = specObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
+specObs.genusSpecies.unique()
 
-#specObs.to_csv('specObs.csv')
-#specObs.to_pickle('specObs.p')
+specObs.to_csv('specObs.csv')
+specObs.to_pickle('specObs.p')
 
 specObs.familia.isnull().any() ## nope
 specObs.genero.isnull().any() ## also no empty genero cells. The problem is with the names of species
@@ -998,14 +999,29 @@ plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
 
 ## works. can this be generalized to the other habitat types?
 
+###### general turnover pipeline #########
+
 specObs = pd.read_pickle('specObs.p')
 spDF = pd.read_pickle('subParcelSpatial.p')
 subParcelComm = pd.read_pickle("subParcelComm.p")
+
+## get our original in there first:
+fig, axes = plt.subplots(nrows=2, ncols=3, sharey=True)
+axes = axes.flatten()
+
+physDist = sp.distance.pdist(spDF, metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+axes[0].scatter(physDist, bcDist)
+axes[0].plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
+
+## now look at these individually:
+
 soGrouped = specObs.groupby('habitat')
 
 habs = list(soGrouped.groups.keys())
-fig, axes = plt.subplots(nrows=2, ncols=3, sharey=True)
-axes = axes.flatten()
+
+
 for h,i in enumerate(habs): 
     print(i)
     obs_i = soGrouped.get_group(i)
@@ -1020,14 +1036,15 @@ for h,i in enumerate(habs):
     spDF_i = spDF.loc[comm_i.index.values]
     physDist_i = sp.distance.pdist(spDF_i, metric='euclidean')
     bcDist_i = sp.distance.pdist(comm_i, metric='brayCurtis')
-    axes[h].scatter(physDist_i, bcDist_i)
+    axes[h+1].scatter(physDist_i, bcDist_i)
     X, Y = physDist_i.reshape(-1,1), bcDist_i.reshape(-1,1)
-    axes[h].plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
-    axes[h].set_xlabel('distance between subplots')
-    axes[h].set_ylabel('BC dissimilarity')
-    axes[h].set_title(f'{i} habitat turnover')
+    axes[h+1].plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
+    axes[h+1].set_xlabel('distance between subplots')
+    axes[h+1].set_ylabel('BC dissimilarity')
+    axes[h+1].set_title(f'{i} habitat turnover')
 
 plt.tight_layout()
+
 plt.savefig('turnoverByHabitat.png')
 
 ## well, withing the scale of comparisons that we have,
@@ -1036,10 +1053,105 @@ plt.savefig('turnoverByHabitat.png')
 ## massive biodiversity that we are seeing here. 
 
 ## is it worth our time to do some mem analysis on this?
-
 ## what would be the advantages..?
 
+## something to chew on...
+
+#############################################################
 
 ## while we're here, SAC for each, to compare
 ## alpha diversity?
+
+## what do we need for this?
+
+## we need the community matrix for each habitat type, 
+## exported as a csv, so we can head over to R and get into 
+## vegan
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import pickle
+from sklearn.linear_model import LinearRegression
+import scipy.spatial as sp
+
+## grab the pipeline for the community matrix above:
+
+specObs = pd.read_pickle('specObs.p')
+spDF = pd.read_pickle('subParcelSpatial.p')
+subParcelComm = pd.read_pickle("subParcelComm.p")
+smallDF = specObs[['PsubP','genusSpecies']]
+dfDummy = pd.get_dummies(smallDF['genusSpecies'])
+bdfDummy.insert(0, 'PsubP', specObs.PsubP)
+bdfDummyGroup = bdfDummy.groupby('PsubP')
+subParcelComm = bdfDummyGroup.agg(np.sum)
+
+## to do one habitat type, we want a column that shows 
+## the habitat type for each PsubP
+
+aa = specObs[['PsubP', 'habitat']].drop_duplicates()
+aa.set_index('PsubP', inplace=True)
+bb = pd.concat([aa, subParcelComm], axis=1)
+
+## now groupby this?
+bbGrouped = bb.groupby('habitat')
+
+bbGrouped.groups.keys()
+
+
+cc = bbGrouped.get_group('BC')
+
+~(cc == 0).all(axis=0) ## or...
+
+(cc != 0).any(axis=0)
+
+observed = (cc != 0).any(axis=0).values
+dd = cc.iloc[:,observed]
+
+dd.drop('habitat', axis=1, inplace=True)
+
+dd.to_csv('BC_comm.csv')
+
+
+## let's generalize that to create community dataframes for each habitat
+## type:
+
+
+aa = specObs[['PsubP', 'habitat']].drop_duplicates()
+aa.set_index('PsubP', inplace=True)
+bb = pd.concat([aa, subParcelComm], axis=1)
+bbGrouped = bb.groupby('habitat')
+habs = list(bbGrouped.groups.keys())
+
+for i in habs:
+    cc = bbGrouped.get_group(i)
+    observed = (cc != 0).any(axis=0).values
+    dd = cc.iloc[:,observed]
+    dd.drop('habitat', axis=1, inplace=True)
+    dd.to_csv(f'{i}_comm.csv')
+
+## in R
+
+library(vegan)
+
+subParcelComm <- read.csv('BC_comm.csv', header=TRUE, row.names=1)
+SAC <- specaccum(subParcelComm, method = "exact")
+#pdf(file="BC_SAC.pdf")
+plot(SAC)
+#dev.off()
+specpool(subParcelComm)
+
+    Species     chao chao.se    jack1 jack1.se    jack2     boot  boot.se  n
+All     137 250.2274  36.241 207.5833    22.91 253.5682 167.1898 10.28604 12
+
+## so ~half of the estimated species will come from this type of forest.
+
+
+
+
+
+## make SACs
+## make NMS
 
