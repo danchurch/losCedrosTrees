@@ -1153,6 +1153,7 @@ All     137 250.2274  36.241 207.5833    22.91 253.5682 167.1898 10.28604 12
 
 pdf("comboSACs.pdf")
 par(mfrow = c(2,3))
+files <- list.files()
 comm <- grep('_comm.csv', list.files())
 comms <- files[comm]
 comms <- c("subParcelComm.csv", comms)
@@ -1164,11 +1165,12 @@ for (i in comms){
     comm.i <- read.csv(i, header=TRUE, row.names=1)
     SAC <- specaccum(comm.i, method = "exact")
     plot(SAC, main=comtitles[j])
+    specpool(comm.i)
 }
 dev.off()
 
+## tomorrow we can go back to python, plot these together. 
 
-## save a figure that shows the curves independently 
 
 ## make SACs
 ## make NMS
