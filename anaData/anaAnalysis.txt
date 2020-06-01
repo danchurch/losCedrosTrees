@@ -1148,10 +1148,29 @@ All     137 250.2274  36.241 207.5833    22.91 253.5682 167.1898 10.28604 12
 
 ## so ~half of the estimated species will come from this type of forest.
 
+## okay, can we repeat for the others, and build a single diagram out of 
+## this?
+
+pdf("comboSACs.pdf")
+par(mfrow = c(2,3))
+comm <- grep('_comm.csv', list.files())
+comms <- files[comm]
+comms <- c("subParcelComm.csv", comms)
+comtitles <- sub("_comm.csv", "", comms)
+comtitles[1] <- "All habs"
+j <- 0
+for (i in comms){
+    j <- j + 1
+    comm.i <- read.csv(i, header=TRUE, row.names=1)
+    SAC <- specaccum(comm.i, method = "exact")
+    plot(SAC, main=comtitles[j])
+}
+dev.off()
 
 
-
+## save a figure that shows the curves independently 
 
 ## make SACs
 ## make NMS
+
 
