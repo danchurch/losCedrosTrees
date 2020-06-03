@@ -1136,9 +1136,14 @@ for i in habs:
 
 library(vegan)
 
+library(RColorBrewer)
+
 subParcelComm <- read.csv('BC_comm.csv', header=TRUE, row.names=1)
 SAC <- specaccum(subParcelComm, method = "exact")
 #pdf(file="BC_SAC.pdf")
+
+
+
 plot(SAC)
 #dev.off()
 specpool(subParcelComm)
@@ -1151,7 +1156,7 @@ All     137 250.2274  36.241 207.5833    22.91 253.5682 167.1898 10.28604 12
 ## okay, can we repeat for the others, and build a single diagram out of 
 ## this?
 
-pdf("comboSACs.pdf")
+#pdf("comboSACs.pdf")
 par(mfrow = c(2,3))
 files <- list.files()
 comm <- grep('_comm.csv', list.files())
@@ -1163,16 +1168,138 @@ j <- 0
 for (i in comms){
     j <- j + 1
     comm.i <- read.csv(i, header=TRUE, row.names=1)
+    print(i)
     SAC <- specaccum(comm.i, method = "exact")
-    plot(SAC, main=comtitles[j])
-    specpool(comm.i)
+    plot(SAC, main=comtitles[j], ylab='No. of Spp')
+    capture.output(print(paste('Species estimates for', comtitles[j], sep=" ")), 
+                    file="habSRestimates.txt", append = TRUE)
+    capture.output(specpool(comm.i), 
+                    file="habSRestimates.txt",
+                    append = TRUE)
+    sacDF <- data.frame(cbind(SAC$richness, SAC$sd), row.names=SAC$sites)
+    colnames(sacDF) <- c('richness', 'sd')
+    write.csv(sacDF, file=paste(comtitles[j], "SAC.csv", sep="_"))
 }
-dev.off()
+#dev.off()
 
-## tomorrow we can go back to python, plot these together. 
+## so now we can go back to python, plot these together. 
+## so we need to export appropriate data. These will be CSVs 
+## of the sites, richness, and SD.
 
+######## side note - NMS #########
+## while we're in here, can we do an NMS of the habitat types,
+## see if they group together?
+
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+
+sPC <- subParcelComm[,-1]
+
+rownames(sPC) <- subParcelComm[,1]
+
+## get some colors
+display.brewer.all()
+
+## standard discrete color palette will work?
+display.brewer.pal(10, "Set1")
+
+colrs <- brewer.pal(10, "Set1")
+
+## color key:
+
+specObs <- read.csv('specObs.csv')
+
+dim(specObs[specObs$habitat ==  'RG',]) ## 1080 plant observations! 
+
+rownames(sPC)
+
+aa = specObs[c("PsubP","habitat")]
+## how can we eliminate duplicate rows?
+
+nondups <- aa[!duplicated(aa),]
+nondups <- nondups[order(nondups$PsubP),]
+rownames(nondups) <- NULL
+nondups$colorNu <- as.numeric(nondups$habitat)
+
+head(nondups)
+
+## each habitat type needs a color:
+
+unique(nondups$habitat) 
+
+
+colrs <- 
+
+head(sPC)
+
+nms <- metaMDS(sPC)
+
+stressplot(nms) ## lots of scatter but not bad 
+
+## stress is 0.28, not great but could be worse
+
+## can we see what this looks like?
+
+## colors:
+
+str(nms$points)
+
+class(nms$points)
+
+attr(nms$points, "dimnames")[[1]]
+
+colrs <- vector(mode='character', length = 61)
+
+aa <- data.frame(cbind(nms$points,colrs))
+
+subParcelComm$PsubP
+
+##################################
+
+## back to python, plot SAC curves
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import pickle
+from sklearn.linear_model import LinearRegression
+import scipy.spatial as sp
+import scipy.spatial as sp
+plt.ion()
+
+
+## find our csvs of interest
+SACs = [ i for i in os.listdir() if "SAC.csv" in i ]
+sacDF = pd.read_csv('RCA_SAC.csv', index_col=0)
+
+## plot this
+
+fig, ax = plt.subplots(1,1)
+
+def oneSacPlot(DF, clr):
+    sacDF = pd.read_csv(DF, index_col=0)
+    plt.plot(sacDF['richness'],
+                color=clr)
+    plt.fill_between(x=sacDF.index,
+                     y1=sacDF.richness - sacDF.sd,
+                     y2=sacDF.richness + sacDF.sd,
+                    alpha=0.4,
+                    color=clr,
+                    label=,
+                    )
+
+colors = ['blue', 'green', 'red', 'yellow', 'orange', 'brown']
+
+for colNu,DF in enumerate(SACs):
+    oneSacPlot(DF, colors[colNu])
+
+
+
+
+## the goal now is to plot these 
 
 ## make SACs
 ## make NMS
 
-
+##  
