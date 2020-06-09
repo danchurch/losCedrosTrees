@@ -1135,7 +1135,6 @@ for i in habs:
 ## in R
 
 library(vegan)
-
 library(RColorBrewer)
 
 subParcelComm <- read.csv('BC_comm.csv', header=TRUE, row.names=1)
@@ -1191,68 +1190,71 @@ for (i in comms){
 ## see if they group together?
 
 subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
-
 sPC <- subParcelComm[,-1]
-
 rownames(sPC) <- subParcelComm[,1]
 
-## get some colors
-display.brewer.all()
-
 ## standard discrete color palette will work?
-display.brewer.pal(10, "Set1")
 
-colrs <- brewer.pal(10, "Set1")
+nms <- metaMDS(sPC, try=40)
 
-## color key:
-
+## make plotting dataframe
 specObs <- read.csv('specObs.csv')
-
-dim(specObs[specObs$habitat ==  'RG',]) ## 1080 plant observations! 
-
-rownames(sPC)
-
 aa = specObs[c("PsubP","habitat")]
-## how can we eliminate duplicate rows?
-
+colrs <- brewer.pal(5, "Set1")
 nondups <- aa[!duplicated(aa),]
 nondups <- nondups[order(nondups$PsubP),]
 rownames(nondups) <- NULL
-nondups$colorNu <- as.numeric(nondups$habitat)
+nondups$colorNu <- as.numeric(nondups$habitat) 
+nondups$colrs <- colrs[nondups$colorNu]
+nondups$MDS1 <- nms$points[,'MDS1']
+nondups$MDS2 <- nms$points[,'MDS2']
+nmsInfo <- nondups
 
-head(nondups)
-
-## each habitat type needs a color:
-
-unique(nondups$habitat) 
-
-
-colrs <- 
-
-head(sPC)
-
-nms <- metaMDS(sPC)
-
-stressplot(nms) ## lots of scatter but not bad 
-
-## stress is 0.28, not great but could be worse
+head(nmsInfo)
 
 ## can we see what this looks like?
 
-## colors:
+pdf(file='primenetNMSbyHabitat.pdf')
+plot(nondups$MDS1, nondups$MDS2, 
+    col=nmsInfo$colrs,
+    pch=19,
+    cex=2.0,
+)
+## add a legend
+legend( x='bottomleft',
+        legend = c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        fill = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        col = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        cex = 1.0,
+        )
+## looks okay. How do we add hulls again?
+ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+dev.off()
 
-str(nms$points)
+names(table(nmsInfo$habitat))
 
-class(nms$points)
+names(table(nmsInfo$colrs))
 
-attr(nms$points, "dimnames")[[1]]
+## do some checks
 
-colrs <- vector(mode='character', length = 61)
+nmsInfo[identify(nondups$MDS1, nondups$MDS2),]
 
-aa <- data.frame(cbind(nms$points,colrs))
 
-subParcelComm$PsubP
+data(dune)
+attach(dune.env)
+ord <- metaMDS(dune)
+plot(ord)
+ordihull(ord, Management, col=1:4, lwd=3)
+detach(dune.env)
 
+
+
+names(table(nmsInfo$habitat))
+names(table(nmsInfo$colrs))
+
+nmsInfo$colrs
+
+plot(1, col="#FF7F00", pch=19, cex=5)
 ##################################
 
 ## back to python, plot SAC curves
@@ -1293,8 +1295,6 @@ colors = ['blue', 'green', 'red', 'yellow', 'orange', 'brown']
 
 for colNu,DF in enumerate(SACs):
     oneSacPlot(DF, colors[colNu])
-
-
 
 
 ## the goal now is to plot these 
