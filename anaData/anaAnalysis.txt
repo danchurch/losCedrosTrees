@@ -1016,9 +1016,7 @@ axes[0].scatter(physDist, bcDist)
 axes[0].plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
 
 ## now look at these individually:
-
 soGrouped = specObs.groupby('habitat')
-
 habs = list(soGrouped.groups.keys())
 
 
@@ -1267,9 +1265,7 @@ import matplotlib.pyplot as plt
 import pickle
 from sklearn.linear_model import LinearRegression
 import scipy.spatial as sp
-import scipy.spatial as sp
 plt.ion()
-
 
 ## find our csvs of interest
 SACs = [ i for i in os.listdir() if "SAC.csv" in i ]
@@ -1288,7 +1284,6 @@ def oneSacPlot(DF, clr):
                      y2=sacDF.richness + sacDF.sd,
                     alpha=0.4,
                     color=clr,
-                    label=,
                     )
 
 colors = ['blue', 'green', 'red', 'yellow', 'orange', 'brown']
@@ -1300,6 +1295,22 @@ for colNu,DF in enumerate(SACs):
 ## the goal now is to plot these 
 
 ## make SACs
-## make NMS
 
-##  
+## make some useful SAC combo plots...then what? 
+
+## indicator species for each type of habitat?
+
+## the general story - deforestation knocks back a landscape into
+## a pluripotent state? You may well end up with a very different
+
+## wehere did the bosque secondario come from? Is it natural disturbance?
+## blowdown, etc?
+## or is it from deforestation? 
+
+## If it is natural, then I think the story here is that deforestation
+## changes the trajectory of succession...you may not recover your
+## old growth, even with time, if you cut your forest. You will with 
+## "natural" disturbance 
+
+## would be nice to get the ages on
+
