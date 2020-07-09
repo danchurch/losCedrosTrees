@@ -1112,7 +1112,6 @@ dd.drop('habitat', axis=1, inplace=True)
 
 dd.to_csv('BC_comm.csv')
 
-
 ## let's generalize that to create community dataframes for each habitat
 ## type:
 
@@ -1310,7 +1309,115 @@ for colNu,DF in enumerate(SACs):
 ## If it is natural, then I think the story here is that deforestation
 ## changes the trajectory of succession...you may not recover your
 ## old growth, even with time, if you cut your forest. You will with 
-## "natural" disturbance 
+## "natural" disturbance. Alternate stable states. 
+
+## how would we test this hypothesis, with this data?
+
+## not sure. Here the assumption would be that the ecosystem
+## has alternate stable states, and that access to seeds
+## from nearby plants is what will determine the the succession
+## of the second growth. We might predict, then, that 
+## regeneration of sites surrounded by forest will take 
+## on old forest characteristics, and sites in clearings 
+## will take on different species, showing more edge effects 
+## and all that. 
+
+## but I don't know if we have the ability to examine that 
 
 ## would be nice to get the ages on
+
+## other ideas:
+## let's try indicator species analysis, see what this turns up...
+
+##############################################
+
+## but first, we need to get our environmental data in order...
+
+## where to start?
+
+## none of the csvs that Ana has given me have environmental
+## data other than elevation and habitat type.
+## according to her report, we should also have light levels,
+## "condiciones del clima" (=? did they have hobos at each site?)
+
+## etc. very confusing. But let's start by getting a site x env 
+## matrix with the data we have on our working dataframe:
+
+python3
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import pickle
+from sklearn.linear_model import LinearRegression
+import scipy.spatial as sp
+plt.ion()
+
+[ i for i in os.listdir() if '.p' in i ]
+
+specObs = pd.read_pickle('specObs.p')
+
+envOnly=specObs[['PsubP', 'elevacion', 'habitat']].drop_duplicates()
+
+
+## odd, we have two elevation values for site 1.1: there is one collection
+## from 1425m and the rest (~37 other collections) are from 1413 m. 
+## I guess let's assume the singleton is the error?
+
+envOnly=specObs[['PsubP', 'elevacion', 'habitat']].drop_duplicates()
+envOnly.drop(1, inplace=True)
+envOnly.set_index('PsubP', inplace=True)
+
+## well, that's an environmental matrix, I guess. Not much there to work with. 
+ 
+## we can check elevation as a predictor of community composition, permanova style...
+
+## we also wanted to try clustering - can we recapture our habitat types using a 
+## hierarchical clustering method?
+
+######### hierarchical clusturing ##########
+
+## back to R...
+
+library(vegan)
+library(stats)
+ 
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+sPC <- subParcelComm[,-1]
+rownames(sPC) <- subParcelComm[,1]
+
+## we need a distance matrix, BC
+## does vegan give us what we need?
+
+sPCBray <- vegdist(sPC)
+
+sPC.ward <- hclust(sPCBray, method='ward.D2')
+
+#sPC.ward.reorder <- reorder.hclust(sPC.ward, sPCBray)
+## that function doesn't seem to exist in vegan anymore?
+
+identify.hclust()
+## also deprecated? can't find any of these...
+
+## looks cool, but can we color by plot type?
+
+## let's see if k=5 works, as this is the number of 
+## habitat types that we have:
+
+k <- 5
+
+plot(sPC.ward,
+hang=-1,
+xlab='5 groups',
+ylab='height',
+sub='',
+main='',
+labels=cutree(sPC.ward, k=k), 
+)
+
+rect.hclust(sPC.ward, k=k)
+
+## how we get our psubp values on there?
 
