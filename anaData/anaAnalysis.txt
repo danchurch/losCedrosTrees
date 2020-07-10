@@ -1369,6 +1369,8 @@ envOnly=specObs[['PsubP', 'elevacion', 'habitat']].drop_duplicates()
 envOnly=specObs[['PsubP', 'elevacion', 'habitat']].drop_duplicates()
 envOnly.drop(1, inplace=True)
 envOnly.set_index('PsubP', inplace=True)
+#envOnly.to_csv('envOnly.csv')
+#envOnly.to_pickle('envOnly.p')
 
 ## well, that's an environmental matrix, I guess. Not much there to work with. 
  
@@ -1399,6 +1401,7 @@ sPC.ward <- hclust(sPCBray, method='ward.D2')
 ## that function doesn't seem to exist in vegan anymore?
 
 identify.hclust()
+
 ## also deprecated? can't find any of these...
 
 ## looks cool, but can we color by plot type?
@@ -1414,10 +1417,74 @@ xlab='5 groups',
 ylab='height',
 sub='',
 main='',
-labels=cutree(sPC.ward, k=k), 
+#labels=cutree(sPC.ward, k=k), 
 )
 
 rect.hclust(sPC.ward, k=k)
 
 ## how we get our psubp values on there?
+
+## the PsubP values are here:
+sPC.ward$labels
+
+## get our environmental matrix:
+envOnly <- read.csv('envOnly.csv')
+
+## and general info spreadsheet
+specObs <- read.csv('specObs.csv')
+
+## extract what our habitat types from this?
+
+
+hab <- vector(length = length(sPC.ward$labels))
+
+for (i in 1:length(sPC.ward$labels)){
+    ind <- which(envOnly$PsubP==sPC.ward$labels[i])
+    hab[i] <- as.character(envOnly$habitat[ind])
+}
+
+aa <- data.frame(cbind(sPC.ward$labels, hab))
+
+head(aa)
+
+head(sPC)
+
+## some sanity checks
+envOnly[envOnly$PsubP == 10.1,]
+envOnly[envOnly$PsubP == 9.7,]
+
+## generally seem to line up. So can we use this to label the
+## leaves of the tree?
+
+
+plot(sPC.ward,
+hang=-1,
+xlab='habitat',
+ylab='height',
+sub='',
+main='',
+labels=hab, 
+)
+
+rect.hclust(sPC.ward, k=4)
+
+## well, interesting. The RCA plots are on their own again...with some regen forest
+## tagging along.
+
+## and there is an entire block of regenerating forest by itself
+
+## can we make a map of this, to see if there is a spatial pattern in these groups?
+
+## starting to think that a PCNM analysis would be useful. Would probably show if 
+## the eastern RCA plots are all on their own...
+
+## this is going to start to involve some spatial analysis. It was inevitable.
+
+## To start off, how to we get a map of our points?
+
+## and we need to address the biodiversity questions - are we as diverse as Yasuni?
+## how many species could we expect from the reserve as a whole? 
+
+## also, wtf do we do with the permanent plot? Can we reconstruct using Danilo + Ana's
+## data? I still do not understand what Ana did there...
 
