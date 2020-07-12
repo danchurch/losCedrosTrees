@@ -1413,7 +1413,7 @@ k <- 5
 
 plot(sPC.ward,
 hang=-1,
-xlab='5 groups',
+#xlab='5 groups',
 ylab='height',
 sub='',
 main='',
@@ -1437,15 +1437,14 @@ specObs <- read.csv('specObs.csv')
 
 
 hab <- vector(length = length(sPC.ward$labels))
-
 for (i in 1:length(sPC.ward$labels)){
     ind <- which(envOnly$PsubP==sPC.ward$labels[i])
     hab[i] <- as.character(envOnly$habitat[ind])
 }
 
-aa <- data.frame(cbind(sPC.ward$labels, hab))
+hablabels <- data.frame(cbind(sPC.ward$labels, hab))
 
-head(aa)
+head(hablabels)
 
 head(sPC)
 
@@ -1456,7 +1455,8 @@ envOnly[envOnly$PsubP == 9.7,]
 ## generally seem to line up. So can we use this to label the
 ## leaves of the tree?
 
-
+par(mfrow=c(1,1))
+#png(file="wardCluster.png", width=900, height=500)
 plot(sPC.ward,
 hang=-1,
 xlab='habitat',
@@ -1465,13 +1465,111 @@ sub='',
 main='',
 labels=hab, 
 )
-
-rect.hclust(sPC.ward, k=4)
+aa <- rect.hclust(sPC.ward, k=3)
+#dev.off()
 
 ## well, interesting. The RCA plots are on their own again...with some regen forest
 ## tagging along.
 
+## can we look at these on a map?
+
+envOnly <- read.csv('envOnly.csv')
+pts <- read.csv('subParcelSpatial.csv')
+k <- 4
+tree <- sPC.ward
+jit <- 50 ## jitter value
+
+hab <- vector(length = length(tree$labels))
+## get labels
+
+for (i in 1:length(sPC.ward$labels)){
+    ind <- which(envOnly$PsubP==sPC.ward$labels[i])
+    hab[i] <- as.character(envOnly$habitat[ind])
+}
+
+makeClustMap <- function(tree, k, labels=NULL, jit=50){
+    envOnly <- read.csv('envOnly.csv')
+    pts <- read.csv('subParcelSpatial.csv')
+    require(stats)
+    ## get habitat type labels for tree
+    if (is.null(labels)){lab <- NULL}
+    else {
+        if (labels=='hab'){
+        lab <- vector(length = length(tree$labels))
+        for (i in 1:length(tree$labels)){
+            ind <- which(envOnly$PsubP==tree$labels[i])
+            lab[i] <- as.character(envOnly$habitat[ind])
+    }}}
+    par(mfrow=c(1,2))
+    plot(tree, labels=lab)
+    clustGroups <- rect.hclust(tree, k=k, border=1:k)
+    cmem <- vector(length=k)
+    PsubP <- vector()
+    gr <- vector()
+    for (i in 1:k){
+        cmem.i <- as.numeric(attr(clustGroups[[i]], "names"))
+        PsubP <- c(PsubP, cmem.i)
+        gr <- c(gr, rep(i, length(cmem.i)))
+        }
+    cGroup <- data.frame(cbind(PsubP, gr))
+    cGroup <- cGroup[order(cGroup$PsubP),]
+    pts <- pts[order(pts$PsubP),]
+    clsp <- base::merge(pts, cGroup)
+    clsp <- base::merge(clsp, envOnly)
+    shapes <- vector(length=nrow(clsp))
+    shapes[clsp$habitat == 'BC'] <- 19
+    shapes[clsp$habitat == 'BS'] <- 21
+    shapes[clsp$habitat == 'CLB'] <- 22
+    shapes[clsp$habitat == 'RCA'] <- 17
+    shapes[clsp$habitat == 'RG'] <- 23
+    eJit=jitter(clsp$E, jit)
+    nJit=jitter(clsp$N, jit)
+    plot(x=eJit, 
+        y=nJit, 
+        col=clsp$gr,
+        xlab='',
+        ylab='',
+        asp=1,
+        cex=2,
+        lwd=2,
+        pch=shapes,
+    )
+    legend('bottomright', 
+        legend=c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        pch=c(19, 21, 22, 17, 23)
+    )
+    legend('bottomleft', 
+        legend=1:k,
+        pch=c(15),
+        col=1:k,
+        title='ClusterGroup')
+    return(clsp)
+    }
+
+makeClustMap(sPC.ward, 2)
+
+makeClustMap(sPC.ward, k=2, labels='hab')
+
+## interesting. forcing this to two groups does recapture this 
+## result of RCA all by itself, with some of the regenerating 
+## forest
+
+## 5 groups - see if habitat types mostly split out as predicted.
+
+png(file='hclust4groups.png', width=1600, height=800)
+makeClustMap(sPC.ward, k=4, labels='hab')
+dev.off()
+
+makeClustMap(sPC.ward, k=4, labels='hab')
+
+makeClustMap(sPC.ward, k=5, labels='hab')
+
+## maybe build a function for this:
+
+## also get a map behind this? 
 ## and there is an entire block of regenerating forest by itself
+
+## can we add this cluster-group membership to our data?
 
 ## can we make a map of this, to see if there is a spatial pattern in these groups?
 
@@ -1487,4 +1585,17 @@ rect.hclust(sPC.ward, k=4)
 
 ## also, wtf do we do with the permanent plot? Can we reconstruct using Danilo + Ana's
 ## data? I still do not understand what Ana did there...
+
+###################### make a map of points  ##############################
+
+## we want to show the southeastern third of LC, with all of the plots in it
+
+## check symbols
+#png(file='Rpch.png', width=800, height=500)
+par(mfrow=c(1,1))
+plot(1:25, rep(1,25), pch=1:25, cex=3)
+points(1:25, rep(1.1,25), pch=15, cex=3, col=1:25)
+text(1:25, rep(0.9, 25), label=1:25)
+text(1:25, rep(1.1, 25), label=1:25)
+#dev.off()
 
