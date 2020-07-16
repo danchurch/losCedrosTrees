@@ -1,0 +1,694 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rasterio.enums module &mdash; rasterio  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rasterio.env module" href="rasterio.env.html" />
+    <link rel="prev" title="rasterio.dtypes module" href="rasterio.dtypes.html" /> 
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="rasterio.enums.html" />
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2020-07-08T18:00:55Z", "builder": "sphinx", "canonical_url": "https://rasterio.readthedocs.io/en/latest/", "commit": "3ae51c8e", "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "api/rasterio.enums", "programming_language": "py", "project": "rasterio", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rasterio
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Python Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Python API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="rasterio.html">rasterio package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="rasterio.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="rasterio._base.html">rasterio._base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._crs.html">rasterio._crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._env.html">rasterio._env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._err.html">rasterio._err module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._example.html">rasterio._example module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._features.html">rasterio._features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._fill.html">rasterio._fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._io.html">rasterio._io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._warp.html">rasterio._warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.compat.html">rasterio.compat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.control.html">rasterio.control module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.coords.html">rasterio.coords module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.crs.html">rasterio.crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.drivers.html">rasterio.drivers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.dtypes.html">rasterio.dtypes module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="rasterio.enums.html#">rasterio.enums module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.env.html">rasterio.env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.errors.html">rasterio.errors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.features.html">rasterio.features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.fill.html">rasterio.fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.io.html">rasterio.io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.mask.html">rasterio.mask module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.merge.html">rasterio.merge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.path.html">rasterio.path module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.plot.html">rasterio.plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.profiles.html">rasterio.profiles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.sample.html">rasterio.sample module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.shutil.html">rasterio.shutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.tools.html">rasterio.tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.transform.html">rasterio.transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.vrt.html">rasterio.vrt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.warp.html">rasterio.warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.windows.html">rasterio.windows module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#module-rasterio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rasterio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Python API Reference</a> &raquo;</li>
+        
+          <li><a href="rasterio.html">rasterio package</a> &raquo;</li>
+        
+      <li>rasterio.enums module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/mapbox/rasterio/blob/master/docs/api/rasterio.enums.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-rasterio.enums">
+<span id="rasterio-enums-module"></span><h1>rasterio.enums module<a class="headerlink" href="rasterio.enums.html#module-rasterio.enums" title="Permalink to this headline">¶</a></h1>
+<p>Enumerations.</p>
+<dl class="py class">
+<dt id="rasterio.enums.ColorInterp">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">ColorInterp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>Raster band color interpretation.</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.Cb">
+<code class="sig-name descname">Cb</code><em class="property"> = 15</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.Cb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.Cr">
+<code class="sig-name descname">Cr</code><em class="property"> = 16</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.Cr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.Y">
+<code class="sig-name descname">Y</code><em class="property"> = 14</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.Y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.alpha">
+<code class="sig-name descname">alpha</code><em class="property"> = 6</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.black">
+<code class="sig-name descname">black</code><em class="property"> = 13</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.black" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.blue">
+<code class="sig-name descname">blue</code><em class="property"> = 5</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.blue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.cyan">
+<code class="sig-name descname">cyan</code><em class="property"> = 10</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.cyan" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.gray">
+<code class="sig-name descname">gray</code><em class="property"> = 1</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.gray" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.green">
+<code class="sig-name descname">green</code><em class="property"> = 4</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.green" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.grey">
+<code class="sig-name descname">grey</code><em class="property"> = 1</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.grey" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.hue">
+<code class="sig-name descname">hue</code><em class="property"> = 7</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.hue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.lightness">
+<code class="sig-name descname">lightness</code><em class="property"> = 9</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.lightness" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.magenta">
+<code class="sig-name descname">magenta</code><em class="property"> = 11</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.magenta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.palette">
+<code class="sig-name descname">palette</code><em class="property"> = 2</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.palette" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.red">
+<code class="sig-name descname">red</code><em class="property"> = 3</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.red" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.saturation">
+<code class="sig-name descname">saturation</code><em class="property"> = 8</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.saturation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.undefined">
+<code class="sig-name descname">undefined</code><em class="property"> = 0</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.undefined" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.ColorInterp.yellow">
+<code class="sig-name descname">yellow</code><em class="property"> = 12</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.ColorInterp.yellow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio.enums.Compression">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">Compression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Available compression algorithms.</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.ccittfax3">
+<code class="sig-name descname">ccittfax3</code><em class="property"> = 'CCITTFAX3'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.ccittfax3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.ccittfax4">
+<code class="sig-name descname">ccittfax4</code><em class="property"> = 'CCITTFAX4'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.ccittfax4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.ccittrle">
+<code class="sig-name descname">ccittrle</code><em class="property"> = 'CCITTRLE'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.ccittrle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.deflate">
+<code class="sig-name descname">deflate</code><em class="property"> = 'DEFLATE'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.deflate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.jpeg">
+<code class="sig-name descname">jpeg</code><em class="property"> = 'JPEG'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.jpeg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.jpeg2000">
+<code class="sig-name descname">jpeg2000</code><em class="property"> = 'JPEG2000'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.jpeg2000" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.lerc">
+<code class="sig-name descname">lerc</code><em class="property"> = 'LERC'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.lerc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.lzma">
+<code class="sig-name descname">lzma</code><em class="property"> = 'LZMA'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.lzma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.lzw">
+<code class="sig-name descname">lzw</code><em class="property"> = 'LZW'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.lzw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.none">
+<code class="sig-name descname">none</code><em class="property"> = 'NONE'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.packbits">
+<code class="sig-name descname">packbits</code><em class="property"> = 'PACKBITS'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.packbits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.webp">
+<code class="sig-name descname">webp</code><em class="property"> = 'WEBP'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.webp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Compression.zstd">
+<code class="sig-name descname">zstd</code><em class="property"> = 'ZSTD'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Compression.zstd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio.enums.Interleaving">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">Interleaving</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Interleaving" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.Interleaving.band">
+<code class="sig-name descname">band</code><em class="property"> = 'BAND'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Interleaving.band" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Interleaving.line">
+<code class="sig-name descname">line</code><em class="property"> = 'LINE'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Interleaving.line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Interleaving.pixel">
+<code class="sig-name descname">pixel</code><em class="property"> = 'PIXEL'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Interleaving.pixel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio.enums.MaskFlags">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">MaskFlags</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MaskFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.MaskFlags.all_valid">
+<code class="sig-name descname">all_valid</code><em class="property"> = 1</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MaskFlags.all_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.MaskFlags.alpha">
+<code class="sig-name descname">alpha</code><em class="property"> = 4</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MaskFlags.alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.MaskFlags.nodata">
+<code class="sig-name descname">nodata</code><em class="property"> = 8</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MaskFlags.nodata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.MaskFlags.per_dataset">
+<code class="sig-name descname">per_dataset</code><em class="property"> = 2</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MaskFlags.per_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio.enums.MergeAlg">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">MergeAlg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MergeAlg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Available rasterization algorithms</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.MergeAlg.add">
+<code class="sig-name descname">add</code><em class="property"> = 'ADD'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MergeAlg.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.MergeAlg.replace">
+<code class="sig-name descname">replace</code><em class="property"> = 'REPLACE'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.MergeAlg.replace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio.enums.PhotometricInterp">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">PhotometricInterp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.black">
+<code class="sig-name descname">black</code><em class="property"> = 'MINISBLACK'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.black" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.cielab">
+<code class="sig-name descname">cielab</code><em class="property"> = 'CIELAB'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.cielab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.cmyk">
+<code class="sig-name descname">cmyk</code><em class="property"> = 'CMYK'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.cmyk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.icclab">
+<code class="sig-name descname">icclab</code><em class="property"> = 'ICCLAB'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.icclab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.itulab">
+<code class="sig-name descname">itulab</code><em class="property"> = 'ITULAB'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.itulab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.rgb">
+<code class="sig-name descname">rgb</code><em class="property"> = 'RGB'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.white">
+<code class="sig-name descname">white</code><em class="property"> = 'MINISWHITE'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.white" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.PhotometricInterp.ycbcr">
+<code class="sig-name descname">ycbcr</code><em class="property"> = 'YCbCr'</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.PhotometricInterp.ycbcr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio.enums.Resampling">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.enums.</code><code class="sig-name descname">Resampling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>Available warp resampling algorithms.</p>
+<p>The first 8, ‘nearest’, ‘bilinear’, ‘cubic’, ‘cubic_spline’,
+‘lanczos’, ‘average’, ‘mode’, and ‘gauss’, are available for making
+dataset overviews.</p>
+<p>‘max’, ‘min’, ‘med’, ‘q1’, ‘q3’ are only supported in GDAL &gt;= 2.0.0.</p>
+<p>‘nearest’, ‘bilinear’, ‘cubic’, ‘cubic_spline’, ‘lanczos’,
+‘average’, ‘mode’ are always available (GDAL &gt;= 1.10).</p>
+<p>Note: ‘gauss’ is not available to the functions in rio.warp.</p>
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.average">
+<code class="sig-name descname">average</code><em class="property"> = 5</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.average" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.bilinear">
+<code class="sig-name descname">bilinear</code><em class="property"> = 1</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.bilinear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.cubic">
+<code class="sig-name descname">cubic</code><em class="property"> = 2</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.cubic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.cubic_spline">
+<code class="sig-name descname">cubic_spline</code><em class="property"> = 3</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.cubic_spline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.gauss">
+<code class="sig-name descname">gauss</code><em class="property"> = 7</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.gauss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.lanczos">
+<code class="sig-name descname">lanczos</code><em class="property"> = 4</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.lanczos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.max">
+<code class="sig-name descname">max</code><em class="property"> = 8</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.med">
+<code class="sig-name descname">med</code><em class="property"> = 10</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.med" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.min">
+<code class="sig-name descname">min</code><em class="property"> = 9</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.mode">
+<code class="sig-name descname">mode</code><em class="property"> = 6</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.mode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.nearest">
+<code class="sig-name descname">nearest</code><em class="property"> = 0</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.nearest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.q1">
+<code class="sig-name descname">q1</code><em class="property"> = 11</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.q1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio.enums.Resampling.q3">
+<code class="sig-name descname">q3</code><em class="property"> = 12</em><a class="headerlink" href="rasterio.enums.html#rasterio.enums.Resampling.q3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rasterio.env.html" class="btn btn-neutral float-right" title="rasterio.env module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rasterio.dtypes.html" class="btn btn-neutral float-left" title="rasterio.dtypes module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Mapbox
+      
+        <span class="commit">
+          Revision <code>3ae51c8e</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="../index.html">latest</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/en/stable/">stable</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/pdf/">pdf</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/htmlzip/">html</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/epub/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="https://readthedocs.org/projects/rasterio/?fromdocs=rasterio">Project Home</a>
+          </dd>
+          <dd>
+            <a href="https://readthedocs.org/builds/rasterio/?fromdocs=rasterio">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>

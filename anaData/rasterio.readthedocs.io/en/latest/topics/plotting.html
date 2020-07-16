@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plotting &mdash; rasterio  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Profiles and Writing Files" href="profiles.html" />
+    <link rel="prev" title="Overviews" href="overviews.html" /> 
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="plotting.html" />
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2020-07-08T18:00:59Z", "builder": "sphinx", "canonical_url": "https://rasterio.readthedocs.io/en/latest/", "commit": "3ae51c8e", "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "topics/plotting", "programming_language": "py", "project": "rasterio", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rasterio
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Python Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="calc.html">Using rio-calc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="color.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concurrency.html">Concurrent processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">GDAL Option Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">Advanced Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="errors.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html">Vector Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fillnodata.html">Filling nodata areas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="georeferencing.html">Georeferencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_options.html">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_processing.html">Interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="masking-by-shapefile.html">Masking a raster using a shapefile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="masks.html">Nodata Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-files.html">In-Memory Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-to-v1.html">Migrating to Rasterio 1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overviews.html">Overviews</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="plotting.html#">Plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html">Profiles and Writing Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading.html">Reading Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproject.html">Reprojection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resampling.html">Resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="switch.html">Switching from GDAL’s Python bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tags.html">Tagging datasets and bands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtual-warping.html">Virtual Warping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vsi.html">Virtual Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windowed-rw.html">Windowed reading and writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html">Writing Datasets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Python API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rasterio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Advanced Topics</a> &raquo;</li>
+        
+      <li>Plotting</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/mapbox/rasterio/blob/master/docs/topics/plotting.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="plotting">
+<h1>Plotting<a class="headerlink" href="plotting.html#plotting" title="Permalink to this headline">¶</a></h1>
+<p>Rasterio reads raster data into numpy arrays so plotting a single band as
+two dimensional data can be accomplished directly with <code class="docutils literal notranslate"><span class="pre">pyplot</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;tests/data/RGB.byte.tif&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyplot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;pink&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.image.AxesImage object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="http://farm6.staticflickr.com/5032/13938576006_b99b23271b_o_d.png" src="http://farm6.staticflickr.com/5032/13938576006_b99b23271b_o_d.png" />
+<p>Rasterio also provides <a class="reference internal" href="../api/rasterio.plot.html#rasterio.plot.show" title="rasterio.plot.show"><code class="xref py py-func docutils literal notranslate"><span class="pre">rasterio.plot.show()</span></code></a> to perform common tasks such as
+displaying multi-band images as RGB and labeling the axes with proper geo-referenced extents.</p>
+<p>The first argument to <a class="reference internal" href="../api/rasterio.plot.html#rasterio.plot.show" title="rasterio.plot.show"><code class="xref py py-func docutils literal notranslate"><span class="pre">show()</span></code></a> represent the data source to be plotted. This can be one of</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A dataset object opened in ‘r’ mode</p></li>
+<li><p>A single band of a source, represented by a <code class="docutils literal notranslate"><span class="pre">(src,</span> <span class="pre">band_index)</span></code> tuple</p></li>
+<li><p>A numpy ndarray, 2D or 3D. If the array is 3D, ensure that it is in rasterio band order.</p></li>
+</ul>
+</div></blockquote>
+<p>Thus the following operations for 3-band RGB data are equivalent. Note that when passing arrays,
+you can pass in a transform in order to get extent labels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rasterio.plot</span> <span class="kn">import</span> <span class="n">show</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">transform</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/rgb.jpg" src="../_images/rgb.jpg" />
+<p>and similarly for single band plots. Note that you can pass in <code class="docutils literal notranslate"><span class="pre">cmap</span></code> to
+specify a matplotlib color ramp. Any kwargs passed to <a class="reference internal" href="../api/rasterio.plot.html#rasterio.plot.show" title="rasterio.plot.show"><code class="xref py py-func docutils literal notranslate"><span class="pre">show()</span></code></a>  will be passed
+through to the underlying pyplot functions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/singleband.jpg" src="../_images/singleband.jpg" />
+<p>You can create a figure with multiple subplots by passing the <code class="docutils literal notranslate"><span class="pre">show(...,</span> <span class="pre">ax=ax1)</span></code>
+argument. Also note that this example demonstrates setting the overall figure size
+and sets a title for each subplot.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">axr</span><span class="p">,</span> <span class="n">axg</span><span class="p">,</span> <span class="n">axb</span><span class="p">)</span> <span class="o">=</span> <span class="n">pyplot</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axr</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;red channel&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axg</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greens&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;green channel&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axb</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;blue channel&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/subplots.jpg" src="../_images/subplots.jpg" />
+<p>For single-band rasters, there is also an option to generate contours.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pyplot</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys_r&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">contour</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/contours.jpg" src="../_images/contours.jpg" />
+<p>Rasterio also provides a <a class="reference internal" href="../api/rasterio.plot.html#rasterio.plot.show_hist" title="rasterio.plot.show_hist"><code class="xref py py-func docutils literal notranslate"><span class="pre">show_hist()</span></code></a> function for generating histograms of
+single or multiband rasters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rasterio.plot</span> <span class="kn">import</span> <span class="n">show_hist</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show_hist</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">src</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;stepfilled&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Histogram&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/hist.jpg" src="../_images/hist.jpg" />
+<p>The <a class="reference internal" href="../api/rasterio.plot.html#rasterio.plot.show_hist" title="rasterio.plot.show_hist"><code class="xref py py-func docutils literal notranslate"><span class="pre">show_hist()</span></code></a> function also takes an <code class="docutils literal notranslate"><span class="pre">ax</span></code> argument to allow subplot configurations</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">axrgb</span><span class="p">,</span> <span class="n">axhist</span><span class="p">)</span> <span class="o">=</span> <span class="n">pyplot</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axrgb</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes._subplots.AxesSubplot object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show_hist</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;stepfilled&#39;</span><span class="p">,</span>
+<span class="gp">... </span>          <span class="n">lw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axhist</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/rgb_hist.jpg" src="../_images/rgb_hist.jpg" />
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="profiles.html" class="btn btn-neutral float-right" title="Profiles and Writing Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="overviews.html" class="btn btn-neutral float-left" title="Overviews" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Mapbox
+      
+        <span class="commit">
+          Revision <code>3ae51c8e</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="../index.html">latest</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/en/stable/">stable</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/pdf/">pdf</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/htmlzip/">html</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/epub/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="https://readthedocs.org/projects/rasterio/?fromdocs=rasterio">Project Home</a>
+          </dd>
+          <dd>
+            <a href="https://readthedocs.org/builds/rasterio/?fromdocs=rasterio">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>

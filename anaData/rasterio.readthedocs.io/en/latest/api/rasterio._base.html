@@ -1,0 +1,1198 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rasterio._base module &mdash; rasterio  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rasterio._crs module" href="rasterio._crs.html" />
+    <link rel="prev" title="rasterio.rio.warp module" href="rasterio.rio.warp.html" /> 
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="rasterio._base.html" />
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2020-07-08T18:00:54Z", "builder": "sphinx", "canonical_url": "https://rasterio.readthedocs.io/en/latest/", "commit": "3ae51c8e", "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "api/rasterio._base", "programming_language": "py", "project": "rasterio", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rasterio
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Python Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Python API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="rasterio.html">rasterio package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="rasterio.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="rasterio._base.html#">rasterio._base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._crs.html">rasterio._crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._env.html">rasterio._env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._err.html">rasterio._err module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._example.html">rasterio._example module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._features.html">rasterio._features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._fill.html">rasterio._fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._io.html">rasterio._io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._warp.html">rasterio._warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.compat.html">rasterio.compat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.control.html">rasterio.control module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.coords.html">rasterio.coords module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.crs.html">rasterio.crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.drivers.html">rasterio.drivers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.dtypes.html">rasterio.dtypes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.enums.html">rasterio.enums module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.env.html">rasterio.env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.errors.html">rasterio.errors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.features.html">rasterio.features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.fill.html">rasterio.fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.io.html">rasterio.io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.mask.html">rasterio.mask module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.merge.html">rasterio.merge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.path.html">rasterio.path module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.plot.html">rasterio.plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.profiles.html">rasterio.profiles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.sample.html">rasterio.sample module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.shutil.html">rasterio.shutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.tools.html">rasterio.tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.transform.html">rasterio.transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.vrt.html">rasterio.vrt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.warp.html">rasterio.warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.windows.html">rasterio.windows module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#module-rasterio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rasterio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Python API Reference</a> &raquo;</li>
+        
+          <li><a href="rasterio.html">rasterio package</a> &raquo;</li>
+        
+      <li>rasterio._base module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/mapbox/rasterio/blob/master/docs/api/rasterio._base.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-rasterio._base">
+<span id="rasterio-base-module"></span><h1>rasterio._base module<a class="headerlink" href="rasterio._base.html#module-rasterio._base" title="Permalink to this headline">¶</a></h1>
+<p>Numpy-free base classes.</p>
+<dl class="py class">
+<dt id="rasterio._base.DatasetBase">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">DatasetBase</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataset base class</p>
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.block_shapes">
+<code class="sig-name descname">block_shapes</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.block_shapes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.bounds">
+<code class="sig-name descname">bounds</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.bounds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.closed">
+<code class="sig-name descname">closed</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.closed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.colorinterp">
+<code class="sig-name descname">colorinterp</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.colorinterp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.count">
+<code class="sig-name descname">count</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.crs">
+<code class="sig-name descname">crs</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.crs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.descriptions">
+<code class="sig-name descname">descriptions</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.descriptions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.files">
+<code class="sig-name descname">files</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.gcps">
+<code class="sig-name descname">gcps</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.gcps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.indexes">
+<code class="sig-name descname">indexes</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.indexes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.mask_flag_enums">
+<code class="sig-name descname">mask_flag_enums</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.mask_flag_enums" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.meta">
+<code class="sig-name descname">meta</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.nodata">
+<code class="sig-name descname">nodata</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.nodata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.nodatavals">
+<code class="sig-name descname">nodatavals</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.nodatavals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.profile">
+<code class="sig-name descname">profile</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.res">
+<code class="sig-name descname">res</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.res" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.subdatasets">
+<code class="sig-name descname">subdatasets</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.subdatasets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.transform">
+<code class="sig-name descname">transform</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.units">
+<code class="sig-name descname">units</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.compression">
+<code class="sig-name descname">compression</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.compression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compression algorithm’s short name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.driver">
+<code class="sig-name descname">driver</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format driver used to open the dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.interleaving">
+<code class="sig-name descname">interleaving</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.interleaving" title="Permalink to this definition">¶</a></dt>
+<dd><p>‘pixel’ or ‘band’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.kwds">
+<code class="sig-name descname">kwds</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.kwds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stored creation option tags</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.mode">
+<code class="sig-name descname">mode</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Access mode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remote or local dataset name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.options">
+<code class="sig-name descname">options</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of opening options</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.photometric">
+<code class="sig-name descname">photometric</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.photometric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Photometric interpretation’s short name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">block_shapes</code><a class="headerlink" href="rasterio._base.html#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ordered list of block shapes for each bands</p>
+<p>Shapes are tuples and have the same ordering as the dataset’s
+shape: (count of image rows, count of image columns).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.block_size">
+<code class="sig-name descname">block_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.block_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size in bytes of a particular block</p>
+<p>Only useful for TIFF formatted datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bidx</strong> (<em>int</em>) – Band index, starting with 1.</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – Row index of the block, starting with 0.</p></li>
+<li><p><strong>j</strong> (<em>int</em>) – Column index of the block, starting with 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.block_window">
+<code class="sig-name descname">block_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.block_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the window for a particular block</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bidx</strong> (<em>int</em>) – Band index, starting with 1.</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – Row index of the block, starting with 0.</p></li>
+<li><p><strong>j</strong> (<em>int</em>) – Column index of the block, starting with 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="rasterio.windows.html#rasterio.windows.Window" title="rasterio.windows.Window">Window</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.block_windows">
+<code class="sig-name descname">block_windows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.block_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator over a band’s blocks and their windows</p>
+<p>The primary use of this method is to obtain windows to pass to
+<cite>read()</cite> for highly efficient access to raster block data.</p>
+<p>The positional parameter <cite>bidx</cite> takes the index (starting at 1) of the
+desired band.  This iterator yields blocks “left to right” and “top to
+bottom” and is similar to Python’s <code class="docutils literal notranslate"><span class="pre">enumerate()</span></code> in that the first
+element is the block index and the second is the dataset window.</p>
+<p>Blocks are built-in to a dataset and describe how pixels are grouped
+within each band and provide a mechanism for efficient I/O.  A window
+is a range of pixels within a single band defined by row start, row
+stop, column start, and column stop.  For example, <code class="docutils literal notranslate"><span class="pre">((0,</span> <span class="pre">2),</span> <span class="pre">(0,</span> <span class="pre">2))</span></code>
+defines a <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">x</span> <span class="pre">2</span></code> window at the upper left corner of a raster band.
+Blocks are referenced by an <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j)</span></code> tuple where <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0)</span></code> would be
+a band’s upper left block.</p>
+<p>Raster I/O is performed at the block level, so accessing a window
+spanning multiple rows in a striped raster requires reading each row.
+Accessing a <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">x</span> <span class="pre">2</span></code> window at the center of a <code class="docutils literal notranslate"><span class="pre">1800</span> <span class="pre">x</span> <span class="pre">3600</span></code> image
+requires reading 2 rows, or 7200 pixels just to get the target 4.  The
+same image with internal <code class="docutils literal notranslate"><span class="pre">256</span> <span class="pre">x</span> <span class="pre">256</span></code> blocks would require reading at
+least 1 block (if the window entire window falls within a single block)
+and at most 4 blocks, or at least 512 pixels and at most 2048.</p>
+<p>Given an image that is <code class="docutils literal notranslate"><span class="pre">512</span> <span class="pre">x</span> <span class="pre">512</span></code> with blocks that are
+<code class="docutils literal notranslate"><span class="pre">256</span> <span class="pre">x</span> <span class="pre">256</span></code>, its blocks and windows would look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Blocks</span><span class="p">:</span>
+
+        <span class="mi">0</span>       <span class="mi">256</span>     <span class="mi">512</span>
+      <span class="mi">0</span> <span class="o">+--------+--------+</span>
+        <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>
+        <span class="o">|</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+        <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>
+    <span class="mi">256</span> <span class="o">+--------+--------+</span>
+        <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>
+        <span class="o">|</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+        <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>
+    <span class="mi">512</span> <span class="o">+--------+--------+</span>
+
+
+<span class="n">Windows</span><span class="p">:</span>
+
+    <span class="n">UL</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+    <span class="n">UR</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span>
+    <span class="n">LL</span><span class="p">:</span> <span class="p">((</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+    <span class="n">LR</span><span class="p">:</span> <span class="p">((</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bidx</strong> (<em>int</em><em>, </em><em>optional</em>) – The band index (using 1-based indexing) from which to extract
+windows. A value less than 1 uses the first band if all bands have
+homogeneous windows and raises an exception otherwise.</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><em>block, window</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id1">
+<code class="sig-name descname">bounds</code><a class="headerlink" href="rasterio._base.html#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the lower left and upper right bounds of the dataset
+in the units of its coordinate reference system.</p>
+<p>The returned value is a tuple:
+(lower left x, lower left y, upper right x, upper right y)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.checksum">
+<code class="sig-name descname">checksum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.checksum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute an integer checksum for the stored band</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bidx</strong> (<em>int</em>) – The band’s index (1-indexed).</p></li>
+<li><p><strong>window</strong> (<em>tuple</em><em>, </em><em>optional</em>) – A window of the band. Default is the entire extent of the band.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>An int.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the dataset</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id2">
+<code class="sig-name descname">closed</code><a class="headerlink" href="rasterio._base.html#id2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the dataset is closed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id3">
+<code class="sig-name descname">colorinterp</code><a class="headerlink" href="rasterio._base.html#id3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a sequence of <code class="docutils literal notranslate"><span class="pre">ColorInterp.&lt;enum&gt;</span></code> representing
+color interpretation in band order.</p>
+<p>To set color interpretation, provide a sequence of
+<code class="docutils literal notranslate"><span class="pre">ColorInterp.&lt;enum&gt;</span></code>:</p>
+<blockquote>
+<div><p>import rasterio
+from rasterio.enums import ColorInterp</p>
+<dl class="simple">
+<dt>with rasterio.open(‘rgba.tif’, ‘r+’) as src:</dt><dd><dl class="simple">
+<dt>src.colorinterp = (</dt><dd><p>ColorInterp.red,
+ColorInterp.green,
+ColorInterp.blue,
+ColorInterp.alpha)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.colormap">
+<code class="sig-name descname">colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.colormap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dict containing the colormap for a band or None.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id4">
+<code class="sig-name descname">compression</code><a class="headerlink" href="rasterio._base.html#id4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id5">
+<code class="sig-name descname">count</code><a class="headerlink" href="rasterio._base.html#id5" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of raster bands in the dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id6">
+<code class="sig-name descname">crs</code><a class="headerlink" href="rasterio._base.html#id6" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dataset’s coordinate reference system</p>
+<p>In setting this property, the value may be a CRS object or an
+EPSG:nnnn or WKT string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id7">
+<code class="sig-name descname">descriptions</code><a class="headerlink" href="rasterio._base.html#id7" title="Permalink to this definition">¶</a></dt>
+<dd><p>Descriptions for each dataset band</p>
+<p>To set descriptions, one for each band is required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id8">
+<code class="sig-name descname">driver</code><a class="headerlink" href="rasterio._base.html#id8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.dtypes">
+<code class="sig-name descname">dtypes</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.dtypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data types of each band in index order</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id9">
+<code class="sig-name descname">files</code><a class="headerlink" href="rasterio._base.html#id9" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a sequence of files associated with the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id10">
+<code class="sig-name descname">gcps</code><a class="headerlink" href="rasterio._base.html#id10" title="Permalink to this definition">¶</a></dt>
+<dd><p>ground control points and their coordinate reference system.</p>
+<p>This property is a 2-tuple, or pair: (gcps, crs).</p>
+<dl class="simple">
+<dt>gcps<span class="classifier">list of GroundControlPoint</span></dt><dd><p>Zero or more ground control points.</p>
+</dd>
+<dt>crs: CRS</dt><dd><p>The coordinate reference system of the ground control points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.get_gcps">
+<code class="sig-name descname">get_gcps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.get_gcps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get GCPs and their associated CRS.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.get_nodatavals">
+<code class="sig-name descname">get_nodatavals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.get_nodatavals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.get_tag_item">
+<code class="sig-name descname">get_tag_item</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.get_tag_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns tag item value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ns</strong> (<em>str</em>) – The key for the metadata item to fetch.</p></li>
+<li><p><strong>dm</strong> (<em>str</em>) – The domain to fetch for.</p></li>
+<li><p><strong>bidx</strong> (<em>int</em>) – Band index, starting with 1.</p></li>
+<li><p><strong>ovr</strong> (<em>int</em>) – Overview level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.get_transform">
+<code class="sig-name descname">get_transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.get_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a GDAL geotransform in its native form.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.height">
+<code class="sig-name descname">height</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id11">
+<code class="sig-name descname">indexes</code><a class="headerlink" href="rasterio._base.html#id11" title="Permalink to this definition">¶</a></dt>
+<dd><p>The 1-based indexes of each band in the dataset</p>
+<p>For a 3-band dataset, this property will be <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id12">
+<code class="sig-name descname">interleaving</code><a class="headerlink" href="rasterio._base.html#id12" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.is_tiled">
+<code class="sig-name descname">is_tiled</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.is_tiled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.lnglat">
+<code class="sig-name descname">lnglat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.lnglat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id13">
+<code class="sig-name descname">mask_flag_enums</code><a class="headerlink" href="rasterio._base.html#id13" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets of flags describing the sources of band masks.</p>
+<dl class="simple">
+<dt>all_valid: There are no invalid pixels, all mask values will be</dt><dd><ol class="arabic simple" start="255">
+<li><p>When used this will normally be the only flag set.</p></li>
+</ol>
+</dd>
+<dt>per_dataset: The mask band is shared between all bands on the</dt><dd><p>dataset.</p>
+</dd>
+<dt>alpha: The mask band is actually an alpha band and may have</dt><dd><p>values other than 0 and 255.</p>
+</dd>
+<dt>nodata: Indicates the mask is actually being generated from</dt><dd><p>nodata values (mutually exclusive of “alpha”).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>One list of rasterio.enums.MaskFlags members per band.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list [, list*]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>For a 3 band dataset that has masks derived from nodata values:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span><span class="o">.</span><span class="n">mask_flag_enums</span>
+<span class="go">([&lt;MaskFlags.nodata: 8&gt;], [&lt;MaskFlags.nodata: 8&gt;], [&lt;MaskFlags.nodata: 8&gt;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">band1_flags</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">mask_flag_enums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rasterio</span><span class="o">.</span><span class="n">enums</span><span class="o">.</span><span class="n">MaskFlags</span><span class="o">.</span><span class="n">nodata</span> <span class="ow">in</span> <span class="n">band1_flags</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rasterio</span><span class="o">.</span><span class="n">enums</span><span class="o">.</span><span class="n">MaskFlags</span><span class="o">.</span><span class="n">alpha</span> <span class="ow">in</span> <span class="n">band1_flags</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id14">
+<code class="sig-name descname">meta</code><a class="headerlink" href="rasterio._base.html#id14" title="Permalink to this definition">¶</a></dt>
+<dd><p>The basic metadata of this dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id15">
+<code class="sig-name descname">mode</code><a class="headerlink" href="rasterio._base.html#id15" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id16">
+<code class="sig-name descname">name</code><a class="headerlink" href="rasterio._base.html#id16" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id17">
+<code class="sig-name descname">nodata</code><a class="headerlink" href="rasterio._base.html#id17" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dataset’s single nodata value</p>
+<p class="rubric">Notes</p>
+<p>May be set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id18">
+<code class="sig-name descname">nodatavals</code><a class="headerlink" href="rasterio._base.html#id18" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nodata values for each band</p>
+<p class="rubric">Notes</p>
+<p>This may not be set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.offsets">
+<code class="sig-name descname">offsets</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.offsets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raster offset for each dataset band</p>
+<p>To set offsets, one for each band is required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id19">
+<code class="sig-name descname">options</code><a class="headerlink" href="rasterio._base.html#id19" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.overviews">
+<code class="sig-name descname">overviews</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.overviews" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id20">
+<code class="sig-name descname">photometric</code><a class="headerlink" href="rasterio._base.html#id20" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id21">
+<code class="sig-name descname">profile</code><a class="headerlink" href="rasterio._base.html#id21" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic metadata and creation options of this dataset.</p>
+<p>May be passed as keyword arguments to <cite>rasterio.open()</cite> to
+create a clone of this dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.read_crs">
+<code class="sig-name descname">read_crs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.read_crs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the GDAL dataset’s stored CRS</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.read_transform">
+<code class="sig-name descname">read_transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.read_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the stored GDAL GeoTransform</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id22">
+<code class="sig-name descname">res</code><a class="headerlink" href="rasterio._base.html#id22" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the (width, height) of pixels in the units of its
+coordinate reference system.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.scales">
+<code class="sig-name descname">scales</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.scales" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raster scale for each dataset band</p>
+<p>To set scales, one for each band is required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.shape">
+<code class="sig-name descname">shape</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends the dataset’s life cycle</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id23">
+<code class="sig-name descname">subdatasets</code><a class="headerlink" href="rasterio._base.html#id23" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence of subdatasets</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.tag_namespaces">
+<code class="sig-name descname">tag_namespaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.tag_namespaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of the dataset’s metadata domains.</p>
+<p>Returned items may be passed as <cite>ns</cite> to the tags method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>int</strong><strong>, </strong><strong>optional</strong> (<em>bidx</em>) – Can be used to select a specific band, otherwise the
+dataset’s general metadata domains are returned.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.tags">
+<code class="sig-name descname">tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dict containing copies of the dataset or band’s
+tags.</p>
+<p>Tags are pairs of key and value strings. Tags belong to
+namespaces.  The standard namespaces are: default (None) and
+‘IMAGE_STRUCTURE’.  Applications can create their own additional
+namespaces.</p>
+<p>The optional bidx argument can be used to select the tags of
+a specific band. The optional ns argument can be used to select
+a namespace other than the default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id24">
+<code class="sig-name descname">transform</code><a class="headerlink" href="rasterio._base.html#id24" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dataset’s georeferencing transformation matrix</p>
+<p>This transform maps pixel row/column coordinates to coordinates
+in the dataset’s coordinate reference system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Affine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id25">
+<code class="sig-name descname">units</code><a class="headerlink" href="rasterio._base.html#id25" title="Permalink to this definition">¶</a></dt>
+<dd><p>one units string for each dataset band</p>
+<p>Possible values include ‘meters’ or ‘degC’. See the Pint
+project for a suggested list of units.</p>
+<p>To set units, one for each band is required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>A list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="rasterio._base.DatasetBase.width">
+<code class="sig-name descname">width</code><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._base.DatasetBase.write_transform">
+<code class="sig-name descname">write_transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.DatasetBase.write_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._base.check_gdal_version">
+<code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">check_gdal_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.check_gdal_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the major and minor versions match.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._base.driver_can_create">
+<code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">driver_can_create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.driver_can_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the driver has CREATE capability</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._base.driver_can_create_copy">
+<code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">driver_can_create_copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.driver_can_create_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the driver has CREATE_COPY capability</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._base.driver_supports_mode">
+<code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">driver_supports_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.driver_supports_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the driver supports the mode</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._base.gdal_version">
+<code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">gdal_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.gdal_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the version as a major.minor.patchlevel string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._base.get_dataset_driver">
+<code class="sig-prename descclassname">rasterio._base.</code><code class="sig-name descname">get_dataset_driver</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._base.html#rasterio._base.get_dataset_driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the name of the driver that opens a dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference internal" href="rasterio.path.html#rasterio.path.Path" title="rasterio.path.Path"><em>rasterio.path.Path</em></a><em> or </em><em>str</em>) – A remote or local dataset path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rasterio._crs.html" class="btn btn-neutral float-right" title="rasterio._crs module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rasterio.rio.warp.html" class="btn btn-neutral float-left" title="rasterio.rio.warp module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Mapbox
+      
+        <span class="commit">
+          Revision <code>3ae51c8e</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="../index.html">latest</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/en/stable/">stable</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/pdf/">pdf</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/htmlzip/">html</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/epub/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="https://readthedocs.org/projects/rasterio/?fromdocs=rasterio">Project Home</a>
+          </dd>
+          <dd>
+            <a href="https://readthedocs.org/builds/rasterio/?fromdocs=rasterio">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>

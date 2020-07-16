@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Color &mdash; rasterio  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Concurrent processing" href="concurrency.html" />
+    <link rel="prev" title="Using rio-calc" href="calc.html" /> 
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="color.html" />
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2020-07-08T18:00:58Z", "builder": "sphinx", "canonical_url": "https://rasterio.readthedocs.io/en/latest/", "commit": "3ae51c8e", "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "topics/color", "programming_language": "py", "project": "rasterio", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rasterio
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Python Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="calc.html">Using rio-calc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="color.html#">Color</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="color.html#color-interpretation">Color interpretation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#writing-colormaps">Writing colormaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#reading-colormaps">Reading colormaps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="concurrency.html">Concurrent processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">GDAL Option Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">Advanced Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="errors.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html">Vector Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fillnodata.html">Filling nodata areas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="georeferencing.html">Georeferencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_options.html">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_processing.html">Interoperability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="masking-by-shapefile.html">Masking a raster using a shapefile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="masks.html">Nodata Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-files.html">In-Memory Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-to-v1.html">Migrating to Rasterio 1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overviews.html">Overviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html">Plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html">Profiles and Writing Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading.html">Reading Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproject.html">Reprojection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resampling.html">Resampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="switch.html">Switching from GDAL’s Python bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tags.html">Tagging datasets and bands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtual-warping.html">Virtual Warping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vsi.html">Virtual Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windowed-rw.html">Windowed reading and writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html">Writing Datasets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Python API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rasterio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Advanced Topics</a> &raquo;</li>
+        
+      <li>Color</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/mapbox/rasterio/blob/master/docs/topics/color.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="color">
+<h1>Color<a class="headerlink" href="color.html#color" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="color-interpretation">
+<h2>Color interpretation<a class="headerlink" href="color.html#color-interpretation" title="Permalink to this headline">¶</a></h2>
+<p>Color interpretation of raster bands can be read from the dataset</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;tests/data/RGB.byte.tif&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">colorinterp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;ColorInterp.red: 3&gt;</span>
+</pre></div>
+</div>
+<p>GDAL builds the color interpretation based on the driver and creation options.
+With the <code class="docutils literal notranslate"><span class="pre">GTiff</span></code> driver, rasters with exactly 3 bands of uint8 type will be RGB,
+4 bands of uint8 will be RGBA by default.</p>
+<p>Color interpretation can be set when creating a new datasource with the
+<code class="docutils literal notranslate"><span class="pre">photometric</span></code> creation option:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;photometric&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RGB&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;/tmp/rgb.tif&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>or via the <code class="docutils literal notranslate"><span class="pre">colorinterp</span></code> property when a datasource is opened in
+update mode:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">ColorInterp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/tmp/rgb.tif&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">src</span><span class="o">.</span><span class="n">colorinterp</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>        <span class="n">ColorInterp</span><span class="o">.</span><span class="n">red</span><span class="p">,</span> <span class="n">ColorInterp</span><span class="o">.</span><span class="n">green</span><span class="p">,</span> <span class="n">ColorInterp</span><span class="o">.</span><span class="n">blue</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>And the resulting raster will be interpretted as RGB.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;/tmp/rgb.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">src2</span><span class="o">.</span><span class="n">colorinterp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&lt;ColorInterp.green: 4&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing-colormaps">
+<h2>Writing colormaps<a class="headerlink" href="color.html#writing-colormaps" title="Permalink to this headline">¶</a></h2>
+<p>Mappings from 8-bit (rasterio.uint8) pixel values to RGBA values can be attached
+to bands using the <code class="docutils literal notranslate"><span class="pre">write_colormap()</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rasterio</span>
+
+<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;tests/data/shade.tif&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">shade</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/tmp/colormap.tif&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">shade</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write_colormap</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="p">{</span>
+                <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                <span class="mi">255</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span> <span class="p">})</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">colormap</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># True</span>
+        <span class="k">assert</span> <span class="n">cmap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+        <span class="c1"># True</span>
+        <span class="k">assert</span> <span class="n">cmap</span><span class="p">[</span><span class="mi">255</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+
+<span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="s1">&#39;/tmp/colormap.tif&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The program above (on OS X, another viewer is needed with a different OS)
+yields the image below:</p>
+<a class="reference internal image-reference" href="http://farm8.staticflickr.com/7391/12443115173_80ecca89db_d.jpg"><img alt="http://farm8.staticflickr.com/7391/12443115173_80ecca89db_d.jpg" src="http://farm8.staticflickr.com/7391/12443115173_80ecca89db_d.jpg" style="width: 500px; height: 500px;" /></a>
+</div>
+<div class="section" id="reading-colormaps">
+<h2>Reading colormaps<a class="headerlink" href="color.html#reading-colormaps" title="Permalink to this headline">¶</a></h2>
+<p>As shown above, the <code class="docutils literal notranslate"><span class="pre">colormap()</span></code> returns a dict holding the colormap for the
+given band index. For TIFF format files, the colormap will have 256 items, and
+all but two of those would map to (0, 0, 0, 0) in the example above.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="concurrency.html" class="btn btn-neutral float-right" title="Concurrent processing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="calc.html" class="btn btn-neutral float-left" title="Using rio-calc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Mapbox
+      
+        <span class="commit">
+          Revision <code>3ae51c8e</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="../index.html">latest</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/en/stable/">stable</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/pdf/">pdf</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/htmlzip/">html</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/epub/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="https://readthedocs.org/projects/rasterio/?fromdocs=rasterio">Project Home</a>
+          </dd>
+          <dd>
+            <a href="https://readthedocs.org/builds/rasterio/?fromdocs=rasterio">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>

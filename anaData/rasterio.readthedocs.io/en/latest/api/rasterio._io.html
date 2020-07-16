@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rasterio._io module &mdash; rasterio  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rasterio._warp module" href="rasterio._warp.html" />
+    <link rel="prev" title="rasterio._fill module" href="rasterio._fill.html" /> 
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="rasterio._io.html" />
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2020-07-08T18:00:54Z", "builder": "sphinx", "canonical_url": "https://rasterio.readthedocs.io/en/latest/", "commit": "3ae51c8e", "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "api/rasterio._io", "programming_language": "py", "project": "rasterio", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rasterio
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Python Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Python API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="rasterio.html">rasterio package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="rasterio.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="rasterio._base.html">rasterio._base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._crs.html">rasterio._crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._env.html">rasterio._env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._err.html">rasterio._err module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._example.html">rasterio._example module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._features.html">rasterio._features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._fill.html">rasterio._fill module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="rasterio._io.html#">rasterio._io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._warp.html">rasterio._warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.compat.html">rasterio.compat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.control.html">rasterio.control module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.coords.html">rasterio.coords module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.crs.html">rasterio.crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.drivers.html">rasterio.drivers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.dtypes.html">rasterio.dtypes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.enums.html">rasterio.enums module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.env.html">rasterio.env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.errors.html">rasterio.errors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.features.html">rasterio.features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.fill.html">rasterio.fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.io.html">rasterio.io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.mask.html">rasterio.mask module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.merge.html">rasterio.merge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.path.html">rasterio.path module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.plot.html">rasterio.plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.profiles.html">rasterio.profiles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.sample.html">rasterio.sample module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.shutil.html">rasterio.shutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.tools.html">rasterio.tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.transform.html">rasterio.transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.vrt.html">rasterio.vrt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.warp.html">rasterio.warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.windows.html">rasterio.windows module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#module-rasterio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rasterio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Python API Reference</a> &raquo;</li>
+        
+          <li><a href="rasterio.html">rasterio package</a> &raquo;</li>
+        
+      <li>rasterio._io module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/mapbox/rasterio/blob/master/docs/api/rasterio._io.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-rasterio._io">
+<span id="rasterio-io-module"></span><h1>rasterio._io module<a class="headerlink" href="rasterio._io.html#module-rasterio._io" title="Permalink to this headline">¶</a></h1>
+<p>Rasterio input/output.</p>
+<dl class="py class">
+<dt id="rasterio._io.BufferedDatasetWriterBase">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">BufferedDatasetWriterBase</code><a class="headerlink" href="rasterio._io.html#rasterio._io.BufferedDatasetWriterBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="rasterio._io.html#rasterio._io.DatasetWriterBase" title="rasterio._io.DatasetWriterBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio._io.DatasetWriterBase</span></code></a></p>
+<dl class="py method">
+<dt id="rasterio._io.BufferedDatasetWriterBase.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.BufferedDatasetWriterBase.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends the dataset’s life cycle</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio._io.DatasetReaderBase">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">DatasetReaderBase</code><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetReaderBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="rasterio._base.html#rasterio._base.DatasetBase" title="rasterio._base.DatasetBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio._base.DatasetBase</span></code></a></p>
+<dl class="py method">
+<dt id="rasterio._io.DatasetReaderBase.dataset_mask">
+<code class="sig-name descname">dataset_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetReaderBase.dataset_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dataset’s 2D valid data mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out</strong> (<em>numpy ndarray</em><em>, </em><em>optional</em>) – <p>As with Numpy ufuncs, this is an optional reference to an
+output array with the same dimensions and shape into which
+data will be placed.</p>
+<p><em>Note</em>: the method’s return value may be a view on this
+array. In other words, <cite>out</cite> is likely to be an
+incomplete representation of the method’s results.</p>
+<p>Cannot be combined with <cite>out_shape</cite>.</p>
+</p></li>
+<li><p><strong>out_shape</strong> (<em>tuple</em><em>, </em><em>optional</em>) – <p>A tuple describing the output array’s shape.  Allows for decimated
+reads without constructing an output Numpy array.</p>
+<p>Cannot be combined with <cite>out</cite>.</p>
+</p></li>
+<li><p><strong>window</strong> (<em>a pair</em><em> (</em><em>tuple</em><em>) </em><em>of pairs of ints</em><em> or </em><a class="reference internal" href="rasterio.windows.html#rasterio.windows.Window" title="rasterio.windows.Window"><em>Window</em></a><em>, </em><em>optional</em>) – The optional <cite>window</cite> argument is a 2 item tuple. The first
+item is a tuple containing the indexes of the rows at which
+the window starts and stops and the second is a tuple
+containing the indexes of the columns at which the window
+starts and stops. For example, ((0, 2), (0, 2)) defines
+a 2x2 window at the upper left of the raster dataset.</p></li>
+<li><p><strong>boundless</strong> (bool, optional (default <cite>False</cite>)) – If <cite>True</cite>, windows that extend beyond the dataset’s extent
+are permitted and partially or completely filled arrays will
+be returned as appropriate.</p></li>
+<li><p><strong>resampling</strong> (<a class="reference internal" href="rasterio.enums.html#rasterio.enums.Resampling" title="rasterio.enums.Resampling"><em>Resampling</em></a>) – By default, pixel values are read raw or interpolated using
+a nearest neighbor algorithm from the band cache. Other
+resampling algorithms may be specified. Resampled pixels
+are not cached.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The dtype of this array is uint8. 0 = nodata, 255 = valid
+data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Numpy ndarray or a view on a Numpy ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Note: as with Numpy ufuncs, an object is returned even if you
+use the optional <cite>out</cite> argument and the return value shall be
+preferentially used by callers.</p>
+<p>The dataset mask is calculated based on the individual band
+masks according to the following logic, in order of precedence:</p>
+<ol class="arabic simple">
+<li><p>If a .msk file, dataset-wide alpha, or internal mask exists
+it will be used for the dataset mask.</p></li>
+<li><p>Else if the dataset is a 4-band  with a shadow nodata value, band 4 will be
+used as the dataset mask.</p></li>
+<li><p>If a nodata value exists, use the binary OR (|) of the band
+masks 4. If no nodata value exists, return a mask filled with
+255.</p></li>
+</ol>
+<p>Note that this differs from read_masks and GDAL RFC15 in that it
+applies per-dataset, not per-band (see
+<a class="reference external" href="https://trac.osgeo.org/gdal/wiki/rfc15_nodatabitmask">https://trac.osgeo.org/gdal/wiki/rfc15_nodatabitmask</a>)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetReaderBase.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetReaderBase.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a dataset’s raw pixels as an N-d array</p>
+<p>This data is read from the dataset’s band cache, which means
+that repeated reads of the same windows may avoid I/O.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indexes</strong> (<em>list of ints</em><em> or </em><em>a single int</em><em>, </em><em>optional</em>) – If <cite>indexes</cite> is a list, the result is a 3D array, but is
+a 2D array if it is a band index number.</p></li>
+<li><p><strong>out</strong> (<em>numpy ndarray</em><em>, </em><em>optional</em>) – <p>As with Numpy ufuncs, this is an optional reference to an
+output array into which data will be placed. If the height
+and width of <cite>out</cite> differ from that of the specified
+window (see below), the raster image will be decimated or
+replicated using the specified resampling method (also see
+below).</p>
+<p><em>Note</em>: the method’s return value may be a view on this
+array. In other words, <cite>out</cite> is likely to be an
+incomplete representation of the method’s results.</p>
+<p>This parameter cannot be combined with <cite>out_shape</cite>.</p>
+</p></li>
+<li><p><strong>out_dtype</strong> (<em>str</em><em> or </em><em>numpy dtype</em>) – The desired output data type. For example: ‘uint8’ or
+rasterio.uint16.</p></li>
+<li><p><strong>out_shape</strong> (<em>tuple</em><em>, </em><em>optional</em>) – <p>A tuple describing the shape of a new output array. See
+<cite>out</cite> (above) for notes on image decimation and
+replication.</p>
+<p>Cannot combined with <cite>out</cite>.</p>
+</p></li>
+<li><p><strong>window</strong> (<em>a pair</em><em> (</em><em>tuple</em><em>) </em><em>of pairs of ints</em><em> or </em><a class="reference internal" href="rasterio.windows.html#rasterio.windows.Window" title="rasterio.windows.Window"><em>Window</em></a><em>, </em><em>optional</em>) – The optional <cite>window</cite> argument is a 2 item tuple. The first
+item is a tuple containing the indexes of the rows at which
+the window starts and stops and the second is a tuple
+containing the indexes of the columns at which the window
+starts and stops. For example, ((0, 2), (0, 2)) defines
+a 2x2 window at the upper left of the raster dataset.</p></li>
+<li><p><strong>masked</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <cite>masked</cite> is <cite>True</cite> the return value will be a masked
+array. Otherwise (the default) the return value will be a
+regular array. Masks will be exactly the inverse of the
+GDAL RFC 15 conforming arrays returned by read_masks().</p></li>
+<li><p><strong>boundless</strong> (bool, optional (default <cite>False</cite>)) – If <cite>True</cite>, windows that extend beyond the dataset’s extent
+are permitted and partially or completely filled arrays will
+be returned as appropriate.</p></li>
+<li><p><strong>resampling</strong> (<a class="reference internal" href="rasterio.enums.html#rasterio.enums.Resampling" title="rasterio.enums.Resampling"><em>Resampling</em></a>) – By default, pixel values are read raw or interpolated using
+a nearest neighbor algorithm from the band cache. Other
+resampling algorithms may be specified. Resampled pixels
+are not cached.</p></li>
+<li><p><strong>fill_value</strong> (<em>scalar</em>) – Fill value applied in the <cite>boundless=True</cite> case only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Numpy ndarray or a view on a Numpy ndarray</em></p></li>
+<li><p><strong>Note</strong> (<em>as with Numpy ufuncs, an object is returned even if you</em>)</p></li>
+<li><p>use the optional <cite>out</cite> argument and the return value shall be</p></li>
+<li><p><em>preferentially used by callers.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetReaderBase.read_masks">
+<code class="sig-name descname">read_masks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetReaderBase.read_masks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read raster band masks as a multidimensional array</p>
+<p>This data is read from the dataset’s band cache, which means
+that repeated reads of the same windows may avoid I/O.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indexes</strong> (<em>list of ints</em><em> or </em><em>a single int</em><em>, </em><em>optional</em>) – If <cite>indexes</cite> is a list, the result is a 3D array, but is
+a 2D array if it is a band index number.</p></li>
+<li><p><strong>out</strong> (<em>numpy ndarray</em><em>, </em><em>optional</em>) – <p>As with Numpy ufuncs, this is an optional reference to an
+output array with the same dimensions and shape into which
+data will be placed.</p>
+<p><em>Note</em>: the method’s return value may be a view on this
+array. In other words, <cite>out</cite> is likely to be an
+incomplete representation of the method’s results.</p>
+<p>Cannot combine with <cite>out_shape</cite>.</p>
+</p></li>
+<li><p><strong>out_shape</strong> (<em>tuple</em><em>, </em><em>optional</em>) – <p>A tuple describing the output array’s shape.  Allows for decimated
+reads without constructing an output Numpy array.</p>
+<p>Cannot combined with <cite>out</cite>.</p>
+</p></li>
+<li><p><strong>window</strong> (<em>a pair</em><em> (</em><em>tuple</em><em>) </em><em>of pairs of ints</em><em> or </em><a class="reference internal" href="rasterio.windows.html#rasterio.windows.Window" title="rasterio.windows.Window"><em>Window</em></a><em>, </em><em>optional</em>) – The optional <cite>window</cite> argument is a 2 item tuple. The first
+item is a tuple containing the indexes of the rows at which
+the window starts and stops and the second is a tuple
+containing the indexes of the columns at which the window
+starts and stops. For example, ((0, 2), (0, 2)) defines
+a 2x2 window at the upper left of the raster dataset.</p></li>
+<li><p><strong>boundless</strong> (bool, optional (default <cite>False</cite>)) – If <cite>True</cite>, windows that extend beyond the dataset’s extent
+are permitted and partially or completely filled arrays will
+be returned as appropriate.</p></li>
+<li><p><strong>resampling</strong> (<a class="reference internal" href="rasterio.enums.html#rasterio.enums.Resampling" title="rasterio.enums.Resampling"><em>Resampling</em></a>) – By default, pixel values are read raw or interpolated using
+a nearest neighbor algorithm from the band cache. Other
+resampling algorithms may be specified. Resampled pixels
+are not cached.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Numpy ndarray or a view on a Numpy ndarray</em></p></li>
+<li><p><strong>Note</strong> (<em>as with Numpy ufuncs, an object is returned even if you</em>)</p></li>
+<li><p>use the optional <cite>out</cite> argument and the return value shall be</p></li>
+<li><p><em>preferentially used by callers.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetReaderBase.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetReaderBase.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the values of a dataset at certain positions</p>
+<p>Values are from the nearest pixel. They are not interpolated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xy</strong> (<em>iterable</em>) – Pairs of x, y coordinates (floats) in the dataset’s
+reference system.</p></li>
+<li><p><strong>indexes</strong> (<em>int</em><em> or </em><em>list of int</em>) – Indexes of dataset bands to sample.</p></li>
+<li><p><strong>masked</strong> (<em>bool</em><em>, </em><em>default: False</em>) – Whether to mask samples that fall outside the extent of the
+dataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Arrays of length equal to the number of specified indexes
+containing the dataset values for the bands corresponding to
+those indexes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio._io.DatasetWriterBase">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">DatasetWriterBase</code><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="rasterio._io.html#rasterio._io.DatasetReaderBase" title="rasterio._io.DatasetReaderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio._io.DatasetReaderBase</span></code></a></p>
+<p>Read-write access to raster data and metadata</p>
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.build_overviews">
+<code class="sig-name descname">build_overviews</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.build_overviews" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build overviews at one or more decimation factors for all
+bands of the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.set_band_description">
+<code class="sig-name descname">set_band_description</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.set_band_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the description of a dataset band.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bidx</strong> (<em>int</em>) – Index of the band (starting with 1).</p></li>
+<li><p><strong>value</strong> (<em>string</em>) – A description of the band.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.set_band_unit">
+<code class="sig-name descname">set_band_unit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.set_band_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the unit of measure of a dataset band.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bidx</strong> (<em>int</em>) – Index of the band (starting with 1).</p></li>
+<li><p><strong>value</strong> (<em>string</em>) – A label for the band’s unit of measure such as ‘meters’ or
+‘degC’.  See the Pint project for a suggested list of units.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends the dataset’s life cycle</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.update_tags">
+<code class="sig-name descname">update_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.update_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the tags of a dataset or one of its bands.</p>
+<p>Tags are pairs of key and value strings. Tags belong to
+namespaces.  The standard namespaces are: default (None) and
+‘IMAGE_STRUCTURE’.  Applications can create their own additional
+namespaces.</p>
+<p>The optional bidx argument can be used to select the dataset
+band. The optional ns argument can be used to select a namespace
+other than the default.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the src array into indexed bands of the dataset.</p>
+<p>If <cite>indexes</cite> is a list, the src must be a 3D array of
+matching shape. If an int, the src must be a 2D array.</p>
+<p>See <cite>read()</cite> for usage of the optional <cite>window</cite> argument.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.write_band">
+<code class="sig-name descname">write_band</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.write_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the src array into the <cite>bidx</cite> band.</p>
+<p>Band indexes begin with 1: read_band(1) returns the first band.</p>
+<p>The optional <cite>window</cite> argument takes a tuple like:</p>
+<blockquote>
+<div><p>((row_start, row_stop), (col_start, col_stop))</p>
+</div></blockquote>
+<p>specifying a raster subset to write into.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.write_colormap">
+<code class="sig-name descname">write_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.write_colormap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a colormap for a band to the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.write_mask">
+<code class="sig-name descname">write_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.write_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the valid data mask src array into the dataset’s band
+mask.</p>
+<p>The optional <cite>window</cite> argument takes a tuple like:</p>
+<blockquote>
+<div><p>((row_start, row_stop), (col_start, col_stop))</p>
+</div></blockquote>
+<p>specifying a raster subset to write into.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.DatasetWriterBase.write_transform">
+<code class="sig-name descname">write_transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.DatasetWriterBase.write_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio._io.InMemoryRaster">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">InMemoryRaster</code><a class="headerlink" href="rasterio._io.html#rasterio._io.InMemoryRaster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that manages a single-band in memory GDAL raster dataset.  Data type
+is determined from the data type of the input numpy 2D array (image), and
+must be one of the data types supported by GDAL
+(see rasterio.dtypes.dtype_rev).  Data are populated at create time from
+the 2D array passed in.</p>
+<p>Use the ‘with’ pattern to instantiate this class for automatic closing
+of the memory dataset.</p>
+<p>This class includes attributes that are intended to be passed into GDAL
+functions:
+self.dataset
+self.band
+self.band_ids  (single element array with band ID of this dataset’s band)
+self.transform (GDAL compatible transform array)</p>
+<p>This class is only intended for internal use within rasterio to support
+IO with GDAL.  Other memory based operations should use numpy arrays.</p>
+<dl class="py method">
+<dt id="rasterio._io.InMemoryRaster.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.InMemoryRaster.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.InMemoryRaster.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.InMemoryRaster.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.InMemoryRaster.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.InMemoryRaster.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="rasterio._io.MemoryFileBase">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">MemoryFileBase</code><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base for a BytesIO-like class backed by an in-memory file.</p>
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.exists">
+<code class="sig-name descname">exists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the in-memory file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the in-memory file exists.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.getbuffer">
+<code class="sig-name descname">getbuffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.getbuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a view on bytes of the file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read size bytes from MemoryFile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.seek">
+<code class="sig-name descname">seek</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.seek" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.tell">
+<code class="sig-name descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.tell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="rasterio._io.MemoryFileBase.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.MemoryFileBase.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write data bytes to MemoryFile</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._io.silence_errors">
+<code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">silence_errors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.silence_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intercept GDAL errors</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio._io.virtual_file_to_buffer">
+<code class="sig-prename descclassname">rasterio._io.</code><code class="sig-name descname">virtual_file_to_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio._io.html#rasterio._io.virtual_file_to_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read content of a virtual file into a Python bytes buffer.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rasterio._warp.html" class="btn btn-neutral float-right" title="rasterio._warp module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rasterio._fill.html" class="btn btn-neutral float-left" title="rasterio._fill module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Mapbox
+      
+        <span class="commit">
+          Revision <code>3ae51c8e</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="../index.html">latest</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/en/stable/">stable</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/pdf/">pdf</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/htmlzip/">html</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/epub/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="https://readthedocs.org/projects/rasterio/?fromdocs=rasterio">Project Home</a>
+          </dd>
+          <dd>
+            <a href="https://readthedocs.org/builds/rasterio/?fromdocs=rasterio">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>

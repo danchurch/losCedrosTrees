@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rasterio.crs module &mdash; rasterio  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rasterio.drivers module" href="rasterio.drivers.html" />
+    <link rel="prev" title="rasterio.coords module" href="rasterio.coords.html" /> 
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="rasterio.crs.html" />
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": false, "api_host": "https://readthedocs.org", "build_date": "2020-07-08T18:00:54Z", "builder": "sphinx", "canonical_url": "https://rasterio.readthedocs.io/en/latest/", "commit": "3ae51c8e", "docroot": "/docs/", "features": {"docsearch_disabled": false}, "global_analytics_code": "UA-17997319-1", "language": "en", "page": "api/rasterio.crs", "programming_language": "py", "project": "rasterio", "proxied_api_host": "/_", "source_suffix": ".rst", "subprojects": {}, "theme": "sphinx_rtd_theme", "user_analytics_code": "", "version": "latest"}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rasterio
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Python Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command Line User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topics/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Python API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="rasterio.html">rasterio package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="rasterio.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="rasterio._base.html">rasterio._base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._crs.html">rasterio._crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._env.html">rasterio._env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._err.html">rasterio._err module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._example.html">rasterio._example module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._features.html">rasterio._features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._fill.html">rasterio._fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._io.html">rasterio._io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio._warp.html">rasterio._warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.compat.html">rasterio.compat module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.control.html">rasterio.control module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.coords.html">rasterio.coords module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="rasterio.crs.html#">rasterio.crs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.drivers.html">rasterio.drivers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.dtypes.html">rasterio.dtypes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.enums.html">rasterio.enums module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.env.html">rasterio.env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.errors.html">rasterio.errors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.features.html">rasterio.features module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.fill.html">rasterio.fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.io.html">rasterio.io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.mask.html">rasterio.mask module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.merge.html">rasterio.merge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.path.html">rasterio.path module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.plot.html">rasterio.plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.profiles.html">rasterio.profiles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.sample.html">rasterio.sample module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.shutil.html">rasterio.shutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.tools.html">rasterio.tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.transform.html">rasterio.transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.vrt.html">rasterio.vrt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.warp.html">rasterio.warp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rasterio.windows.html">rasterio.windows module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rasterio.html#module-rasterio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rasterio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Python API Reference</a> &raquo;</li>
+        
+          <li><a href="rasterio.html">rasterio package</a> &raquo;</li>
+        
+      <li>rasterio.crs module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/mapbox/rasterio/blob/master/docs/api/rasterio.crs.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-rasterio.crs">
+<span id="rasterio-crs-module"></span><h1>rasterio.crs module<a class="headerlink" href="rasterio.crs.html#module-rasterio.crs" title="Permalink to this headline">¶</a></h1>
+<p>Coordinate Reference Systems</p>
+<p class="rubric">Notes</p>
+<p>In Rasterio versions &lt;= 1.0.13, coordinate reference system support was limited
+to the CRS that can be described by PROJ parameters. This limitation is gone in
+versions &gt;= 1.0.14. Any CRS that can be defined using WKT (version 1) may be
+used.</p>
+<dl class="py class">
+<dt id="rasterio.crs.CRS">
+<em class="property">class </em><code class="sig-prename descclassname">rasterio.crs.</code><code class="sig-name descname">CRS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">initialdata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code></p>
+<p>A geographic or projected coordinate reference system</p>
+<p>CRS objects may be created by passing PROJ parameters as keyword
+arguments to the standard constructor or by passing EPSG codes, PROJ
+mappings, PROJ strings, or WKT strings to the from_epsg, from_dict,
+from_string, or from_wkt class methods or static methods.</p>
+<p class="rubric">Examples</p>
+<p>The from_dict method takes PROJ parameters as keyword arguments.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="s1">&#39;epsg:3005&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>EPSG codes may be used with the from_epsg method.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="n">from_epsg</span><span class="p">(</span><span class="mi">3005</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The from_string method takes a variety of input.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s1">&#39;EPSG:3005&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="rasterio.crs.CRS.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A PROJ4 dict representation of the CRS</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">initialdata</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a CRS from a PROJ dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initialdata</strong> (<em>mapping</em><em>, </em><em>optional</em>) – A dictionary or other mapping</p></li>
+<li><p><strong>kwargs</strong> (<em>mapping</em><em>, </em><em>optional</em>) – Another mapping. Will be overlaid on the initialdata.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.from_epsg">
+<em class="property">classmethod </em><code class="sig-name descname">from_epsg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.from_epsg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a CRS from an EPSG code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>code</strong> (<em>int</em><em> or </em><em>str</em>) – An EPSG code. Strings will be converted to integers.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The input code is not validated against an EPSG database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.from_proj4">
+<em class="property">classmethod </em><code class="sig-name descname">from_proj4</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proj</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.from_proj4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a CRS from a PROJ4 string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>proj</strong> (<em>str</em>) – A PROJ4 string like “+proj=longlat …”</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.from_string">
+<em class="property">classmethod </em><code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">morph_from_esri_dialect</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a CRS from an EPSG, PROJ, or WKT string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> (<em>str</em>) – An EPSG, PROJ, or WKT string.</p></li>
+<li><p><strong>morph_from_esri_dialect</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, items in the input using Esri’s dialect of WKT
+will be replaced by OGC standard equivalents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.from_user_input">
+<em class="property">classmethod </em><code class="sig-name descname">from_user_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">morph_from_esri_dialect</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.from_user_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a CRS from various input</p>
+<p>Dispatches to from_epsg, from_proj, or from_string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>obj</em>) – A Python int, dict, or str.</p></li>
+<li><p><strong>morph_from_esri_dialect</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, items in the input using Esri’s dialect of WKT
+will be replaced by OGC standard equivalents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.from_wkt">
+<em class="property">classmethod </em><code class="sig-name descname">from_wkt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wkt</span></em>, <em class="sig-param"><span class="n">morph_from_esri_dialect</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.from_wkt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a CRS from a WKT string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wkt</strong> (<em>str</em>) – A WKT string.</p></li>
+<li><p><strong>morph_from_esri_dialect</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, items in the input using Esri’s dialect of WKT
+will be replaced by OGC standard equivalents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS">CRS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.is_epsg_code">
+<em class="property">property </em><code class="sig-name descname">is_epsg_code</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.is_epsg_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the CRS is defined by an EPSG code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.is_geographic">
+<em class="property">property </em><code class="sig-name descname">is_geographic</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.is_geographic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that the CRS is a geographic CRS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.is_projected">
+<em class="property">property </em><code class="sig-name descname">is_projected</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.is_projected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that the CRS is a projected CRS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.is_valid">
+<em class="property">property </em><code class="sig-name descname">is_valid</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that the CRS is a geographic or projected CRS</p>
+<p class="rubric">Notes</p>
+<p>There are other types of CRS, such as compound or local or
+engineering CRS, but these are not supported in Rasterio 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.linear_units">
+<em class="property">property </em><code class="sig-name descname">linear_units</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.linear_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>The linear units of the CRS</p>
+<p>Possible values include “metre” and “US survey foot”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.linear_units_factor">
+<em class="property">property </em><code class="sig-name descname">linear_units_factor</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.linear_units_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>The linear units of the CRS and the conversion factor to meters.</p>
+<p>The first element of the tuple is a string, its possible values
+include “metre” and “US survey foot”.
+The second element of the tuple is a float that represent the conversion
+factor of the raster units to meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert CRS to a PROJ4 dict</p>
+<p class="rubric">Notes</p>
+<p>If there is a corresponding EPSG code, it will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.to_epsg">
+<code class="sig-name descname">to_epsg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.to_epsg" title="Permalink to this definition">¶</a></dt>
+<dd><p>The epsg code of the CRS</p>
+<p>Returns None if there is no corresponding EPSG code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.to_proj4">
+<code class="sig-name descname">to_proj4</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.to_proj4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert CRS to a PROJ4 string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.to_string">
+<code class="sig-name descname">to_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert CRS to a PROJ4 or WKT string</p>
+<p class="rubric">Notes</p>
+<p>Mapping keys are tested against the <code class="docutils literal notranslate"><span class="pre">all_proj_keys</span></code> list.
+Values of <code class="docutils literal notranslate"><span class="pre">True</span></code> are omitted, leaving the key bare:
+{‘no_defs’: True} -&gt; “+no_defs” and items where the value is
+otherwise not a str, int, or float are omitted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.to_wkt">
+<code class="sig-name descname">to_wkt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">morph_to_esri_dialect</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.to_wkt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert CRS to its OGC WKT representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>morph_to_esri_dialect</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to morph to the Esri dialect of WKT</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="rasterio.crs.CRS.wkt">
+<em class="property">property </em><code class="sig-name descname">wkt</code><a class="headerlink" href="rasterio.crs.html#rasterio.crs.CRS.wkt" title="Permalink to this definition">¶</a></dt>
+<dd><p>An OGC WKT representation of the CRS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio.crs.epsg_treats_as_latlong">
+<code class="sig-prename descclassname">rasterio.crs.</code><code class="sig-name descname">epsg_treats_as_latlong</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.epsg_treats_as_latlong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the CRS is in latlon order</p>
+<p>From GDAL docs:</p>
+<p>&gt; This method returns TRUE if EPSG feels this geographic coordinate
+system should be treated as having lat/long coordinate ordering.</p>
+<p>&gt; Currently this returns TRUE for all geographic coordinate systems with
+an EPSG code set, and axes set defining it as lat, long.</p>
+<p>&gt; FALSE will be returned for all coordinate systems that are not
+geographic, or that do not have an EPSG code set.</p>
+<p>&gt; <strong>Note</strong></p>
+<p>&gt; Important change of behavior since GDAL 3.0.
+In previous versions, geographic CRS imported with importFromEPSG()
+would cause this method to return FALSE on them, whereas now it returns
+TRUE, since importFromEPSG() is now equivalent to importFromEPSGA().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input</strong> (<a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS"><em>CRS</em></a>) – Coordinate reference system, as a rasterio CRS object
+Example: CRS({‘init’: ‘EPSG:4326’})</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="rasterio.crs.epsg_treats_as_northingeasting">
+<code class="sig-prename descclassname">rasterio.crs.</code><code class="sig-name descname">epsg_treats_as_northingeasting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em><span class="sig-paren">)</span><a class="headerlink" href="rasterio.crs.html#rasterio.crs.epsg_treats_as_northingeasting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the CRS should be treated as having northing/easting coordinate ordering</p>
+<p>From GDAL docs:</p>
+<p>&gt; This method returns TRUE if EPSG feels this projected coordinate
+system should be treated as having northing/easting coordinate ordering.</p>
+<p>&gt; Currently this returns TRUE for all projected coordinate systems with
+an EPSG code set, and axes set defining it as northing, easting.</p>
+<p>&gt; FALSE will be returned for all coordinate systems that are not
+projected, or that do not have an EPSG code set.</p>
+<p>&gt; <strong>Note</strong></p>
+<p>&gt; Important change of behavior since GDAL 3.0.
+In previous versions, projected CRS with northing, easting axis order
+imported with importFromEPSG() would cause this method to return FALSE
+on them, whereas now it returns TRUE, since importFromEPSG() is now
+equivalent to importFromEPSGA().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input</strong> (<a class="reference internal" href="rasterio.crs.html#rasterio.crs.CRS" title="rasterio.crs.CRS"><em>CRS</em></a>) – Coordinate reference system, as a rasterio CRS object
+Example: CRS({‘init’: ‘EPSG:4326’})</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rasterio.drivers.html" class="btn btn-neutral float-right" title="rasterio.drivers module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rasterio.coords.html" class="btn btn-neutral float-left" title="rasterio.coords module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Mapbox
+      
+        <span class="commit">
+          Revision <code>3ae51c8e</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl>
+        <dt>Versions</dt>
+        
+          <dd><a href="../index.html">latest</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/en/stable/">stable</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/pdf/">pdf</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/htmlzip/">html</a></dd>
+        
+          <dd><a href="https://rasterio.readthedocs.io/_/downloads/en/latest/epub/">epub</a></dd>
+        
+      </dl>
+      <dl>
+        <dt>On Read the Docs</dt>
+          <dd>
+            <a href="https://readthedocs.org/projects/rasterio/?fromdocs=rasterio">Project Home</a>
+          </dd>
+          <dd>
+            <a href="https://readthedocs.org/builds/rasterio/?fromdocs=rasterio">Builds</a>
+          </dd>
+      </dl>
+      <hr/>
+      Free document hosting provided by <a href="http://www.readthedocs.org">Read the Docs</a>.
+
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+   
+
+</body>
+</html>

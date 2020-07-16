@@ -1564,6 +1564,17 @@ makeClustMap(sPC.ward, k=4, labels='hab')
 
 makeClustMap(sPC.ward, k=5, labels='hab')
 
+legend('bottomright',
+    legend=c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+    pch=c(19, 21, 22, 17, 23)
+)
+
+legend('bottomleft',
+    legend=1:k,
+    pch=c(15),
+    col=1:k,
+    title='ClusterGroup')
+
 ## maybe build a function for this:
 
 ## also get a map behind this? 
@@ -1586,16 +1597,127 @@ makeClustMap(sPC.ward, k=5, labels='hab')
 ## also, wtf do we do with the permanent plot? Can we reconstruct using Danilo + Ana's
 ## data? I still do not understand what Ana did there...
 
+
+############## get python packages ###########
+
+## since internet is limited out here, let's see what packages we 
+## can get while we got it
+
+sudo pip3 install geojson
+sudo pip3 install OGR
+sudo pip3 install PyShp
+sudo pip3 install dbfpy
+sudo pip3 install Shapely
+sudo pip3 install Fiona
+sudo pip3 install GDAL
+sudo pip3 install PIL
+sudo pip3 install PNGCanvas
+sudo pip3 install GeoPandas
+sudo pip3 install PyMySQL
+sudo pip3 install PyFPDF ## didn't work
+sudo pip3 install Rasterio
+sudo pip3 install osmnx ## didn't work
+
+
 ###################### make a map of points  ##############################
 
 ## we want to show the southeastern third of LC, with all of the plots in it
+## we want to show elevation, streams, and our points, with their cluster
+## info and their habitat info
 
-## check symbols
-#png(file='Rpch.png', width=800, height=500)
-par(mfrow=c(1,1))
-plot(1:25, rep(1,25), pch=1:25, cex=3)
-points(1:25, rep(1.1,25), pch=15, cex=3, col=1:25)
-text(1:25, rep(0.9, 25), label=1:25)
-text(1:25, rep(1.1, 25), label=1:25)
-#dev.off()
+## seems like matplotlib makes more sense to me here
+
+import operator
+import os
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from osgeo import gdal, gdal_array, osr
+
+from Pillow import Image ## why can't I import pillow? try fixing this with pip and internet connection
+
+## a good first step is to see if we can read in our geotiffed DEG
+
+## can we just read it in like a normal image?
+
+plt.ion()
+
+ax, fig = plt.subplots(1,1)
+
+#deg="LosCedAster.tif" ## this doesn't. Is it an issue with the tif formatting?
+deg="/home/daniel/Documents/LosCed/Ecuador_GIS/losced/LosCedOldMapGeoReffed/LosCed_topo.png" 
+## yeah, because the above georeffed png works fine
+img=mpimg.imread(deg)
+plt.imshow(img)
+
+## hmm, regardless, we probably need approach this is in a way that maintains 
+## the integrity of the spatial coordinates. The coordinates are lost on png.
+## there must be a way to use matplotlib for spatially explicit data 
+
+## so I think we're jumping on this too early. let's work through a geopandas
+## tutorial. I think we're going to need to do this right. 
+
+
+import pandas as pd 
+import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+import rasterio
+import rasterio.plot
+
+plt.ion()
+
+gpd.datasets.available
+
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres')) 
+
+world.head()
+world.plot()
+
+worldfiltered = world[world.continent == 'Asia']
+worldfiltered.plot()
+worldfiltered.plot(column = 'gdp_md_est', cmap='Reds')
+world.plot(column = 'pop_est')
+
+## that is badass. I love python. 
+
+nybb = gpd.read_file(gpd.datasets.get_path('nybb')) 
+
+cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities')) 
+
+cities.plot()
+
+## this is more like what we need 
+
+## so how can we work with our data? We want a geopanda
+## for our sample sites
+
+anaPt = gpd.read_file('ana30meterPlots.geojson')
+
+## that was easy. let's do that for our other layers of interest:
+
+paths = gpd.read_file('PathsLC.geojson')
+
+#paths.to_crs(anaPt.crs)
+
+aa = anaPt.plot(color='purple')
+paths.plot(ax=aa)
+
+## This is so easy. I'm in love. 
+
+
+countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+raster = rasterio.open("NE1_50M_SR_W/NE1_50M_SR_W.tif")
+
+fig, ax = plt.subplots(figsize=(15, 15))
+rasterio.plot.show(raster, ax=ax)
+countries.plot(ax=ax, facecolor='none', edgecolor='red')
+
+######################## indicator species ######################
+
+## let's see if we can get indicator species for our habitat types, 
+## and/or cluster types
+
+install.packages('indicspecies')
+
 
