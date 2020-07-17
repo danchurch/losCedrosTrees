@@ -1691,27 +1691,74 @@ cities.plot()
 ## so how can we work with our data? We want a geopanda
 ## for our sample sites
 
-anaPt = gpd.read_file('ana30meterPlots.geojson')
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
+## some weird column names, fix them:
+anaPt.rename(columns={
+                    "No Hoja/Page":"hoja",
+                    "Ubicacion/Ubication":"ubicacion",
+                    "Sitio/Site":"sitio",
+                    "Parcela/Plot":"parcela", 
+                    "Subparcela  /Subplot": "subparcela",
+                    "Fecha/Date": "fecha",
+                    }, inplace=True)
+## add in a PsubP column as a unique identifier
+PsubPseries = anaPt.parcela.astype('str') + "." + anaPt.subparcela.astype('str')
+anaPt.insert(6,"PsubP", PsubPseries.astype('float'))
+
 
 ## that was easy. let's do that for our other layers of interest:
+paths = gpd.read_file('GIS/PathsLC.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 
-paths = gpd.read_file('PathsLC.geojson')
+## This is so easy. I'm in love. 
 
 #paths.to_crs(anaPt.crs)
 
 aa = anaPt.plot(color='purple')
-paths.plot(ax=aa)
+lcHydro.plot(color='Blue', ax=aa)
+raster = rasterio.open("GIS/anaPlotDEG.tif")
+rasterio.plot.show(raster, ax=aa)
 
-## This is so easy. I'm in love. 
+## how can we trim down the raster a bit?
+## to clip this raster to size, I guess we need to work
+## with the rasterio program in the shell?
+
+#rio clip input.tif output.tif --bounds xmin ymin xmax ymax
+rio clip LosCedAster.tif test.tif --bounds "745020 10032300 749161 10035795" --overwrite
+
+## our cluster info is here:
+cGroup = pd.read_csv("cGroup.csv")
+## add this cluster info in
+anaPt = anaPt.merge(cGroup, on="PsubP")
+
+## now, how do we change our symbols in pyplot?
+
+##  in our previous graphic, we had 
+## 1=black
+## 2=red
+## 3=green
+## 4=blue
+
+## can we repeat this?
+
+cdik={
+1:"k",
+2:"r",
+3:"g",
+4:"b"
+}
+
+clustCols = [ cdik[i] for i in anaPt.gr ]
+
+aa = anaPt.plot(color=clustCols)
+hydro.plot(color='Blue', ax=aa)
+paths.plot(color='red', ax=aa)
+raster = rasterio.open("GIS/anaPlotDEG.tif")
+rasterio.plot.show(raster, ax=aa)
 
 
-countries = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-
-raster = rasterio.open("NE1_50M_SR_W/NE1_50M_SR_W.tif")
-
-fig, ax = plt.subplots(figsize=(15, 15))
-rasterio.plot.show(raster, ax=ax)
-countries.plot(ax=ax, facecolor='none', edgecolor='red')
+## and we need a PsubP column for our pts geopd...
 
 ######################## indicator species ######################
 
@@ -1719,5 +1766,4 @@ countries.plot(ax=ax, facecolor='none', edgecolor='red')
 ## and/or cluster types
 
 install.packages('indicspecies')
-
 
