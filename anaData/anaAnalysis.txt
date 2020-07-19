@@ -1663,6 +1663,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rasterio
 import rasterio.plot
+import copy
+import random
 
 plt.ion()
 
@@ -1697,68 +1699,130 @@ anaPt.rename(columns={
                     "No Hoja/Page":"hoja",
                     "Ubicacion/Ubication":"ubicacion",
                     "Sitio/Site":"sitio",
+                    "Habitat":"habitat",
                     "Parcela/Plot":"parcela", 
                     "Subparcela  /Subplot": "subparcela",
                     "Fecha/Date": "fecha",
+                    "Elevation": "elevation",
                     }, inplace=True)
+## don't think we need these:
+anaPt.drop(['hoja','ubicacion'], axis=1, inplace=True).head(2)
 ## add in a PsubP column as a unique identifier
 PsubPseries = anaPt.parcela.astype('str') + "." + anaPt.subparcela.astype('str')
-anaPt.insert(6,"PsubP", PsubPseries.astype('float'))
-
-
-## that was easy. let's do that for our other layers of interest:
-paths = gpd.read_file('GIS/PathsLC.geojson')
-lcPoly = gpd.read_file('GIS/lcPoly.geojson')
-hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
-
-## This is so easy. I'm in love. 
-
-#paths.to_crs(anaPt.crs)
-
-aa = anaPt.plot(color='purple')
-lcHydro.plot(color='Blue', ax=aa)
-raster = rasterio.open("GIS/anaPlotDEG.tif")
-rasterio.plot.show(raster, ax=aa)
-
-## how can we trim down the raster a bit?
-## to clip this raster to size, I guess we need to work
-## with the rasterio program in the shell?
-
-#rio clip input.tif output.tif --bounds xmin ymin xmax ymax
-rio clip LosCedAster.tif test.tif --bounds "745020 10032300 749161 10035795" --overwrite
-
+anaPt.insert(5,"PsubP", PsubPseries.astype('float'))
 ## our cluster info is here:
 cGroup = pd.read_csv("cGroup.csv")
 ## add this cluster info in
 anaPt = anaPt.merge(cGroup, on="PsubP")
-
-## now, how do we change our symbols in pyplot?
-
-##  in our previous graphic, we had 
-## 1=black
-## 2=red
-## 3=green
-## 4=blue
-
-## can we repeat this?
-
+## make a vector for coloring the clustering results:
 cdik={
 1:"k",
 2:"r",
 3:"g",
 4:"b"
 }
+anaPt['clustCols'] = [ cdik[i] for i in anaPt.gr ]
+## set the habitat symbol
+msym_dik={
+'BC':'o',
+'BS':'p',
+'CLB':'s',
+'RCA':'^',
+'RG':'D',
+}
+anaPt['habSyms'] = [ msym_dik[i] for i in anaPt.habitat ]
 
-clustCols = [ cdik[i] for i in anaPt.gr ]
+## that was easy. let's do that for our other layers of interest:
+paths = gpd.read_file('GIS/PathsLC.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 
-aa = anaPt.plot(color=clustCols)
-hydro.plot(color='Blue', ax=aa)
-paths.plot(color='red', ax=aa)
+## now start plotting
+fig, ax = plt.subplots(1,1)
+for i in anaPt.habitat.unique():
+    print(i)
+    anaPtI = anaPt[anaPt['habitat'] ==  i].reset_index()
+    anaPtI.plot(color=anaPtI.clustCols, 
+                marker=anaPtI.habSyms[0], 
+                ax=ax)
+
+## jitter?
+
+def jitt(x,σ=10):
+    ''' returns a jittered value using normal dist '''
+    xJit = x + random.gauss(0, σ)
+    return(xJit)
+
+def jitCoords(gdf, σ=10):
+    ''' jitters a geopanda df. Amount of jitter is set 
+        with the 'σ' parameter'''
+    aa=copy.deepcopy(gdf)
+    xx = aa.geometry.x.apply(jitt, args=(σ,)).astype('int')
+    yy = aa.geometry.y.apply(jitt, args=(σ,)).astype('int')
+    aa.geometry = gpd.points_from_xy(xx,yy)
+    return(aa)
+
+
+anaPt.tail()
+jitCoords(anaPt).tail()
+
+anaPt.tail()
+jitCoords(anaPt, 20).tail()
+
+## think it works. Try it out our data?
+jit = 40
+anaPtJitt = jitCoords(anaPt, σ=jit)
+fig, ax = plt.subplots(1,1)
+for i in anaPtJitt.habitat.unique():
+    print(i)
+    anaPtI = anaPtJitt[anaPtJitt['habitat'] ==  i].reset_index()
+    anaPtI.plot(color=anaPtI.clustCols, 
+                marker=anaPtI.habSyms[0], 
+                ax=ax)
+
+ax.set_title('σ='+str(jit))
+hydro.plot(color='Blue', ax=ax)
+#paths.plot(color='red', ax=ax)
 raster = rasterio.open("GIS/anaPlotDEG.tif")
-rasterio.plot.show(raster, ax=aa)
+rasterio.plot.show(raster, ax=ax)
+
+## looks like jit = 40 is a nice amount
+
+## This is so easy. I'm in love. 
+## how do we make a lengend?
+help(ax.legend)
+## this might be helpful:
+http://matplotlib.org/users/legend_guide.html
+http://matplotlib.org/users/legend_guide.html#creating-artists-specifically-for-adding-to-the-legend-aka-proxy-artists
 
 
-## and we need a PsubP column for our pts geopd...
+
+## how can we trim down the rasters a bit?
+## to clip this raster to size, I guess we need to work
+## with the rasterio program in the shell?
+
+#rio clip input.tif output.tif --bounds xmin ymin xmax ymax
+rio clip LosCedAster.tif test.tif --bounds "745020 10032300 749161 10035795" --overwrite
+
+## get forest cover raster for 2005?
+## legend
+
+## well, it's a nicer plot, but I am still unclear why 
+## the bosques primarias split into two types. 
+
+## let's run some indicator species analysis, or maybe cooccurrence
+## networks if we need more sensitivity. 
+
+## good cooccurrence network diagram would be worth looking at. 
+
+## also permanova models for elevation, slope, aspect, proximity 
+## to stream
+
+## and I guess you gotta do a variance partitioning  analysis.
+## which would include the dbmems...
+
+## lots of work to do. 
+
 
 ######################## indicator species ######################
 
