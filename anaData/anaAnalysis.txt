@@ -1688,6 +1688,10 @@ cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
 cities.plot()
 
+help(plt.subplots)
+
+fig, ax = plt.subplots(figsize=[4,4])
+
 ## this is more like what we need 
 
 ## so how can we work with our data? We want a geopanda
@@ -1795,8 +1799,6 @@ help(ax.legend)
 http://matplotlib.org/users/legend_guide.html
 http://matplotlib.org/users/legend_guide.html#creating-artists-specifically-for-adding-to-the-legend-aka-proxy-artists
 
-
-
 ## how can we trim down the rasters a bit?
 ## to clip this raster to size, I guess we need to work
 ## with the rasterio program in the shell?
@@ -1830,4 +1832,55 @@ rio clip LosCedAster.tif test.tif --bounds "745020 10032300 749161 10035795" --o
 ## and/or cluster types
 
 install.packages('indicspecies')
+
+library(vegan)
+library(indicspecies)
+
+## check out the tutorial:
+
+data(wetland)
+groups = c(rep(1, 17), rep(2, 14), rep(3,10))
+indval = multipatt(wetland, groups, control = how(nperm=999))
+## seems simple
+
+## our community matrix...
+comM <- read.csv('subParcelComm.csv')
+rownames(comM) <- comM$PsubP
+
+## general plant observation dataframe
+specObs <- read.csv('specObs.csv', row.names=1)
+## make a PsubP/habitat dataframe:
+specObs[,c('PsubP','habitat')]
+habs <- unique(specObs[,c('PsubP','habitat')])
+rownames(habs) <- NULL
+
+## and our cluster groups:
+cldf <- read.csv('cGroup.csv')
+
+## make sure they are the same order
+habs <- habs[order(habs$PsubP),]
+comM <- comM[order(comM$PsubP),]
+cldf <- cldf[order(cldf$PsubP),]
+all(habs$PsubP == comM$PsubP)
+all(habs$PsubP == rownames(comM))
+all(cldf$PsubP == rownames(comM))
+
+## now we can make a vector of our habs dataframe:
+habsV <- habs$habitat
+
+clV <- cldf$gr
+
+## clean up extra column of com matrix, careful with this
+#comM <- comM[,-1] ## get rid of PsubP
+
+## and try out the indicator species function
+
+habIndSpp <- multipatt(comM, habsV, func = 'r.g', control=how(nperm=9999))
+
+clustIndSpp <- multipatt(comM, clV, func = 'r.g', control=how(nperm=9999))
+
+
+
+###################### cooccurrence matrix ######################
+
 
