@@ -1883,4 +1883,157 @@ clustIndSpp <- multipatt(comM, clV, func = 'r.g', control=how(nperm=9999))
 
 ###################### cooccurrence matrix ######################
 
+## it's been a couple years, how do we do this again?
 
+## we'll use the cooccur package again, they seem to be maintaining
+## it, and people seem to be using it. I don't know the specific 
+## advantages over the classic correlation approaches, but some 
+## folks like this approach and it is computationally cheaper, 
+## which is meaningful out here with just my little laptop. 
+
+library(cooccur)
+
+## example:
+
+data(finches)
+cooccur.finches <- cooccur(mat=finches,
+                          type="spp_site",
+                          thresh=TRUE,
+                          spp_names=TRUE)
+
+summary(cooccur.finches)
+
+plot(cooccur.finches)
+
+## simple enough
+
+## need my community matrix
+## think we need to transpose?
+
+comMat <- t(read.csv('subParcelComm.csv', row.names='PsubP'))
+
+## I don't know if abundance matters here. We'll leave it. 
+
+coocc_thresh <- cooccur(mat=comMat,
+                          type="spp_site",
+                          thresh=TRUE,
+                          spp_names=TRUE)
+
+## lots of warnings - try removing the threshold?
+## might also be the abundance data causing problems.
+
+coocc <- cooccur(mat=comMat,
+                          type="spp_site",
+                          thresh=FALSE,
+                          spp_names=TRUE)
+## takes way longer...
+## hmm, now how do we visually this?
+
+plot(coocc)
+plot(coocc_thresh) 
+
+## I think we want to add in the habitat types. 
+## Then run a second analysis with cluster types,
+## and maybe both. 
+
+## what does this look like? species are rows, so we need a row 
+## for each habitat type, and cluster type. 
+
+## borrow the above code from the indicator species analysis:
+
+library(cooccur)
+
+## general plant observation dataframe
+specObs <- read.csv('specObs.csv')
+## make a PsubP/habitat dataframe:
+habs <- unique(specObs[,c('PsubP','habitat')])
+## and our cluster groups:
+cldf <- read.csv('cGroup.csv')
+## merge these
+aa <- merge(habs, cldf, by='PsubP')
+## habitat dummy vars
+habDum <- model.matrix(aa$PsubP ~ aa$habitat)[,-1]
+rownames(habDum) <- aa$PsubP
+colnames(habDum) <- c('BS', 'CLB', 'RCA','RG')
+BC <- c(rep(0, nrow(habDum)))
+habDum <- data.frame(cbind(BC, habDum))
+habDum$BC[rowSums(habDum) == 0] <- 1
+## cluster dummy vars
+clDum <- model.matrix(aa$PsubP ~ as.factor(aa$gr))[,-1]
+rownames(clDum) <- aa$PsubP
+colnames(clDum) <- c('cl2', 'cl3','cl4')
+cl1 <- c(rep(0, nrow(clDum)))
+clDum <- data.frame(cbind(cl1, clDum))
+clDum$cl1[rowSums(clDum) == 0] <- 1
+## I think we just need to transpose these and stack them on our 
+## community matrix
+comMat <- t(read.csv('subParcelComm.csv', row.names='PsubP'))
+comMat <- rbind(t(habDum),t(clDum),comMat)
+
+## visual checks:
+cbind(habDum, aa$habitat)
+
+cbind(clDum, aa$gr)
+## works
+
+
+dim()
+dim(t(clDum))
+
+## now rerun the cooccurrence analysis:
+coocc_thresh <- cooccur(mat=comMat,
+                          type="spp_site",
+                          thresh=TRUE,
+                          spp_names=TRUE)
+
+aa <- prob.table(coocc_thresh)
+bb <- aa[complete.cases(aa),]
+cc <- aa[!complete.cases(aa),]
+dd <- bb[,c('sp1_name', 'sp2_name','p_gt', 'sp1_inc', 'sp2_inc', 'obs_cooccur','prob_cooccur','exp_cooccur')]
+ee <- dd[dd$p_gt <= 0.10,]
+
+
+## what do we want? if we are interested in cooccurring species,
+## we want a very small chance in the null model of seeing our 
+## level of cooccurrence or higher. 
+
+## so I think we want the p_gt statistic, for positive cooccurrences
+
+## subset to p_gt <= 0.05
+
+bb <- aa[aa$p_gt <= .05,]
+
+dim(bb)
+
+## okay, that looks like a bust. It is not as sensitive as our 
+## indicator species analysis. I thought I was casting a wider 
+## net with this method, but no bueno. The system is too 
+## noisy, I guess. We could try correlations instead, but doesn't seem 
+## like a good use of time right now.  
+
+## seems like the best next steps are the mantel tests, permanovas, 
+## then move onto the PCNMs and varpar analysis. 
+
+###################################################
+
+## mantel tests
+
+install.packages('ecodist')
+
+library('vegan')
+library('ecodist')
+
+## make the distance matrix 
+aa <- read.csv('subParcelSpatial.csv', row.names="PsubP")[,-1]
+physdist <- vegdist(aa, method='euclidean')
+
+## make the community dissimilarity matrix
+bb <- read.csv('subParcelComm.csv', row.names="PsubP")
+
+braydist <- vegdist(bb, method='bray')
+cgram <- mgram(braydist, physdist) ## correlogram object
+plot(cgram)
+
+wood_mant_test <- ecodist::mantel(wood_comdist ~ physdist, nperm = 10000) ## overall test
+
+## can we subset this by habitat and by cluster group?
