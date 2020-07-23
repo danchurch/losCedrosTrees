@@ -2026,14 +2026,50 @@ library('ecodist')
 ## make the distance matrix 
 aa <- read.csv('subParcelSpatial.csv', row.names="PsubP")[,-1]
 physdist <- vegdist(aa, method='euclidean')
-
 ## make the community dissimilarity matrix
 bb <- read.csv('subParcelComm.csv', row.names="PsubP")
-
 braydist <- vegdist(bb, method='bray')
+## correlogram
 cgram <- mgram(braydist, physdist) ## correlogram object
 plot(cgram)
-
-wood_mant_test <- ecodist::mantel(wood_comdist ~ physdist, nperm = 10000) ## overall test
+global_mant_test <- mantel(braydist ~ physdist, nperm = 10000) ## overall test
 
 ## can we subset this by habitat and by cluster group?
+## this shows no strong evidence of global autocorrelation,
+## though our correlogram indicates that some level is occurring
+## locally. 
+
+## what if we subset a little...
+
+getDists <- function(comfile, physfile='subParcelSpatial.csv'){ 
+    comM <- read.csv(comfile, row.names=1)
+    comM <- comM[order(as.numeric((rownames(comM)))),]
+    spM <- read.csv(physfile, row.names='PsubP')[,-1]
+    spM <- spM[rownames(spM)%in%rownames(comM),] 
+    spM <- spM[order(as.numeric((rownames(comM)))),]
+    if(all(rownames(spM) == rownames(comM))){
+        physdist <- vegdist(spM, method='euclidean')
+        braydist <- vegdist(comM, method='bray')
+        return(list(braydist, physdist))
+        }
+    else{print("something doesn't fit right")}
+    }
+
+
+
+comms <- c('BC_comm.csv', 'BS_comm.csv', 'CLB_comm.csv', 'RCA_comm.csv', 'RG_comm.csv')
+## start df
+all_mant_test  <- global_mant_test
+## test individually
+par(mfrow=c(2,3))
+for (i in 1:length(comms)){
+    print(comms[i])
+    dists.i <- getDists(comms[i])
+    cgram.i <- mgram(dists.i[[1]], dists.i[[2]]) ## correlogram object
+    plot(cgram.i, main = comms[i] )
+    mant_test.i <- mantel(dists.i[[1]] ~ dists.i[[2]], nperm = 10000) ## overall test
+    all_mant_test <- rbind(mant_test.i, all_mant_test)
+}
+plot(cgram, main = "global" )
+
+
