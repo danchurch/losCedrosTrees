@@ -1,3 +1,5 @@
+## if we're using R, for big community matrices:
+smat <- function(mat){return(mat[1:3,1:3])}
 
 ## clean gps points
 
@@ -1395,7 +1397,7 @@ rownames(sPC) <- subParcelComm[,1]
 
 sPCBray <- vegdist(sPC)
 
-sPC.ward <- hclust(sPCBray, method='ward.D2')
+
 
 #sPC.ward.reorder <- reorder.hclust(sPC.ward, sPCBray)
 ## that function doesn't seem to exist in vegan anymore?
@@ -1560,7 +1562,8 @@ png(file='hclust4groups.png', width=1600, height=800)
 makeClustMap(sPC.ward, k=4, labels='hab')
 dev.off()
 
-makeClustMap(sPC.ward, k=4, labels='hab')
+clsp <- makeClustMap(sPC.ward, k=4, labels='hab')[,-2]
+sum(clsp$habitat == 'RG' | clsp$habitat == 'RCA')
 
 makeClustMap(sPC.ward, k=5, labels='hab')
 
@@ -2055,8 +2058,6 @@ getDists <- function(comfile, physfile='subParcelSpatial.csv'){
     else{print("something doesn't fit right")}
     }
 
-
-
 comms <- c('BC_comm.csv', 'BS_comm.csv', 'CLB_comm.csv', 'RCA_comm.csv', 'RG_comm.csv')
 ## start df
 all_mant_test  <- global_mant_test
@@ -2072,4 +2073,344 @@ for (i in 1:length(comms)){
 }
 plot(cgram, main = "global" )
 
+dists.i <- getDists('RCA_comm.csv')
+cgram.i <- mgram(dists.i[[1]], dists.i[[2]]) ## correlogram object
+plot(cgram.i, main = 'RCA_comm.csv' )
+mant_test.i <- mantel(dists.i[[1]] ~ dists.i[[2]], nperm = 10000) ## overall test
 
+
+## The natural forest sites
+## seem to be behaving similarly, classic positive autocorrelation
+## dropping off to zero (with a dip into negative autocorrelation 
+## around 1500m?), and the ag sites, especially RCA, are doing 
+## weird stuff. In the turnover diagram, RG sites were 
+## actually showing steeper turnover, with sites 
+## increasing in dissimilarity more rapidly. The mantel 
+## seems to show that here, too. 
+
+## what happens if we exclude the weird RCA plots from the mantel, 
+## and also when we examine the old forest sites together (BC+BS+CLB)
+
+## exclude RCA plots:
+
+## general plant observation dataframe
+specObs <- read.csv('specObs.csv', row.names=1)
+## make a PsubP/habitat dataframe:
+habs <- unique(specObs[,c('PsubP','habitat')])
+## order by site
+habs <- habs[order(habs$Psub),]
+rownames(habs) <- NULL
+
+## let's look at the old-forest-only sites:
+
+PsubPoldForest <- habs$habitat != 'RCA' & habs$habitat != 'RG'
+
+aa <- read.csv('subParcelSpatial.csv')[-1]
+aa <- aa[order(aa$PsubP),]
+rownames(aa) <- NULL
+bb <- read.csv('subParcelComm.csv')
+bb <- bb[order(bb$PsubP),]
+rownames(bb) <- NULL
+all(habs$PsubP == aa$PsubP)
+all(habs$PsubP == bb$PsubP)
+## subset these:
+aa <- aa[PsubPoldForest,]
+bb <- bb[PsubPoldForest,]
+all(rownames(aa) == rownames(bb))
+
+## make dist objects
+physdist <- vegdist(aa, method='euclidean')
+braydist <- vegdist(bb, method='bray')
+cgram <- mgram(braydist, physdist) ## correlogram object
+plot(cgram)
+mant_test <- mantel(braydist ~ physdist, nperm = 10000) ## overall test
+
+## wow. that cleans up the story a bit:
+##    mantelr      pval1      pval2      pval3  llim.2.5% ulim.97.5%
+## 0.12648406 0.00810000 0.99200000 0.00970000 0.05079009 0.19028648
+
+
+## let's include the regen sites:
+
+## to get the sites that are not RCA:
+PsubPNotRCA <- habs$habitat != 'RCA'
+
+aa <- read.csv('subParcelSpatial.csv')[-1]
+aa <- aa[order(aa$PsubP),]
+rownames(aa) <- NULL
+bb <- read.csv('subParcelComm.csv')
+bb <- bb[order(bb$PsubP),]
+rownames(bb) <- NULL
+
+all(habs$PsubP == aa$PsubP)
+all(habs$PsubP == bb$PsubP)
+
+## subset these:
+aa <- aa[PsubPNotRCA,]
+bb <- bb[PsubPNotRCA,]
+all(rownames(aa) == rownames(bb))
+
+## make dist objects
+physdist <- vegdist(aa, method='euclidean')
+braydist <- vegdist(bb, method='bray')
+cgram <- mgram(braydist, physdist) ## correlogram object
+plot(cgram)
+mant_test <- mantel(braydist ~ physdist, nperm = 10000) ## overall test
+## make dist objects
+physdist <- vegdist(aa, method='euclidean')
+braydist <- vegdist(bb, method='bray')
+cgram <- mgram(braydist, physdist) ## correlogram object
+plot(cgram)
+mant_test <- mantel(braydist ~ physdist, nperm = 10000) ## overall test
+
+## doesn't do much, the regen sites also really confuse things, 
+## they really are a different system. 
+
+## let's run permanovas on the data we have. Still need to 
+## create distance-to-stream data, might be useful. 
+
+## but after that, time to dive into PCNM and varpart. Ugh...
+
+## but first, scratch an itch - there is some detective work 
+## to be done with the RG points that went outside their 
+## cluster
+
+############# fishing for stray RG points  #######################
+
+## we need to rebuild our NMS and cluster results a bit, and see
+## why which RG points clustered with the RCA plots, and which 
+## clustered with the old forest plots:
+
+## first, figure out the cluster results. Rebuild cluster graphic:
+
+library(vegan)
+library(stats)
+
+## redo the tree
+
+k <- 4
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+sPC <- subParcelComm[,-1]
+rownames(sPC) <- subParcelComm[,1]
+sPCBray <- vegdist(sPC)
+sPC.ward <- hclust(sPCBray, method='ward.D2')
+
+png(file='hclust_4groups_PsubP.png', width=1200, height=800)
+plot(sPC.ward)
+clustGroups <- rect.hclust(tree, k=k, border=1:k)
+dev.off()
+
+## from our other plots, we can figure out the 
+## the following RGs cluster with the RCAs:
+RGwithRCA <- c(1.1, 1.2, 1.3, 1.4, 1.5)
+## and the RG that clustered with the old forest:
+RGwithOB <- 10.1
+
+## where are these?
+## both on the physical map, and in the NMS?
+
+## bring up the NMS again, label with point names:
+
+library(vegan)
+library(RColorBrewer)
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+sPC <- subParcelComm[,-1]
+rownames(sPC) <- subParcelComm[,1]
+nms <- metaMDS(sPC, try=40)
+
+stressplot(nms)
+
+specObs <- read.csv('specObs.csv')
+aa = specObs[c("PsubP","habitat")]
+colrs <- brewer.pal(5, "Set1")
+nondups <- aa[!duplicated(aa),]
+nondups <- nondups[order(nondups$PsubP),]
+rownames(nondups) <- NULL
+nondups$colorNu <- as.numeric(nondups$habitat)
+nondups$colrs <- colrs[nondups$colorNu]
+nondups$MDS1 <- nms$points[,'MDS1']
+nondups$MDS2 <- nms$points[,'MDS2']
+nmsInfo <- nondups
+
+plot(nmsInfo$MDS1, nmsInfo$MDS2,
+    col=nmsInfo$colrs,
+    pch=19,
+    cex=2.0,
+)
+
+ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+
+aa <- identify(nmsInfo$MDS1, nmsInfo$MDS2)
+
+## too slow can we just label the points on there?
+text(nmsInfo$MDS1, nmsInfo$MDS2, nmsInfo$PsubP)
+
+## where is 10.1 on the map?
+pts <- read.csv('subParcelSpatial.csv')[-1]
+
+
+makeMap <- function(jit=50){
+    envOnly <- read.csv('envOnly.csv')
+    pts <- read.csv('subParcelSpatial.csv')
+    cmem <- vector(length=k)
+    PsubP <- vector()
+    gr <- vector()
+    for (i in 1:k){
+        cmem.i <- as.numeric(attr(clustGroups[[i]], "names"))
+        PsubP <- c(PsubP, cmem.i)
+        gr <- c(gr, rep(i, length(cmem.i)))
+        }
+    cGroup <- data.frame(cbind(PsubP, gr))
+    cGroup <- cGroup[order(cGroup$PsubP),]
+    pts <- pts[order(pts$PsubP),]
+    clsp <- base::merge(pts, cGroup)
+    clsp <- base::merge(clsp, envOnly)
+    shapes <- vector(length=nrow(clsp))
+    shapes[clsp$habitat == 'BC'] <- 19
+    shapes[clsp$habitat == 'BS'] <- 21
+    shapes[clsp$habitat == 'CLB'] <- 22
+    shapes[clsp$habitat == 'RCA'] <- 17
+    shapes[clsp$habitat == 'RG'] <- 23
+    eJit=jitter(clsp$E, jit)
+    nJit=jitter(clsp$N, jit)
+    plot(x=eJit,
+        y=nJit,
+        col=clsp$gr,
+        xlab='',
+        ylab='',
+        xlim=c(745000,749000),
+        asp=1,
+        cex=2,
+        lwd=2,
+        pch=shapes,
+    )
+    legend('bottomright',
+        legend=c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        pch=c(19, 21, 22, 17, 23)
+    )
+    legend('bottomleft',
+        legend=1:k,
+        pch=c(15),
+        col=1:k,
+        title='ClusterGroup')
+    return(clsp)
+    }
+
+makeMap(100)
+points(pts[pts$PsubP == 10.1,2:3], 
+    pch=21, 
+    cex=4, 
+    col=6, 
+    lwd=2, 
+    bg="transparent")
+
+
+## weird. 10.1 more closely resembles an old forest, as it is 
+## clustered with the forest groups both in the NMS and the 
+## the hclust. 
+
+## but it is situated right next to other regenerating sites 
+## that cluster more closely to the nefarious RCA plots 
+## and the 
+
+## what do we think decides this?
+
+## Ana mariscal says age - when was it last farmed?
+## we need that as a variable, can this be constructed? 
+
+## rebuild the dataframe with habitat, etc:
+clsp <- makeClustMap(sPC.ward, k=4, labels='hab')[,-2]
+sum(clsp$habitat == 'RG' | clsp$habitat == 'RCA')
+## we have 25 subparcels whose history we need to reconstruct. 
+
+############# permanovas ######################
+
+## back up a little to some of the basics
+
+## can we predict differences in our sites by
+## the environmental data we have?
+
+library(vegan)
+
+envOnly <- read.csv('envOnly.csv')
+envOnly <- envOnly[order(envOnly$PsubP),]
+
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+sPC <- subParcelComm[,-1]
+rownames(sPC) <- subParcelComm[,1]
+sPC <- sPC[order(as.numeric(rownames(sPC))),]
+
+
+## try habitat and elevation:
+
+aa <- adonis(sPC ~ envOnly$elevacion) ## r2 = 0.08, p < .001
+aa <- adonis(sPC ~ envOnly$habitat) ## r2 = 0.19, p < 0.001
+aa <- adonis(sPC ~ envOnly$elevacion, strata=envOnly$habitat) ## no errors thrown, but don't think it worked...
+
+## ugh, don't want to learn about the permute package. I think that's
+## what we have to do to really get into this strata argument.
+
+aa <- adonis(sPC ~ envOnly$elevacion*envOnly$habitat)  
+bb <- adonis(sPC ~ envOnly$habitat*envOnly$elevacion)  
+
+##                                   Df SumsOfSqs MeanSqs F.Model      R2 Pr(>F)
+## envOnly$elevacion                  1    1.8357 1.83572  5.9572 0.07945  0.001
+## envOnly$habitat                    4    4.1072 1.02679  3.3321 0.17776  0.001
+## envOnly$elevacion:envOnly$habitat  4    1.4468 0.36170  1.1738 0.06262  0.090
+## Residuals                         51   15.7157 0.30815         0.68017
+## Total                             60   23.1054                 1.00000
+## 
+## envOnly$elevacion                 ***
+## envOnly$habitat                   ***
+## envOnly$elevacion:envOnly$habitat .
+
+
+
+## some variance explained. seems 
+
+## just checking, is the story clearer if we subset to just old forest? and to just RG?
+
+## just old forest, with no zero columns
+oldF <- envOnly$habitat != 'RG' & envOnly$habitat != 'RCA'
+oldForestEnv <-  envOnly[oldF,]
+oldForestComm <- sPC[oldF,]
+all(rownames(sPC) == envOnly$PsubP )
+nonzs <- colSums(oldForestComm) != 0
+oldForestComm <- oldForestComm[,nonzs]
+bb <- adonis(oldForestComm ~ oldForestEnv$elevacion*oldForestEnv$habitat)  
+
+bb <- adonis(oldForestComm ~ oldForestEnv$habitat*oldForestEnv$elevacion)  
+## when you subset to old forest, only elevation matters. 
+## makes sense. The sites are interchangeable. 
+
+## given that, what does an ordination of the old forest look like, 
+## if we put elevation on there?
+
+
+
+## we need distance to stream, slope, and aspect...
+
+
+
+all(rownames(sPC) == envOnly$PsubP )
+
+
+## want to check the 
+
+gr <- vector()
+for (i in 1:k){
+    cmem.i <- as.numeric(attr(clustGroups[[i]], "names"))
+    PsubP <- c(PsubP, cmem.i)
+    gr <- c(gr, rep(i, length(cmem.i)))
+    }
+cGroup <- data.frame(cbind(PsubP, gr))
+cGroup <- cGroup[order(cGroup$PsubP),]
+
+################### ideal forest community ##########################
+
+## we need some way to quantitatively characterize the old forest basin, 
+## and measure if a sight may be moving toward or away from that state.
+
+sPC[,'Cyatheaceae.Alsophila.erinacea', drop=FALSE]
+
+aa <- cbind(envOnly$PsubP,oldF, sPC[,'Cyatheaceae.Alsophila.erinacea'])
