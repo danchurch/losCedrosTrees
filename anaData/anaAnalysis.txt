@@ -2334,7 +2334,6 @@ library(vegan)
 
 envOnly <- read.csv('envOnly.csv')
 envOnly <- envOnly[order(envOnly$PsubP),]
-
 subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
 sPC <- subParcelComm[,-1]
 rownames(sPC) <- subParcelComm[,1]
@@ -2364,49 +2363,127 @@ bb <- adonis(sPC ~ envOnly$habitat*envOnly$elevacion)
 ## envOnly$habitat                   ***
 ## envOnly$elevacion:envOnly$habitat .
 
+## some variance explained. 
 
-
-## some variance explained. seems 
+################# focus on old Forest ###################
 
 ## just checking, is the story clearer if we subset to just old forest? and to just RG?
 
 ## just old forest, with no zero columns
 oldF <- envOnly$habitat != 'RG' & envOnly$habitat != 'RCA'
+## add in cluster membership:
+load('cGroup.rda')
+all(cGroup$PsubP == envOnly$PsubP)
+envOnly$clGr <- cGroup$gr
 oldForestEnv <-  envOnly[oldF,]
+rownames(oldForestEnv) <- NULL
 oldForestComm <- sPC[oldF,]
 all(rownames(sPC) == envOnly$PsubP )
 nonzs <- colSums(oldForestComm) != 0
 oldForestComm <- oldForestComm[,nonzs]
-bb <- adonis(oldForestComm ~ oldForestEnv$elevacion*oldForestEnv$habitat)  
+all(oldForestEnv$PsubP == rownames(oldForestComm))
 
+#save(oldForestComm, file="oldForestComm.rda")
+#save(oldForestEnv, file="oldForestEnv.rda")
+
+bb <- adonis(oldForestComm ~ oldForestEnv$elevacion*oldForestEnv$habitat)  
 bb <- adonis(oldForestComm ~ oldForestEnv$habitat*oldForestEnv$elevacion)  
+
+
 ## when you subset to old forest, only elevation matters. 
 ## makes sense. The sites are interchangeable. 
 
 ## given that, what does an ordination of the old forest look like, 
-## if we put elevation on there?
+## if we put elevation on there? and do the hierarchical clusters
+## separate cleanly?
+
+library(vegan)
+
+OFnms <- metaMDS(oldForestComm, try=40)
+stressplot(OFnms)
+## as usual, not great, but still generally under 0.3
+
+## make a color ramp for this elevation data
+minElev <- min(oldForestEnv$elevacion)
+maxElev <- max(oldForestEnv$elevacion)
+rangeElev <- maxElev - minElev
+colrsRamp <- colorRampPalette(c(rgb(1,0,0,1), rgb(1,0,0,0)), alpha = TRUE)(rangeElev)
+ElevColrs <- colrsRamp[oldForestEnv$elevacion - min(oldForestEnv$elevacion)]
+
+# get points
+XX <- OFnms$points[,'MDS1']
+YY <- OFnms$points[,'MDS2']
+
+png(file='oldForestNMSelevClust.png', height=800, width=800)
+plot(XX, YY, 
+    col="black", 
+    xlab='NMS1',
+    ylab='NMS2',
+    pch=21, 
+    cex=3, 
+    bg=ElevColrs,
+    main="Two forest types detected, with elevation gradient",
+    )
+## can we add cluster group data to the plot?
+## group order will be:
+names(table(oldForestEnv$clGr))
+## so this should work:
+ordihull(OFnms, oldForestEnv$clGr, col=c(3,4), lwd=2, lty=2)
+## yup, that's intriguing. 
+legend( x='topright',
+        legend = c('clustGroup 3', 'clustGroup 4', '1259 m', '1680 m'),
+        col = c(3,4, 1, 1),
+        bty = 'n',
+        pt.bg = c(NA, NA, "transparent", "red"),
+        #merge = FALSE,
+        cex = 2.0,
+        lty = c(2,2, NA, NA),
+        lwd = 2.0,
+        pch = c(NA, NA, 21, 21),
+        )
+dev.off()
 
 
+aa <- identify(OFnms$points)
+OFnms$points[aa,]
 
-## we need distance to stream, slope, and aspect...
+### check habitat type on old forest nms ###
 
+colz <- vector()
+for (i in oldForestEnv$habitat){
+    if (i == 'BC'){colz <- c(colz, '#E41A1C')} 
+    if (i == 'BS'){colz <- c(colz, '#377EB8')}
+    if (i == 'CLB'){colz <- c(colz, '#4DAF4A')}
+}
 
+## just checking
+cbind(as.character(oldForestEnv$habitat), colz)
 
-all(rownames(sPC) == envOnly$PsubP )
+#png(file=, height=800, width=800)
+plot(XX, YY, 
+    col="black", 
+    xlab='NMS1',
+    ylab='NMS2',
+    pch=21, 
+    cex=2, 
+    bg=colz,
+    main="Old forest sites by habitat",
+    )
+legend( x='topright',
+        legend = c('BC', 'BS', 'CLB'),
+        fill = c('#E41A1C', '#377EB8', '#4DAF4A'),
+        cex = 1.0,
+        )
 
+        legend = c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+names(table(oldForestEnv$habitat))
 
-## want to check the 
+## not even going to try to put hulls on that. Pretty much randoms:
 
-gr <- vector()
-for (i in 1:k){
-    cmem.i <- as.numeric(attr(clustGroups[[i]], "names"))
-    PsubP <- c(PsubP, cmem.i)
-    gr <- c(gr, rep(i, length(cmem.i)))
-    }
-cGroup <- data.frame(cbind(PsubP, gr))
-cGroup <- cGroup[order(cGroup$PsubP),]
+fh <- factor(oldForestEnv$habitat)
+adonis(oldForestComm ~ fh)
 
-################### ideal forest community ##########################
+#### ideal forest community ######
 
 ## we need some way to quantitatively characterize the old forest basin, 
 ## and measure if a sight may be moving toward or away from that state.
@@ -2414,3 +2491,5 @@ cGroup <- cGroup[order(cGroup$PsubP),]
 sPC[,'Cyatheaceae.Alsophila.erinacea', drop=FALSE]
 
 aa <- cbind(envOnly$PsubP,oldF, sPC[,'Cyatheaceae.Alsophila.erinacea'])
+
+#### 
