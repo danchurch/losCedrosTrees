@@ -2492,4 +2492,200 @@ sPC[,'Cyatheaceae.Alsophila.erinacea', drop=FALSE]
 
 aa <- cbind(envOnly$PsubP,oldF, sPC[,'Cyatheaceae.Alsophila.erinacea'])
 
-#### 
+###########  dbMEM analysis ################
+
+## been a while, so let's work through the dbMEM materials out there
+## looks like ade4 and associated packages are the way to go. 
+
+## where has this package been all my (graduate) life?
+
+library(ade4)
+library(adespatial)
+library(adegraphics)
+library(spdep)
+library(maptools)
+library(sp)
+
+data("mafragh")
+
+names(mafragh)
+
+dim(mafragh$flo)
+
+head(mafragh$env)
+
+## check out the spatial data
+mxy <- as.matrix(mafragh$xy)
+
+rownames(mxy)
+rownames(mxy) <- NULL
+
+s.label(mxy, ppoint.col='darkseagreen4', Sp=mafragh$Spatial.contour)
+
+class(mafragh$Spatial.contour)
+
+## this is great, but what do we want to do with our data?
+
+## for now, we want to define a spatial neighborhood of our points
+
+## in the near future, I think we will need to define watershed polygons
+## and look for an effect by microsite
+
+## let's try running our point data through their dbMEM pipeline. 
+
+## we can do this in three cycles - entire data set, forest only, and regen only
+
+## start with entire, I guess. Our sampling scheme is irregular, looks like 
+## this:
+
+pts <- read.csv('subParcelSpatial.csv')
+env <- read.csv('envOnly.csv')
+
+
+## are these in order?
+all(env == env[order(env$PsubP),])
+all(pts == pts[order(pts$PsubP),])
+all(pts$PsubP == env$PsubP)
+## looks good. 
+
+pts[,2:3]
+
+ptsMat <- as.matrix(pts[,2:3])
+colnames(ptsMat) <- c('x','y')
+
+
+s.label(ptsMat, labels=pts$PsubP)
+
+plot(ptsMat)
+
+s.label(xyir)
+
+s.label(ptsMat)
+
+## jitter these? Having different data on same points will be problem:
+
+set.seed=1
+
+pJ <- jitter(ptsMat, amount=10)
+## not working - what if we bring everything closer to axes?
+mx <- min(pJ[,1])
+my <- min(pJ[,2])
+pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
+
+s.label(pJ)
+## looks okay.
+
+## now we need to define what a neighbor is. 
+## in the past, we used the minimum spanning tree, recommended
+## by borcard and legendre. 
+
+## but these are not the only options
+
+## there is an interactive program to explore these kinds of questions,
+## let's see if it works:
+
+listw.explore()
+
+## okay, for the moment let's try the "gabriel" graph type. I don't totally
+## understand the effect of the different graph 
+
+## but I want to allow more comparisons than the minimum spanning tree
+## might allow, without so many as the triangulating methods that might 
+## make a lot of very distant comparisons. This I think equates to more
+## eigenvectors, = more components of the model that have to be selected
+## against, = model needs more p-value correction
+
+## If you use a harsh spatial weighting, I'm not sure if it makes much 
+## difference. I need to sit down with one of these stats folks, I 
+## have a lot of questions here. 
+
+## speaking of, for spatial weighting, let's use a simple linear weighting
+## for now. 
+
+## we can rerun all of this with different methods, see how much of a difference
+## it makes. 
+
+## this is the code that the interactive program generated based on 
+## a "gabriel" neighborhood graph type, a "binary"/"B" standardization,
+## and a linear weighting. 
+
+## choose neighborhood type. "2" = gabriel:
+nb <- chooseCN(coordinates(pJ), type = 2, plot.nb = FALSE)
+## get the distances of each link:
+distnb <- nbdists(nb, pJ)
+## weight them, by their length. Here a linear weighting:
+fdist <- lapply(distnb, function(x) 1 - x/max(dist(pJ)))
+## combine nb and fdist: 
+lw <- nb2listw(nb, style = 'B', glist = fdist, zero.policy = TRUE)
+
+## also need to install the "spatialreg" package...
+
+## the above generates the following neighborhood graph:
+
+s.label(pJ, nb=nb, pnb.edge.col='red')
+
+print(listw2mat(lw)[1:10, 1:10], digits = 3)
+
+print(listw2mat(lw), digits = 2)
+
+mem.lw <- mem(lw)
+
+names(attributes(mem.lw))
+
+barplot(attr(mem.lw, "values"))
+
+s.value(pJ, mem.lw[,c(seq(1,60,5))], symbol="circle")
+
+s.value(pJ, mem.lw[,c(1, 5, 10, 20, 30, 40, 50, 60)], symbol="circle")
+
+## okay, that works, now?
+
+## the goal is to do an RDA of the community matrix by the spatial matrix. 
+## the spatial matrix at this point will be a list of eigenvectors, ~60 
+## of them. We have to cut this down to size, so time for model selection.
+
+## the model selection process needs a "y" matrix. Since we are going to 
+## do an RDA, which is basically two PCAs on either side of the equation, 
+## we can go ahead and hellinger transform our community matrix and run a 
+## PCA on this:
+
+
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+comM <- comM[order(as.numeric(rownames(comM))),]
+
+
+
+
+
+pca.hell <- dudi.pca(comM, scale = FALSE, scannf = TRUE)
+
+pca.hell <- dudi.pca(mafragh$flo, scale = FALSE, scannf = TRUE)
+
+## where is the hellinger transformation? 
+
+##or
+pca.hell <- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE, nf = 4)
+
+## use this as our judge of character for the MEMs:
+
+mem 
+
+
+
+
+
+
+
+
+
+
+## side note, I am really confused about the locations of 
+## the various sites. At some point in the not-too-distant-future, 
+## we need to come to an understanding of this. 
+
+aa <- read.csv('specObs.csv')[,-1]
+site5 <- unique(aa[aa$site==5,c('site','PsubP')])
+rownames(site5) <- NULL
+site6 <- unique(aa[aa$site==6,c('site','PsubP')])
+rownames(site6) <- NULL
+
