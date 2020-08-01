@@ -2383,6 +2383,14 @@ nonzs <- colSums(oldForestComm) != 0
 oldForestComm <- oldForestComm[,nonzs]
 all(oldForestEnv$PsubP == rownames(oldForestComm))
 
+## just for kicks, get the spatial matrix, too:
+
+oldForestSp <- read.csv("subParcelSpatial.csv")
+oldForestSp <- oldForestSp[oldForestSp$PsubP %in% oldForestEnv$PsubP,]
+all(oldForestSp$PsubP == oldForestEnv$PsubP)
+#save(oldForestSp, file='oldForestSp.rda')
+
+
 #save(oldForestComm, file="oldForestComm.rda")
 #save(oldForestEnv, file="oldForestEnv.rda")
 
@@ -2602,6 +2610,14 @@ listw.explore()
 ## speaking of, for spatial weighting, let's use a simple linear weighting
 ## for now. 
 
+## there is another parameter here, not well explained in the tutorial,
+## = "Standardization Style". From the help file, this seems to be 
+## another weighting of the links, but this time based on the 
+## neighborhood. As in, if a point has a large neighborhood, it is 
+## standardized to compare with the other neighborhoods by the number
+## of links. Not sure why this is necessary. One function below (multispa)
+## wants this to be "W", so let's go with it. 
+
 ## we can rerun all of this with different methods, see how much of a difference
 ## it makes. 
 
@@ -2616,7 +2632,7 @@ distnb <- nbdists(nb, pJ)
 ## weight them, by their length. Here a linear weighting:
 fdist <- lapply(distnb, function(x) 1 - x/max(dist(pJ)))
 ## combine nb and fdist: 
-lw <- nb2listw(nb, style = 'B', glist = fdist, zero.policy = TRUE)
+lw <- nb2listw(nb, style = 'W', glist = fdist, zero.policy = TRUE)
 
 ## also need to install the "spatialreg" package...
 
@@ -2633,6 +2649,8 @@ mem.lw <- mem(lw)
 names(attributes(mem.lw))
 
 barplot(attr(mem.lw, "values"))
+
+s.value(pJ, mem.lw, symbol="circle")
 
 s.value(pJ, mem.lw[,c(seq(1,60,5))], symbol="circle")
 
@@ -2653,31 +2671,98 @@ s.value(pJ, mem.lw[,c(1, 5, 10, 20, 30, 40, 50, 60)], symbol="circle")
 comM <- read.csv('subParcelComm.csv', row.names="PsubP")
 comM <- comM[order(as.numeric(rownames(comM))),]
 
+all(rownames(comM) == env$PsubP)
 
-
-
+all(env == env[order(env$PsubP),])
+all(pts == pts[order(pts$PsubP),])
+all(pts$PsubP == env$PsubP)
 
 pca.hell <- dudi.pca(comM, scale = FALSE, scannf = TRUE)
+dudi.pca(df = comM, scale = FALSE, scannf = FALSE, nf = 3)
 
-pca.hell <- dudi.pca(mafragh$flo, scale = FALSE, scannf = TRUE)
+## but where is the hellinger transformation? No where in the 
+## documentation does it say it is transforming our 
+## abundances...
 
-## where is the hellinger transformation? 
+## the ade4 stuff looks powerful, but culty. 
 
-##or
-pca.hell <- dudi.pca(mafragh$flo, scale = FALSE, scannf = FALSE, nf = 4)
+# let's do the standardization with the traditional function
+## and see if we can get to the same spot:
 
-## use this as our judge of character for the MEMs:
+library(vegan)
 
-mem 
+comM.hell <- decostand(comM, 'hellinger')
+
+pca.hell <- dudi.pca(comM.hell, scale = FALSE, scannf = TRUE)
+
+pca.hell <- dudi.pca(df = comM.hell, scale = FALSE, scannf = FALSE, nf = 4)
+
+## okay, select using these PCAs, see if the output makes sense:
+
+mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw)
+
+## okay, as we learned below, change pvalue. The alpha is just a hair past
+## the .05 cutoff (.0528!), this is blocking the model selection from
+## going forward:
+
+mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.6)
+summary(mem.comM.sel)
+
+mem.comM.sel
+
+## this gives us the following:
+
+## $summary
+##   variables order         R2      R2Cum   AdjR2Cum pvalue
+## 1     MEM28    28 0.02830765 0.02830765 0.01183829  0.009
+## 2      MEM2     2 0.02816669 0.05647434 0.02393897  0.005
+## 3      MEM1     1 0.02559362 0.08206796 0.03375575  0.008
+
+## plot these:
+
+#png(file='wholeCommMEMS.png', width=1500, height=600)
+s.value(pJ, mem.lw[,c(1, 2, 28)], symbol="circle")
+#dev.off()
 
 
+## we can also look at the PCA axes individually with the multispati function
+ms.hell <- multispati(pca.hell$li, listw = lw, scannf = F)
+g.ms.maps <- s.value(pJ, ms.hell$li, symbol = "circle", ppoint.cex = 0.6)
+## well, it picked up the forest contrast. That's encouraging. But not 
+## really sure what to do with that. Keep going with the model
+## selection method. 
 
+## but generally not working here, when we try to forward select, everything is thrown out. 
 
+## try subsetting to old forest, and repeat:
 
+load(file="oldForestComm.rda")
+load(file="oldForestEnv.rda")
+load(file="oldForestSp.rda")
 
+mx <- min(oldForestSp[,2])
+my <- min(oldForestSp[,3])
+oldForestPts <- cbind(oldForestSp[,2] - mx, oldForestSp[,3] - my)
 
+oldForestPts <- jitter(oldForestPts, amount=10)
 
+s.label(oldForestPts, labels=oldForestSp$PsubP)
 
+listw.explore()
+
+library(adespatial);library(sp);library(spdep)
+
+nb <- chooseCN(coordinates(oldForestPts), type = 2, plot.nb = FALSE)
+distnb <- nbdists(nb, oldForestPts)
+fdist <- lapply(distnb, function(x) 1 - x/max(dist(oldForestPts)))
+lw <- nb2listw(nb, style = 'W', glist = fdist, zero.policy = TRUE)
+
+mem.lw <- mem(lw)
+
+s.value(oldForestPts, mem.lw[,c(1, 5, 10, 20, 30)], symbol="circle")
+s.value(oldForestPts, mem.lw[,c(1:5)], symbol="circle")
+
+##############################################################3
 
 ## side note, I am really confused about the locations of 
 ## the various sites. At some point in the not-too-distant-future, 
@@ -2688,4 +2773,38 @@ site5 <- unique(aa[aa$site==5,c('site','PsubP')])
 rownames(site5) <- NULL
 site6 <- unique(aa[aa$site==6,c('site','PsubP')])
 rownames(site6) <- NULL
+mem.lw <- mem(lw)
 
+##############################################################
+
+library(vegan)
+comM.hell <- decostand(oldForestComm, 'hellinger')
+pca.hell <- dudi.pca(df = oldForestComm, scale = FALSE, scannf = FALSE, nf = 3)
+
+mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, )
+
+## huh, we have to relax the alpha to see any interesting results. 
+mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.15)
+
+## this produces the same as:
+mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.50)
+
+## so it seems like this does a global test of all mems first, if that test
+## does not meet the alpha setting, even highly significant results 
+## for single mems are not examined. Sort like a big anova before checking
+## differences with a tukey.
+
+## but that is the problem with damn frequentist methods. There is a strong 
+## signal in this second MEM, it maps our pattern of the two forest types 
+## really well, and this global alpha throws it out, if we are not careful.
+
+mm.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, MEM.all=TRUE)
+
+## even this MEM.all=TRUE doesn't tell us that one of the MEMs is highly 
+## informative. 
+
+summary(mem.comM.sel)
+
+mem.comM.sel
+
+mem.comM.sel$select
