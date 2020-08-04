@@ -579,8 +579,6 @@ specObs.familia.isnull().any() ## nope
 specObs.genero.isnull().any() ## also no empty genero cells. The problem is with the names of species
 
 
-## we need to 
-
 ## there is a species that starts with "vs. "
 ## wtf?
 
@@ -2546,7 +2544,14 @@ class(mafragh$Spatial.contour)
 ## start with entire, I guess. Our sampling scheme is irregular, looks like 
 ## this:
 
-pts <- read.csv('subParcelSpatial.csv')
+## pts <- read.csv('subParcelSpatial.csv') ## bad data!!
+
+###### new data here: ########3
+pts <- read.csv('finalReport2012Coords.csv')[,-2]
+###############################
+
+pts <- pts[order(pts$PsubP),]
+
 env <- read.csv('envOnly.csv')
 
 
@@ -2556,26 +2561,15 @@ all(pts == pts[order(pts$PsubP),])
 all(pts$PsubP == env$PsubP)
 ## looks good. 
 
-pts[,2:3]
-
-ptsMat <- as.matrix(pts[,2:3])
+pJ <- as.matrix(pts[,2:3])
 colnames(ptsMat) <- c('x','y')
 
 
-s.label(ptsMat, labels=pts$PsubP)
+### jitter these? Having different data on same points will be problem:
+#set.seed=1
+#pJ <- jitter(ptsMat, amount=10)
+### not working - what if we bring everything closer to axes?
 
-plot(ptsMat)
-
-s.label(xyir)
-
-s.label(ptsMat)
-
-## jitter these? Having different data on same points will be problem:
-
-set.seed=1
-
-pJ <- jitter(ptsMat, amount=10)
-## not working - what if we bring everything closer to axes?
 mx <- min(pJ[,1])
 my <- min(pJ[,2])
 pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
@@ -2672,17 +2666,9 @@ comM <- read.csv('subParcelComm.csv', row.names="PsubP")
 comM <- comM[order(as.numeric(rownames(comM))),]
 
 all(rownames(comM) == env$PsubP)
-
 all(env == env[order(env$PsubP),])
 all(pts == pts[order(pts$PsubP),])
 all(pts$PsubP == env$PsubP)
-
-pca.hell <- dudi.pca(comM, scale = FALSE, scannf = TRUE)
-dudi.pca(df = comM, scale = FALSE, scannf = FALSE, nf = 3)
-
-## but where is the hellinger transformation? No where in the 
-## documentation does it say it is transforming our 
-## abundances...
 
 ## the ade4 stuff looks powerful, but culty. 
 
@@ -2692,9 +2678,6 @@ dudi.pca(df = comM, scale = FALSE, scannf = FALSE, nf = 3)
 library(vegan)
 
 comM.hell <- decostand(comM, 'hellinger')
-
-pca.hell <- dudi.pca(comM.hell, scale = FALSE, scannf = TRUE)
-
 pca.hell <- dudi.pca(df = comM.hell, scale = FALSE, scannf = FALSE, nf = 4)
 
 ## okay, select using these PCAs, see if the output makes sense:
@@ -2705,10 +2688,455 @@ mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw)
 ## the .05 cutoff (.0528!), this is blocking the model selection from
 ## going forward:
 
-mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.6)
+mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.1)
+
 summary(mem.comM.sel)
 
 mem.comM.sel
+
+## why does jupyter notebook not want to work like our repl does?
+
+wtf <- function(jit=10, alpha=0.05, meth='FWD'){
+pJ <- jitter(ptsMat, amount=jit)
+mx <- min(pJ[,1])
+my <- min(pJ[,2])
+pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
+nb <- chooseCN(coordinates(pJ), type = 2, plot.nb = FALSE)
+distnb <- nbdists(nb, pJ)
+#fdist <- lapply(distnb, function(x) 1 - x/max(dist(pJ))) ## linear
+fdist <- lapply(distnb, function(x) 1 / x^3) ## concave
+lw <- nb2listw(nb, style = 'W', glist = fdist, zero.policy = TRUE)
+mem.lw <- mem(lw)
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+comM <- comM[order(as.numeric(rownames(comM))),]
+comM.hell <- decostand(comM, 'hellinger')
+pca.hell <- dudi.pca(df = comM.hell, scale = FALSE, scannf = FALSE, nf = 4)
+mem.comM.sel <- mem.select(pca.hell$tab, 
+        listw = lw, 
+        nperm.global = 10000, 
+        alpha=alpha,
+        method=meth)
+s.label(pJ, nb=nb, pnb.edge.col='red')
+#save(pJ, file='jitteredPoints.rda')
+#save(lw, file='lw.rda')
+#save(mem.comM.sel, file='mem.comM.sel.rda')
+return(mem.comM.sel)
+}
+
+
+bb <- wtf(alpha=0.10, jit = 2)
+bb$global.test$pvalue
+bb$summary$variables
+
+## pvals
+0.01729827
+0.02159784
+0.1460854
+
+## mems
+"MEM16" "MEM19" "MEM3"
+"MEM16" "MEM6"  "MEM2"  "MEM12" "MEM20"
+"MEM16" "MEM12" "MEM7"  "MEM19"
+"MEM16" "MEM17" "MEM2"  "MEM20" "MEM12" "MEM9"
+
+
+## 
+cc <- wtf(alpha=0.10, meth='global')
+## not useful, just re-reports all mems
+
+## well...
+
+## so try 3 things:
+## 1. tone down the jitter distances 
+## 2. don't weight the short distances so high, try different function 
+## 3. run a lot of trials to get the mems of interest. 
+
+## 1 -- didn't work. Just as wildly different each time.
+## 2 -- results in wildly different results, emphasis on mem16, thought changing 
+##      to concave weight with high exponent would make it more robust but still 
+##      changing radically. 
+## 3 -- not doing much for me, after ~20 trials, results are wildly different. Want
+##      more elegant solutions, don't want to grind my computer on for 1000's of 
+##      trials. 
+
+## the real answer here is to hand curate our neighborhoods, either
+## in the pt map itself, or in the neighborhood matrix
+## we have to eliminate the false positives and negatives
+## that are resulting from the jitter. 
+
+## I think we have to look at each sample site in the coordinate matrix, 
+## and actually separate them by some non-random distance, so we can 
+## get consistent results that have some basis in reality.
+
+## how to do this...how many duplicates do we have?
+
+unique(ptsMat) ## 46 unique locations
+
+sum(duplicated(ptsMat)) ## 15 duplicates
+
+pts[,2:3]
+
+## any particular pattern to dupped subParcels?
+
+dups <- duplicated(ptsMat)
+
+dupDF <- pts[dups,]
+
+tE <- table(dupDF$E)
+
+tN <- table(dupDF$N)
+
+pts[pts$E == 746847,]
+
+unique(pts[dups,])
+
+## for instance, this set of GPS points is very 
+## common:
+
+## 746847, 10034621
+
+pts[pts$E == 746847,]
+
+## 3.1, 3.4, 6.2, 9.2,
+
+## any pattern here on what is duplicated/not?
+
+## not seeing any. Looks like good old fashioned data entry error. 
+
+
+## fuck.
+
+## Fuck. Fuck. 
+
+## but it is good we looked at this. 
+
+## to make things even more complicated, the GPS points in the specimen-based 
+## spreadsheet ("CedrosFinalReview.7022012.xlsx") are slightly different than the GPS info 
+## spread sheet ("CedrosGPSPoinst.xls")
+
+## we need to hand verify the coordinates and elevation of each PsubP value. 
+
+## how to do this intelligently? start with lowest numbered
+## PsubP, 
+## check its coordinates for duplicates
+## try to figure out its true coordinates based on specimens sheets
+
+## a function to check dups:
+
+pts <- read.csv('subParcelSpatial.csv')
+
+psubp <- 1.1
+
+checkDups <- function(psubp){
+    psubpRow <- pts[pts$PsubP==psubp,]
+    perfMatch <- pts[pts$E==psubpRow$E & pts$N == psubpRow$N,]
+    halfMatchE <- pts[pts$E == psubpRow$E & pts$N != psubpRow$N,]
+    halfMatchN <- pts[pts$E != psubpRow$E & pts$N == psubpRow$N,]
+    #print(paste("PsubP = ", psubp, sep=''))
+    #print("perfect matches:")
+    #print(perfMatch)
+    #print("half matches:")
+    #print("E")
+    #print(halfMatchE)
+    #print("N")
+    #print(halfMatchN)
+    return(rbind(perfMatch, halfMatchE, halfMatchN))
+}
+
+aa <- checkDups(1.1)
+
+aa <- checkDups(6.3)
+
+## make a function tells us how many points
+## have the same coordinates as the input point
+
+pts <- read.csv('subParcelSpatial.csv')
+
+
+sink('lookingForDups.txt')
+dupsList <- vector('list', length(pts$PsubP))
+for (i in 1:length(pts$PsubP)){
+    print(paste(i, pts$PsubP[i]))
+    aa <- checkDups(pts$PsubP[i])
+    print(nrow(aa))
+    if (nrow(aa) > 1){
+    dupsList[[i]] <- aa
+}}
+sink()
+
+
+## meh, sort of worked... now, 
+## let's look at these:
+
+1  1.1  2
+2  1.2  1
+3  1.3  1
+4  1.4  2
+5  1.5  2
+6  2.1  1
+7  2.2  1
+8  2.3  2
+9  2.4  2
+10 3.1  4
+11 3.2  1
+12 3.3  3
+13 3.4  4
+14 4.1  2
+15 4.2  1
+16 4.3  2
+17 4.4  3
+18 5.1  1
+19 5.2  2
+20 5.3  1
+21 5.4  1
+22 6.1  1
+23 6.2  4
+24 6.3  2
+25 6.4  1
+26 6.5  1
+27 6.6  1
+28 6.7  1
+29 6.8  1
+30 6.9  1
+31 7.1  2
+32 7.2  1
+33 7.3  1
+34 7.4  1
+35 7.5  1
+36 7.6  1
+37 7.7  1
+38 7.8  2
+39 7.9  2
+40 8.1  3
+41 8.2  3
+42 8.3  1
+43 8.4  3
+44 8.5  3
+45 8.6  2
+46 8.7  1
+47 8.8  1
+48 8.9  1
+49 9.1  1
+50 9.2  4
+51 9.3  2
+52 9.4  2
+53 9.5  2
+54 9.6  1
+55 9.7  1
+56 9.8  2
+57 9.9  2
+58 10.1 1
+59 10.2 2
+60 10.3 2
+61 10.4 1
+
+## 1.1:
+dupsList[[1]]
+## 1.1 is at the same spot as 6.3
+## not sure which is right, but probably 
+## 1.1 is correct, because 6.3 is listed as
+## sendero oso, and for a higher elevation
+
+## interesting, the second sheet of Ana's GPSPointsCedros.xls
+## lists the 1.1 as N748045 E33792. 
+
+## This is different. If we apply the above corrections (flip x and y, 
+## add 10^7 m), this gives us E748045 N10033792, which is spot 
+## on the entrance trail, which matches their description spot on. 
+
+## hmm. Think I have been given some rotten data...
+
+## which, if either, matches the collections? 
+
+
+## 1.4
+dupsList[[4]]
+##   PsubP      E        N
+## 4    1.4 747598 10034057
+## 59  10.2 747598 10034057
+
+## elevation for 1.4 listed as 1351 on the aster
+## elevation for 10.2 listed as 1367 on the aster
+
+## base de datos final puts 1.4 at 747986, 10033888
+## base de datos final puts 10.2 at 747413 10033728  
+
+## GPSpointsCedrosHoja2 says 1.4 is at 747986 10033888
+## (on the camino chontal)
+## GPSpointsCedrosHoja2 has no GPS data for 10.2
+## says it is behind the greenhouse. 
+
+## using hoja2/base de datos, this puts this point 
+## almost exactly on the camino chontal trail
+
+## a trend is forming. Seems like we used exactly 
+## the wrong data. I just used the cleanest data I
+## could find, I didn't see there was a difference...
+## not my fault! :)
+
+## let's look at a few more before we make the leap. 
+
+
+
+
+5  1.5  2
+8  2.3  2
+9  2.4  2
+10 3.1  4
+12 3.3  3
+13 3.4  4
+14 4.1  2
+
+
+## 4.3
+dupsList[[16]]
+##    PsubP      E        N
+## 16   4.3 746470 10032679
+## 45   8.6 746470 10033324
+
+## base de datos 746459, 10032194  elev= 1618
+## which makes a lot more sense. 
+
+## does the base de datos generally disagree 
+## with hoja1 of the gps data?
+## and generally agree with hoja2?
+
+
+17 4.4  3
+19 5.2  2
+23 6.2  4
+
+## 24 6.3  2
+dupsList[[24]]
+## as above, I think 1.1 is more likely to be 
+## correct here, if either are correct. 
+## so where does 6.3 actually belong?
+## they are all listed as being on the oso/inca 
+## trail system, and as old forest sites
+
+## on the first page of the GPS data
+## its listed as N0748246 E0034127
+## corrected, this means: 
+## E0748246 N10034127
+
+## if we check the second page of the GPS data,
+## it's listed as N747140 E35018. 
+## correct this to E747140 N10035018. 
+## and it's spot on, lands close to Oso trail, 
+## near the intersection of the inca, oso and new waterfall trails. 
+
+## I wonder if this is a trend, that the second page
+## is the most useful.
+
+
+
+
+ 
+
+## also a different elevation. WTF. 
+
+31 7.1  2
+38 7.8  2
+39 7.9  2
+40 8.1  3
+41 8.2  3
+43 8.4  3
+44 8.5  3
+45 8.6  2
+50 9.2  4
+51 9.3  2
+52 9.4  2
+53 9.5  2
+56 9.8  2
+57 9.9  2
+
+## 10.2
+dupsList[[59]]
+##    PsubP      E        N
+## 4    1.4 747598 10034057
+## 59  10.2 747598 10034057
+
+## the only other data I have for this is 
+## base dat final, 747413, 10033728
+## which sort of makes sense. 
+
+## matches the elevation ok, their data says 1340, 
+## mine says 1326. 
+
+## but the name makes no sense, at least not if 
+## I am thinking about the same green house,
+## which is basically at the main lc lodge. 
+
+60 10.3 2
+
+
+## so let's make a dataframe comparing the three sources
+## of spatial data - the final report, and pages 1 and 2
+## of the los Cedros GPS data:
+
+## start with the final review:
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import pickle
+
+wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
+sheet = wb['Base dat final 6 29 2012']
+bdfDF = pd.DataFrame(sheet.values)
+bdfDF.columns = bdfDF.iloc[0]
+bdfDF.drop(0,0, inplace=True)
+fpRep = bdfDF[['Parcela', 'Subparcela','N','E' ]]
+fpRep.dropna(axis=0, inplace=True, how='all')
+PsubP = fpRep.Parcela.astype('str') + "." + fpRep.Subparcela.astype('str')
+PsubP = PsubP.astype('float')
+fpRep['PsubP'] = PsubP
+fpRep.drop(['Subparcela'], axis=1, inplace=True)
+#fpRep.drop(['Parcela', 'Subparcela'], axis=1, inplace=True)
+fpRep.set_index('PsubP', inplace=True)
+fpRep.drop_duplicates(inplace=True)
+fpRep.rename_axis('', axis=1, inplace=True)
+## flip n/e, give different name so as to not confuse anything
+fpRep.rename(index=str, columns={"N":'FinalRep_E', "E":'FinalRep_N'}, inplace=True)
+fpRep.FinalRep_N = fpRep.FinalRep_N + 10000000 ## fix northing numbers
+fpRep.to_csv('finalReport2012Coords.csv')
+
+## okay, so how does this compare to the gps data 
+## we were using?
+
+aa = pd.read_pickle('subParcelSpatial.p')
+aa.rename(index=str, columns={'E':'GPSHoja1_E','N':'GPSHoja1_N'}, inplace=True)
+
+bb = pd.concat([fpRep, aa], axis=1, sort=True)
+
+bb.to_csv('coordinateComparison.csv')
+
+## send this off to Ana for comment...
+
+GPSpointsCedrosMapHoja1
+
+## the finalreview pts look way better to me, so let's redo
+## all the explicitly spatial tests with these.
+
+#####################################################3
+
+
+
+
+all(pca.hell2$tab == pca.hell$tab) ## yup, the pcas are exactly the same
+
+## copy our text from the notebook
+mem.comM.sel <- mem.select(pca.hell2$tab, method="FWD", listw = lw, alpha=1)
+
+## works here. try with the jupyter lw:
+mem.comM.sel <- mem.select(pca.hell2$tab, method="FWD", listw = lw2, alpha=1)
+
+## hmmm, seems to have something to do with the lw object we're using. 
+mem.comM.sel <- mem.select(pca.hell2$tab, method="FWD", adjR2cum = 0.05, listw = lw, alpha=1)
+
+nb2 <- chooseCN(coordinates(pJ2), type = 2, plot.nb = FALSE)
 
 ## this gives us the following:
 
@@ -2733,6 +3161,8 @@ g.ms.maps <- s.value(pJ, ms.hell$li, symbol = "circle", ppoint.cex = 0.6)
 ## selection method. 
 
 ## but generally not working here, when we try to forward select, everything is thrown out. 
+
+#################
 
 ## try subsetting to old forest, and repeat:
 
@@ -2775,19 +3205,37 @@ site6 <- unique(aa[aa$site==6,c('site','PsubP')])
 rownames(site6) <- NULL
 mem.lw <- mem(lw)
 
+## okay, I think the new points clarify this quite 
+## a bit 
 ##############################################################
 
 library(vegan)
 comM.hell <- decostand(oldForestComm, 'hellinger')
 pca.hell <- dudi.pca(df = oldForestComm, scale = FALSE, scannf = FALSE, nf = 3)
 
+
 mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, )
 
 ## huh, we have to relax the alpha to see any interesting results. 
-mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.15)
+## up the perms, because we have functions on the edge of our cutoffs,
+## some precision might help
 
-## this produces the same as:
-mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.50)
+mem.comM.sel.p20 <- mem.select(pca.hell$tab, 
+    method="FWD", 
+    listw = lw, 
+    alpha=0.2,
+    nperm=9999, 
+    )
+
+
+mem.comM.sel$summary$order
+mem.comM.sel.p20$summary$order
+
+## these are the same. It does not seem to be relaxing
+## either the global or local alphas. Should probably 
+## post about this. 
+
+## oh well. Let's go with this. 
 
 ## so it seems like this does a global test of all mems first, if that test
 ## does not meet the alpha setting, even highly significant results 
@@ -2798,13 +3246,98 @@ mem.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, alpha=0.50)
 ## signal in this second MEM, it maps our pattern of the two forest types 
 ## really well, and this global alpha throws it out, if we are not careful.
 
-mm.comM.sel <- mem.select(pca.hell$tab, method="FWD", listw = lw, MEM.all=TRUE)
+#mm.comM.sel.all <- mem.select(pca.hell$tab, method="FWD", listw = lw, MEM.all=TRUE)
 
 ## even this MEM.all=TRUE doesn't tell us that one of the MEMs is highly 
-## informative. 
+## informative. Kind of an odd function. 
 
 summary(mem.comM.sel)
 
-mem.comM.sel
+mem.comM.sel$summary
 
-mem.comM.sel$select
+##    variables order         R2      R2Cum   AdjR2Cum pvalue
+## 1       MEM1     1 0.04396803 0.04396803 0.02776410  0.001
+## 2       MEM2     2 0.03833651 0.08230453 0.05065986  0.001
+## 3       MEM8     8 0.03662942 0.11893395 0.07256205  0.001
+## 4       MEM3     3 0.03119336 0.15012730 0.08942211  0.001
+## 5      MEM10    10 0.03012891 0.18025621 0.10573405  0.001
+## 6       MEM5     5 0.02939932 0.20965553 0.12183948  0.003
+## 7      MEM12    12 0.02703676 0.23669229 0.13587807  0.005
+## 8       MEM6     6 0.02478950 0.26148180 0.14786361  0.003
+## 9       MEM9     9 0.02096149 0.28244329 0.15581563  0.008
+## 10     MEM14    14 0.02080523 0.30324852 0.16389822  0.010
+## 11     MEM15    15 0.01957388 0.32282240 0.17080294  0.023
+## 12     MEM11    11 0.01919429 0.34201669 0.17752087  0.017
+## 13      MEM4     4 0.01917227 0.36118897 0.18449655  0.027
+## 14     MEM13    13 0.01826007 0.37944903 0.19058570  0.036
+
+## well, up to ~.38 of variance predicted by spatial patterns. 
+## we are into some interesting results, my friends.
+
+## lots of MEMs. plot these:
+
+s.value(pJ, mem.lw[,mem.comM.sel$summary$order], symbol="circle")
+
+## very cool. 
+
+## let's summarize that MEM creation/selection pipeline:
+
+## load packages
+library(vegan)
+library(ade4)
+library(adespatial)
+library(adegraphics)
+library(spdep)
+library(maptools)
+library(sp)
+## get data:
+pts <- read.csv('finalReport2012Coords.csv')[,-2]
+pts <- pts[order(pts$PsubP),]
+env <- read.csv('envOnly.csv')
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+comM <- comM[order(as.numeric(rownames(comM))),]
+## are these in order?
+all(rownames(comM) == env$PsubP)
+all(env == env[order(env$PsubP),])
+all(pts == pts[order(pts$PsubP),])
+all(pts$PsubP == env$PsubP)
+all(env == env[order(env$PsubP),])
+all(pts == pts[order(pts$PsubP),])
+all(pts$PsubP == env$PsubP)
+## looks good. 
+pJ <- as.matrix(pts[,2:3])
+colnames(ptsMat) <- c('x','y')
+mx <- min(pJ[,1])
+my <- min(pJ[,2])
+pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
+## sanity plot check:
+#s.label(pJ)
+## graphical interface for exploring neighborhoods:
+##listw.explore()
+## make SWG, with gabriel method:
+nb <- chooseCN(coordinates(pJ), type = 2, plot.nb = FALSE)
+## get the distances of each link:
+distnb <- nbdists(nb, pJ)
+## weight them, by their length. Here a linear weighting:
+fdist <- lapply(distnb, function(x) 1 - x/max(dist(pJ)))
+## combine nb and fdist: 
+lw <- nb2listw(nb, style = 'W', glist = fdist, zero.policy = TRUE)
+## visual check of neighborhoods
+s.label(pJ, nb=nb, pnb.edge.col='red')
+## generate mems
+mem.lw <- mem(lw)
+## standardize/"linearize" rows of community matrix, make PCAs
+comM.hell <- decostand(comM, 'hellinger')
+pca.hell <- dudi.pca(df = comM.hell, scale = FALSE, scannf = FALSE, nf = 4)
+## okay, select using these PCAs, see if the output makes sense. Use lots of 
+## permutations, because we have a MEM on the edge of significance. 
+mem.comM.sel <- mem.select(pca.hell$tab, 
+    method="FWD", 
+    listw = lw, 
+    nperm=9999, 
+    )
+
+## check results
+mem.comM.sel$summary
+## plot:
+s.value(pJ, mem.lw[,mem.comM.sel$summary$order], symbol="circle")
