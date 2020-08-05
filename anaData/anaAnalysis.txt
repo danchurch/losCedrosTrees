@@ -1002,16 +1002,23 @@ plt.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
 ###### general turnover pipeline #########
 
 specObs = pd.read_pickle('specObs.p')
-spDF = pd.read_pickle('subParcelSpatial.p')
 subParcelComm = pd.read_pickle("subParcelComm.p")
+## old data: spDF = pd.read_pickle('subParcelSpatial.p')
+## new data:
+spDF = pd.read_csv('finalReport2012Coords.csv')
+spDF['PsubP'] = spDF['PsubP'].astype('str')
+spDF.set_index('PsubP', inplace=True)
+spDF.drop('Parcela', axis=1, inplace=True)
+spDF.rename(columns={'FinalRep_E':'E', 'FinalRep_N':'N'}, inplace=True)
+
 
 ## get our original in there first:
 fig, axes = plt.subplots(nrows=2, ncols=3, sharey=True)
 axes = axes.flatten()
-
 physDist = sp.distance.pdist(spDF, metric='euclidean')
 bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
 X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+
 axes[0].scatter(physDist, bcDist)
 axes[0].plot( X, LinearRegression().fit(X, Y).predict(X), c='k') 
 
@@ -1019,12 +1026,12 @@ axes[0].plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
 soGrouped = specObs.groupby('habitat')
 habs = list(soGrouped.groups.keys())
 
-
 for h,i in enumerate(habs): 
     print(i)
+    print(h)
     obs_i = soGrouped.get_group(i)
-    obs_iN = [ spDF.loc[a].N for a in obs_i.PsubP ]
     obs_iE = [ spDF.loc[a].E for a in obs_i.PsubP ]
+    obs_iN = [ spDF.loc[a].N for a in obs_i.PsubP ]
     obs_i['N'] = obs_iN
     obs_i['E'] = obs_iE
     subParcelInObs_i = subParcelComm.index.isin(obs_i.PsubP)
@@ -1394,6 +1401,7 @@ rownames(sPC) <- subParcelComm[,1]
 ## does vegan give us what we need?
 
 sPCBray <- vegdist(sPC)
+sPC.ward <- hclust(sPCBray, method='ward.D2')
 
 
 
@@ -1468,13 +1476,20 @@ labels=hab,
 aa <- rect.hclust(sPC.ward, k=3)
 #dev.off()
 
+rect.hclust(sPC.ward, k=3, lwd=4)
+
+rect.hclust
+
 ## well, interesting. The RCA plots are on their own again...with some regen forest
 ## tagging along.
 
 ## can we look at these on a map?
 
 envOnly <- read.csv('envOnly.csv')
-pts <- read.csv('subParcelSpatial.csv')
+## old data: pts <- read.csv('subParcelSpatial.csv')
+pts <- read.csv('finalReport2012Coords.csv')[,-2]
+pts <- pts[order(pts$PsubP),]
+
 k <- 4
 tree <- sPC.ward
 jit <- 50 ## jitter value
@@ -1487,9 +1502,13 @@ for (i in 1:length(sPC.ward$labels)){
     hab[i] <- as.character(envOnly$habitat[ind])
 }
 
-makeClustMap <- function(tree, k, labels=NULL, jit=50){
+
+all(envOnly$PsubP == pts$PsubP)
+
+makeClustMap <- function(tree, k, labels=NULL){
     envOnly <- read.csv('envOnly.csv')
-    pts <- read.csv('subParcelSpatial.csv')
+    pts <- read.csv('finalReport2012Coords.csv')[,-2]
+    pts <- pts[order(pts$PsubP),]
     require(stats)
     ## get habitat type labels for tree
     if (is.null(labels)){lab <- NULL}
@@ -1513,7 +1532,6 @@ makeClustMap <- function(tree, k, labels=NULL, jit=50){
         }
     cGroup <- data.frame(cbind(PsubP, gr))
     cGroup <- cGroup[order(cGroup$PsubP),]
-    pts <- pts[order(pts$PsubP),]
     clsp <- base::merge(pts, cGroup)
     clsp <- base::merge(clsp, envOnly)
     shapes <- vector(length=nrow(clsp))
@@ -1522,10 +1540,8 @@ makeClustMap <- function(tree, k, labels=NULL, jit=50){
     shapes[clsp$habitat == 'CLB'] <- 22
     shapes[clsp$habitat == 'RCA'] <- 17
     shapes[clsp$habitat == 'RG'] <- 23
-    eJit=jitter(clsp$E, jit)
-    nJit=jitter(clsp$N, jit)
-    plot(x=eJit, 
-        y=nJit, 
+    plot(x=pts$FinalRep_E, 
+        y=pts$FinalRep_N, 
         col=clsp$gr,
         xlab='',
         ylab='',
@@ -1549,6 +1565,8 @@ makeClustMap <- function(tree, k, labels=NULL, jit=50){
 makeClustMap(sPC.ward, 2)
 
 makeClustMap(sPC.ward, k=2, labels='hab')
+
+makeClustMap(sPC.ward, k=4, labels='hab')
 
 ## interesting. forcing this to two groups does recapture this 
 ## result of RCA all by itself, with some of the regenerating 
@@ -1666,7 +1684,6 @@ import rasterio
 import rasterio.plot
 import copy
 import random
-
 plt.ion()
 
 gpd.datasets.available
@@ -1699,22 +1716,6 @@ fig, ax = plt.subplots(figsize=[4,4])
 ## for our sample sites
 
 anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
-## some weird column names, fix them:
-anaPt.rename(columns={
-                    "No Hoja/Page":"hoja",
-                    "Ubicacion/Ubication":"ubicacion",
-                    "Sitio/Site":"sitio",
-                    "Habitat":"habitat",
-                    "Parcela/Plot":"parcela", 
-                    "Subparcela  /Subplot": "subparcela",
-                    "Fecha/Date": "fecha",
-                    "Elevation": "elevation",
-                    }, inplace=True)
-## don't think we need these:
-anaPt.drop(['hoja','ubicacion'], axis=1, inplace=True).head(2)
-## add in a PsubP column as a unique identifier
-PsubPseries = anaPt.parcela.astype('str') + "." + anaPt.subparcela.astype('str')
-anaPt.insert(5,"PsubP", PsubPseries.astype('float'))
 ## our cluster info is here:
 cGroup = pd.read_csv("cGroup.csv")
 ## add this cluster info in
@@ -1727,6 +1728,9 @@ cdik={
 4:"b"
 }
 anaPt['clustCols'] = [ cdik[i] for i in anaPt.gr ]
+## where is our habitat data?:
+envOnly = pd.read_csv('envOnly.csv')
+anaPt = anaPt.merge(envOnly, on="PsubP")
 ## set the habitat symbol
 msym_dik={
 'BC':'o',
@@ -1751,45 +1755,30 @@ for i in anaPt.habitat.unique():
                 marker=anaPtI.habSyms[0], 
                 ax=ax)
 
-## jitter?
-
-def jitt(x,σ=10):
-    ''' returns a jittered value using normal dist '''
-    xJit = x + random.gauss(0, σ)
-    return(xJit)
-
-def jitCoords(gdf, σ=10):
-    ''' jitters a geopanda df. Amount of jitter is set 
-        with the 'σ' parameter'''
-    aa=copy.deepcopy(gdf)
-    xx = aa.geometry.x.apply(jitt, args=(σ,)).astype('int')
-    yy = aa.geometry.y.apply(jitt, args=(σ,)).astype('int')
-    aa.geometry = gpd.points_from_xy(xx,yy)
-    return(aa)
-
-
-anaPt.tail()
-jitCoords(anaPt).tail()
-
-anaPt.tail()
-jitCoords(anaPt, 20).tail()
-
-## think it works. Try it out our data?
-jit = 40
-anaPtJitt = jitCoords(anaPt, σ=jit)
-fig, ax = plt.subplots(1,1)
-for i in anaPtJitt.habitat.unique():
-    print(i)
-    anaPtI = anaPtJitt[anaPtJitt['habitat'] ==  i].reset_index()
-    anaPtI.plot(color=anaPtI.clustCols, 
-                marker=anaPtI.habSyms[0], 
-                ax=ax)
-
-ax.set_title('σ='+str(jit))
 hydro.plot(color='Blue', ax=ax)
-#paths.plot(color='red', ax=ax)
+
+paths.plot(color='red', linestyle='--', ax=ax)
+
 raster = rasterio.open("GIS/anaPlotDEG.tif")
 rasterio.plot.show(raster, ax=ax)
+
+## jitter?
+## don't need this with corrected GPS info
+## def jitt(x,σ=10):
+##     ''' returns a jittered value using normal dist '''
+##     xJit = x + random.gauss(0, σ)
+##     return(xJit)
+## 
+## def jitCoords(gdf, σ=10):
+##     ''' jitters a geopanda df. Amount of jitter is set 
+##         with the 'σ' parameter'''
+##     aa=copy.deepcopy(gdf)
+##     xx = aa.geometry.x.apply(jitt, args=(σ,)).astype('int')
+##     yy = aa.geometry.y.apply(jitt, args=(σ,)).astype('int')
+##     aa.geometry = gpd.points_from_xy(xx,yy)
+##     return(aa)
+
+
 
 ## looks like jit = 40 is a nice amount
 
@@ -2025,27 +2014,41 @@ library('vegan')
 library('ecodist')
 
 ## make the distance matrix 
-aa <- read.csv('subParcelSpatial.csv', row.names="PsubP")[,-1]
+## old data: aa <- read.csv('subParcelSpatial.csv', row.names="PsubP")[,-1]
+
+## corrected coordinates:
+
+cc <- read.csv('finalReport2012Coords.csv')
+
+aa <- read.csv('finalReport2012Coords.csv')[,-2]
+aa <- aa[order(aa$PsubP),]
 physdist <- vegdist(aa, method='euclidean')
 ## make the community dissimilarity matrix
-bb <- read.csv('subParcelComm.csv', row.names="PsubP")
+bb <- read.csv('subParcelComm.csv')
+bb <- bb[order(bb$PsubP),]
+row.names(bb) <- bb$PsubP
+bb <- bb[,-1]
+all(aa$PsubP == rownames(bb))
 braydist <- vegdist(bb, method='bray')
+
 ## correlogram
 cgram <- mgram(braydist, physdist) ## correlogram object
 plot(cgram)
 global_mant_test <- mantel(braydist ~ physdist, nperm = 10000) ## overall test
 
 ## can we subset this by habitat and by cluster group?
-## this shows no strong evidence of global autocorrelation,
-## though our correlogram indicates that some level is occurring
-## locally. 
+## this shows strong evidence of global autocorrelation
 
 ## what if we subset a little...
 
-getDists <- function(comfile, physfile='subParcelSpatial.csv'){ 
+getDists <- function(comfile, physfile='finalReport2012Coords.csv'){ 
     comM <- read.csv(comfile, row.names=1)
     comM <- comM[order(as.numeric((rownames(comM)))),]
-    spM <- read.csv(physfile, row.names='PsubP')[,-1]
+    spM <- read.csv('finalReport2012Coords.csv')[,-2]
+    spM <- spM[order(spM$PsubP),]
+    rownames(spM) <- spM$PsubP
+    spM <- spM[,-1]
+    physdist <- vegdist(spM, method='euclidean')
     spM <- spM[rownames(spM)%in%rownames(comM),] 
     spM <- spM[order(as.numeric((rownames(comM)))),]
     if(all(rownames(spM) == rownames(comM))){
@@ -2057,8 +2060,10 @@ getDists <- function(comfile, physfile='subParcelSpatial.csv'){
     }
 
 comms <- c('BC_comm.csv', 'BS_comm.csv', 'CLB_comm.csv', 'RCA_comm.csv', 'RG_comm.csv')
+
 ## start df
 all_mant_test  <- global_mant_test
+
 ## test individually
 par(mfrow=c(2,3))
 for (i in 1:length(comms)){
@@ -2071,10 +2076,10 @@ for (i in 1:length(comms)){
 }
 plot(cgram, main = "global" )
 
-dists.i <- getDists('RCA_comm.csv')
-cgram.i <- mgram(dists.i[[1]], dists.i[[2]]) ## correlogram object
-plot(cgram.i, main = 'RCA_comm.csv' )
-mant_test.i <- mantel(dists.i[[1]] ~ dists.i[[2]], nperm = 10000) ## overall test
+comms <- c('BC_comm.csv', 'BS_comm.csv', 'CLB_comm.csv', 'RCA_comm.csv', 'RG_comm.csv')
+
+rownames(all_mant_test) <- c(rev(comms), "global")
+
 
 
 ## The natural forest sites
