@@ -2336,7 +2336,9 @@ sum(clsp$habitat == 'RG' | clsp$habitat == 'RCA')
 library(vegan)
 
 envOnly <- read.csv('envOnly.csv')
+
 envOnly <- envOnly[order(envOnly$PsubP),]
+
 subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
 sPC <- subParcelComm[,-1]
 rownames(sPC) <- subParcelComm[,1]
@@ -3346,3 +3348,324 @@ mem.comM.sel <- mem.select(pca.hell$tab,
 mem.comM.sel$summary
 ## plot:
 s.value(pJ, mem.lw[,mem.comM.sel$summary$order], symbol="circle")
+
+
+##### look at big picture again ########
+
+## our todo list is something like:
+
+## see if we can correct the point outside of 
+## los cedros, Ana says this is incorrect
+
+## check old forest NMS, groups seem funky to me
+
+## examine differences in communities of seedlings and mature 
+## trees - are they a view into the future?
+
+## examine differences among blocks
+
+## finish spatial analysis -  what were we trying to do again?
+## get mems as predictor variables. 
+
+## the classical next steps are to conduct a variation partitioning 
+## process - changes in our community composition as predicted by:
+## slope, aspect, elevation, distance to stream, land use 
+
+## that means I need to generate more environmental data, and clean up 
+## the land use question a bit. 
+
+## land use right now is now well defined, and should be broken up into 
+## at least two variables: 
+
+## time since last  use 
+## type of use (potrero vs agriculture?)
+
+## right now the latter is already broadly defined, RCA vs. BS
+
+## BS is old potrero, mostly, and RCA is intensive agriculture
+
+## so maybe step one is correct small mistakes, the point outside 
+## LC and the old forest groups
+
+## step two is generate the other environmental data, 
+## step three is complete the broad varpar
+## step four check seedlings
+## step five, try out the BC distance to Old forest vs. RCA within the BS
+## (the pleuripotent hypothesis, alternate stable states) 
+
+###### try to correct point outside los cedros ######
+
+## how can we quickly plot our points and the los cedros 
+## polygon?
+
+## back into R. We need to know how to do this anyway, 
+## to make all the MEM stuff look nicer.
+
+## load all the libraries:
+library(vegan)
+library(ade4)
+library(adespatial)
+library(adegraphics)
+library(spdep)
+library(maptools)
+library(sp)
+
+## here is the example tutorial from ADE folks:
+
+data('mafragh')
+
+mxy <- as.matrix(mafragh$xy)
+rownames(mxy) <- NULL
+
+s.label(mxy, ppoint.pch = 15, ppoint.col = "darkseagreen4", Sp = mafragh$Spatial.contour)
+
+## works, so how do we adapt to this to our data?
+
+## our points are here:
+aa <- read.csv('finalReport2012Coords.csv')[,-2]
+aa <- aa[order(aa$PsubP),]
+rownames(aa) <- aa$PsubP
+colnames(aa) <- c('PsubP','E','N')
+pts <- aa[,-1]
+
+## how to plot the losCed polygon?
+
+## we have a geojson, there must be an easy way to do this
+
+## this is a horrible way to do this, but:
+source('lcPolyGetCoords.R') 
+
+Polygons(list(Polygon(LCpolyCoords)), ID="losCedros")
+
+lcPoly <- SpatialPolygons(list(Polygons(list(Polygon(LCpolyCoords)), ID="losCedros")))
+#save(lcPoly, file='lcPoly.rda')
+
+s.label(pts, ppoint.pch = 15, ppoint.col = "darkseagreen4", Sp = lcPoly)
+
+## looks like 2.4 is the problem. 
+
+pts['2.4',]
+
+## to me it looks like the northing is off by about 1000m, 
+## in order to bring it down to the 2.__ subparcels
+
+## how does this look if we correct just this point, by subtracting
+## 1000m from the Northing?
+
+pts['2.4',]$N <- 10033474
+
+s.label(pts, ppoint.pch = 15, ppoint.col = "darkseagreen4", Sp = lcPoly)
+
+## looks better. But looks like all of the 2.__ plots are outside the 
+## reserve, still:
+
+s.label(pts, label=NULL, ppoint.col = "darkseagreen4", Sp = lcPoly)
+
+## not sure, but they are close. 
+
+## let's leave them as they are, with that one point corrected. 
+## we should probably rerun the spatial stuff with this point, it may 
+## have made a difference. 
+
+## that works. 
+## can we do this with the MEMs? don't see why not. save that for later.
+
+
+### debug old forest elevacion NMS ###
+
+## for some reason, our old forest NMS that checks 
+## the effects of elevation on plot, the results are reversed
+## from my maps. 
+
+load("oldForestComm.rda")
+load("oldForestEnv.rda")
+
+## groups look right in the environmentat data. 
+## must simply be an ordering issue in the
+## hulls
+
+OFnms <- metaMDS(oldForestComm, try=40)
+ 
+XX <- OFnms$points[,'MDS1']
+YY <- OFnms$points[,'MDS2']
+
+## make a color ramp for this elevation data
+minElev <- min(oldForestEnv$elevacion)
+maxElev <- max(oldForestEnv$elevacion)
+rangeElev <- maxElev - minElev
+colrsRamp <- colorRampPalette(c(rgb(1,0,0,0), rgb(1,0,0,1)), alpha = TRUE)(rangeElev)
+ElevColrs <- colrsRamp[oldForestEnv$elevacion - min(oldForestEnv$elevacion)]
+
+
+png(file='oldForestNMSelevClust.png', height=800, width=800)
+plot(XX, YY,
+    col="black",
+    pch=21,
+    cex=4.5,
+    bg=ElevColrs,
+    xlab='NMS1',
+    ylab='NMS2',
+    main="Two forest types detected, with elevation gradient"
+    )
+ordihull(OFnms, oldForestEnv$clGr, col=c(3,4), lwd=2, lty=2)
+legend( x='topright',
+        legend = c('clustGroup 3', 'clustGroup 4', '1259 m', '1680 m'),
+        col = c(3,4, 1, 1),
+        bty = 'n',
+        pt.bg = c(NA, NA, "transparent", "red"),
+        #merge = FALSE,
+        pt.cex = 3.0,
+        cex = 2.0,
+        lty = c(2,2, NA, NA),
+        lwd = 2.0,
+        pch = c(NA, NA, 21, 21),
+        )
+dev.off()
+
+names(table(oldForestEnv$clGr))
+
+aa <- identify(OFnms$points)
+
+OFnms$points[aa,]
+
+OFnms$points[identify(OFnms$points),]
+
+## where is our lowest point on this?
+
+oldForestEnv[order(oldForestEnv$elevacion),]
+
+## looks like our lowest is 7.1
+
+OFnms$points['7.1','MDS1']
+
+points(OFnms$points['9.1','MDS1'], 
+        OFnms$points['9.1','MDS2'],
+        cex=5, 
+        pch=21,
+        col="blue")
+
+## yup, all lines up. problem debugged. 
+
+## what's next?
+
+## we need environmental data.
+
+### looks like we could have sed this:
+
+install.packages('geojsonio')
+
+## then try
+geojson_sp()
+
+######### generate more environmental data ########
+
+## we need slope, aspect, distance to water,
+## how can we generate these? 
+ 
+## if we do this in python:
+
+##### to plot polygon boudaries:
+
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+
+help(lcPoly.boundary.plot)
+
+lcPoly.boundary.plot(color='purple', linewidth=3)
+
+## I think the other functions will be shapely type 
+## operations
+
+##### to get distance to stream
+## one example is here:
+## https://stackoverflow.com/questions/30740046/calculate-distance-to-nearest-feature-with-geopandas ##
+## remember to upvote if it works
+
+import geopandas as gpd
+
+# read geodata for five nyc boroughs
+gdf_nyc = gpd.read_file(gpd.datasets.get_path('nybb'))
+# read geodata for international cities
+gdf_cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+
+# convert to a meter projection
+gdf_nyc.to_crs(epsg=3857, inplace=True)
+gdf_cities.to_crs(epsg=3857, inplace=True)
+gdf_nyc.geometry.apply(lambda x: gdf_cities.distance(x).min())
+
+##### to get slope and aspect ######
+
+## try this in python. 
+
+import pandas as pd 
+import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+import rasterio
+import rasterio.plot
+plt.ion()
+
+
+## the boundaries are here:
+lcpoly.bounds
+
+## but we already have a good size DEM for this study, let's 
+## try that first. Following <https://stackoverflow.com/questions/47653271/calculating-aspect-slope-in-python3-x-matlab-gradientm-function>
+
+## upvote if works
+
+## slope:
+
+from osgeo import gdal
+import numpy as np
+import rasterio
+from rasterio.plot import show_hist
+
+help(gdal.DEMProcessing)
+
+gdal.DEMProcessing('GIS/anaStudySlope.tif', 'GIS/anaPlotDEG.tif', 'slope')
+slopeRast = rasterio.open("GIS/anaStudySlope.tif")
+rasterio.plot.show(slopeRast)
+## does not work as above...
+rasterio.plot.show_hist(slopeRast) ## nada
+
+
+help(gdal.DEMProcessing)
+gdal.DEMProcessing('GIS/anaStudyAspect.tif', 'GIS/anaPlotDEG.tif', "aspect")
+aspectRast = rasterio.open("GIS/anaStudyAspect.tif")
+rasterio.plot.show(aspectRast)
+
+rasterio.plot.show_hist(slopeRast) ## nada
+
+## fuckit, none of that worked. Did a little pointNclick with 
+## qgis, let's see if that worked:
+
+slopeRast = rasterio.open("GIS/lcSlope.tif")
+rasterio.plot.show(slopeRast)
+
+aa = slopeRast.read(1)
+## this makes a numpy array which could be handy, but we lose
+## our spatial indexing?
+
+## "index" might work here:
+xx, yy = slopeRast.index(748667, 10033329)
+aa[xx,yy]
+
+## not sure if that works perfectly. Let's do a sanity 
+## check with the DEM itself:
+
+dem = rasterio.open("GIS/anaPlotDEM.tif")
+demR = dem.read(1)
+
+
+xx, yy = dem.index(745605,10038208)
+
+demR[xx, yy]
+
+demR[yy, xx]
+
+## aspect
+aspectRast = rasterio.open("GIS/lcAspect.tif")
+rasterio.plot.show(aspectRast)
+rasterio.plot.show(aspectRast)
+
+## looks good. Now, how can we get the information for each subparcel?

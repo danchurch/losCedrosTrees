@@ -11,7 +11,7 @@
 { "type": "Feature", "properties": { "PsubP": 2.1, "Parcela": 2, "FinalRep_E": 748670, "FinalRep_N": 10033330 }, "geometry": { "type": "Point", "coordinates": [ 748670.0, 10033330.0 ] } },
 { "type": "Feature", "properties": { "PsubP": 2.2, "Parcela": 2, "FinalRep_E": 748610, "FinalRep_N": 10033337 }, "geometry": { "type": "Point", "coordinates": [ 748610.0, 10033337.0 ] } },
 { "type": "Feature", "properties": { "PsubP": 2.3, "Parcela": 2, "FinalRep_E": 748648, "FinalRep_N": 10033427 }, "geometry": { "type": "Point", "coordinates": [ 748648.0, 10033427.0 ] } },
-{ "type": "Feature", "properties": { "PsubP": 2.4, "Parcela": 2, "FinalRep_E": 748661, "FinalRep_N": 10034474 }, "geometry": { "type": "Point", "coordinates": [ 748661.0, 10034474.0 ] } },
+{ "type": "Feature", "properties": { "PsubP": 2.4, "Parcela": 2, "FinalRep_E": 748661, "FinalRep_N": 10033474 }, "geometry": { "type": "Point", "coordinates": [ 748661.0, 10033474.0 ] } },
 { "type": "Feature", "properties": { "PsubP": 3.1, "Parcela": 3, "FinalRep_E": 746650, "FinalRep_N": 10034309 }, "geometry": { "type": "Point", "coordinates": [ 746650.0, 10034309.0 ] } },
 { "type": "Feature", "properties": { "PsubP": 3.2, "Parcela": 3, "FinalRep_E": 746696, "FinalRep_N": 10034354 }, "geometry": { "type": "Point", "coordinates": [ 746696.0, 10034354.0 ] } },
 { "type": "Feature", "properties": { "PsubP": 3.3, "Parcela": 3, "FinalRep_E": 746842, "FinalRep_N": 10034367 }, "geometry": { "type": "Point", "coordinates": [ 746842.0, 10034367.0 ] } },

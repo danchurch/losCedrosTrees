@@ -1,0 +1,209 @@
+
+j=(
+Belonophora
+Coffea
+Empogona
+Psilanthus
+Tricalysia
+Bertiera
+Emmenopterys
+Pentagonia
+Cordiereae
+Alibertia
+Atractocarpus
+Euclinia
+Gardenia
+Schumanniophyton
+Sherbournia
+Ixora
+Mussaenda
+Pseudomussaenda
+Feretiaae
+Leptactina
+Pavetta
+Tarenna
+Mitriostigma
+Vangueria
+)
+
+
+
+for i in ${j[@]}; do 
+echo $i
+grep $i specObs.csv
+done
+
+## Out of the genera mentioned in the Ly 2020 paper, We've got Pentagonia. 
+
+## That's encouraging. They only use 28 genera, are there others in the 
+## subfamily?
+
+## looking at the Bremer 2009 paper. Let's try some python to make this easier:
+
+import PyPDF3 
+
+bremer2009 = open('/home/daniel/Zotero/storage/HW59ID24/BremerRubiaceaePhylogeny.pdf', 'rb')
+
+pdfReader = PyPDF3.PdfFileReader(bremer2009)
+
+
+help(pdfReader.getFields)
+
+p6 = pdfReader.getPage(6)
+
+t6 = p6.extractText()
+
+c6 = p6.getContents()
+
+## meh, not helping. Lots more work to do scraping these papers, but no time right now.
+
+## check island hopping paper, see if any of those genera are represented. they looked 
+## the following genera in the coffee alliance
+
+j=(
+Boholia 
+Augusta 
+Wendlandia 
+Alberta 
+Nematostylis 
+Razafimandimbisonia 
+Bertiera
+Calycosiphonia
+Argocoffeopsis
+Sericanthe
+Discospermum
+Xantonnea
+Diplospora
+Empogona
+Tricalysia
+Tricalysia
+Tricalysia
+Coffea
+Didymosalpinx
+Monosalpinx
+Mantalania
+Burchellia
+Galiniera
+Cremaspora
+Gallienia
+Flagenium
+Jovetia
+Paragenipa
+Octotropideae
+Chapelieria
+Canephora
+Lemyrea
+Petitiocodon
+Feretia
+Kraussia
+Ramosmania
+Fernelia
+Kraussia
+Galiniera
+Lamprothamnus
+Morindopsis
+Hypobathrum
+Villaria
+Pouchetia
+Hyptianthera
+Polysphaeria
+Duroia
+Stachyarrhena
+Cordiera
+Schumanniophyton
+Genipa
+Ceriscoides
+Coddia
+Kailarsenia
+Gardenia
+Rothmannia
+Phellocalyx
+Aulacocalyx
+Heinsenia
+Kochummenia
+Rothmannia
+Tocoyena
+Randia
+Melanoxerus
+Preussiodora
+Oligocodon
+Euclinia
+Macrosphyra
+Aoranthe
+Massularia
+Brachytome
+Dioecrescis
+Tamilnadia
+Vidalasia
+Duperrea
+Porterandia
+Tarennoidea
+Gardenia
+Atractocarpus
+Gardenia
+Bungarimba
+Sukunia
+Catunaregam
+Deccania
+Catunaregam
+Morelia
+Aidia
+Benkara
+Aidia
+Hyperacanthus
+Atractogyne
+Mitriostigma
+Oxyanthus
+Rutidea
+Nichallea
+Pavetta
+Tarenna
+Cladoceras
+Tarenna
+Leptactina
+Tennantia
+Coptosperma
+Pelagodendron
+Tarenna
+Coptosperma
+Pavetteae
+Robbrechtia
+Coptosperma
+Homollea
+Paracephaelis
+Coptosperma
+Schizenterospermum
+Coptosperma
+)
+
+for i in ${j[@]}; do 
+#echo $i
+grep $i specObs.csv
+done
+
+## that yields Tocoyena
+## so two genera of interest, one within the coffee alliance. 
+
+## enough to mention the subfamily and alliance with confidence 
+## for the moment.
+
+## but more work is needed here. 
+
+## can we scrape Yasmina's pdf for her text?
+
+
+import PyPDF3 
+
+yasmiinaFile = open('/home/daniel/Documents/job_apps/germanyJobs/StadlerLab/Developed Proposal for AhV - Yasmina Marín Félix.pdf','rb')
+pdfReader = PyPDF3.PdfFileReader(yasmiinaFile) 
+
+p3 = pdfReader.getPage(2)
+t3 = p3.extractText()
+
+with open("yasminaMethodsText.txt", "w") as ymt:
+    ymt.write(t3)
+
+## meh, that doesn't really work either. Someday I will make this 
+## module work for me. 
+
+
