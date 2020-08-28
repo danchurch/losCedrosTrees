@@ -3804,4 +3804,77 @@ http://matplotlib.org/api/axes_api.html?highlight=imshow#matplotlib.axes.Axes.co
 
 rasterio.plot.show(slopeRast)
 
-Advanced Spaceborne Thermal Emission and Reflection Radiometer (ASTER) Global Digital Elevation Model (GDEM) version 2
+## write this out as our new environmental matrix
+
+######## todo 
+
+## rerun existing spatial analyses with corrected point
+## check permanovas of new environmental data
+## do varpart analysis
+
+#########################
+
+## can we redo the turnover diagrams with the 
+## revised point (2.4 moved 1km sout)
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import pickle
+from sklearn.linear_model import LinearRegression
+import scipy.spatial as sp
+import geopandas as gpd
+import rasterio
+import rasterio.plot
+import copy
+import random
+import math
+
+specObs = pd.read_pickle('specObs.p')
+subParcelComm = pd.read_pickle("subParcelComm.p")
+subParcelComm.index = subParcelComm.index.astype('float')
+subParcelComm.sort_index(inplace=True)
+pts = gpd.read_file('GIS/ana30meterPlots.geojson')
+pts.set_index('PsubP', inplace=True)
+pts.sort_index(inplace=True)
+(pts.index == subParcelComm.index).all()
+## get our original in there first:
+fig, axes = plt.subplots(nrows=2, ncols=3, sharey=True, figsize=(12,8))
+axes = axes.flatten()
+d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
+physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+axes[0].scatter(physDist, bcDist)
+axes[0].plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+axes[0].set_title('Overall Turnover')
+## now look at these individually:
+soGrouped = specObs.groupby('habitat')
+habs = list(soGrouped.groups.keys())
+for h,i in enumerate(habs):
+    print(i)
+    print(h)
+    obs_i = soGrouped.get_group(i)
+    obs_iE = [ pts.loc[float(a)].geometry.x for a in obs_i.PsubP ]
+    obs_iN = [ pts.loc[float(a)].geometry.y for a in obs_i.PsubP ]
+    obs_i['E'] = obs_iE
+    obs_i['N'] = obs_iN
+    subParcelInObs_i = subParcelComm.index.isin(obs_i.PsubP)
+    comm_i = subParcelComm[subParcelInObs_i]
+    notObserved=~((comm_i == 0).all(axis=0).values)
+    comm_i = comm_i.iloc[:,notObserved]
+    pts_i = pts.loc[comm_i.index.values]
+    iX, iY = pts_i.geometry.x.to_list(), pts_i.geometry.y.to_list()
+    spDF_i = pd.DataFrame(np.array([iX, iY]).transpose(), columns=['X','Y'])
+    physDist_i = sp.distance.pdist(spDF_i, metric='euclidean')
+    bcDist_i = sp.distance.pdist(comm_i, metric='brayCurtis')
+    axes[h+1].scatter(physDist_i, bcDist_i)
+    X, Y = physDist_i.reshape(-1,1), bcDist_i.reshape(-1,1)
+    axes[h+1].plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+    axes[h+1].set_xlabel('distance between subplots')
+    axes[h+1].set_ylabel('BC dissimilarity')
+    axes[h+1].set_title(f'{i} habitat turnover')
+
+plt.tight_layout()
