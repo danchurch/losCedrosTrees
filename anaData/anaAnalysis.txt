@@ -3602,6 +3602,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rasterio
 import rasterio.plot
+import math
 plt.ion()
 
 
@@ -3656,12 +3657,97 @@ aa[xx,yy]
 dem = rasterio.open("GIS/anaPlotDEM.tif")
 demR = dem.read(1)
 
-
+## this should be roughly the highest spot:
 xx, yy = dem.index(745605,10038208)
-
 demR[xx, yy]
+## no nope...hmmm
 
-demR[yy, xx]
+## try working with the bigger aster image
+lcDEM = rasterio.open("/home/daniel/Documents/LosCed/Ecuador_GIS/losced/losced_topography/LosCedAster.tif")
+lcDEMR = lcDEM.read(1)
+
+dir(lcDEM)
+
+lcDEMR.max()
+
+xx, yy = lcDEM.index(745605,10038208)
+lcDEMR[xx, yy]
+## nope...weird...
+
+## try working backwards
+
+## highest point is:
+lcDEMR.max()
+
+np.where(lcDEMR == lcDEMR.max())
+lcDEMR[62,284]
+## there it is. Where is this on our map?
+np.where(lcDEMR == lcDEMR.max())
+lcDEM.xy(62,284)
+## well, that seems reasonable. 
+
+## try again with the Ana DEM. Where is the
+## highest point on the area of the Ana study?
+
+dem = rasterio.open("GIS/anaPlotDEM.tif")
+demR = dem.read(1)
+np.where(demR == demR.max())
+
+## these two functions are inverse:
+dem.xy(7, 0)
+## (745035.4095220644, 10035563.857169842)
+dem.index(745035,10035564)
+## (7, 0)
+
+np.array(dem.index(745035,10035564))
+
+demR(
+
+
+demR.max()
+
+## yup, lines up. In general, we have UTMs
+## for our plots, how do we use these to 
+## look up our elevations?
+
+## a function would be good here. given an x and y 
+
+def getZ(xx,yy,robj):
+    robjR = robj.read(1)
+    rc = robj.index(xx,yy)
+    return(robjR[rc])
+
+## try this out
+
+np.where(demR == demR.min())
+dem.xy(106,134)
+
+getZ(749165.1614353219, 10032512.771811783, dem)
+
+getZ(746975, 10035200, dem)
+## in general, seems to work.
+
+## while we're looking at elevations, how do our DEM elevations line up
+## with their GPS elevations?
+
+## our pt data:
+pts = gpd.read_file('GIS/ana30meterPlots.geojson')
+pts.set_index('PsubP', inplace=True)
+pts.sort_index(inplace=True)
+
+## add the elevation as measured from the GPS's, in ana's excel sheets:
+envOnly = pd.read_csv('envOnly.csv')
+envOnly.set_index('PsubP', inplace=True)
+envOnly.sort_index(inplace=True)
+
+(pts.index == envOnly.index).all()
+
+## so can we use the above function to find elevations?
+
+type(pts.geometry)
+
+dir(pts.geometry)
+
 
 ## aspect
 aspectRast = rasterio.open("GIS/lcAspect.tif")
@@ -3669,3 +3755,53 @@ rasterio.plot.show(aspectRast)
 rasterio.plot.show(aspectRast)
 
 ## looks good. Now, how can we get the information for each subparcel?
+
+envOnly['DEM'] = [ getZ(i.x, i.y, dem) for i in pts.geometry ]
+
+## wow, some of these look pretty far off. Plot these:
+
+aa = plt.scatter(envOnly['elevacion'], envOnly['DEM'])
+plt.gca().set_xlabel('GPS Elevation')
+plt.gca().set_ylabel('DEM Elevation')
+
+## well, at least there is a strong correlation. 
+
+## do this for the slope and aspect data:
+
+envOnly['aspect'] = [ getZ(i.x, i.y, aspectRast) for i in pts.geometry ]
+
+## and maybe we decompose this into two variables - eastern exposure (cos) and northern exposure (sin)?
+
+## to get our geometry right, we need to change compass heading into classical 
+## eculidean angles, where the angle is measured counterclockwise, starting from
+## "horizontal", which in the case of a compass is straight north. 
+## so shift all the angles 90% counterclockwise (subtract 90 degrees), then 
+## take additive inverse (make it negative, because angles are measured 
+## counterclockwise, unlike the compass heading)
+
+angles = [ -(H - 90) for H in envOnly['aspect'] ]
+
+## then get the sin (northern exposure) and cos (southern exposure):
+
+envOnly['exposeE'] = [ math.cos(math.radians(i)) for i in angles ]
+envOnly['exposeN'] = [ math.sin(math.radians(i)) for i in angles ]
+
+## seems to work. 
+
+######### slope #########
+
+slopeRast = rasterio.open("GIS/lcSlope.tif")
+
+rasterio.plot.show(slopeRast)
+
+envOnly['slope'] = [ getZ(i.x, i.y, slopeRast) for i in pts.geometry ]
+
+getZ(xx,yy,robj)
+
+## get some plotting help here at:
+http://matplotlib.org/api/axes_api.html?highlight=imshow#matplotlib.axes.Axes.imshow
+http://matplotlib.org/api/axes_api.html?highlight=imshow#matplotlib.axes.Axes.contour
+
+rasterio.plot.show(slopeRast)
+
+Advanced Spaceborne Thermal Emission and Reflection Radiometer (ASTER) Global Digital Elevation Model (GDEM) version 2
