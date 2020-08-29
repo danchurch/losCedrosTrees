@@ -3878,3 +3878,245 @@ for h,i in enumerate(habs):
     axes[h+1].set_title(f'{i} habitat turnover')
 
 plt.tight_layout()
+
+## okay, that did make a difference. 
+## pain in the ass, a couple hours of my short life,
+## but same could be said for all of this. 
+
+## anyway, we should export this new pt data as a csv
+## for R:
+
+pd.DataFrame(np.array([pts.index, pts.geometry.x, pts.geometry.y]).transpose(), columns=['PsubP','X','Y']).head()
+
+aa = pd.DataFrame(np.array([pts.index, pts.geometry.x, pts.geometry.y]).transpose(), columns=['PsubP','X','Y'])
+aa.set_index('PsubP', inplace=True)
+aa.to_csv('pts.csv')
+
+## speaking of, time to head over to R to fix other spots with new point location...
+
+##### debug map with clusters in R ##########
+
+library(stats)
+library(vegan)
+
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+sPC <- subParcelComm[,-1]
+rownames(sPC) <- subParcelComm[,1]
+## we need a distance matrix, BC
+## does vegan give us what we need?
+sPCBray <- vegdist(sPC)
+sPC.ward <- hclust(sPCBray, method='ward.D2')
+
+makeClustMap <- function(tree, k, labels=NULL){
+    envOnly <- read.csv('envOnly.csv')
+    pts <- read.csv('pts.csv', row.names='PsubP')
+    pts$PsubP <- as.numeric(rownames(pts))
+    pts <- pts[,c(3,1,2)]
+    rownames(pts) <- NULL
+    require(stats)
+    ## get habitat type labels for tree
+    if (is.null(labels)){lab <- NULL} else {
+        if (labels=='hab'){
+        lab <- vector(length = length(tree$labels))
+        for (i in 1:length(tree$labels)){
+            ind <- which(envOnly$PsubP==tree$labels[i])
+            lab[i] <- as.character(envOnly$habitat[ind])
+    }}}
+    par(mfrow=c(1,2))
+    plot(tree, labels=lab)
+    clustGroups <- rect.hclust(tree, k=k, border=1:k)
+    cmem <- vector(length=k)
+    PsubP <- vector()
+    gr <- vector()
+    for (i in 1:k){
+        cmem.i <- as.numeric(attr(clustGroups[[i]], "names"))
+        PsubP <- c(PsubP, cmem.i)
+        gr <- c(gr, rep(i, length(cmem.i)))
+        }
+    cGroup <- data.frame(cbind(PsubP, gr))
+    cGroup <- cGroup[order(cGroup$PsubP),]
+    clsp <- base::merge(pts, cGroup)
+    clsp <- base::merge(clsp, envOnly)
+    shapes <- vector(length=nrow(clsp))
+    shapes[clsp$habitat == 'BC'] <- 19
+    shapes[clsp$habitat == 'BS'] <- 21
+    shapes[clsp$habitat == 'CLB'] <- 22
+    shapes[clsp$habitat == 'RCA'] <- 17
+    shapes[clsp$habitat == 'RG'] <- 23
+    plot(x=pts$X,
+        y=pts$Y,
+        col=clsp$gr,
+        xlab='',
+        ylab='',
+        asp=1,
+        cex=2,
+        lwd=2,
+        pch=shapes,
+        )
+    legend('bottomright',
+        legend=c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        pch=c(19, 21, 22, 17, 23)
+    )
+    legend('bottomleft',
+        legend=1:k,
+        pch=c(15),
+        col=1:k,
+        title='ClusterGroup')
+    return(clsp)
+    }
+
+k <- 4 ## number of groups 
+
+
+png(file='hclust4groups.png', width=1600, height=800)
+makeClustMap(sPC.ward, k=4, labels='hab')
+dev.off()
+
+### fix mantel tests
+
+pts <- read.csv('pts.csv', row.names='PsubP')
+
+pts <- read.csv('pts.csv')
+
+pts$PsubP <- as.numeric(rownames(pts))
+
+pts <- pts[,c(3,1,2)]
+
+aa <- read.csv('pts.csv', row.names=1)
+
+library('vegan')
+library('ecodist')
+
+pts <- read.csv('pts.csv', row.names='PsubP')
+physdist <- vegdist(pts, method='euclidean')
+## make the community dissimilarity matrix
+bb <- read.csv('subParcelComm.csv')
+bb <- bb[order(bb$PsubP),]
+row.names(bb) <- bb$PsubP
+bb <- bb[,-1]
+all(aa$PsubP == rownames(bb))
+braydist <- vegdist(bb, method='bray')
+## do the global test:
+global_mant_test <- mantel(braydist ~ physdist, nperm = 10000) ## overall test
+global_mant_test 
+## correlogram
+cgram <- mgram(braydist, physdist) ## correlogram object
+plot(cgram)
+
+getDists <- function(comfile, physfile='pts.csv'){
+    comM <- read.csv(comfile, row.names=1)
+    comM <- comM[order(as.numeric((rownames(comM)))),]
+    spM <- read.csv(physfile, row.names=1)
+    spM <- spM[order(rownames(spM)),]
+    physdist <- vegdist(spM, method='euclidean')
+    spM <- spM[rownames(spM)%in%rownames(comM),]
+    spM <- spM[order(as.numeric((rownames(comM)))),]
+    if(all(rownames(spM) == rownames(comM))){
+        physdist <- vegdist(spM, method='euclidean')
+        braydist <- vegdist(comM, method='bray')
+        return(list(braydist, physdist))
+        }
+    else{print("something doesn't fit right")}
+    }
+
+## filenames
+comms <- c('BC_comm.csv', 'BS_comm.csv', 'CLB_comm.csv', 'RCA_comm.csv', 'RG_comm.csv')
+## start df
+all_mant_test  <- global_mant_test
+
+## test individually
+par(mfrow=c(2,3))
+for (i in 1:length(comms)){
+    print(comms[i])
+    dists.i <- getDists(comms[i])
+    cgram.i <- mgram(dists.i[[1]], dists.i[[2]]) ## correlogram object
+    plot(cgram.i, main = comms[i] )
+    mant_test.i <- mantel(dists.i[[1]] ~ dists.i[[2]], nperm = 10000) ## overall test
+    all_mant_test <- rbind(mant_test.i, all_mant_test)
+}
+
+getDists(comms[i])
+
+getDists <- function(comfile, physfile='pts.csv'){
+    comM <- read.csv(comfile, row.names=1)
+    comM <- comM[order(as.numeric((rownames(comM)))),]
+    spM <- read.csv(physfile, row.names=1)
+    spM <- spM[order(rownames(spM)),]
+    physdist <- vegdist(spM, method='euclidean')
+    spM <- spM[rownames(spM)%in%rownames(comM),]
+    spM <- spM[order(as.numeric((rownames(spM)))),]
+    if(all(rownames(spM) == rownames(comM))){
+        physdist <- vegdist(spM, method='euclidean')
+        braydist <- vegdist(comM, method='bray')
+        return(list(braydist, physdist))
+        } else {print("something doesn't fit right")}
+    }
+
+######## update mems 
+
+library(vegan)
+library(ade4)
+library(adespatial)
+library(adegraphics)
+library(spdep)
+library(maptools)
+library(sp)
+
+## get data:
+pts <- read.csv('pts.csv')
+env <- read.csv('envOnly.csv')
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+comM <- comM[order(as.numeric(rownames(comM))),]
+## are these in order?
+all(rownames(comM) == env$PsubP)
+all(env == env[order(env$PsubP),])
+all(pts == pts[order(pts$PsubP),])
+all(pts$PsubP == env$PsubP)
+all(env == env[order(env$PsubP),])
+all(pts == pts[order(pts$PsubP),])
+all(pts$PsubP == env$PsubP)
+## looks good. 
+
+load('lcPoly.rda')
+pJ <- as.matrix(pts[,2:3])
+colnames(pJ) <- c('x','y')
+mx <- min(pJ[,1])
+my <- min(pJ[,2])
+pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
+
+## sanity plot check:
+s.label(pJ, labels=pts$PsubP, ppoint.col = "darkseagreen4", Sp = lcPoly)
+
+class(coordinates(pJ))
+
+nb <- chooseCN(coordinates(pJ), type = 2, plot.nb = FALSE)
+nbdists(nb, coordinates(pJ))
+
+## can we move our lc polygon to match our relocated points on the 
+## our coordinates are here:
+load('lcPoly.rda')
+xx <- lcPoly@polygons[[1]]@Polygons[[1]]@coords[,'LCpolE']
+yy <- lcPoly@polygons[[1]]@Polygons[[1]]@coords[,'LCpolN']
+## the minimums of our sample sites was here:
+pts <- read.csv('pts.csv')
+pJ <- as.matrix(pts[,2:3])
+colnames(pJ) <- c('x','y')
+mx <- min(pJ[,1])
+my <- min(pJ[,2])
+pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
+## transform our polygon points with these values?
+xx <- xx - mx
+yy <- yy - my
+## and make a spatial polygon out of this?
+lcPolyMoved <- SpatialPolygons(list(Polygons(list(Polygon(cbind(xx,yy))), ID="lcPolyMoved")))
+
+s.label(pJ, labels=pts$PsubP, Sp = lcPolyMoved)
+
+## what about our MEMs?
+
+head(lcPoly@polygons[[1]]@Polygons[[1]]@coords)
+class(lcPoly@polygons[[1]]@Polygons[[1]]@coords)
+
+lcPolyOrigin <- SpatialPolygons(list(Polygons(list(Polygon(LCpolyCoords)), ID="losCedros")))
+
+str(lcPoly)
