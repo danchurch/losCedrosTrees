@@ -4120,3 +4120,398 @@ class(lcPoly@polygons[[1]]@Polygons[[1]]@coords)
 lcPolyOrigin <- SpatialPolygons(list(Polygons(list(Polygon(LCpolyCoords)), ID="losCedros")))
 
 str(lcPoly)
+
+## this works for a background on our mems...
+
+## now what?
+
+## look at new environmental data, individually then with varpart
+
+## so, back to the PERMANOVAs...
+
+####### permanovas, new environmental data ############
+
+## two (three) new variables, slope, eastern and northern exposure
+
+library(vegan)
+
+envOnly <- read.csv('envOnly.csv')
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+
+all(envOnly$PsubP == subParcelComm$PsuP)
+
+sPC <- subParcelComm[,-1]
+
+adonis(sPC ~ envOnly$elevacion)
+
+adonis(sPC ~ envOnly$DEM)
+
+## same, makes sense
+
+adonis(sPC ~ envOnly$slope) ## very little, not significant
+
+adonis(sPC ~ envOnly$exposeE) ## very little, definitely not significant
+
+adonis(sPC ~ envOnly$exposeN) ## very little, definitely not significant
+
+adonis(sPC ~ envOnly$toStream) ## statistically significant, but explains very little variance (r2 =.025)
+
+
+
+## well, shit. I guess I had to check
+
+## oh, forgot. One environmental variable remains that I can probably 
+## generate, distance to stream
+
+###### distance to stream #######
+
+## let's do this in python, I think shapely 
+## was made for this...
+
+plt.ion()
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+paths = gpd.read_file('GIS/PathsLC.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+raster = rasterio.open("GIS/anaPlotDEM.tif")
+pts = gpd.read_file('GIS/ana30meterPlots.geojson')
+pts.set_index('PsubP', inplace=True)
+pts.sort_index(inplace=True)
+
+fig, ax = plt.subplots(1, 1)
+hydro.plot(color='Blue', ax=ax)
+lcPoly.boundary.plot(color='purple', linewidth=3,ax=ax)
+paths.plot(color='red', linestyle='--', ax=ax)
+rasterio.plot.show(raster, ax=ax)
+
+## okay, so we need our distance from each ana point 
+## to the closest spot on the river system:
+
+help(pts.geometry[0].distance)
+
+pts.geometry[0].distance(hydro.geometry[0])
+
+pts.geometry[0].distance(hydro.geometry) ## nope. 
+
+pts.geometry.distance(hydro.geometry[0]) 
+## yup. seems like the many to one relationship works.
+
+## so for us, we need:
+
+hydro.geometry.distance(pts.geometry[0])
+
+hydro.geometry.distance(pts.geometry[0]).min()
+
+## to get this for all of our pts...
+
+envOnly['toStream'] = [ hydro.geometry.distance(i).min() for i in pts.geometry ]
+#envOnly.to_csv('envOnly.csv')
+
+## sanity checks
+
+envOnly.loc[[9.4,9.5]]
+
+envOnly.loc[9.4]
+
+buff=400
+fig, ax = plt.subplots(1, 1)
+pts.loc[[9.5,9.4]].plot(color='black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+ax.set_xlim([pts.loc[9.5].geometry.x -400,pts.loc[9.5].geometry.x + 400])
+ax.set_ylim([pts.loc[9.5].geometry.y -400,pts.loc[9.5].geometry.y + 400])
+
+envOnly.loc[2.4]
+## seems okay
+
+## some a permanova on it, add to text in above section
+
+## a little bit important (R2 = 0.025), but not much info there. 
+
+## well, we can tromp on to the variation partioning. 
+
+## also should take a look at the blocks that ana made, see 
+## if they describe all this well. R2 = 0.025), but not much info there. 
+
+## well, we can tromp on to the variation partioning. 
+
+## also should take a look at the blocks that ana made, see 
+## if they predict any variation. 
+
+###### varpart ##########################
+
+## let's see if we have what we need to get a 
+## preliminary variation partition done...
+
+
+## example:
+data(mite)
+data(mite.env)
+data(mite.pcnm)
+# Two explanatory data frames -- Hellinger-transform Y
+mod <- varpart(mite, mite.env, mite.pcnm, transfo="hel")
+
+## community matrix
+comm <- read.csv('subParcelComm.csv', row.names='PsubP')
+
+## we have our environmental data frame:
+envOnly <- read.csv('envOnly.csv', row.names='PsubP')
+
+## we want to retain elevacion, habitat, n and e exposure, distance to stream...
+
+env = envOnly[,c('elevacion', 'habitat', 'slope', 'exposeE', 'exposeN')]
+
+## spatial dataframe should be our MEMs:
+load('sigMEM.rda')
+
+## we might also want to include our clustering results...
+
+clust <- read.csv('cGroup.csv', row.names='PsubP')
+
+## try 
+vp_noClust <- varpart(comm, env, sigMEM, transfo="hel")
+plot(vp_noClust, bg=2:5)
+
+vp_Clust <- varpart(comm, env, sigMEM, clust, transfo="hel")
+plot(vp_Clust)
+
+## adding in the clustering results doesn't do much. 
+## just curious, what do explain alone, via permanova?
+
+adonis(sPC ~ clust$gr) ## explains about ~8% of variance
+
+## most of this variance is also predicted by spatial
+## and environmental variables. 
+
+## well, there's a whole lot of noise in this system. 
+
+## I'm used to that. I'm a microbial ecologist of sorts. 
+
+## I wonder if the old forest story is a little bit cleaner?
+
+## what next? repeat all the above for old forests?
+
+library(vegan)
+library(ade4)
+library(adespatial)
+library(adegraphics)
+library(spdep)
+library(maptools)
+library(sp)
+
+load(file='oldForestSp.rda')
+load(file="oldForestComm.rda")
+load(file="oldForestEnv.rda")
+
+## old forest env data needs to be updated:
+
+oldForestEnv <- envOnly[as.character(oldForestSp$PsubP),]
+#save(oldForestEnv, file="oldForestEnv.rda")
+
+## we need MEMs for the forest, also...
+
+rownames(oldForestSp) <- oldForestSp$PsubP
+oldForestSp <- oldForestSp[,-1]
+
+oldForestSp
+
+## oh, this analysis is still based on the original, erroneous 
+## GPS points
+
+dim(oldForestSp)
+dim(unique(oldForestSp))
+## yeah, repeats, bad data
+
+## build new spatial data:
+pts <- read.csv('pts.csv', row.names='PsubP')
+
+oldForestSp <- pts[row.names(oldForestEnv),]
+#save(oldForestSp, file='oldForestSp.rda')
+
+load('ptsmxmy.rda')
+
+oldForestSpRecentered <- cbind(oldForestSp[,1] - ptsmxmy[1], oldForestSp [,2] - ptsmxmy[2])
+row.names(oldForestSpRecentered) <- row.names(oldForestSp)
+oldForestCoords <- coordinates(oldForestSpRecentered)
+
+## interactive
+listw.explore()
+
+
+## says do this:
+nb <- chooseCN(oldForestCoords, type = 2, plot.nb = FALSE)
+distnb <- nbdists(nb, oldForestCoords)
+fdist <- lapply(distnb, function(x) 1 - x/max(dist(oldForestCoords)))
+lw <- nb2listw(nb, style = 'W', glist = fdist, zero.policy = TRUE)
+
+## looks like:
+s.label(oldForestCoords, nb=nb, pnb.edge.col='red')
+
+## get old forest mems:
+mem.oldForest <- mem(lw)
+
+load('lcPolyMoved.rda')
+
+s.value(oldForestCoords, mem.oldForest, symbol="circle", sp=lcPolyMoved)
+## okay, worked
+
+## now find the important ones:
+
+oldForestComm[1:3,1:3]
+
+dim(oldForestComm)
+
+comM.hell <- decostand(oldForestComm, 'hellinger')
+
+## just to be systematic..take all the axes greater than the mean of eigenvalues
+
+ncol(oldForestComm)
+
+pca.hell.all <- dudi.pca(df = comM.hell, scale = FALSE, scannf = FALSE, nf = ncol(oldForestComm))
+
+sum(pca.hell.all$eig)
+
+length(pca.hell.all$eig) ## told it to keep them all, why only 35? oh well...
+
+meig <- mean(pca.hell.all$eig)
+
+lines(c(0,50),c(meig,meig), col='red')
+
+pca.hell.all$eig[pca.hell.all$eig > mean(pca.hell.all$eig)]
+
+sum(pca.hell.all$eig > mean(pca.hell.all$eig))
+## so maybe the first 12 are useful?
+
+pca.hell <- dudi.pca(df = comM.hell, scale = FALSE, scannf = TRUE)
+
+pca.hell <- dudi.pca(df = comM.hell, scale = FALSE, scannf = FALSE, nf = 12)
+
+all(pca.hell$tab == pca.hell.all$tab)
+## no difference...
+length(pca.hell$eig)
+## ugh, again the ade4 functions aren't responding to my changes in arguments.
+## don't know why that is, I really should write them
+
+## we can extract these ourselves, I guess. But a little out of my league 
+## here, because the downstream model selection is based on a new weighted
+## dataframe of the sites and species that I don't know how to make.
+
+## so just keep going, with all thirty five axes? seems like this may
+## take forever?
+
+## let's try it
+
+mem.comM.sel <- mem.select(pca.hell$tab,
+    method="FWD",
+    listw = lw,
+    nperm=999,
+    )
+
+## actually pretty quick.
+
+## look at them:
+
+s.value(oldForestCoords, mem.comM.sel$MEM.select, symbol="circle", Sp=lcPolyMoved)
+
+mem.comM.sel$MEM.select
+
+## huh, none of them are obvious to me. check some environmental vars:
+
+aa <- rda(mem.comM.sel$MEM.select[,1], oldForestEnv$elevacion)
+
+cor(mem.comM.sel$MEM.select[,1], oldForestEnv$elevacion)
+
+head(oldForestEnv)
+
+
+vp_noClust <- varpart(comm, env, sigMEM, transfo="hel")
+plot(vp_noClust, bg=2:5)
+
+vp_Clust <- varpart(comm, env, sigMEM, clust, transfo="hel")
+plot(vp_Clust)
+
+## then try to explain what is happening with secondary 
+## forests 
+
+## and look at seedling data - how good is this data? 
+## can we use it to predict the future?
+
+
+## anyway, to do:
+
+## clean old forest analysis, it still has the old spatial data
+## check new environmental variables on old forest, 
+## run varpart for old forest
+## maybe check clustering on old forest, see if it splits 
+## cleanly in two when looked at in isolation
+
+## check seedling data
+
+############ add cluster results to entire community nms  ################
+
+## before we go to far, let's see how our cluster results bear out
+## on the all comm nms, we never did this. 
+
+library(vegan)
+library(RColorBrewer)
+
+subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+envOnly = read.csv('envOnly.csv')
+sPC <- subParcelComm[,-1]
+rownames(sPC) <- subParcelComm[,1]
+
+nms <- metaMDS(sPC, try=40)
+
+options(repr.plot.width=5, repr.plot.height=5)
+stressplot(nms)
+
+specObs <- read.csv('specObs.csv')
+aa = specObs[c("PsubP","habitat")]
+nondups <- aa[!duplicated(aa),]
+nondups <- nondups[order(nondups$PsubP),]
+cGroup = read.csv('cGroup.csv')
+rownames(nondups) <- NULL
+all(nondups$PsubP == cGroup$PsubP)
+nmsInfo <- merge(nondups, cGroup)
+nmsInfo$MDS1 <- nms$points[,'MDS1']
+nmsInfo$MDS2 <- nms$points[,'MDS2']
+
+nmsInfo <- nondups
+
+## plot it 
+
+plot(nmsInfo$MDS1, nmsInfo$MDS2,
+    col=nmsInfo$gr,
+    pch=19,
+    cex=2.0,
+)
+text(nmsInfo$MDS1, nmsInfo$MDS2 - 0.015, nmsInfo$PsubP, cex=1.5)
+## add legend
+legend( x='bottomleft',
+        legend = 1:4,
+        fill = 1:4,
+        cex = 1.0,
+        bty='n',
+        title='Cluster Group'
+        )
+
+## figure out lines only:
+plot(1:5,rep(1,5), cex=3, pch=19, col=1:5)
+legend( x='bottomright',
+        legend = c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        col = c(1:5),
+        cex = 1.0,
+        lwd = 1,
+        )
+
+
+
+## add natural cluster hulls:
+#ordihull(nms, nmsInfo$gr, col=1:4, lwd=3)
+
+## or with habitat hulls:
+ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+
+
+############ check seedling data ################
+
