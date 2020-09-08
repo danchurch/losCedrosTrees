@@ -4131,12 +4131,13 @@ str(lcPoly)
 
 ####### permanovas, new environmental data ############
 
-## two (three) new variables, slope, eastern and northern exposure
+##sfl two (three) new variables, slope, eastern and northern exposure
 
 library(vegan)
 
 envOnly <- read.csv('envOnly.csv')
 subParcelComm <- read.csv('subParcelComm.csv', header=TRUE)
+
 
 all(envOnly$PsubP == subParcelComm$PsuP)
 
@@ -4160,8 +4161,59 @@ adonis(sPC ~ envOnly$toStream) ## statistically significant, but explains very l
 
 ## well, shit. I guess I had to check
 
-## oh, forgot. One environmental variable remains that I can probably 
-## generate, distance to stream
+## check the old forest only data:
+
+load("oldForestComm.rda")
+load("oldForestEnv.rda")
+
+all(rownames(oldForestComm) == rownames(oldForestEnv))
+
+adonis(oldForestComm ~ oldForestEnv$toStream) ## higher, r2 = .06, p=0.005
+adonis(oldForestComm ~ oldForestEnv$slope) ## r2 = .04, p = .03 
+
+adonis(oldForestComm ~ oldForestEnv$toStream * oldForestEnv$slope) 
+## no significant interaction
+
+adonis(oldForestComm ~ oldForestEnv$exposeE) ## NS, r2 small
+adonis(oldForestComm ~ oldForestEnv$exposeN) ## NS, r2 small
+
+## can we do an ordination of the distance to stream?
+
+load('OFnms.rda')
+XX <- OFnms$points[,'MDS1']
+YY <- OFnms$points[,'MDS2']
+cGroup <- read.csv('cGroup.csv', row.names="PsubP")
+oldForestClGr <- cGroup[row.names(oldForestEnv),]
+
+minDtoS <- min(oldForestEnv$toStream)
+maxDtoS <- max(oldForestEnv$toStream)
+rangeDtoS <- maxDtoS - minDtoS
+colrsRamp <- colorRampPalette(c(rgb(0,0,1,0.5), rgb(1,0,0,1)), alpha = TRUE)(rangeDtoS)
+DtoSColrs <- colrsRamp[oldForestEnv$toStream - min(oldForestEnv$toStream)]
+plot(XX, YY,
+    col="black",
+    pch=21,
+    cex=3,
+    bg=DtoSColrs,
+    xlab='NMS1',
+    ylab='NMS2',
+    main="Two forest types detected, distance to stream"
+    )
+ordihull(OFnms, oldForestClGr, col=c(3,4), lwd=2, lty=2)
+legend( x='topright',
+        legend = c('clustGroup 3', 'clustGroup 4', '7 m', '461 m'),
+        col = c(3,4, 1, 1),
+        bty = 'n',
+        pt.bg = c(NA, NA, colrsRamp[1], colrsRamp[maxDtoS - minDtoS]),
+        #pt.bg = c(NA, NA, "transparent", "blue"),
+        cex = 1.0,
+        lty = c(2,2, NA, NA),
+        lwd = 2.0,
+        pch = c(NA, NA, 21, 21),
+        )
+
+## well, it does look like the type four forests tend to be 
+## closer to streams
 
 ###### distance to stream #######
 
@@ -4227,6 +4279,9 @@ envOnly.loc[2.4]
 ## some a permanova on it, add to text in above section
 
 ## a little bit important (R2 = 0.025), but not much info there. 
+
+
+
 
 ## well, we can tromp on to the variation partioning. 
 
@@ -4513,5 +4568,31 @@ legend( x='bottomright',
 ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
 
 
+cGroup <- read.csv('cGroup.csv')
+
+cGroup <- read.csv('cGroup.csv', row.names="PsubP")
+
+
 ############ check seedling data ################
 
+## can we get our seedling info into a useable format?
+
+## do this in python, methinks. 
+
+python3
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import pickle
+
+wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
+
+wb.get_sheet_names()
+
+sheet = wb['Cedros Arb juv bosq']
+
+
+wb.sheetnames
