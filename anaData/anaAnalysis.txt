@@ -4188,7 +4188,7 @@ oldForestClGr <- cGroup[row.names(oldForestEnv),]
 minDtoS <- min(oldForestEnv$toStream)
 maxDtoS <- max(oldForestEnv$toStream)
 rangeDtoS <- maxDtoS - minDtoS
-colrsRamp <- colorRampPalette(c(rgb(0,0,1,0.5), rgb(1,0,0,1)), alpha = TRUE)(rangeDtoS)
+colrsRamp <- colorRampPalette(c(rgb(0,0,1,0.5), rgb(1,1,0,1)), alpha = TRUE)(rangeDtoS)
 DtoSColrs <- colrsRamp[oldForestEnv$toStream - min(oldForestEnv$toStream)]
 plot(XX, YY,
     col="black",
@@ -4590,9 +4590,130 @@ import pickle
 
 wb = openpyxl.load_workbook("BaseDeDatosCedrosEnvaSarah7012012.xlsx")
 
-wb.get_sheet_names()
+wb.sheetnames
 
 sheet = wb['Cedros Arb juv bosq']
+dfBosque = pd.DataFrame(sheet.values)
+dfBosque.columns = dfBosque.iloc[0]
+dfBosque.drop(0,0, inplace=True)
+## what do we need from this?
+dfBosque = dfBosque[[ 'Norte ', 'Este', 'Elevación', 'Hábitat', 'Sitio/Site', 'Parcela/Plot', 'Sub.Parc.', 'Altura ', 'Familia', 'Genero ', 'Especie']]
+## clean up the names a little. As per before, I think the northing and easting are mixed up, reverse here:
+dfBosque.rename(index=str, columns=
+        {'0':'', 
+        'Norte ':'este', 
+        'Este': 'norte',
+        'Elevación': 'elevación',
+        'Hábitat': 'habitat',
+        'Sitio/Site': 'sitio',
+        'Parcela/Plot':'plot',
+        'Sub.Parc.':'subplot', 
+        'Altura ': 'altura',
+        'Familia': 'familia',
+        'Genero ': 'genero',
+        'Especie': 'especie'},
+        inplace=True)
+## a lot of empty rows now...
+dfBosque.dropna(how='all', axis=0, inplace=True)
 
+## repeat the above for the regen plots:
 
 wb.sheetnames
+
+sheet = wb['Cedros Arb juv reg ']
+dfRegen = pd.DataFrame(sheet.values)
+dfRegen.columns = dfRegen.iloc[0]
+dfRegen.drop(0,0, inplace=True)
+## what do we need from this?
+dfRegen = dfRegen[[ 'Norte ', 'Este', 'Elevación', 'Hábitat', 'Sitio/Site', 'Parcela/Plot', 'Sub.Parc.', 'Altura ', 'Familia', 'Genero ', 'Especie']]
+## clean up the names a little. As per before, I think the northing and easting are mixed up, reverse here:
+dfRegen.rename(index=str, columns=
+        {'0':'', 
+        'Norte ':'este', 
+        'Este': 'norte',
+        'Elevación': 'elevación',
+        'Hábitat': 'habitat',
+        'Sitio/Site': 'sitio',
+        'Parcela/Plot':'plot',
+        'Sub.Parc.':'subplot', 
+        'Altura ': 'altura',
+        'Familia': 'familia',
+        'Genero ': 'genero',
+        'Especie': 'especie'},
+        inplace=True)
+## get rid of empty rows now...
+dfRegen.dropna(how='all', axis=0, inplace=True)
+
+(dfBosque.columns.values == dfRegen.columns.values).all()
+
+## now join these two:
+
+juvSpecObs = pd.concat([dfBosque, dfRegen])
+juvSpecObs.reset_index(drop=True, inplace=True)
+
+## look okay?
+juvSpecObs.head(2)
+juvSpecObs.tail(2)
+
+## how do we make a unique taxonomic unit out of each species?
+## needs to be compatible with the mature species dataframe...
+
+
+juvSpecObs.reset_index(inplace=True)
+
+
+
+## looks good. now we need to create unique familyGenusSpecies names 
+## get rid of white spaces 
+
+strCols=["familia", "genero", "especie", "habitat"]
+for j in strCols:
+    print(j)
+    juvSpecObs[j] = juvSpecObs[j].str.strip()
+
+juvSpecObs.especie.isnull().any() ## we have some empty species slots
+juvSpecObs.genero.isnull().any() ## no empty genera slots
+juvSpecObs.familia.isnull().any() ## no empty family slots
+
+juvSpecObs.especie[juvSpecObs.especie.isnull()] = ""
+juvSpecObs.especie.isnull().any() ## that worked... keep following our original data cleaning process
+juvSpecObs['genusSpecies'] = juvSpecObs.familia + " " + juvSpecObs.genero + " " + juvSpecObs.especie
+juvSpecObs['genusSpecies'] = juvSpecObs['genusSpecies'].str.strip()
+
+juvSpecObs['PsubP'] = juvSpecObs['plot'].astype('str') + "." + juvSpecObs['subplot'].astype('str')
+
+juvSpecObs = juvSpecObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
+
+juvSpecObs.genusSpecies.unique()
+
+len(juvSpecObs.genusSpecies.unique()) ## 177 unique species
+
+## how many of these are in our mature tree species list?
+
+specObs = pd.read_pickle('specObs.p')
+
+help(specObs.genusSpecies.unique) ## 
+
+specObs.genusSpecies.unique() ## 
+
+np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())
+
+len(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique()))
+
+sum(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique()))
+
+## looks like about half of juvenile seedlings are not in the mature species lists
+
+## is this all real, or are there some typos causing some of this?
+## how to check this...
+ 
+jvUniq = juvSpecObs.genusSpecies.unique()
+
+## these are the juv species species reportedly not in our mature species
+notIn=~(np.isin(jvUniq, specObs.genusSpecies.values))
+jvNotMat = jvUniq[notIn]
+
+## just spotcheck a bunch of these, don't know a better way to do this...
+jvNotMat
+
+
