@@ -4580,7 +4580,6 @@ cGroup <- read.csv('cGroup.csv', row.names="PsubP")
 ## do this in python, methinks. 
 
 python3
-
 import os
 import openpyxl
 import pandas as pd
@@ -4603,11 +4602,11 @@ dfBosque.rename(index=str, columns=
         {'0':'', 
         'Norte ':'este', 
         'Este': 'norte',
-        'Elevación': 'elevación',
+        'Elevación': 'elevacion',
         'Hábitat': 'habitat',
-        'Sitio/Site': 'sitio',
-        'Parcela/Plot':'plot',
-        'Sub.Parc.':'subplot', 
+        'Sitio/Site': 'site',
+        'Parcela/Plot':"parcela",
+        'Sub.Parc.':"subparcela", 
         'Altura ': 'altura',
         'Familia': 'familia',
         'Genero ': 'genero',
@@ -4631,11 +4630,11 @@ dfRegen.rename(index=str, columns=
         {'0':'', 
         'Norte ':'este', 
         'Este': 'norte',
-        'Elevación': 'elevación',
+        'Elevación': 'elevacion',
         'Hábitat': 'habitat',
-        'Sitio/Site': 'sitio',
-        'Parcela/Plot':'plot',
-        'Sub.Parc.':'subplot', 
+        'Sitio/Site': 'site',
+        'Parcela/Plot':"parcela",
+        'Sub.Parc.':"subparcela", 
         'Altura ': 'altura',
         'Familia': 'familia',
         'Genero ': 'genero',
@@ -4655,34 +4654,38 @@ juvSpecObs.reset_index(drop=True, inplace=True)
 juvSpecObs.head(2)
 juvSpecObs.tail(2)
 
+
 ## how do we make a unique taxonomic unit out of each species?
 ## needs to be compatible with the mature species dataframe...
-
-
-juvSpecObs.reset_index(inplace=True)
-
-
 
 ## looks good. now we need to create unique familyGenusSpecies names 
 ## get rid of white spaces 
 
+juvSpecObs = pd.concat([dfBosque, dfRegen])
+juvSpecObs.reset_index(drop=True, inplace=True)
 strCols=["familia", "genero", "especie", "habitat"]
 for j in strCols:
     print(j)
     juvSpecObs[j] = juvSpecObs[j].str.strip()
 
+
 juvSpecObs.especie.isnull().any() ## we have some empty species slots
 juvSpecObs.genero.isnull().any() ## no empty genera slots
 juvSpecObs.familia.isnull().any() ## no empty family slots
-
 juvSpecObs.especie[juvSpecObs.especie.isnull()] = ""
 juvSpecObs.especie.isnull().any() ## that worked... keep following our original data cleaning process
+juvSpecObs.genero.replace('theobromifolia', 'Caryodaphnopsis', inplace=True) ## fix some errors where a genus name was left out
+juvSpecObs.genero.replace('Saurauria', 'Saurauia', inplace=True)
+juvSpecObs.especie.replace('(A.H. Gentry) van der Werff & H.G. Richt.', 'theobromifolia', inplace=True) ## fix some errors where a genus name was left out
 juvSpecObs['genusSpecies'] = juvSpecObs.familia + " " + juvSpecObs.genero + " " + juvSpecObs.especie
 juvSpecObs['genusSpecies'] = juvSpecObs['genusSpecies'].str.strip()
-
-juvSpecObs['PsubP'] = juvSpecObs['plot'].astype('str') + "." + juvSpecObs['subplot'].astype('str')
-
-juvSpecObs = juvSpecObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
+juvSpecObs['PsubP'] = juvSpecObs["parcela"].astype('str') + "." + juvSpecObs["subparcela"].astype('str')
+juvSpecObs['PsubP'] = juvSpecObs.PsubP.astype('float')
+juvSpecObs = juvSpecObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","elevacion","habitat",]]
+juvSpecObs.genusSpecies.replace("Indeterminada","Indeterminado", regex=True, inplace=True)
+juvSpecObs.sort_values('PsubP', inplace=True)
+juvSpecObs.reset_index(drop=True, inplace=True)
+#juvSpecObs.to_csv('juvSpecObs.csv', index=False)
 
 juvSpecObs.genusSpecies.unique()
 
@@ -4698,11 +4701,14 @@ specObs.genusSpecies.unique() ##
 
 np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())
 
-len(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique()))
+len(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ## 177
 
-sum(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique()))
+sum(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ## 103 species found in mature tree data
 
-## looks like about half of juvenile seedlings are not in the mature species lists
+## looks like about 70 of juvenile trees are not in the mature species lists
+## that is a lot, considering there are only ~300 mature tree species, and
+## the area sampled for these juvies is much smaller, I think.
+## so the forest is changing, probably
 
 ## is this all real, or are there some typos causing some of this?
 ## how to check this...
@@ -4714,6 +4720,267 @@ notIn=~(np.isin(jvUniq, specObs.genusSpecies.values))
 jvNotMat = jvUniq[notIn]
 
 ## just spotcheck a bunch of these, don't know a better way to do this...
-jvNotMat
+
+## a lot these seem correct, but the indeterminada species I think may well 
+## be the same as indeterminado in the mature tree species
+
+## for now, assume they are the same
+
+juvSpecObs.genusSpecies.replace("Indeterminada","Indeterminado", regex=True, inplace=True)
+
+## also we have two "species" that are authorities:
+
+juvSpecObs = pd.read_csv("juvSpecObs.csv")
+
+## add this to above pipeline, also
+
+juvSpecObs.genero.replace('theobromifolia', 'Caryodaphnopsis')
+
+juvSpecObs.genero.replace('theobromifolia', 'Caryodaphnopsis')[466]
+juvSpecObs.especie.replace('(A.H. Gentry) van der Werff & H.G. Richt.', 'theobromifolia')[466]
+
+juvSpecObs.genero.replace('theobromifolia', 'Caryodaphnopsis',True)
+juvSpecObs.especie.replace('(A.H. Gentry) van der Werff & H.G. Richt.', 'theobromifolia', inplace=True)
+
+## back up, put this in the formation of the table
+
+## okay, so should be pretty compatible now...
+## now what?
+
+## we want to see how things are shifting over time. Are sites being pulled 
+
+## maybe repeat our 
+
+## seems like the first stop would be to get a community matrix for the juveniles
+
+juvSpecObs = pd.read_csv('juvSpecObs.csv')
+
+juvSpecObs.head()
+
+aa = juvSpecObs[['PsubP', 'genusSpecies']]
+aa.drop_duplicates(inplace=True)
+juvDummy = pd.get_dummies(aa['genusSpecies'])
+## that's presence/absence, not sure if we want that...
+## for subParcelComm we did this:
+
+aa = juvSpecObs[['PsubP', 'genusSpecies']]
+aa.set_index('PsubP', inplace=True)
+bb = pd.get_dummies(aa['genusSpecies'])
+## okay, we need to collapse these 
+bb.reset_index(inplace=True)
+cc = bb.groupby('PsubP')
+juvDummy = cc.agg(np.sum)
+juvDummy.iloc[1:20,1:4]
+
+juvDummy.sum(axis=1)
+
+juvDummy.sum(axis=0)
+
+juvDummy.head()
+
+juvDummy.to_csv('juvComm.csv')
+juvComm = juvDummy
+
+## that's nice, but we might want matrix that is compatible with the larger community matrix. 
+## How can we add in our extra columns 
+
+## let's compare to our other community matrix:
+
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+
+subParcelComm.head()
+
+juvDummy.head()
+
+subParcelComm.columns.isin(juvDummy.columns.values)
+
+'Actinidaceae.Saurauia.sp..1' in subParcelComm.columns.values
+
+'Actinidaceae.Saurauia.sp..1' in juvDummy.columns.values
+
+'Actinidaceae Saurauia sp.1' in juvDummy.columns.values
+
+## the column names are different...can we fix this? 
+## recreate the community matrix from the mature trees:
+
+aa = specObs[['PsubP', 'genusSpecies']].copy()
+aa.PsubP = aa.PsubP.astype(float)
+aa.sort_values('PsubP', inplace=True)
+aa.PsubP = aa.PsubP.astype(str)
+aa.set_index('PsubP', inplace=True)
+
+bb = pd.get_dummies(aa['genusSpecies'])
+## okay, we need to collapse these 
+bb.reset_index(inplace=True)
+cc = bb.groupby('PsubP')
+specDummy = cc.agg(np.sum)
+
+specDummy.sum(axis=0).all()
+specDummy.sum(axis=1).all()
+
+specDummy.columns.isin(juvDummy.columns.values)
+
+len(specDummy.columns.isin(juvDummy.columns.values))
+sum(specDummy.columns.isin(juvDummy.columns.values))
+
+juvDummy.columns.isin(specDummy.columns.values)
+
+len(juvDummy.columns.isin(specDummy.columns.values))
+sum(juvDummy.columns.isin(specDummy.columns.values))
+
+## does this community matrix produce the same results
+## as our previous?
+
+specDummy.index
+
+#specDummy.to_csv('specDummy.csv')
+
+#specDummy = pd.read_csv('specDummy.csv')
+
+## take a look at an nms:
+
+library(vegan)
+library(RColorBrewer)
+
+## our newest version of entire community matrix
+specDummy <- read.csv('specDummy.csv', row.names='PsubP')
+specDummy <- specDummy[order(as.numeric(row.names(specDummy))),]
+nms <- metaMDS(specDummy, try=40)
+#stressplot(nms) ## looks pretty similar to our other stresses from older version
+## run this through the below graphics pipeline
+
+## compare it with our previous, saved entire community matrix
+subParcelComm <- read.csv('subParcelComm.csv', row.names='PsubP')
+nms <- metaMDS(subParcelComm, try=40)
+
+## and with a rerun version of the subparcelcomm pipeline
+subParcelComm2 <- read.csv('subParcelComm2.csv', row.names='PsubP')
+subParcelComm2 <- subParcelComm2[order(as.numeric(row.names(subParcelComm2))),]
+nms <- metaMDS(subParcelComm2, try=40)
+
+specObs <- read.csv('specObs.csv')
+aa = specObs[c("PsubP","habitat")]
+colrs <- brewer.pal(5, "Set1")
+nondups <- aa[!duplicated(aa),]
+nondups <- nondups[order(nondups$PsubP),]
+rownames(nondups) <- NULL
+nondups$colorNu <- as.numeric(nondups$habitat)
+nondups$colrs <- colrs[nondups$colorNu]
+nondups$MDS1 <- nms$points[,'MDS1']
+nondups$MDS2 <- nms$points[,'MDS2']
+nmsInfo <- nondups
+plot(nmsInfo$MDS1, nmsInfo$MDS2,
+    col=nmsInfo$colrs,
+    pch=19,
+    cex=2.0,
+)
+text(nmsInfo$MDS1, nmsInfo$MDS2, nmsInfo$PsubP, cex=1.5)
+## add a legend
+legend( x='bottomleft',
+        legend = c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        fill = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        col = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        cex = 1.0,
+        )
+ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+
+## fuck, these two dataframes are giving us slightly different results...
+## why?
+
+## the pipeline I have in the notebook goes like this:
+
+specObs = pd.read_pickle('specObs.p')
+smallSpecObs = specObs[['PsubP','genusSpecies']]
+bdfDummy = pd.get_dummies(smallSpecObs['genusSpecies'])
+bdfDummy.insert(0, 'PsubP', smallSpecObs.PsubP)
+bdfDummyGroup = bdfDummy.groupby('PsubP')
+
+subParcelComm2 = bdfDummyGroup.agg(np.sum)
+
+#subParcelComm2.to_csv('subParcelComm2.csv') ## wait
+
+## this gives us a weird NMS, the original.
+## as our saved subParcelComm.csv?
+
+## ah, think it is due to misordered rows. 
+
+## tomorrow, fix this with pandas, resave. Make sure the juvenile 
+## trees are also saved in the right order...
+
+## looks like a relic of R saving the csv? 
+
+## so keep working in python. 
+## 1) resave the subParcelComm from python, with rows in the right order
+## 2) get columns of juveniles and mature trees to line up
+## 3) add zero columns where the juveniles lack 
+
+## then start poking around with the juvenile data
+
+subParcelComm['PsubP'] = subParcelComm['PsubP'].astype('float')
+subParcelComm.sort_values('PsubP', inplace=True)
+subParcelComm.set_index('PsubP', inplace=True)
+#subParcelComm.to_csv('subParcelComm.csv')
+
+## let's just delete the python object of this to 
+## avoid confusion. 
+
+## does R always insert the periods in the name? Run above NMS 
+## pipeline again...yes 
+
+## okay, just don't save over from R
+
+## now, to make the mature and juvenile species data frames more compatible...
+
+##  
+
+subParcelComm.columns.isin(juvComm.columns.values)
+
+len(subParcelComm.columns.isin(juvComm.columns.values))
+
+sum(subParcelComm.columns.isin(juvComm.columns.values))
+
+juvComm.columns.isin(subParcelComm.columns.values)
+
+len(juvComm.columns.isin(subParcelComm.columns.values))
+
+sum(juvComm.columns.isin(subParcelComm.columns.values))
+
+## they share 103 species.  
+## for a total of 416 species 
+
+juvComm.shape
+
+subParcelComm.shape
+
+## seems like we want three matrices:
+## juveniles
+## mature trees
+## combined
+
+## as far as the combined, what is the point of truly 
+## combining the juvenile and mature trees...? 
+## maybe just use this for creating the other two. 
+
+
+## regardless, I think all should have all the same rows (sites)
+## and all the same species (columns). 
+
+## how to do this...
+
+## the combined matrix should be the easiest, and maybe we can
+## recycle the columns and rows.
+
+## an outer join is the default for concat, what happens 
+## when we just use defaults:
+
+aa = pd.concat([subParcelComm, juvComm], sort=False)
+
+## this sorts the columns, integrating the new ones from juvenile data:
+bb = pd.concat([subParcelComm, juvComm], sort=True)
+
+## do we need to flatten the rows that have the same PsubP values?
+## as per above, don't think so. This combo matrix can just be for 
+## the creation of the two submatrices.
+
 
 
