@@ -570,10 +570,14 @@ specObs['genusSpecies'] = specObs.familia + " " + specObs.genero + " " + specObs
 specObs['genusSpecies'] = specObs['genusSpecies'].str.strip()
 specObs['PsubP'] = specObs.parcela.astype('str') + "." + specObs.subparcela.astype('str')
 specObs = specObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","habito","elevacion","habitat",]]
+specObs['genusSpecies'] = specObs['genusSpecies'].str.replace('sp. ', 'sp.', regex=False)
 specObs.genusSpecies.unique()
-
 specObs.to_csv('specObs.csv')
-specObs.to_pickle('specObs.p')
+#specObs.to_pickle('specObs.p')
+
+#specObs = pd.read_csv('specObs.csv')
+
+len(specObs['genusSpecies'].unique())
 
 specObs.familia.isnull().any() ## nope
 specObs.genero.isnull().any() ## also no empty genero cells. The problem is with the names of species
@@ -4615,6 +4619,7 @@ dfBosque.rename(index=str, columns=
 ## a lot of empty rows now...
 dfBosque.dropna(how='all', axis=0, inplace=True)
 
+
 ## repeat the above for the regen plots:
 
 wb.sheetnames
@@ -4683,11 +4688,15 @@ juvSpecObs['PsubP'] = juvSpecObs["parcela"].astype('str') + "." + juvSpecObs["su
 juvSpecObs['PsubP'] = juvSpecObs.PsubP.astype('float')
 juvSpecObs = juvSpecObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","elevacion","habitat",]]
 juvSpecObs.genusSpecies.replace("Indeterminada","Indeterminado", regex=True, inplace=True)
+juvSpecObs['genusSpecies'] = juvSpecObs['genusSpecies'].str.replace('sp. ', 'sp.', regex=False)
 juvSpecObs.sort_values('PsubP', inplace=True)
 juvSpecObs.reset_index(drop=True, inplace=True)
+
+## let's make sure our species names with "sp." match the original specObs
+
 #juvSpecObs.to_csv('juvSpecObs.csv', index=False)
 
-juvSpecObs.genusSpecies.unique()
+juvSpecObs = pd.read_csv("juvSpecObs.csv")
 
 len(juvSpecObs.genusSpecies.unique()) ## 177 unique species
 
@@ -4770,6 +4779,7 @@ bb = pd.get_dummies(aa['genusSpecies'])
 bb.reset_index(inplace=True)
 cc = bb.groupby('PsubP')
 juvDummy = cc.agg(np.sum)
+
 juvDummy.iloc[1:20,1:4]
 
 juvDummy.sum(axis=1)
@@ -4778,7 +4788,9 @@ juvDummy.sum(axis=0)
 
 juvDummy.head()
 
-juvDummy.to_csv('juvComm.csv')
+#juvDummy.to_csv('juvComm.csv')
+
+
 juvComm = juvDummy
 
 ## that's nice, but we might want matrix that is compatible with the larger community matrix. 
@@ -4889,33 +4901,21 @@ ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3',
 
 ## the pipeline I have in the notebook goes like this:
 
-specObs = pd.read_pickle('specObs.p')
+specObs = pd.read_csv('specObs.csv')
 smallSpecObs = specObs[['PsubP','genusSpecies']]
 bdfDummy = pd.get_dummies(smallSpecObs['genusSpecies'])
 bdfDummy.insert(0, 'PsubP', smallSpecObs.PsubP)
 bdfDummyGroup = bdfDummy.groupby('PsubP')
+subParcelComm = bdfDummyGroup.agg(np.sum)
+#subParcelComm.to_csv('subParcelComm.csv') 
 
-subParcelComm2 = bdfDummyGroup.agg(np.sum)
 
-#subParcelComm2.to_csv('subParcelComm2.csv') ## wait
-
-## this gives us a weird NMS, the original.
-## as our saved subParcelComm.csv?
-
-## ah, think it is due to misordered rows. 
-
-## tomorrow, fix this with pandas, resave. Make sure the juvenile 
-## trees are also saved in the right order...
-
-## looks like a relic of R saving the csv? 
-
-## so keep working in python. 
-## 1) resave the subParcelComm from python, with rows in the right order
 ## 2) get columns of juveniles and mature trees to line up
 ## 3) add zero columns where the juveniles lack 
 
 ## then start poking around with the juvenile data
 
+## if we need to reorder, this is the code
 subParcelComm['PsubP'] = subParcelComm['PsubP'].astype('float')
 subParcelComm.sort_values('PsubP', inplace=True)
 subParcelComm.set_index('PsubP', inplace=True)
@@ -4933,20 +4933,21 @@ subParcelComm.set_index('PsubP', inplace=True)
 
 ##  
 
+juvSpecObs = pd.read_csv('juvSpecObs.csv')
+subParcelComm = pd.read_csv('subParcelComm.csv')
+juvComm = pd.read_csv('juvComm.csv')
+specObs = pd.read_csv('specObs.csv')
+
 subParcelComm.columns.isin(juvComm.columns.values)
-
 len(subParcelComm.columns.isin(juvComm.columns.values))
-
 sum(subParcelComm.columns.isin(juvComm.columns.values))
 
 juvComm.columns.isin(subParcelComm.columns.values)
-
 len(juvComm.columns.isin(subParcelComm.columns.values))
-
 sum(juvComm.columns.isin(subParcelComm.columns.values))
 
-## they share 103 species.  
-## for a total of 416 species 
+## they share 104 species.  
+## for a total of 417 species 
 
 juvComm.shape
 
@@ -4980,7 +4981,85 @@ bb = pd.concat([subParcelComm, juvComm], sort=True)
 
 ## do we need to flatten the rows that have the same PsubP values?
 ## as per above, don't think so. This combo matrix can just be for 
+
+## let's check this manually, in a text file:
+
+dd = bb.columns.astype('str').copy().to_series()
+
+with open('comboColumns.txt', 'w') as cc:
+    for i in dd:
+        cc.write(i + "\n")
+
+
+
+## looking this over, the "sp." string is a problem. Somethings that are
+## presumably the same are being counted as different.
+
+ 
+
 ## the creation of the two submatrices.
 
+dd = bb.columns.copy().to_series()
 
+dir(dd.str)
 
+help(dd.str.replace)
+
+ee = dd.str.replace('sp. ', 'sp.', regex=False)
+
+len(ee) ## 417
+len(ee.unique()) ## 411
+
+## looks like 6 cases of a space after species potentially causing problems. 
+
+## what next - got to clean the original species observation matrices, then rerun
+## the whole community matrix pipelines, maybe all analyses that used these
+## matrices (basically eveything in the notebook, jesus christ).
+
+## but perhaps the best workflow here is to create the master, combined
+## community matrix, that can be subset easily to the juvenile and mature
+## trees
+
+## if I do that, no need to individually create or correct the community matrices
+## but not sure how to index it so I can do that easily...
+
+## regardless the specobs and juvSpecObs need to be cleaned up. Next time...
+
+## and now it's next time. so, let's try for both specObs and and juvSpecObs,
+## then rerun the community matrix creation pipelines. 
+
+## fixed, there are now 104 shared species among the juveniles and adults
+
+##  so to start again, again:
+
+bb = pd.concat([subParcelComm, juvComm], sort=True)
+
+## how can we retain indices?
+
+subParcelComm.set_index('PsubP', inplace=True)
+juvComm.set_index('PsubP', inplace=True)
+
+subParcelComm.index
+juvComm.index
+
+bb = pd.concat([subParcelComm, juvComm], keys=['adulto','joven'], sort=True)
+## how can we get zeroes instead of NA's?
+bb.fillna(0, inplace=True)
+
+## get a better look at this...
+bb.to_csv('comboMat.csv')
+
+## for me, this looks good. If need to quickly subset by adult/juvenile?
+
+bb.loc['adulto',:]
+
+## you can pass the nested indices as tuples:
+bb.loc[('adulto',9.2)]
+
+## ok, that works well.
+
+## now what?
+
+## getting closer to the fun questions. 
+
+## 
