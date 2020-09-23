@@ -5042,19 +5042,18 @@ juvComm.set_index('PsubP', inplace=True)
 subParcelComm.index
 juvComm.index
 
-bb = pd.concat([subParcelComm, juvComm], keys=['adulto','joven'], sort=True)
+combCommMat = pd.concat([subParcelComm, juvComm], keys=['adulto','joven'], sort=True)
 ## how can we get zeroes instead of NA's?
-bb.fillna(0, inplace=True)
-
+combCommMat.fillna(0, inplace=True)
 ## get a better look at this...
-bb.to_csv('comboMat.csv')
+combCommMat.to_csv('comboMat.csv')
 
 ## for me, this looks good. If need to quickly subset by adult/juvenile?
 
-bb.loc['adulto',:]
+combCommMat.loc['adulto',:]
 
 ## you can pass the nested indices as tuples:
-bb.loc[('adulto',9.2)]
+combCommMat.loc[('adulto',9.2)]
 
 ## ok, that works well.
 
@@ -5062,4 +5061,139 @@ bb.loc[('adulto',9.2)]
 
 ## getting closer to the fun questions. 
 
-## 
+## I think we may need to rerun all the same pipelines on the seedling 
+## data
+
+## the ultimate result should be some sort graphic showing how 
+## far the seedling communities have "wandered", and in what direction.
+
+## are they heading into communities that we have already defined 
+## with our cluster analysis of the adults? Or is the forest 
+## creating something new with it's seedling community?
+
+## To do this properly, we need a coordinate system on which to place 
+## the communities. 
+
+## each seedling site should be shown in respect to its mother data. 
+
+## a good first first look would be a regular old NMS, color coded 
+## by mother/daughter pairs, with hulls of the old cluster boundaries. 
+
+## can we rig up an NMS real quick like?
+
+R 
+
+library(vegan)
+library(RColorBrewer)
+
+comboCommMat <- read.csv('comboMat.csv')
+
+comboCommMat[,'X']
+
+comboCommMat[1:4,1:4]
+
+comboCommMat[,1:4]
+
+tail(comboCommMat)[,1:4]
+
+sum(comboCommMat$X == 'adulto')
+sum(comboCommMat$X == 'joven')
+
+adultosAll <- comboCommMat[comboCommMat$X == 'adulto',]
+
+dim(adultosAll)
+
+jovenes <- comboCommMat[comboCommMat$X == 'joven',]
+
+dim(jovenes)
+
+## can we trim off the rows that don't have juvenile data?
+
+adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
+
+dim(comboCommMat[adultosInjovenes,])
+
+adultosDejovenes <- comboCommMat[adultosInjovenes,]
+
+comboNMS <- metaMDS(adultosDejovenes[,3:ncol(adultosDejovenes)])
+## okay, now how do we want to color this? 
+## we need to color by the old clusters and habitat types,
+## but also need to match up the seedlings with their 
+## parent groups 
+
+## to get cluster and habitat type:
+
+envOnly <- read.csv('envOnly.csv')
+cGroup <- read.csv('cGroup.csv')
+
+head(cGroup)
+
+all(envOnly$PsubP == cGroup$PsubP)
+
+adultosDejovenes[1:4,1:4]
+
+adultosDejovenes
+
+findOldcGroup <- function(x){
+if 
+
+adultosDejovenes
+
+adultosDejovenes[1:3,1:3]
+
+cGroup[cGroup$PsubP == x,'gr']
+
+## now, how to create new vectors of cluster and habitat type
+comboGr <- sapply(adultosDejovenes$PsubP, function(x){ cGroup[cGroup$PsubP == x,'gr']})
+comboHab <- sapply(adultosDejovenes$PsubP, function(x){ envOnly[envOnly$PsubP == x,'habitat']})
+
+## those will be hull groups. We'll constrain hulls to the parents only
+## What about parent/child designations? I guess we can use a different shape, and text, 
+## this should become obvious. To start off, let's see if we can get the hulls right:
+
+MDS1 <- comboNMS$points[,'MDS1']
+MDS2 <- comboNMS$points[,'MDS2']
+
+plot(MDS1, MDS2,
+col=comboGr)
+ordihull(comboNMS, comboGr, col=1:4, lwd=3)
+
+## how can we constrain to our old hulls? basically, we want polygons 
+## that are defined only by the parent points, that the child points 
+## can escape.
+
+## we can recover this information by only putting hulls around the adults:
+
+
+## for hulls:
+comboGrAdOnly <- comboGr
+for (i in 1:length(comboGrAdOnly)){
+    if (adultosDejovenes[i,'X'] == 'joven'){
+    comboGrAdOnly[i] <- 0}
+}
+
+## for pch:
+## we want solid colors, triangle for 
+## juvenile plots, circles for adults 
+
+symbs=vector(length=length(comboGr))
+for (i in 1:length(comboGr)){
+    if (adultosDejovenes[i,'X'] == 'adulto'){
+        symbs[i] <- 19} else {
+            if (adultosDejovenes[i,'X'] == 'joven'){
+                symbs[i] <- 17}
+}}
+
+png(file='jovenesNMS.png', width=1000, height=800)
+plot(MDS1, MDS2,
+col=comboGr,
+pch=symbs,
+cex=2.0,
+)
+ordihull(comboNMS, comboGrAdOnly, col=c('NA',1,2,3,4), lwd=3)
+dev.off()
+
+## habitat
+ordihull(comboNMS, comboHab, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+
+names(table(comboGrAdOnly))
