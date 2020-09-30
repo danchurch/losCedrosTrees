@@ -5115,7 +5115,25 @@ dim(comboCommMat[adultosInjovenes,])
 
 adultosDejovenes <- comboCommMat[adultosInjovenes,]
 
-comboNMS <- metaMDS(adultosDejovenes[,3:ncol(adultosDejovenes)])
+adultosDejovenes$PsubP
+
+aa <- adultosDejovenes[,3:ncol(adultosDejovenes)]
+comboNMS <- metaMDS(aa)
+## are any of these species matrix columns empty?
+
+all(colSums(aa) > 0)
+
+any(colSums(aa) == 0)
+
+sum(colSums(aa) == 0) ## 52? wow...that is ~1/8 of our columns...
+
+## if we get rid of these, does it change our NMS?
+
+
+bb <- aa[,colSums(aa) > 0]
+comboNMS <- metaMDS(bb)
+
+
 ## okay, now how do we want to color this? 
 ## we need to color by the old clusters and habitat types,
 ## but also need to match up the seedlings with their 
@@ -5134,10 +5152,6 @@ adultosDejovenes[1:4,1:4]
 
 adultosDejovenes
 
-findOldcGroup <- function(x){
-if 
-
-adultosDejovenes
 
 adultosDejovenes[1:3,1:3]
 
@@ -5149,21 +5163,25 @@ comboHab <- sapply(adultosDejovenes$PsubP, function(x){ envOnly[envOnly$PsubP ==
 
 ## those will be hull groups. We'll constrain hulls to the parents only
 ## What about parent/child designations? I guess we can use a different shape, and text, 
-## this should become obvious. To start off, let's see if we can get the hulls right:
+## this should become obvious. 
 
 MDS1 <- comboNMS$points[,'MDS1']
 MDS2 <- comboNMS$points[,'MDS2']
-
 plot(MDS1, MDS2,
 col=comboGr)
 ordihull(comboNMS, comboGr, col=1:4, lwd=3)
+legend( x='bottomright',
+        legend = 1:4,
+        fill = 1:4,
+        cex = 1.0,
+        title='Cluster',
+        )
 
 ## how can we constrain to our old hulls? basically, we want polygons 
 ## that are defined only by the parent points, that the child points 
 ## can escape.
 
 ## we can recover this information by only putting hulls around the adults:
-
 
 ## for hulls:
 comboGrAdOnly <- comboGr
@@ -5184,16 +5202,115 @@ for (i in 1:length(comboGr)){
                 symbs[i] <- 17}
 }}
 
-png(file='jovenesNMS.png', width=1000, height=800)
+#png(file='jovenesNMS.png', width=1000, height=800)
 plot(MDS1, MDS2,
 col=comboGr,
 pch=symbs,
 cex=2.0,
 )
 ordihull(comboNMS, comboGrAdOnly, col=c('NA',1,2,3,4), lwd=3)
-dev.off()
+#dev.off()
 
-## habitat
-ordihull(comboNMS, comboHab, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+#png(file='jovenesLeavingNestClusterNMS.png', width=1000, height=1000)
+## zoom a little, see how that looks:
+comboNMS <- metaMDS(bb)
+MDS1 <- comboNMS$points[,'MDS1']
+MDS2 <- comboNMS$points[,'MDS2']
+plot(MDS1, MDS2,
+col=comboGr,
+pch=symbs,
+cex=2.0,
+xlim=c(-0.5, 0.5)
+)
+ordihull(comboNMS, comboGrAdOnly, col=c('NA',1,2,3,4), lwd=3)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+#dev.off()
 
-names(table(comboGrAdOnly))
+MDS1 <- comboNMS$points[,'MDS1']
+MDS2 <- comboNMS$points[,'MDS2']
+## things to check:
+## wtf is going on with that point way out east?
+## how do these points cluster
+
+comboNMS$points
+
+aa <- identify(comboNMS$points)
+
+head(comboNMS$points)
+
+identify(comboNMS$points)
+
+comboNMS$points[identify(comboNMS$points),]
+
+
+## habitat seedlings:
+## we want all points to have the colors of their or their 
+## parent points' habitat
+## we want the hulls around the adult (parents) points,
+## and not necessarily their child points, which should 
+## be free to "escape" their parental points. 
+## symbols should be one of two types, juvenile or adults
+
+comboHabAdOnly <- comboHab
+levels(comboHabAdOnly) <- c(levels(comboHabAdOnly), 'juv')
+for (i in 1:length(comboHabAdOnly)){
+    if (adultosDejovenes[i,'X'] == 'joven'){
+    comboHabAdOnly[i] <- 'juv'}
+}
+
+## hull colors
+hullColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', NA)
+names(hullColrsMap) <- names(table(comboHabAdOnly))
+## regular colors, all points need this juv or adult:
+colrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00')
+names(colrsMap) <- names(table(comboHab))
+## does this work?
+colrs <- colrsMap[comboHab]
+
+plot(MDS1, MDS2,
+col=colrs,
+pch=symbs,
+cex=2.0,
+)
+ordihull(comboNMS, comboHabAdOnly, col=hullColrsMap, lwd=3)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+
+names(table(comboHabAdOnly))
+ordihull(comboNMS, comboHabAdOnly, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00',NA), lwd=3)
+
+colrs <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', NA)
+names(colrs) <- names(table(comboHabAdOnly))
+
+## looks like some groups are unrepresented?
+droplevels(comboHab)
+## looks like we have no juvenile data from clearings or bosques secondario
+
+names(table(comboHabAdOnly))
+
+## what's up with the southern forest point
+## and the agricola
+
+identify(comboNMSpoints)
+
+comboNMS$points[identify(comboNMS$points),]
+
+comboNMS[38,]
+
+head(comboNMS$points)
+
+str(comboNMS$points)
+
+## catch up the notebook, 
+## get seedling NMSes with habitat (land use) coloration
+## think about what to do with seedlings. 
+
+## after the seedlings, what is next? 
+
+## the case for highly endemic communities
+
+## classification of forest types? As in, can we build a 
+## logit linear model based on environmental characteristics
+## that predicts the two forest types?
+
+## if we get that far, we probably should call it. This is going to 
+## take too long otherwise. 
