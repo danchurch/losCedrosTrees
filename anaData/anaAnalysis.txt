@@ -5332,6 +5332,8 @@ all(colSums(juvComm) > 0)
 juvCommBray <- vegdist(juvComm)
 juvComm.ward <- hclust(juvCommBray, method='ward.D2')
 
+#save(juvComm.ward, file='juvCommHierClust.rda')
+
 plot(juvComm.ward)
 k=3
 juvGrp <- rect.hclust(juvComm.ward, border=c('purple','yellow','blue'), k=k)
@@ -5344,12 +5346,16 @@ vector(length = length(unlist(juvGrp)))
 
 ## nms of juveniles only:
 juvNMS <- metaMDS(juvComm)
+#save(juvNMS, file='juvNMS.rda')
 
 ## get the cluster group membership:
 par(mfrow=c(1,2))
 k=3
 plot(juvComm.ward)
-juvGrp <- rect.hclust(juvComm.ward, border=1:k,  k=k)
+juvGrp <- rect.hclust(juvComm.ward, 
+    border=(1:k+4),  
+    #border=c(5,6,7),  
+    k=k)
 jvgr <- NULL
 for (i in 1:k){
 groupNu <- rep(i, length(juvGrp[[i]]))
@@ -5359,36 +5365,103 @@ names(jvgr) <- names(unlist(juvGrp))
 ## sort these to match the order of our NMS
 jvgr <- jvgr[rownames(juvNMS$points)]
 plot(juvNMS$points, 
-    col=jvgr,
-    pch=19,
+    cex=1.5,
+    #bg=1,
+    #col=jvgr+4,
+    bg=jvgr+4,
+    pch=24,
 )
 text(juvNMS$points[,'MDS1'], 
     juvNMS$points[,'MDS2'] - 0.02, 
     rownames(juvNMS$points), 
     cex=1)
 
-all(names(jvgr) == rownames(juvNMS$points))
-
-names(jvgr) 
-
-
-jvgr['1.5']
-jvgr['2.4']
-jvgr['9.9']
-jvgr['8.9']
-## seems to work. 
+## save, with a better name:
+juvSpecClustMap <- jvgr
+#save(juvSpecClustMap, file='juvSpecClustMap.rda')
 
 ## k=3 seems like the most natural split here.
 
-## can we get an NMS and color it with these?
+## works okay... we should probably export that tree
+## as a svg and work on it a little...later
+
+## we need a single graph that shows the evolution of these 
+## groups. It should have the hulls of both the old and new 
+## clusters, plus the colors of the old, 
+
+## use our combined NMS of juv and adults:
+
+library(vegan)
+
+## we need a vector for hulls, indicating which cluster the 
+## subplot belongs to (74 objects)
+
+## regenerate our community matrix of sites with adults and juveniles:
+comboCommMat <- read.csv('comboMat.csv')
+jovenes <- comboCommMat[comboCommMat$X == 'joven',]
+adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
+adultosDejovenes <- comboCommMat[adultosInjovenes,]
+comboInfo <- adultosDejovenes[,1:2]
+colnames(comboInfo) <- c("ageClass","PsubP")
+## our adult cluster results were here:
+cGroup <- read.csv('cGroup.csv')
+adultGroupMaps <- cGroup$gr
+names(adultGroupMaps) <- cGroup$PsubP
+## our juvenile cluster results were here:
+load('juvSpecClustMap.rda')
+PsubP <- as.character(comboInfo[comboInfo$ageClass == 'adulto','PsubP'])
+## these should be our cluster groups.
+adultGroupMaps[PsubP]
+## juveniles, bump them forward a bit
+juvSpecClustMap[PsubP] + max(adultGroupMaps[PsubP])
+## this can be a column in our dataframe 
+comboInfo$Clust <- c(adultGroupMaps[PsubP], juvSpecClustMap[PsubP] + max(adultGroupMaps[PsubP]))
+## make our symbols 
+symbs <- vector(length = nrow(comboInfo))
+for (i in 1:length(symbs)){
+    if (comboInfo[i,'ageClass'] == 'adulto'){
+        symbs[i] <- 21} else {
+            if (comboInfo[i,'ageClass'] == 'joven'){
+                symbs[i] <- 24}
+}}
+comboInfo$symbs <- symbs
+## we also want to retain the original parent cluster
+## info for the juveniles:
+comboInfo$parentClust <- adultGroupMaps[as.character(comboInfo$PsubP)]
+
+plot(1:3, rep(1,3), cex=4, pch=24, col=c(1,2,3), bg=c(4,5,6))
+
+## so can we use this to color our NMS graphic?
+load('comboNMS.rda')
+MDS1 <- comboNMS$points[,'MDS1'] 
+MDS2 <- comboNMS$points[,'MDS2'] 
+plot(MDS1, MDS2,
+    bg=comboInfo$Clust,
+    pch=comboInfo$symbs,
+    col=comboInfo$parentClust,
+    lwd=4.0,
+    cex=2.0,
+)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+ordihull(comboNMS, comboInfo$Clust, col=comboInfo$Clust, lwd=3)
+legend( x='bottomright',
+        legend = 1:4,
+        fill = 1:4,
+        cex = 1.0,
+        title='Cluster',
+        )
+
+#######################################################
+## to subset to the non-zero columns. Doesn't really matter here, but this how to do it:
+aa <- adultosDejovenes[,c(TRUE,TRUE, (colSums(adultosDejovenes[,3:ncol(adultosDejovenes)]) > 0))]
+#######################################################
 
 
+## our juvenile clusters 
 
+cGroup$PsubP
 
-juvNMS$points[,'MDS1']
-juvNMS$points[,'MDS2']
-
-str(juvNMS)
+## and repeat this for the land uses ('habitat'):
 
 ## does it make sense to conduct a hierarchical clustering on the combined data?
 ## or just explore the seedlines? I think they are the cloud we need to stare at 
@@ -5405,3 +5478,4 @@ str(juvNMS)
 ## if we get that far, we probably should call it. This is going to 
 ## take too long otherwise. 
 
+## 
