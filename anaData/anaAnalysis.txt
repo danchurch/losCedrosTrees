@@ -4788,7 +4788,7 @@ juvDummy.sum(axis=0)
 
 juvDummy.head()
 
-#juvDummy.to_csv('juvComm.csv')
+juvDummy.to_csv('juvComm.csv')
 
 
 juvComm = juvDummy
@@ -5366,8 +5366,6 @@ names(jvgr) <- names(unlist(juvGrp))
 jvgr <- jvgr[rownames(juvNMS$points)]
 plot(juvNMS$points, 
     cex=1.5,
-    #bg=1,
-    #col=jvgr+4,
     bg=jvgr+4,
     pch=24,
 )
@@ -5397,6 +5395,7 @@ library(vegan)
 ## subplot belongs to (74 objects)
 
 ## regenerate our community matrix of sites with adults and juveniles:
+par(mfrow=c(1,1))
 comboCommMat <- read.csv('comboMat.csv')
 jovenes <- comboCommMat[comboCommMat$X == 'joven',]
 adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
@@ -5443,25 +5442,66 @@ plot(MDS1, MDS2,
     cex=2.0,
 )
 text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
-ordihull(comboNMS, comboInfo$Clust, col=comboInfo$Clust, lwd=3)
+#ordihull(comboNMS, comboInfo$Clust, col=comboInfo$Clust, lwd=3)
+ordihull(comboNMS, comboInfo$Clust, col=names(table(comboInfo$Clust)), lwd=3)
 legend( x='bottomright',
-        legend = 1:4,
-        fill = 1:4,
-        cex = 1.0,
+        legend = 1:7,
+        pch = c(rep(21,4), rep(24,3)),
+        pt.bg = 1:7,
+        ncol = 2,
+        cex = 2.0,
         title='Cluster',
         )
 
-#######################################################
-## to subset to the non-zero columns. Doesn't really matter here, but this how to do it:
-aa <- adultosDejovenes[,c(TRUE,TRUE, (colSums(adultosDejovenes[,3:ncol(adultosDejovenes)]) > 0))]
-#######################################################
+## that is nice. Can we get rid of the outlier and take another look?
+## the outlier is the juvenile point of 1.1. Should we also remove the parent point?
+## kind of makes sense, we because we removed the rest of the mature tree data
+## that weren't parent points with juvenile data...
+
+## our NMS was made from this community matrix of adult and juvenile
+
+comboCommMat <- read.csv('comboMat.csv')
+jovenes <- comboCommMat[comboCommMat$X == 'joven',]
+adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
+adultosDejovenes <- comboCommMat[adultosInjovenes,]
+## get rid of outlier point from community matrix
+aa <- adultosDejovenes[adultosDejovenes$PsubP != '1.1',]
+## get rid of outlier point from nmsInfo 
+aaInfo <- comboInfo[comboInfo$PsubP != 1.1,]
+all(aa$PsubP == aaInfo$PsubP)
+## get rid of label columns
+bb <- aa[,c(3:ncol(aa))]
+## check row names
+all(bb$PsubP == aaInfo$PsubP)
+## redo NMS without outlier:
+comboNMS_noOut <- metaMDS(bb)
+## interesting, that increased the stress:
+## plot this as above 
+
+MDS1 <- comboNMS_noOut$points[,'MDS1'] 
+MDS2 <- comboNMS_noOut$points[,'MDS2'] 
+plot(MDS1, MDS2,
+    bg=aaInfo$Clust,
+    pch=aaInfo$symbs,
+    col=aaInfo$parentClust,
+    lwd=4.0,
+    cex=2.0,
+)
+text(MDS1, MDS2 - 0.005, aaInfo$PsubP, cex=1)
+ordihull(comboNMS_noOut$points, aaInfo$Clust, col=names(table(aaInfo$Clust)), lwd=3, lty = c(rep(1,4), rep(2,3)))
+legend( x='bottomright',
+    legend = 1:7,
+    pch = c(rep(21,4), rep(24,3)),
+    pt.bg = 1:7,
+    ncol = 2,
+    cex = 2.0,
+    title='Cluster',
+    bty='n',
+    )
 
 
-## our juvenile clusters 
 
-cGroup$PsubP
-
-## and repeat this for the land uses ('habitat'):
+## and repeat this for the land uses ('habitat')?
 
 ## does it make sense to conduct a hierarchical clustering on the combined data?
 ## or just explore the seedlines? I think they are the cloud we need to stare at 
@@ -5478,4 +5518,4 @@ cGroup$PsubP
 ## if we get that far, we probably should call it. This is going to 
 ## take too long otherwise. 
 
-## 
+##  
