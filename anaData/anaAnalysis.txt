@@ -5458,6 +5458,7 @@ legend( x='bottomright',
 ## kind of makes sense, we because we removed the rest of the mature tree data
 ## that weren't parent points with juvenile data...
 
+
 ## our NMS was made from this community matrix of adult and juvenile
 
 comboCommMat <- read.csv('comboMat.csv')
@@ -5498,24 +5499,174 @@ legend( x='bottomright',
     title='Cluster',
     bty='n',
     )
+## and a legend for the lines?
+legend( x='bottomleft',
+    legend = c('mature cluster', 'juvenile cluster'),
+    lty = c(1,2),
+    bty='n',
+    )
 
 
+## I think that works for now, to talk to Ana and Bitty about this
+## we'll probably revisit to improve the aesthetics...
 
 ## and repeat this for the land uses ('habitat')?
 
-## does it make sense to conduct a hierarchical clustering on the combined data?
-## or just explore the seedlines? I think they are the cloud we need to stare at 
-## for a while?
+## meh. But one thing that might be important to look at is if our combined matrix of adult and child 
+## points recapitulates these results. The results I think I am seeing is that original four adult 
+## clusters should be inside of our new cluster 7. As in, the RCA points and their allies in the regeneration
+## plots should cluster with the four adult groups, 
 
-## after the seedlings, what is next? 
+## our combined child/parent matrix, with outlier (1.1) still included
 
-## the case for highly endemic communities
+adultosDejovenes[1:4,1:4]
+
+## curious, is the cluster affected by the zero columns?
+
+aa <- adultosDejovenes[,3:ncol(adultosDejovenes)]
+## make a unique identifier for rownames
+comboInfo$agePsubP <- paste(comboInfo$ageClass, comboInfo$PsubP, sep='.')
+comboInfo$agePsubP <- sub('adulto', 'A', comboInfo$agePsubP)
+comboInfo$agePsubP <- sub('joven', 'J', comboInfo$agePsubP)
+rownames(aa) <- comboInfo$agePsubP
+## do the hierarchical clustering with this
+k=7
+aaBray <- vegdist(aa)
+aa.ward <- hclust(aaBray, method='ward.D2')
+allComboClust <- rect.hclust(aa.ward, k=k) 
+plot(aa.ward)
+## get the cluster group membership:
+allComboGrp <- rect.hclust(aa.ward, 
+    border=(1:k),  
+    k=k)
+cgr <- NULL
+for (i in 1:k){
+groupNu <- rep(i, length(allComboGrp[[i]]))
+cgr <- c(cgr, groupNu)
+}
+names(cgr) <- names(unlist(allComboGrp))
+## sort these to match the order of our NMS
+comboInfo$cgr <- cgr[rownames(aa)]
+## clean up a little
+comboInfo <- comboInfo[,c("ageClass","PsubP","agePsubP","Clust","symbs","parentClust","cgr")]
+
+head(comboInfo)
+
+## now, what are we trying to do with this? 
+
+## let's see how our NMS graphics compare with this new clustering system, 
+## which was done on all the child/adult points at once, instead of 
+## piecing together the adult and child ones separately. 
+
+## how to do this... use our old NMS:
+
+load('comboNMS.rda')
+MDS1 <- comboNMS$points[,'MDS1'] 
+MDS2 <- comboNMS$points[,'MDS2'] 
+par(mfrow=c(1,2))
+plot(MDS1, MDS2,
+    pch=comboInfo$symbs,
+    col=comboInfo$Clust,
+    lwd=4.0,
+    cex=2.0,
+)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+ordihull(comboNMS, comboInfo$Clust, col=names(table(comboInfo$Clust)), lwd=3)
+plot(MDS1, MDS2,
+    pch=comboInfo$symbs,
+    col=comboInfo$cgr,
+    lwd=4.0,
+    cex=2.0,
+)
+ordihull(comboNMS, comboInfo$cgr, col=names(table(comboInfo$cgr)), lwd=3)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+
+## huh. The results are extremely similar. Even the order is 
+## almost the same, the parent forest clusters got switched in 
+## order, and a few points swapped cluster groups, but generally
+## the hierarchical clustering algorithm was consistent. That's 
+## encouraging. So I think we can just move forward with the 
+## graphics as they are, and move on to the next step of 
+## arguing for alternative stable states using the clusters 
+## as we have them
+
+## what about the case for highly endemic communities - can we 
+## work on the MEMs a bit... perhaps classify all the plots 
+## based on their membership within watersheds of different 
+## size classes, and match MEMs to these?
 
 ## classification of forest types? As in, can we build a 
 ## logit linear model based on environmental characteristics
-## that predicts the two forest types?
+## that predicts the two forest types? I think 
 
 ## if we get that far, we probably should call it. This is going to 
 ## take too long otherwise. 
 
-##  
+################ axes of succession ######################
+
+## okay, now we want to create one or two axes along which 
+## we can rank these communities, in terms of their 
+## similarity to the alternate stable states we think we 
+## are seeing. 
+
+## we think we are seeing a trajectory that the forest plots 
+## are following (vaguely west on the overall nms graphic)
+## and a different trajectory followed 
+## and the argument is that the regeneration plots are 
+## being divided by these two different poles, some are going 
+## one way and some are going the other. 
+
+## the simplest graphic I can think of would be two axis, 
+## one with BC distance to the combined indicator species of the 
+## parent forest types, and one with the indicator types
+
+## I feel like we have to use the parent indicator species,
+## even though we know that the child communities are very
+## different, because it is too circular to use indicator 
+## species from our juvenile plots
+
+## anyway, we want to assemble a cast of species to 
+## compare all points against... it seems like the best here
+## would to get all indicator species associated the 
+## clusters 3&4 in any way as one axis, and clusters 1&2 for 
+## the other.
+
+## axis one: similarity to all indicated species of forests
+## axis two: similarity to all indicated species of disturbed sites
+
+## is BC right for this? 
+
+## not sure. Let's get to it, see how it behaves...
+
+## axis one:
+library(indicspecies)
+## our community matrix...
+comM <- read.csv('subParcelComm.csv')
+rownames(comM) <- comM$PsubP
+
+## general plant observation dataframe
+specObs <- read.csv('specObs.csv', row.names=1)
+## make a PsubP/habitat dataframe:
+habs <- unique(specObs[,c('PsubP','habitat')])
+rownames(habs) <- NULL
+
+## and our cluster groups:
+cldf <- read.csv('cGroup.csv')
+
+## make sure they are the same order
+habs <- habs[order(habs$PsubP),]
+comM <- comM[order(comM$PsubP),]
+cldf <- cldf[order(cldf$PsubP),]
+all(habs$PsubP == comM$PsubP)
+all(habs$PsubP == rownames(comM))
+all(cldf$PsubP == rownames(comM))
+
+## now we can make a vector of our habs dataframe:
+habsV <- habs$habitat
+clV <- cldf$gr
+
+## clean up extra column of com matrix, careful with this
+comM <- comM[,-1] ## get rid of PsubP
+clustIndSpp <- multipatt(comM, clV, func = 'r.g', control=how(nperm=9999))
+
+ 
