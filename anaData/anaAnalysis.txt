@@ -5465,6 +5465,7 @@ comboCommMat <- read.csv('comboMat.csv')
 jovenes <- comboCommMat[comboCommMat$X == 'joven',]
 adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
 adultosDejovenes <- comboCommMat[adultosInjovenes,]
+#save(adultosDejovenes, file='adultosDejovenes.csv')
 ## get rid of outlier point from community matrix
 aa <- adultosDejovenes[adultosDejovenes$PsubP != '1.1',]
 ## get rid of outlier point from nmsInfo 
@@ -5638,35 +5639,986 @@ text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
 
 ## not sure. Let's get to it, see how it behaves...
 
-## axis one:
+## go back over indicator species process:
+
+##############
 library(indicspecies)
+library(stats)
+library(vegan)
 ## our community matrix...
-comM <- read.csv('subParcelComm.csv')
-rownames(comM) <- comM$PsubP
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+envOnly <- read.csv('envOnly.csv', row.names="PsubP")
+cGroup <- read.csv('cGroup.csv', row.names="PsubP")
 
-## general plant observation dataframe
-specObs <- read.csv('specObs.csv', row.names=1)
-## make a PsubP/habitat dataframe:
-habs <- unique(specObs[,c('PsubP','habitat')])
-rownames(habs) <- NULL
+## order okay?
+all(rownames(envOnly) == rownames(comM))
+all(rownames(cGroup) == rownames(comM))
 
-## and our cluster groups:
-cldf <- read.csv('cGroup.csv')
+## run it. We have some pvalues right on the edge of our cutoff, so let's use
+## a lot of permutations for some added precision here:
+clustIndSpp <- multipatt(comM, cGroup$gr, func = 'r.g', control=how(nperm=19999))
 
-## make sure they are the same order
-habs <- habs[order(habs$PsubP),]
-comM <- comM[order(comM$PsubP),]
-cldf <- cldf[order(cldf$PsubP),]
-all(habs$PsubP == comM$PsubP)
-all(habs$PsubP == rownames(comM))
-all(cldf$PsubP == rownames(comM))
+## how does it look?:
 
-## now we can make a vector of our habs dataframe:
-habsV <- habs$habitat
-clV <- cldf$gr
+summary(clustIndSpp)
 
-## clean up extra column of com matrix, careful with this
-comM <- comM[,-1] ## get rid of PsubP
-clustIndSpp <- multipatt(comM, clV, func = 'r.g', control=how(nperm=9999))
+str(clustIndSpp)
 
+head(clustIndSpp$sign)
+
+## how can we lift our species of interest out of this? For instance, to get 
+## all the "native" forest species of interest? This would any indicators for 
+## type 3 or 4, or 3+4:
+
+## our actual results are here:
+indSign <- clustIndSpp$sign
+
+## retain only statistically significant at 0.05
+sigSign <- indSign[indSign$p.value <= .05,]
+
+## Annonaceae.Guatteria.megalophylla should be 2+3, if I'm reading this right
+## Moraceae.Ficus.cuatrecasana also.
+## so if we want 3, 4, and 3+4, we should just keep the rows that have a non-zero
+## value for 3 or 4:
+
+forestSign <- sigSign[sigSign$s.3 == 1 | sigSign$s.4 == 1,]
+## but we need to eleminate any that are indicators of clusters 1 or 2:
+forestSign <- forestSign[forestSign$s.1 == 0 & forestSign$s.2 == 0,]
+## and these should be our "native forest community":
+natforc <- rownames(forestSign)
+
+## we can repeat this for the other "pole", something like disturbed forest community:
+
+distForestSign <- sigSign[sigSign$s.1 == 1 | sigSign$s.2 == 1,]
+## but we need to eleminate any that are indicators of clusters 1 or 2:
+distForestSign <- distForestSign[distForestSign$s.3 == 0 & distForestSign$s.4 == 0,]
+## and these should be our "native forest community":
+distforc <- rownames(distForestSign)
+
+## is it inappropriate to include the regen indicators, if our hypothesis is that 
+## the regen sites are plastic, or pluripotent? 
+
+## leave them in for the moment. Think about this more. 
+
+## what would be the plan here...
+
+## what community matrix are we working with here...the combined or the juvenile only?
+load('adultosDejovenes.csv')
+
+## all of these names make sense?
+distforc %in% colnames(adultosDejovenes)
+natforc %in% colnames(adultosDejovenes)
+
+## subset these matrices using these species:
+
+colnames(adultosDejovenes) %in% distforc
+
+comboNatForcMat <- adultosDejovenes[, colnames(adultosDejovenes) %in% natforc]
+rownames(comboNatForcMat) <- comboInfo$agePsubP 
+## I think it makes the most sense to convert to presence/absence here, because I
+## have no idea how to come up with some sort of proper abundances for the "ideal"
+## community 
+comboNatForcMat[comboNatForcMat > 0] <- 1
+
+## before we add our "ideal community", check:
+all(colSums(comboNatForcMat) > 0) ## nope. 
+colSums(comboNatForcMat) > 0 
+## Lauraceae.Ocotea.stenoneura is not represented in any of these subparcels
+## not sure if that is important. Carry on. 
+## check rownames
+cbind(adultosDejovenes$PsubP, rownames(comboNatForcMat))
+## looks good
+
+## so, to add our ideal community:
+comboNatForcMat <- rbind(comboNatForcMat, rep(1,nrow(comboNatForcMat)))
+rownames(comboNatForcMat)[75] <- "idealNatForest"
+
+## now get distances from this. I think euclidean isn't inappropriate here, 
+## because we're going to consider lots of shared zeroes a sign of similarity:
+
+aa <- as.matrix(vegdist(comboNatForcMat, method='euclidean'))
+## and we just need the bottomrow, right?
+
+distFromNatForest <- aa['idealNatForest',]
+
+max(aa['idealNatForest',])
+
+sort(aa['idealNatForest',])
+
+## the most "foresty" plot is A.7.3:
+rowSums(comboNatForcMat['A.7.3',])
+
+rowSums(comboNatForcMat['idealNatForest',])
+
+## and our other pole, "disturbed forest"
+comboDistForcMat <- adultosDejovenes[, colnames(adultosDejovenes) %in% distforc]
+rownames(comboDistForcMat) <- comboInfo$agePsubP 
+comboDistForcMat[comboDistForcMat > 0] <- 1
+comboDistForcMat <- rbind(comboDistForcMat, rep(1,nrow(comboDistForcMat)))
+rownames(comboDistForcMat)[75] <- "idealDistForest"
+aa <- as.matrix(vegdist(comboDistForcMat, method='euclidean'))
+distFromDistForest <- aa['idealDistForest',]
+cbind(distFromDistForest, distFromNatForest)
+
+## how do we subset to just our juveniles?
+
+comboNatForcMat
+
+grep('A', rownames(comboNatForcMat))
+
+grep('J', rownames(comboNatForcMat))
+
+juvNatForcMat <- comboNatForcMat[grep('J', rownames(comboNatForcMat)),]
+
+########## put these together, for quick exploration ##############
+metr <- "bray"
+#metr <- "euclidean"
+## "natural" forest ##
+comboNatForcMat <- adultosDejovenes[, colnames(adultosDejovenes) %in% natforc]
+rownames(comboNatForcMat) <- comboInfo$agePsubP 
+comboNatForcMat[comboNatForcMat > 0] <- 1
+juvNatForcMat <- comboNatForcMat[grep('J', rownames(comboNatForcMat)),]
+juvNatForcMat <- rbind(juvNatForcMat, rep(1,nrow(juvNatForcMat)))
+rownames(juvNatForcMat)[38] <- "idealNatForest"
+aa <- as.matrix(vegdist(juvNatForcMat, method=metr))
+distFromNatForest <- aa['idealNatForest',]
+## "disturbed" forest ##
+comboDistForcMat <- adultosDejovenes[, colnames(adultosDejovenes) %in% distforc]
+rownames(comboDistForcMat) <- comboInfo$agePsubP 
+comboDistForcMat[comboDistForcMat > 0] <- 1
+juvDistForcMat <- comboDistForcMat[grep('J', rownames(comboDistForcMat)),]
+juvDistForcMat <- rbind(juvDistForcMat, rep(1,nrow(juvDistForcMat)))
+rownames(juvDistForcMat)[38] <- "idealDistForest"
+aa <- as.matrix(vegdist(juvDistForcMat, method=metr))
+distFromDistForest <- aa['idealDistForest',]
+#######################
+distsForests <- cbind(distFromNatForest, distFromDistForest)
+#plot(distFromDistForest, distFromDistForest)
+plot(jitter(distsForests), jitter(distsForests))
+################
  
+## yeah, not useful. What we are looking for is another way to present the
+## the above NMS. Staring into those clouds, I think I can see that the 
+## forest is moving in two directions, something like a "natural" forest 
+## trajectory, with both undisturbed forest types 3 & 4 moving forward 
+## into a new community type, or maybe two closely related community types.
+## And then the more disturbed forest is hard to characterize. In the NMS
+## the communities of the more disturbed forest types move outward from
+## from the communities, but radially, each subparcel in a different 
+## direction. 
+
+## seems like we need to jettison the idea that the trajectories will 
+## in some way predictably resemble the old communities. 
+
+## I see two ways forward - 
+
+## 1) try transforming and getting new axis the juvenile. Use the loading
+## to decide what species are driving changes
+
+## 2) repeat the above pipeline using indicator species from the seedlings. I think 
+## we lack the stat power to differentiate between the two "natural" forest 
+## seedling communities, so we can do a k=2, either with ward algorithm or 
+## or with kmeans. Then see if we can create a clean graphic showing progress
+## toward one or the other community?
+
+## so do #2 first. This will involve trying to split the seedlings only 
+## into two groups: 
+
+library(stats)
+library(vegan)
+
+## where is our community matrix of juveniles?
+juvComm <- read.csv('juvComm.csv', header=TRUE, row.names='PsubP')
+
+any(colSums(juvComm) < 1)
+
+
+juvKmeanClust <- kmeans(juvComm, 2)
+juvKmeanClust <- kmeans(juvComm, 3)
+
+juvKmeanClust$cluster
+
+## check an NMS with these? 
+juvCommNMS <- metaMDS(juvComm)
+
+all(names(juvKmeanClust$cluster) == rownames(juvCommNMS$points))
+
+##
+plot(juvCommNMS$points,
+    pch=21,
+    bg=juvKmeanClust$cluster,
+)
+
+## checks
+rowSums(juvComm)
+any(colSums(juvComm) == 0)
+all(colSums(juvComm) > 0)
+
+## k means didn't work, not sure why... 
+juvBray <- vegdist(juvComm)
+
+k=3
+juv.ward <- hclust(juvBray, method='ward.D2')
+#plot(juv.ward)
+juvWardClust <- rect.hclust(juv.ward, k=k) 
+
+plot(juvCommNMS$points,
+    pch=21,
+    bg=juvKmeanClust$cluster,
+)
+
+## still haven't found an elegant solution to this:
+
+cgr <- NULL
+for (i in 1:k){
+groupNu <- rep(i, length(juvWardClust[[i]]))
+cgr <- c(cgr, groupNu)
+}
+names(cgr) <- names(unlist(juvWardClust))
+cgr <- cgr[rownames(juvCommNMS$points)]
+
+rownames(juvCommNMS$points) == names(cgr)
+
+par(mfrow = c(1,2))
+plot(juvCommNMS$points,
+    pch=21,
+    cex=2,
+    bg=cgr+4,
+)
+plot(juv.ward)
+juvWardClust <- rect.hclust(juv.ward, k=k, border=1:3 +4) 
+
+## well, that doesn't say anything new
+## the ward clustering, the NMS, and the kmeans all disagree
+
+par(mfrow = c(1,2))
+plot(juvCommNMS$points,
+    pch=21,
+    cex=2,
+    bg=cgr,
+    main='Ward',
+)
+plot(juvCommNMS$points,
+    pch=21,
+    cex=2,
+    bg=juvKmeanClust$cluster,
+    main='kmeans',
+)
+
+## this just means we have a messy system that is not easily simplified. 
+## it is worth repeating the indicator-species/BC analysis that we tried
+## with the parent communities? 
+
+## get indicator species for the three groups of juvenile groups
+
+## 
+library(indicspecies)
+juvComm <- read.csv('juvComm.csv', header=TRUE, row.names='PsubP')
+juvBray <- vegdist(juvComm)
+k=3
+juv.ward <- hclust(juvBray, method='ward.D2')
+juvWardClust <- rect.hclust(juv.ward, k=k) 
+cgr <- NULL
+for (i in 1:k){
+groupNu <- rep(i, length(juvWardClust[[i]]))
+cgr <- c(cgr, groupNu)
+}
+names(cgr) <- names(unlist(juvWardClust))
+
+juvClustIndSpp <- multipatt(juvComm, cgr, func = 'r.g', control=how(nperm=9999))
+
+summary(juvClustIndSpp)
+
+save(juvClustIndSpp, file='juvClustIndSpp.rda')
+
+## not much to work with there, not enough statistical power
+## five species total, 2 for group 1 (forest seedling group)
+## 3 species for Group 3 (the regen/rca seedling group) 
+
+## so probably not a fruitful direction here. If there is time/need,
+## we can track these species as indicators of the new forest 
+## types. But seems like weak sauce. 
+
+## so let's try the PCA approach:
+
+juvComm <- read.csv('juvComm.csv', header=TRUE, row.names='PsubP')
+## transform the abundances
+juvComm.hell <- decostand(juvComm, 'hellinger')
+
+## which PCA function to use?
+
+## we'll use the rda() function, which can do PCA if presented 
+## with only one function. Just because this is what Borcard uses:
+
+juvCommPCA <- rda(juvComm.hell, scale=TRUE)
+save(juvCommPCA, file='juvCommPCA.rda')
+
+summary(juvCommPCA)
+
+## 36 new axes... none of which explains much more than any others
+## the first new axis only explains 0.068 of the variance.
+## Anyway, we can look at these new axes:
+
+
+## plot the species
+## good site for this: https://fromthebottomoftheheap.net/2012/04/11/customising-vegans-ordination-plots/
+
+l=5
+biplot(juvCommPCA, 
+main='species',
+choices=c(1,2),
+display='species',
+scaling='species',
+#xlim=c(-l,l),
+#ylim=c(-l,l),
+type='text',
+)
+
+## plot the sites
+l=5
+biplot(juvCommPCA, 
+main='sites',
+choices=c(1,2),
+display='sites',
+scaling='sites',
+#xlim=c(-l,l),
+#ylim=c(-l,l),
+type=c('text','points'),
+col=cgr,
+)
+## coloring doesn't work
+
+## I guess one way to make a nice graph is to call up the empty:
+
+biplot(juvCommPCA, 
+main='sites',
+choices=c(1,2),
+display='sites',
+scaling=3, ## symmetric for sites and species
+type=c('none'),
+)
+## then plot the points:
+points(juvCommPCA, 
+display='sites',
+col=cgr+4,
+scaling=3,
+)
+## text can be added:
+text(juvCommPCA, 
+display='sites',
+col=1,
+scaling=3,
+)
+
+
+## if we want to see the species driving the driving the differences?
+l=5
+biplot(juvCommPCA, 
+choices=c(1,2),
+display=c('species','sites'),
+scaling='sites',
+#xlim=c(-l,l),
+#ylim=c(-l,l),
+type=c('text','points'),
+col=c('black','red'),
+)
+
+## how can we pick out the species with the greatest impacts?
+
+## 
+par(mfrow=c(1,1))
+l=5
+biplot(juvCommPCA, 
+choices=c(1,2),
+display=c('sites'),
+scaling='sites',
+#xlim=c(-l,l),
+#ylim=c(-l,l),
+type=c('text'),
+)
+
+## it looks to me like site 7.3 is what makes the first pca so important. 
+## can we rerun, without this?
+
+
+## to get the loadings, I guess vegan calls these "scores", 
+## as long as they are unscaled. 
+## for the species
+
+scores(juvCommPCA, choices = 1:4, display = "species", scaling = 0) 
+
+scores(juvCommPCA, choices = 1, display = "species", scaling = 0) 
+
+## what do we want to do with this?
+
+juvComm <- read.csv('juvComm.csv', header=TRUE, row.names='PsubP')
+juvComm.no7.3 <- juvComm[rownames(juvComm) !="7.3",]
+## transform the abundances
+juvComm73.hell <- decostand(juvComm.no7.3, 'hellinger')
+bb <- rda(juvComm73.hell, scale=TRUE)
+
+summary(bb)
+
+
+par(mfrow=c(1,2))
+l=5
+biplot(bb, 
+choices=c(1,2),
+display=c('sites'),
+scaling='sites',
+#xlim=c(-l,l),
+#ylim=c(-l,l),
+type=c('text'),
+)
+
+par(mfrow=c(1,2))
+biplot(juvCommPCA, 
+main='juvCommPCA, sites',
+choices=c(1,2),
+display='sites',
+scaling=3, ## symmetric for sites and species
+type=c('none'),
+)
+## then plot the points:
+points(juvCommPCA, 
+display='sites',
+col=cgr+4,
+scaling=3,
+)
+text(juvCommPCA, 
+display='sites',
+col=cgr+4,
+scaling=3,
+)
+biplot(bb, 
+main='bb, sites',
+choices=c(1,2),
+display='sites',
+scaling=3, ## symmetric for sites and species
+type=c('none'),
+)
+## then plot the points:
+points(bb, 
+display='sites',
+col=cgr+4,
+scaling=3,
+)
+text(bb, 
+display='sites',
+col=cgr+4,
+scaling=3,
+)
+
+## yup, it looks like the first PCA in our original PCA ord is 
+## used to explain the differences between 7.3 and the other 
+## points. 
+
+## don't know why 7.3 is considered so different by the PCA, 
+## in our other clusters/ords it is considered pretty normal 
+## foresty plot, doesn't stick out. 
+## so, going back to the original PCA, maybe the best PCs to 
+## use are 2 and 3. They explain almost as much variance as 
+## the first. 
+
+biplot(juvCommPCA, 
+    choices=c(2,3),
+    display='sites',
+    scaling=3,
+    type='none',
+)
+text(juvCommPCA, 
+    choices=c(2,3),
+    display='sites',
+    col=cgr+4,
+    scaling=3,
+)
+legend(
+    x='bottomright',
+    legend=1:3,
+    fill=1:3+4,
+)
+
+## PCA3 seems mostly there to explain the differences among
+## group 6. But it is nice to have a second axis.
+
+## so now what? 
+
+## we can look at the loadings of PCA2, see what species are 
+## important, and plot just these. These can be argued to 
+## be the species
+
+## we should also see if these line up with any of the indicator
+## species 
+
+juvPC2 <- as.vector(scores(juvCommPCA, choices = 2, display = "species", scaling = 0))
+names(juvPC2) <- rownames(scores(juvCommPCA, choices = 2, display = "species", scaling = 0))
+
+
+sum(juvPC2)
+
+summary(juvCommPCA)
+
+## which species had the greatest effect on this axis? in absolute terms
+
+names(sort(abs(juvPC2)))[1:10]
+
+## does this line up with our indicator species?
+
+load('juvClustIndSpp.rda')
+
+juvClustIndSpp
+
+str(juvClustIndSpp)
+
+summary(juvClustIndSpp)
+
+jvclic <- juvClustIndSpp$sign[juvClustIndSpp$sign$p.value <= 0.05,]
+
+rownames(jvclic) %in% names(juvPC2)
+
+juvPC2[rownames(jvclic)]
+
+jvclic
+
+names(sort(abs(juvPC2)))[1:10]
+
+## totally different results...fuck...
+
+head(sort(juvPC2))
+tail(sort(juvPC2))
+
+## huh. Lots to think about here. For one, it looks like at least
+## some of these "juvenile" species are actually just understory 
+## plants, like the palm Hyospathe. 
+
+## so part of the story is just we have a complex canopy in the 
+## less disturbed forest. These differences are not necessarily a 
+## result of the next generation of canopy trees being different,
+## but perhaps a result of the understory being simpler. In the 
+## regeneration sites
+
+#####################################################
+## side note, these data were requested from TRY:
+# 343 Plant life form (Raunkiaer life form)
+# 42  Plant growth form
+# 3401 Plant growth form detailed consolidated
+# 3400 Plant growth form simple consolidated
+# 197 Plant functional type (PFT)
+#####################################################
+
+## so, what do we here? Seems like we might put this on hold
+## till we can get some sort of way of categorizing the growth 
+## form of the plants. Until we have this info, not sure
+## if I can say whether we are mostly looking at little trees
+## or just understory plants.
+## or both (most likely)
+
+## the major directions left are the general biodiversity patterns,
+## the endemicity
+
+## I would also like to build a model for predicting the forest 
+## type from environmental variables, some sort of logit 
+
+## we need to focus on something, so what next, while we 
+## wait for data from the try folks. 
+
+############## biodiversity metrics  ###################
+
+## okay, can we get a simpsons index for each subparcel? 
+## do this for the full adult community matrix:
+## our community matrix...
+
+library(vegan)
+
+comMsimps <- diversity(comM, index='simpson', MARGIN=1)
+
+comM <- read.csv('subParcelComm.csv', row.names='PsubP')
+envOnly <- read.csv('envOnly.csv', row.names='PsubP')
+
+comM[1:3,1:3]
+
+## how can we get a mean species richness for each 
+## type of land use?
+
+## species richness is basically just rowsums:
+
+rowSums(comM)
+
+all(names(rowSums(comM)) == rownames(envOnly))
+all(names(comMsimps) == rownames(envOnly))
+
+aa <- data.frame(envOnly$habitat, rowSums(comM), comMsimps)
+colnames(aa) <- c('hab', 'nuSpp', 'simps')
+
+head(aa)
+
+## ugh, have to use hadley packages. I refuse. Goto python:
+
+habSpRich <- aa 
+#write.csv(habSpRich, file='habSpRich.csv')
+
+## python
+
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+import statsmodels.stats.multicomp as mc
+
+help(pd.read_csv)
+
+aa = pd.read_csv('habSpRich.csv', index_col=0)
+bb = aa.groupby('hab')
+cc = bb.agg(np.mean)
+cc.columns = ['meanSppRich','simps']
+dd = bb.agg(np.std)
+dd.columns = ['StdNuSpp','StdSimps']
+ee = pd.merge(cc,dd, left_index=True, right_index=True)
+ff = ee.drop(['simps','StdSimps'], axis=1)
+
+## okay, what do we actually want to say here?
+
+## nice graph time. As an example:
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+## we want to grouping to be old forest vs. regen vs. RCA
+
+plt.close('all')
+fig = plt.figure()
+#ax = fig.add_axes([0,0,1,1])
+ax = fig.add_subplot(111)
+ax.bar(0, ff['meanSppRich']['BC'], yerr=ff['StdNuSpp']['BC'], color = '#d34625', width= 0.1)
+ax.bar(0.11, ff['meanSppRich']['BS'], yerr=ff['StdNuSpp']['BS'], color = '#4387b8', width= 0.1)
+ax.bar(0.22, ff['meanSppRich']['CLB'], yerr=ff['StdNuSpp']['CLB'], color = '#6aa149', width= 0.1)
+ax.bar(0.45, ff['meanSppRich']['RG'], yerr=ff['StdNuSpp']['RG'], color = '#f08620', width= 0.15)
+ax.bar(0.61, ff['meanSppRich']['RCA'], yerr=ff['StdNuSpp']['RCA'], color = '#8e68a4', width= 0.15)
+
+## so what are we trying to do here?
+
+## just so the two 
+
+## anova - we need vectors of species abundances for each type of habitat...
+
+RGrich = aa[aa['hab'] == 'CLB']['nuSpp'].copy()
+RCArich = aa[aa['hab'] == 'RCA']['nuSpp'].copy()
+CLBrich = aa[aa['hab'] == 'CLB']['nuSpp'].copy()
+BSrich = aa[aa['hab'] == 'BS']['nuSpp'].copy()
+BCrich = aa[aa['hab'] == 'BC']['nuSpp'].copy()
+
+help(stats.f_oneway)
+
+stats.f_oneway(RGrich, RCArich, CLBrich, BSrich, BCrich)
+## but an ANOVA may not be appropriate. Count data, etc.
+## should be the same as:
+
+
+stats.kruskal(RGrich, RCArich, CLBrich, BSrich, BCrich)
+## KruskalResult(statistic=16.719520034283267, pvalue=0.0021911245666973414)
+
+## can we combine the forest results and compare to the RCA plots?
+(CLBrich + BSrich + BCrich)
+len(CLBrich) + len(BSrich) + len(BCrich)
+CLBrich.append([BSrich,BCrich], ignore_index=True)
+allFor = CLBrich.append([BSrich,BCrich])
+len(allFor)
+
+
+
+
+stats.kruskal(allFor, RCArich)
+## KruskalResult(statistic=3.346398305084755, pvalue=0.067352230850900419)
+
+stats.f_oneway(allFor, RCArich)
+## F_onewayResult(statistic=3.7513611463166825, pvalue=0.060225863826738973)
+## should be the same as:
+stats.ttest_ind(allFor, RCArich, equal_var=False)
+## but isn't. The anova is sig, the ttest is not. fuck...
+
+## very different, now do the tukeys?
+
+## looks hard in python
+
+mc.pairwise_tukeyhsd
+
+help(mc.pairwise_tukeyhsd)
+
+## perform multiple pairwise comparison (Tukey HSD)
+
+m_comp = mc.pairwise_tukeyhsd(endog=aa['nuSpp'], groups=aa['hab'], alpha=0.05)
+print(m_comp)
+
+help(stats.ttest_ind)
+
+stats.ttest_ind(BCrich, RCArich, equal_var=False)
+
+stats.ttest_ind(BSrich, RCArich, equal_var=False)
+
+## yeah, not sure what we can say here.   
+
+## maybe make a nice plot, without the anova...can't 
+## spend too much time here. 
+
+## spending too much time on this right now. just summarize what we 
+## have and move on.
+
+## so what do we need? an estimate of the species 
+
+## we need the NMS graphics, the overall turnover diagram, and the SAD
+
+## plan - 
+## 1) combine the three NMSes into one readable graphic
+## 2) make nice general turnover diagram
+## 3) make nice overall SAD, with chao estimators, etc
+## write in text around them
+## make it matter to the case in discussion  
+
+#### so back into R ####
+
+## 1) combine the three NMSes into one readable graphic
+
+## this will be a bitch. redo the original three graphics, then tweak with inkscape into one graphic.
+
+## nms #1 is our "habitat" NMS - I think we saved the NMS somewhere:
+
+library(vegan)
+library(RColorBrewer)
+
+load('fullCommNMS.rda')
+
+
+plot(nms$points)
+
+## looks right...let's back up a little:
+
+specObs <- read.csv('specObs.csv')
+aa = specObs[c("PsubP","habitat")]
+colrs <- brewer.pal(5, "Set1")
+nondups <- aa[!duplicated(aa),]
+nondups <- nondups[order(nondups$PsubP),]
+rownames(nondups) <- NULL
+nondups$colorNu <- as.numeric(nondups$habitat)
+nondups$colrs <- colrs[nondups$colorNu]
+nondups$MDS1 <- nms$points[,'MDS1']
+nondups$MDS2 <- nms$points[,'MDS2']
+nmsInfo <- nondups
+
+#svg(filename='/home/daniel/Documents/LosCed/courtScientificSummaries/mariscal/habitatNMS.svg')
+plot(nmsInfo$MDS1, nmsInfo$MDS2,
+    col=nmsInfo$colrs,
+    pch=19,
+    cex=2.0,
+    xlab='',
+    ylab='',
+)
+#text(nmsInfo$MDS1, nmsInfo$MDS2, nmsInfo$PsubP, cex=1.5)
+## add a legend
+legend( x='bottomleft',
+        legend = c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        fill = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        col = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        cex = 1.0,
+        )
+ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+dev.off()
+
+## nms #2 is our "natural cluster" NMS:
+
+cGroup = read.csv('cGroup.csv', row.names='PsubP')
+
+all(nmsInfo$PsubP == row.names(cGroup))
+
+nmsInfo$cGroup <- cGroup$gr 
+
+#svg(filename='/home/daniel/Documents/LosCed/courtScientificSummaries/mariscal/natClustNMS.svg')
+plot(nmsInfo$MDS1, nmsInfo$MDS2,
+    col=nmsInfo$cGroup,
+    pch=19,
+    cex=2.0,
+    xlab='',
+    ylab='',
+)
+legend( x='bottomleft',
+        legend = 1:4,
+        fill = 1:4,
+        cex = 1.0,
+        title='Cluster',
+        )
+ordihull(nms, nmsInfo$cGroup, col=1:4, lwd=3)
+dev.off()
+
+## and #3 is our combined natural cluster and habitat NMS:
+
+svg(filename='/home/daniel/Documents/LosCed/courtScientificSummaries/mariscal/natClustAndHabNMS.svg')
+plot(nmsInfo$MDS1, nmsInfo$MDS2,
+    col=nmsInfo$cGroup,
+    pch=19,
+    cex=2.0,
+    xlab='',
+    ylab='',
+)
+#text(nmsInfo$MDS1, nmsInfo$MDS2 - 0.015, nmsInfo$PsubP, cex=1.5)
+## add a legend
+legend( x='bottomleft',
+        legend = 1:4,
+        fill = 1:4,
+        cex = 1.0,
+        title='Cluster'
+        )
+legend( x='bottomright',
+        legend = c('BC', 'BS', 'CLB', 'RCA', 'RG'),
+        #fill = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        col = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        cex = 1.0,
+        lty = 1,
+        lwd = 3,
+        )
+ordihull(nms, nmsInfo$habitat, col=c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'), lwd=3)
+dev.off()
+
+## okay, so now I
+
+## 2) make nice general turnover diagram
+
+## do this in python
+
+specObs = pd.read_csv('specObs.csv')
+subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
+pts = gpd.read_file('GIS/ana30meterPlots.geojson')
+pts.set_index('PsubP', inplace=True)
+pts.sort_index(inplace=True)
+
+## sanity check
+
+(pts.index == envOnly.index).all()
+
+fig, ax = plt.subplots()
+d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
+physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+ax.scatter(physDist, bcDist)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+
+scipy.stats.linregress(X,Y)
+
+ax.set_title('Overall Turnover')
+
+
+
+##############
+## back to R
+
+
+barplot(comMsimps)
+
+comMsimps
+
+## export this:
+write.csv(comMsimps, file="comMsimps.csv")
+## okay, do hierarchical model in python
+
+specObs <- read.csv('specObs.csv')
+
+## this is a bit messy, I think the first two columns are
+#specObs <- specObs[,3:ncol(specObs)]
+## meaningless, get rid of them, res
+## save this to clean up the future uses of this:
+#write.csv(specObs, file='specObs.csv', row.names=FALSE)
+
+head(specObs)
+
+### check out this for watershed analysis:
+https://github.com/mdbartos/pysheds
+
+## hierarchical models
+## develop watershed models 
+
+## both are interesting. We have an hour, let's start by playing around with 
+## watersheds....
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+import pickle
+import geopandas as gpd
+import rasterio
+import pysheds
+import scipy.spatial as sp
+import scipy.stats
+import rasterio.plot
+import copy
+import random
+import math
+import matplotlib.colors as colors
+from pysheds.grid import Grid
+import mplleaflet
+
+plt.ion()
+
+## and following the 
+
+linregress
+
+help('Grid.from_raster')
+
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+
+def plotFigure(data, label, cmap='Blues'):
+    plt.figure(figsize=(12,10))
+    plt.imshow(data, extent=grid.extent, cmap=cmap)
+    plt.colorbar(label=label)
+    plt.grid()
+
+plotFigure(grid.dem, 'Elevation (m)')
+
+#N    NE    E    SE    S    SW    W    NW
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+## this is just a color map. Don't think about it too much.
+
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+
+plotFigure(grid.dir,'Flow Directiom','viridis')
+
+## defining catchement:
+
+# Specify pour point
+x, y = 747657,10033134
+
+# Delineate the catchment
+grid.catchment(data='dir', x=x, y=y, dirmap=dirmap, out_name='catch',
+               recursionlimit=15000, xytype='label', nodata_out=0)
+
+# Clip the bounding box to the catchment
+grid.clip_to('catch')
+
+# Get a view of the catchment
+demView = grid.view('dem', nodata=np.nan)
+
+plotFigure(demView,'Elevation')
+
+Define accumulation grid and stream network
+
+grid.accumulation(data='catch', dirmap=dirmap, pad_inplace=False, out_name='acc')
+
+accView = grid.view('acc', nodata=np.nan)
+plotFigure(accView,"Cell Number",'PuRd')
+
+streams = grid.extract_river_network('catch', 'acc', threshold=200, dirmap=dirmap)
+streams["features"][:2]
+
+def saveDict(dic,file):
+    f = open(file,'w')
+    f.write(str(dic))
+    f.close()
+
+#save geojson as separate file
+saveDict(streams,'./testingPySheds.geojson')
+
+
