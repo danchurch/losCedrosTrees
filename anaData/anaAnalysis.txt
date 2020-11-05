@@ -4619,7 +4619,6 @@ dfBosque.rename(index=str, columns=
 ## a lot of empty rows now...
 dfBosque.dropna(how='all', axis=0, inplace=True)
 
-
 ## repeat the above for the regen plots:
 
 wb.sheetnames
@@ -6237,6 +6236,10 @@ envOnly <- read.csv('envOnly.csv', row.names='PsubP')
 
 comM[1:3,1:3]
 
+## export this:
+write.csv(comMsimps, file="comMsimps.csv")
+## okay, do hierarchical model in python
+
 ## how can we get a mean species richness for each 
 ## type of land use?
 
@@ -6490,44 +6493,120 @@ subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
 pts = gpd.read_file('GIS/ana30meterPlots.geojson')
 pts.set_index('PsubP', inplace=True)
 pts.sort_index(inplace=True)
-
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
 ## sanity check
-
 (pts.index == envOnly.index).all()
-
-fig, ax = plt.subplots()
 d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
 physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
 bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
 X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+
+fig, ax = plt.subplots()
 ax.scatter(physDist, bcDist)
 ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_xlabel('distance between plots (m)')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_title('Tree community turnover')
 
-scipy.stats.linregress(X,Y)
+## save this as 
+plt.savefig('lcTreeTurnover.svg')
 
-ax.set_title('Overall Turnover')
+####### get nice species accumulation curves ##############
+
+## now a species accumulation curve
+
+## back in R:
+
+comM <- read.csv('comM.csv', row.names='PsubP')
+
+anaSAC <- specaccum(comM, method = "exact")
+
+#pdf(file="anaSubparcelSAC.pdf")
+plot(anaSAC)
+#dev.off()
+
+specpool(comM)
+
+################################################################################
+#    Species     chao  chao.se    jack1 jack1.se    jack2     boot  boot.se  n
+#All     343 516.3946 39.15056 483.6557 21.60728 566.8038 404.4403 10.54889 61
+###############################################################################
+
+## can we build a model to stretch this out the predicted 
+## number of species?
+
+mod1 <- fitspecaccum(anaSAC, "lomolino")
+
+plot(anaSAC)
+
+predYs <- predict(mod1, newdata=1:500)
+
+#write.csv(predYs, file="predYs.csv", row.names=FALSE)
 
 
 
-##############
-## back to R
 
 
-barplot(comMsimps)
+## good stuff. To port it over to pyplotter...
+## we need the richness and the sd:
 
-comMsimps
+allSAC <- data.frame(anaSAC$richness, anaSAC$sd)
+colnames(allSAC) <- c('richness', 'sd')
+#write.csv(allSAC, file='allSAC.csv', row.names=FALSE)
 
-## export this:
-write.csv(comMsimps, file="comMsimps.csv")
-## okay, do hierarchical model in python
+## and into python to plot...
 
-specObs <- read.csv('specObs.csv')
+allSAC = pd.read_csv('allSAC.csv')
+predYs = pd.read_csv('predYs.csv')
+predYs.columns = "richness"
 
-## this is a bit messy, I think the first two columns are
-#specObs <- specObs[,3:ncol(specObs)]
-## meaningless, get rid of them, res
-## save this to clean up the future uses of this:
-#write.csv(specObs, file='specObs.csv', row.names=FALSE)
+meanSppEst = np.mean([516.3946,483.6557,566.8038,404.4403])
+
+plt.close('all')
+colr='g'
+fig, ax = plt.subplots(1,1)
+plt.plot(allSAC['richness'],
+            color=colr)
+plt.fill_between(x=allSAC.index,
+                 y1=allSAC.richness - allSAC.sd,
+                 y2=allSAC.richness + allSAC.sd,
+                alpha=0.4,
+                color=colr,
+                )
+plt.plot(list(range(61,301)),predYs.iloc[61:301,:], color=colr, linestyle=':')
+ax.set_xlim(-10,300)
+predYs.iloc[61:301,:]
+ax.hlines(500,
+    xmin = 0,
+    xmax = 301,
+    linestyle = "--",
+)
+## each plot represents 0.09 hectare sampled...can we change the ticks?
+## if we want ticks for every 20 hectares sampled...
+## 20 hectares = 220 plots, too few ticks...
+## 50 plots = 50x.09ha/plot = 4.5 ha. So how about we put a tick for 
+## every 5 ha? 5 ha = 55.5 plots:
+## try 5 ticks, not counting zero: 
+tk = np.arange(0,6)*55.5
+ax.set_xticks(tk)
+## the ha values of this would be:
+tklabs = np.arange(0,6)*5
+ax.set_xticklabels(tklabs)
+ax.set_xlabels(['two', 'four','six', 'eight', 'ten'])
+ax.set_xlabel('Parceles medidas en hectareas (ha)')
+ax.set_ylabel('número de especies de arboles')
+
+## and our 
+
+
+#plt.savefig('anaSAC.svg')
+
+
+## just checking, we have an area surveyed of about 3200 x 3200 m, ~ 1000 ha area surveyed. 
+
+
+
+
 
 head(specObs)
 
@@ -6536,6 +6615,8 @@ https://github.com/mdbartos/pysheds
 
 ## hierarchical models
 ## develop watershed models 
+
+########################## watershed ##########################
 
 ## both are interesting. We have an hour, let's start by playing around with 
 ## watersheds....
@@ -6556,6 +6637,7 @@ import rasterio.plot
 import copy
 import random
 import math
+import re
 import matplotlib.colors as colors
 from pysheds.grid import Grid
 import mplleaflet
@@ -6621,4 +6703,88 @@ def saveDict(dic,file):
 #save geojson as separate file
 saveDict(streams,'./testingPySheds.geojson')
 
+############################ try database   ################################
+
+## what do we do now? 
+
+## check out the try data, see if we can figure out what are juvenile 
+## and what are tree data
+
+## our copy of the try database is here:
+/home/daniel/Documents/analyses/tryData/12154.txt
+
+## how do tell if a plant is a tree or a shrub?
+
+## get our data: 
+specObs = pd.read_csv('specObs.csv')
+
+## we're not going to import the massive try database into memory yet, 
+## so grep it on the command line:
+
+## for instance, 
+grep "Ossaea micrantha" 12154.txt 
+
+## nothing, but:
+grep "Ossaea" 12154.txt -n
+
+sed -n "14004161, 14004162p" 12154.txt
+
+## this is taking forever... 
+
+tail -n 1000 12154.txt > tailTest.tsv
+## nothing in this
+
+## it looks to me like this is what we need to find our info:
+
+grep "Plant growth form" 12154.txt -n -A 1 > test2.txt
+
+grep "Plant growth form" 12154.txt > test3.txt
+
+## that seems like that worked, got things down to 100 meg or so.
+
+## can we add back in the original headers?
+
+head -n 1 12154.txt > justGrowthForm.tsv
+cat test3.txt >> justGrowthForm.tsv
+
+## I think this file works. 
+## so back into python. 
+
+## can we load this in and search for our species of interest?
+
+juvSpecObs = pd.read_csv('juvSpecObs.csv')
+
+juvSpecObs.head()
+
+juvSpecObs.genero.values
+
+juvSpecObs['genero'][2]
+
+'Meriania' in juvSpecObs['genero'].values
+
+"Bartsia" in juvSpecObs['genero'].values
+
+
+## no habit information, either in that file or in the original spreadsheets 
+## from Ana
+
+## so the goal here would be to scan our data from TRY for matches in 
+## genus and maybe species names 
+
+for i in juvSpecObs['genero']:
+    print(i)
+
+
+tryData = '/home/daniel/Documents/analyses/tryData/12154.txt'
+
+
+with open(tryData, 'r', encoding='latin_1') as f:
+    with open("foundGenera.txt", 'w') as w:
+        for line in f:
+            for i in juvSpecObs['genero']:
+                result=re.search(i, line)
+                #if result: print(result.group())
+                if result: w.write(line)
+
+## works, but how to use this?
 
