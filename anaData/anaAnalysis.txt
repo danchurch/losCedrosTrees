@@ -6771,14 +6771,25 @@ cut -f 3,5,7,9,11,15 justGrowthForm.tsv > justGrowthForm2.tsv
 ## there are some strange spots, missing the growth form field:
 grep "Plant growth form" -v justGrowthForm2.tsv | wc -l
 
-(libreoffice --calc justGrowthForm2.tsv &) &
+## so keep only those with growth form?
+head -n 1 justGrowthForm2.tsv > justGrowthForm3.tsv
+grep "Plant growth form" justGrowthForm2.tsv >> justGrowthForm3.tsv
 
-## can we add back in the original headers?
 
+## some just say "no" for growth form. 
+grep "no" -w justGrowthForm3.tsv 
+## Get rid of these:
+head -n 1 justGrowthForm3.tsv > justGrowthForm4.tsv
+grep "no" -v justGrowthForm3.tsv >> justGrowthForm4.tsv
 
-cat test3.txt >> justGrowthForm.tsv
+## checks
+wc -l justGrowthForm4.tsv
 
-## I think this file works. 
+(libreoffice --calc justGrowthForm4.tsv &) &
+
+## I think this file works. simplify name and clear out. 
+mv justGrowthForm4.tsv justGrowthForm.tsv
+
 ## so back into python. 
 
 ## can we load this in and search for our species of interest?
@@ -6795,21 +6806,31 @@ juvSpecObs['genero'][2]
 
 "Bartsia" in juvSpecObs['genero'].values
 
-
 ## no habit information, either in that file or in the original spreadsheets 
 ## from Ana
 
 ## so the goal here would be to scan our data from TRY for matches in 
 ## genus and maybe species names 
 
-#tryData = '/home/daniel/Documents/analyses/tryData/test2.tsv'
-tryData = '/home/daniel/Documents/analyses/tryData/justGrowthForm.tsv' 
-#tryData = '/home/daniel/Documents/analyses/tryData/12154.txt'
+## sp. is causing problems here...
+aa = ~(juvSpecObs['genero'].str.contains('sp\.'))
+juvGenera = juvSpecObs['genero'][aa]
+juvGenera.reset_index(drop=True, inplace=True)
 
-for genus in juvSpecObs['genero']:
-    with open(tryData, 'r', encoding='latin_1') as f:
-        for line in f:
-            if re.search(i, line): print(line)
+
+tryData = 'justGrowthForm.tsv' 
+with open('foundGenera.txt', 'w') as w:
+    for genus in juvGenera:
+        with open(tryData, 'r', encoding='latin_1') as f:
+            for line in f:
+                if re.search(genus, line): 
+                    w.write(line)
+
+
+
+                    print("###########################################")
+                    print(genus)
+                    print(line)
 
 ## "sp." is causing problems here. How do we exclude them?
 ## deal with this later. how 
