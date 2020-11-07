@@ -6718,7 +6718,7 @@ saveDict(streams,'./testingPySheds.geojson')
 ## get our data: 
 specObs = pd.read_csv('specObs.csv')
 
-## we're not going to import the massive try database into memory yet, 
+## we're not going to read the massive try database into memory yet, 
 ## so grep it on the command line:
 
 ## for instance, 
@@ -6734,17 +6734,48 @@ sed -n "14004161, 14004162p" 12154.txt
 tail -n 1000 12154.txt > tailTest.tsv
 ## nothing in this
 
+
+################# build our database from TRY data ##############
+
 ## it looks to me like this is what we need to find our info:
+head -n 1 12154.txt > justGrowthForm.tsv
+grep "Plant growth form" 12154.txt >> justGrowthForm.tsv
 
-grep "Plant growth form" 12154.txt -n -A 1 > test2.txt
+head justGrowthForm.tsv
+tail justGrowthForm.tsv
+wc -l justGrowthForm.tsv
+## looks right
 
-grep "Plant growth form" 12154.txt > test3.txt
+## make a test file
+head 12154.txt -n 1 > test.tsv
+grep "Faramea platyneura" justGrowthForm.tsv  >> test.tsv
+tail justGrowthForm.tsv >> test.tsv
+## sometimes grep seems to cause weird "--" lines to be entered...
+grep "\-\-" justGrowthForm.tsv
+grep "\-\-" test.tsv
+## don't find them, ok onward
+## I think we need the following columns:
+## 3. Dataset
+## 5. SpeciesName
+## 7. AccSpeciesName
+## 9. ObsDataID
+## 11. TraitName
+## 15. OrigValueStr
 
-## that seems like that worked, got things down to 100 meg or so.
+## to cut down to these, first add back in the old headers
+cut -f 3,5,7,9,11,15 test.tsv > test2.tsv
+
+## looks okay, do this with our justGrowthForm file:
+cut -f 3,5,7,9,11,15 justGrowthForm.tsv > justGrowthForm2.tsv
+
+## there are some strange spots, missing the growth form field:
+grep "Plant growth form" -v justGrowthForm2.tsv | wc -l
+
+(libreoffice --calc justGrowthForm2.tsv &) &
 
 ## can we add back in the original headers?
 
-head -n 1 12154.txt > justGrowthForm.tsv
+
 cat test3.txt >> justGrowthForm.tsv
 
 ## I think this file works. 
@@ -6771,20 +6802,24 @@ juvSpecObs['genero'][2]
 ## so the goal here would be to scan our data from TRY for matches in 
 ## genus and maybe species names 
 
-for i in juvSpecObs['genero']:
-    print(i)
+#tryData = '/home/daniel/Documents/analyses/tryData/test2.tsv'
+tryData = '/home/daniel/Documents/analyses/tryData/justGrowthForm.tsv' 
+#tryData = '/home/daniel/Documents/analyses/tryData/12154.txt'
 
-
-tryData = '/home/daniel/Documents/analyses/tryData/12154.txt'
-
-
-with open(tryData, 'r', encoding='latin_1') as f:
-    with open("foundGenera.txt", 'w') as w:
+for genus in juvSpecObs['genero']:
+    with open(tryData, 'r', encoding='latin_1') as f:
         for line in f:
-            for i in juvSpecObs['genero']:
-                result=re.search(i, line)
-                #if result: print(result.group())
-                if result: w.write(line)
+            if re.search(i, line): print(line)
 
-## works, but how to use this?
+## "sp." is causing problems here. How do we exclude them?
+## deal with this later. how 
 
+## in general, how should we format this?
+
+## can we get the results into a dataframe? 
+
+
+## column one should be the genus name
+## column two should be the growth form
+## column three should be whatever unique identifier we need
+## to get back to the TRY database records 
