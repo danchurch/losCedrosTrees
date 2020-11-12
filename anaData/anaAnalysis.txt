@@ -4584,6 +4584,7 @@ cGroup <- read.csv('cGroup.csv', row.names="PsubP")
 ## do this in python, methinks. 
 
 python3
+
 import os
 import openpyxl
 import pandas as pd
@@ -4678,9 +4679,14 @@ juvSpecObs.genero.isnull().any() ## no empty genera slots
 juvSpecObs.familia.isnull().any() ## no empty family slots
 juvSpecObs.especie[juvSpecObs.especie.isnull()] = ""
 juvSpecObs.especie.isnull().any() ## that worked... keep following our original data cleaning process
-juvSpecObs.genero.replace('theobromifolia', 'Caryodaphnopsis', inplace=True) ## fix some errors where a genus name was left out
+## fix some typos and other errors:
+juvSpecObs.genero.replace('theobromifolia', 'Caryodaphnopsis', inplace=True) 
 juvSpecObs.genero.replace('Saurauria', 'Saurauia', inplace=True)
-juvSpecObs.especie.replace('(A.H. Gentry) van der Werff & H.G. Richt.', 'theobromifolia', inplace=True) ## fix some errors where a genus name was left out
+juvSpecObs.especie.replace('(A.H. Gentry) van der Werff & H.G. Richt.', 'theobromifolia', inplace=True) 
+juvSpecObs.especie.replace('salviodes', 'salvioides', inplace=True) 
+juvSpecObs.genero.replace('Shoenobiblus', 'Schoenobiblus', inplace=True) 
+juvSpecObs.especie.replace('cf. imperale', 'cf. imperiale', inplace=True) 
+juvSpecObs.genero.replace('Beilschmedia', 'Beilschmiedia', inplace=True) 
 juvSpecObs['genusSpecies'] = juvSpecObs.familia + " " + juvSpecObs.genero + " " + juvSpecObs.especie
 juvSpecObs['genusSpecies'] = juvSpecObs['genusSpecies'].str.strip()
 juvSpecObs['PsubP'] = juvSpecObs["parcela"].astype('str') + "." + juvSpecObs["subparcela"].astype('str')
@@ -4688,30 +4694,55 @@ juvSpecObs['PsubP'] = juvSpecObs.PsubP.astype('float')
 juvSpecObs = juvSpecObs[["site","parcela","subparcela","PsubP","familia","genero","especie","genusSpecies","elevacion","habitat",]]
 juvSpecObs.genusSpecies.replace("Indeterminada","Indeterminado", regex=True, inplace=True)
 juvSpecObs['genusSpecies'] = juvSpecObs['genusSpecies'].str.replace('sp. ', 'sp.', regex=False)
+## for our uses, the following are dubious data, to be removed:
+probablyNotTrees = pd.Series([
+    "Euphorbiaceae sp.", 
+    "Rubiaceae Notopleura anomothyrsa", 
+    "Urticaceae sp.", 
+    "Sapindaceae Paullinia capreolata", 
+    "Sapindaceae Paullinia cf. nobilis", 
+    "Asteraceae Neurolaena cf. lobata", 
+    "Boraginaceae sp.", 
+    "Rubiaceae Psychotria cf. stipularis", 
+    "Solanaceae sp.", 
+    "Indeterminado sp.22", 
+    "Indeterminado sp.21", 
+    "Arecaceae Aiphanes erinaceae", 
+    "Melastomataceae sp.4", 
+    "Arecaceae sp.", 
+    "Fab-faboideae sp.1", 
+    "Indeterminado sp.20", 
+    "Malvaceae sp.", 
+    "Moraceae sp.2", 
+    "Sapindaceae Paullinia cf. capreolata", 
+    "Menispermaceae Abuta aff. chocoensis", 
+    "Araliaceae Schefflera lasiogyne", 
+    "Indeterminado sp.26", 
+    "Rubiaceae Palicourea aff. sodiroi", 
+    "Rubiaceae Palicourea sodiroi", 
+    "Indeterminado sp.27", 
+    "Dennstaedtiaceae Saccoloma inaequale", 
+    "Gesneriaceae sp."
+])
+aa = ~juvSpecObs['genusSpecies'].isin(probablyNotTrees)
+juvSpecObs = juvSpecObs[aa]
 juvSpecObs.sort_values('PsubP', inplace=True)
 juvSpecObs.reset_index(drop=True, inplace=True)
-
-## let's make sure our species names with "sp." match the original specObs
-
 #juvSpecObs.to_csv('juvSpecObs.csv', index=False)
+
 
 juvSpecObs = pd.read_csv("juvSpecObs.csv")
 
-len(juvSpecObs.genusSpecies.unique()) ## 177 unique species
+len(juvSpecObs.genusSpecies.unique()) ## 176 unique species
 
 ## how many of these are in our mature tree species list?
 
-specObs = pd.read_pickle('specObs.p')
+specObs = pd.read_csv('specObs.csv')
 
-help(specObs.genusSpecies.unique) ## 
 
-specObs.genusSpecies.unique() ## 
+len(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ## 149
 
-np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())
-
-len(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ## 177
-
-sum(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ## 103 species found in mature tree data
+sum(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ## 111 species found in mature tree data
 
 ## looks like about 70 of juvenile trees are not in the mature species lists
 ## that is a lot, considering there are only ~300 mature tree species, and
@@ -4724,7 +4755,9 @@ sum(np.isin(juvSpecObs.genusSpecies.unique(), specObs.genusSpecies.unique())) ##
 jvUniq = juvSpecObs.genusSpecies.unique()
 
 ## these are the juv species species reportedly not in our mature species
+
 notIn=~(np.isin(jvUniq, specObs.genusSpecies.values))
+
 jvNotMat = jvUniq[notIn]
 
 ## just spotcheck a bunch of these, don't know a better way to do this...
@@ -4774,6 +4807,7 @@ juvDummy = pd.get_dummies(aa['genusSpecies'])
 aa = juvSpecObs[['PsubP', 'genusSpecies']]
 aa.set_index('PsubP', inplace=True)
 bb = pd.get_dummies(aa['genusSpecies'])
+
 ## okay, we need to collapse these 
 bb.reset_index(inplace=True)
 cc = bb.groupby('PsubP')
@@ -6703,7 +6737,10 @@ def saveDict(dic,file):
 #save geojson as separate file
 saveDict(streams,'./testingPySheds.geojson')
 
-############################ try database   ################################
+## going to have to get back to this... TRY database just came
+## in 
+
+############################ try database ################################
 
 ## what do we do now? 
 
@@ -6735,7 +6772,7 @@ tail -n 1000 12154.txt > tailTest.tsv
 ## nothing in this
 
 
-################# build our database from TRY data ##############
+#### build our database from TRY data ####
 
 ## it looks to me like this is what we need to find our info:
 head -n 1 12154.txt > justGrowthForm.tsv
@@ -6777,10 +6814,15 @@ grep "Plant growth form" justGrowthForm2.tsv >> justGrowthForm3.tsv
 
 
 ## some just say "no" for growth form. 
-grep "no" -w justGrowthForm3.tsv 
+grep "no" -w justGrowthForm3.tsv  | wc -l
+grep "No" -w justGrowthForm3.tsv | wc -l
+
+grep "[Nn]o" -wv justGrowthForm3.tsv 
+
 ## Get rid of these:
 head -n 1 justGrowthForm3.tsv > justGrowthForm4.tsv
-grep "no" -v justGrowthForm3.tsv >> justGrowthForm4.tsv
+grep "[Nn]o" -wv justGrowthForm3.tsv >> justGrowthForm4.tsv
+
 
 ## checks
 wc -l justGrowthForm4.tsv
@@ -6789,6 +6831,8 @@ wc -l justGrowthForm4.tsv
 
 ## I think this file works. simplify name and clear out. 
 mv justGrowthForm4.tsv justGrowthForm.tsv
+
+(libreoffice --calc justGrowthForm.tsv &) &
 
 ## so back into python. 
 
@@ -6804,6 +6848,11 @@ juvSpecObs['genero'][2]
 
 'Meriania' in juvSpecObs['genero'].values
 
+'Hyospathe' in juvSpecObs['genero'].values
+
+'Hyospathe' in specObs['genero'].values
+
+
 "Bartsia" in juvSpecObs['genero'].values
 
 ## no habit information, either in that file or in the original spreadsheets 
@@ -6817,7 +6866,8 @@ aa = ~(juvSpecObs['genero'].str.contains('sp\.'))
 juvGenera = juvSpecObs['genero'][aa]
 juvGenera.reset_index(drop=True, inplace=True)
 
-
+## now look for every example of each genus we have that 
+## is present in the TRY data:
 tryData = 'justGrowthForm.tsv' 
 with open('foundGenera.txt', 'w') as w:
     for genus in juvGenera:
@@ -6827,20 +6877,1021 @@ with open('foundGenera.txt', 'w') as w:
                     w.write(line)
 
 
+(libreoffice --calc foundGenera.txt &) &
 
-                    print("###########################################")
-                    print(genus)
-                    print(line)
+## looks good. now what?
 
-## "sp." is causing problems here. How do we exclude them?
-## deal with this later. how 
+## step 1 is remove all genera that were found in the adult 
+## tree data set, we assume that these are trees. 
+## step 2 is to identify all of the remaining as either 
+## likely trees or sub-canopy plants
+## our analyses can then treat these separately. 
 
-## in general, how should we format this?
+## step 1 remove the species that are in the adult dataset:
 
-## can we get the results into a dataframe? 
+## get our data: 
+specObs = pd.read_csv('specObs.csv')
+juvSpecObs = pd.read_csv('juvSpecObs.csv')
+
+aa = juvSpecObs['genusSpecies'].isin(specObs['genusSpecies'])
 
 
-## column one should be the genus name
-## column two should be the growth form
-## column three should be whatever unique identifier we need
-## to get back to the TRY database records 
+
+## subset to these in the data frame:
+
+bb = juvSpecObs.loc[~aa,:]
+## get just the genera for these
+
+bb.genero.unique()
+
+len(bb.genero.unique())
+
+juvUniq = juvSpecObs['genusSpecies'][~aa].copy().unique()
+
+len(juvUniq) ## 67 species
+
+
+## that means we have 67 species to look at
+
+## some odd things going on here - why is Saccoloma in there? A little fern...
+
+## also palicourea sodiroi...
+
+## notopleura
+
+## just a lot of things that are not juvenile, just small. 
+
+## yeah, a lot of weirdness. 
+
+## how do we deal with this? 
+
+## let's focus the try data on this. We can accept all speciees 
+## that are in both the adult and juvenile data, and focus our search 
+## on just this set of differences from the  
+
+## start over:
+specObs = pd.read_csv('specObs.csv')
+juvSpecObs = pd.read_csv('juvSpecObs.csv')
+aa = juvSpecObs['genusSpecies'].isin(specObs['genusSpecies'])
+juvGen = juvSpecObs.loc[~aa,"genero"]
+notSp = ~juvGen.str.contains("sp\.") ## get rid of sp.
+juvGen = juvGen[notSp]
+juvGenUniq = juvGen.unique()
+
+tryData = 'justGrowthForm.tsv' 
+with open('foundGenera.txt', 'w') as w:
+    for genus in juvGenUniq:
+        with open(tryData, 'r', encoding='latin_1') as f:
+            for line in f:
+                if re.search(genus, line): 
+                    w.write(line)
+
+## works. what now?
+
+## manual curation - throw out everything that probably isn't a tree,
+## or at least, won't grow large enough to be considered in our 
+## mature plant analysis (10 cm diameter at dbh?)
+
+## then rerun the seedling analysis.
+
+## a lot of data comes from this source:
+
+## check out the sources at:
+https://www.try-db.org/de/DatasetDetails.php 
+
+## so go through these. Can we recover the full family/genus/spp?
+
+aa = juvSpecObs['genusSpecies'].isin(specObs['genusSpecies'])
+juvGenSp = juvSpecObs.loc[~aa,"genusSpecies"]
+juvGenSpUn = juvGenSp.unique() 
+
+#notSp = ~juvGen.str.contains("sp\.") ## get rid of sp.
+
+for i in juvGenSpUn: print(i)
+
+## go through these one-by-one
+
+### Euphorbiaceae sp. ###
+
+## oh jeez. hard to say. Could be anything. Probably Croton or something
+'Croton' in juvSpecObs['genero'].values
+'Croton' in specObs['genero'].values
+## we didn't observe croton in mature trees
+
+## 56 euphorbiaceae observations in adults:
+
+aa = specObs['genusSpecies'].str.contains('Euphorbiaceae')
+specObs[aa]
+
+sum(aa)
+
+## but these are all identified at least to genus 
+## think we gotta throw this out. 
+
+
+### Actinidaceae sp. ###
+
+## unless there is something really cool here, this is going
+## to be Saurauia. The only Saurauias I know are small trees,
+## but that's not saying much. In the full TryData we have 
+## trees and shurbs:
+
+grep "Saurauia" justGrowthForm.tsv
+
+## perhaps just as important to note, these are usually pioneer
+## type species, I think. I would wager that big ecological change is 
+## happening at a site if they are present. And most importantly, 
+## they are really understory species, I think. The point here is 
+## to eliminate species whose ecological niche is to to persist
+## in the understory in more stable forest seres, i.e. species that 
+## would have been missed by the mature tree survey.  
+
+## So keep Actinidaceae sp.
+
+### Moraceae sp.1 ###
+
+## oh jeez. again, really hard to know anything from this
+## not sure if we should err on the side of exclusion or 
+## inclusion here...
+## I think we need to be exclusive. We are trying to reduce
+## the amount of understory plants that are being tracked. 
+
+## Rubiaceae Notopleura anomothyrsa ##
+
+## this is probably the same notopleura we see path-side 
+## if so, shold be thrown out. 
+
+## also, no other notopleuras are seen in the adult data set
+aa = specObs['genero'].str.contains('Notopleura')
+sum(aa)
+
+aa = juvSpecObs['genero'].str.contains('Notopleura')
+sum(aa)
+juvSpecObs[aa]
+## just two observations, both of anomothyrsa
+## throw it out.
+
+### Rubiaceae Psychotria pilosa ###
+
+## psychotria, same deal? mostly shrubs
+
+grep "Psychotria pilosa" foundGenera.txt
+
+## that species is not in there. Are there psychotrias 
+## in the adult data:
+
+specObs['genero'].str.contains('Psychotria').any()
+
+aa = specObs['genero'].str.contains('Psychotria')
+specObs[aa] ## yup
+
+aa = specObs['genero'].str.contains('Psychotria')
+
+## general agreement that psychotria are shrubs, 
+## in tryData and Gentry, and sometimes trees. 
+## given this and that the adult data has a lot of 
+## this genus, let's keep it. 
+
+
+### Capparaceae Capparis macrophylla ###
+
+## this species is specifically noted in the tryData,
+## as a tree, and the genus as small trees/shrubs by gentry. 
+
+specObs['genero'].str.contains('Capparis').any()
+
+## and we have small trees/trees listed in the adult data:
+aa = specObs['genero'].str.contains('Capparis')
+specObs[aa] ## yup
+
+## any other species of capparis in juv data?
+bb = juvSpecObs['genero'].str.contains('Capparis')
+juvSpecObs[bb]
+## nope
+
+### Tiliaceae sp. ###
+
+## tiliaceae is almost entirely trees, according to gentry,
+## with a few "weedy" shrubs.  
+
+specObs['genusSpecies'].str.contains('Tiliaceae').any()
+
+bb = juvSpecObs['genusSpecies'].str.contains('Tiliaceae')
+juvSpecObs[bb]
+
+## these are found in the anthropogenic disturbance plots,
+## fits Gentry's note that tiliaceae tend to be in second
+## growth, so it probably both a tree and an ecologically
+## informative species. 
+
+## keep it
+
+### Urticaceae sp. ###
+
+## urts can be anything. no fucking way. Gotta throw it out. 
+
+### Euphorbiaceae Acalypha aff. diversifolia ###
+
+## definitely observed as a tree in the try data  
+## or at least "T", checking now to make sure 
+
+grep "Acalypha diversifolia" foundGenera.txt
+
+## but Gentry says the vast majority are weedy shrubs/herbs
+## STRI has a species description site
+## https://stricollections.org/portal/taxa/index.php?taxon=Acalypha+diversifolia&formsubmit=Search+Terms
+
+## that is a cool website: stricollections.org
+
+## calls it a tree up to 6m high. I think we gotta keep that. 
+
+### Rubiaceae Palicourea aff. chignul ###
+
+## Palicourea chignul 
+
+## pretty sure palicourea are well covered in the mature data:
+
+aa = specObs['genero'].str.contains('Palicourea')
+specObs[aa]
+
+bb = juvSpecObs['genero'].str.contains('Palicourea')
+juvSpecObs[bb]
+
+## but there are some weird palicourea out there. P. sodiroi
+## is not a tree, for instance
+
+## every source says small trees. keep it.
+
+### Urticaceae Phenax aff. rugosus ###
+
+## not covered by try database. 
+## not in Gentry
+
+## definitely not an unknown genus or even species, 
+## but can't find any growth form information.
+
+## not sure how to judge this one. There are some pictures... 
+## the plants in the pictures look like small shrubs, but 
+## hard to tell. 
+
+## EOL lists it as a tree (https://eol.org/pages/5724960)
+## I guess this means keep it
+
+### Sapindaceae Paullinia capreolata ###
+
+aa = specObs['genero'].str.contains('Paullinia')
+specObs[aa]
+
+## no Paullinias in our adult data
+
+bb = juvSpecObs['genero'].str.contains('Paullinia')
+juvSpecObs[bb]
+
+## the species in our juv data are not in the TRY data,
+## the vast majority of the other examples are climbers/
+## lianas, and Gentry only mentions lianas. 
+
+grep "Paullinia capreolata" foundGenera.txt
+
+grep "Paullinia nobilis" foundGenera.txt
+
+grep "Paullinia" foundGenera.txt
+
+## so gotta throw these out...
+
+### Siparumaceae Siparuna sp. ###
+### Siparumaceae Siparuna laurifolia ###
+
+## concerning the genus:
+aa = specObs['genero'].str.contains('Siparuna')
+specObs[aa]
+## yup other Siparunas in there
+
+bb = juvSpecObs['genero'].str.contains('Siparuna')
+juvSpecObs[bb]
+
+## as for S. laurifolia...
+
+## EOL has data for this species, says tree (https://eol.org/pages/5402878)
+## for the genus, the TRY data overwhelmingly votes tree, with a few shrub/tree entries
+
+## given all that let's keep the Siparunas, and remember to fix this typo before rerunning
+## the analyses:
+
+### Siparumaceae Siparuna salviodes ###
+
+## in the juvenile data, this is a typo:
+## Siparumaceae Siparuna salviodes
+## should be:
+## Siparumaceae Siparuna salvioides
+## so this one is actually considered in the mature data.
+## this is a pain, but will need to be fixed. 
+
+### Asteraceae Neurolaena cf. lobata ###
+
+aa = specObs['genero'].str.contains('Neurolaena')
+specObs[aa]
+##nada
+
+bb = juvSpecObs['genero'].str.contains('Neurolaena')
+juvSpecObs[bb]
+
+## gentry lists this as a weedy herb?
+## TRY database lists this once, as a shrub
+## this species is "cf. lobata". N. lobata is an herb in the EOF database
+## https://eol.org/pages/503028
+
+## we gotta throw this one out.
+
+### Thymelaeaceae Shoenobiblus cf. daphnoides ###
+
+aa = specObs['genero'].str.contains('Shoenobiblus')
+specObs[aa]
+## nada
+
+grep "Shoenobiblus" foundGenera.txt
+## nada
+
+bb = juvSpecObs['genero'].str.contains('Shoenobiblus')
+juvSpecObs[bb]
+
+## "Shoenobiblus" not in Gentry
+## "Schoenobiblus" is...another typo?
+
+aa = specObs['genero'].str.contains('Schoenobiblus')
+specObs[aa] ## yup, its there...
+## so yeah, typo...
+
+## don't think we need to correct this? it is the only 
+## Schoenobiblus in the juvenile set, and it is doesn't 
+## quite match the species in the adult set, though...
+
+bb = juvSpecObs['genero'].str.contains('Schoenobiblus')
+juvSpecObs[bb] ## nada
+
+## interesting, they call this a "cf." of the same species
+## of the adult matches:
+
+## adults:
+"Thymelaeaceae Schoenobiblus daphnoides" 
+## vs.
+## juveniles:
+"Thymelaeaceae Shoenobiblus cf. daphnoides"
+
+## if we had infinite time and resources, we should do some
+## barcoding, see if they are the same. But we don't. 
+
+## all the usual sources show this genus as a tree genus:
+grep "Schoenobiblus" justGrowthForm.tsv
+https://eol.org/pages/5470335
+## + gentry
+
+## maybe remember to correct the name when correcting the 
+## above typo for Siparuna salvioides
+
+## So keep this species, and regard it as something other 
+## than the adult species. 
+
+### Boraginaceae sp. ###
+
+## um, what the hell do we do with this? Borages can be 
+## anything. 
+
+aa = specObs['genusSpecies'].str.contains('Boraginaceae')
+specObs[aa]
+
+## If they weren't able to call it as a Cordia sp., not sure 
+## what it could be, Cordia seems to be the main tree genus..
+
+## I think we gotta throw this out. There is just no information.
+
+### Rubiaceae Psychotria cf. stipularis ###
+
+## I think we just decided above we are keeping all 
+## Psychotrias...
+
+## this may have been renamed to Palicourea stipularis...
+## which EOL says is a woody climber:
+
+https://eol.org/pages/1108085
+
+## I guess err on the side of caution and throw this out.
+
+### Myrsinaceae Cybianthus humilis ###
+
+## this genus is mostly trees in the TRY data, though
+## no exact species match.
+
+## no help from EOL on growth form 
+
+aa = specObs['genusSpecies'].str.contains('Cybianthus')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Cybianthus')
+juvSpecObs[bb]
+
+## all this species
+
+## gentry says small trees, shrubs, subcanopy. But big enough
+## to be noticed in our mature data? Not sure.
+## not a lot of  information. I guess keep it. 
+
+### Solanaceae sp. ###
+
+## no fucking way. this could be anything. 
+
+aa = specObs['genusSpecies'].str.contains('Solanaceae')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Solanaceae')
+juvSpecObs[bb]
+
+## gotta ditch it
+
+### Rubiaceae Agouticarpa grandistipula ###
+
+aa = specObs['genusSpecies'].str.contains('Agouticarpa')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Agouticarpa')
+juvSpecObs[bb]
+
+## TRY has a different species, a tree or small tree:
+grep "Agouticarpa" justGrowthForm.tsv
+## EOL lists this species as a tree <https://eol.org/pages/1097921>
+
+## let's keep it.
+
+### Indeterminado sp.22 ###
+### Indeterminado sp.21 ###
+
+## i think we have ditch these. Not much we can do with them. 
+
+### Arecaceae Aiphanes erinaceae ###
+
+aa = specObs['genusSpecies'].str.contains('Aiphanes')
+specObs[aa]
+## no adults
+
+bb = juvSpecObs['genusSpecies'].str.contains('Aiphanes')
+juvSpecObs[bb]
+
+## based on this:
+Svenning, Jens-Christian, and Henrik Balslev. "The palm flora of the Maquipucuna montane forest reserve, Ecuador." Principes 42 (1998): 218-226.
+## I think we gotta exclude this. This is a small palm, not known 
+## to exceed 5 cm, at least if I'm reading this article right. 
+
+
+### Lauraceae Ocotea aff. insularis ###
+
+aa = specObs['genusSpecies'].str.contains('Ocotea')
+specObs[aa]
+
+specObs[aa].shape ## lots of hits, 77
+
+specObs[aa].head() ## lots of hits, 77
+
+specObs.loc[aa, 'genusSpecies'].unique()
+
+len(specObs.loc[aa, 'genusSpecies'].unique()) ## eleven Ocoteas in the mature set. 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Ocotea')
+juvSpecObs[bb]
+
+## so basically, this is something that looks really similar to 
+## some of our adults, but something made them think it was
+## different. Jeez. Well, keep it I guess. 
+
+### Asteraceae Criptoniosis cf. occidentalis ###
+
+aa = specObs['genusSpecies'].str.contains('Criptoniosis')
+specObs[aa] 
+## none
+
+bb = juvSpecObs['genusSpecies'].str.contains('Criptoniosis')
+juvSpecObs[bb]
+## one site
+
+## I'm betting this is also a typo, and they meant:
+"Critoniopsis cf. occidentalis"
+
+## so check that again...
+aa = specObs['genusSpecies'].str.contains('Critoniopsis')
+specObs[aa] 
+##  lots of the C. occidentalis, in several types of plots 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Critoniopsis')
+juvSpecObs[bb]
+
+## so keep it, correct typo. 
+
+### Myrtaceae Myrcia splendens ###
+
+## definitely keep this one. Well documented tree
+
+### Melastomataceae sp.4 ###
+
+## throw it out. 
+
+### Myrsinaceae Ardisia cf. colombiana ###
+
+aa = specObs['genusSpecies'].str.contains('Ardisia')
+specObs[aa] 
+##  none
+
+bb = juvSpecObs['genusSpecies'].str.contains('Ardisia')
+juvSpecObs[bb]
+## the species they are comparing to, A. colombiana, is
+## a pretty tall tree. 
+## <https://stricollections.org/portal/taxa/index.php?taxon=Ardisia+colombiana&formsubmit=Search+Terms>
+
+## keep it. 
+
+### Meliaceae Ruagea cf. pubescens ###
+
+aa = specObs['genusSpecies'].str.contains('Ruagea')
+specObs[aa] 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Ruagea')
+juvSpecObs[bb]
+
+## just keep all the Ruagea species. They are well represented
+## in the adult data
+
+### Arecaceae sp. ###
+
+## jesus, what do I do with an unknown little palm?
+
+## throw it out. 
+
+### Fab-faboideae sp.1 ###
+
+## jeezus, I am tired of babysitting this data
+## I have to throw this out. 
+
+### Lauraceae Rhodostemonodaphne aff. cyclops ###
+
+aa = specObs['genusSpecies'].str.contains('Rhodostemonodaphne')
+specObs[aa] 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Rhodostemonodaphne')
+juvSpecObs[bb]
+
+## keep it.
+
+### Lauraceae Endlicheria sp. ###
+
+aa = specObs['genusSpecies'].str.contains('Endlicheria')
+specObs[aa] 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Endlicheria')
+juvSpecObs[bb]
+
+## keep it
+
+### Piperaceae Piper cf. imperale ###
+
+## this is probably a typo.
+
+"Piperaceae Piper cf. imperale"
+## is probably:
+"Piperaceae Piper cf. imperiale"
+
+## fix typo
+## once we do this, this species is no longer unique to the juvs
+
+aa = specObs['genusSpecies'].str.contains('imperiale')
+specObs[aa] 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Endlicheria')
+juvSpecObs[bb]
+
+
+### Indeterminado sp.20 ###
+
+## throw out.
+
+### Malvaceae sp. ###
+
+## throw out. 
+
+### Melastomataceae Topobea dodsonorum ###
+
+aa = specObs['genusSpecies'].str.contains('Topobea')
+specObs[aa] 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Endlicheria')
+juvSpecObs[bb]
+
+### Moraceae sp.2 ###
+
+## yeah, generally, gotta throw out anything not identified 
+## to genus
+
+### Melastomataceae Conostegia cuatrecasii ###
+
+aa = specObs['genusSpecies'].str.contains('Conostegia')
+specObs[aa] 
+
+## lots of this genus in the adult dataset
+## mostly trees in the TRY database
+
+## keep it
+
+
+### Myrtaceae Eugenia sp. ###
+
+## Eugenias are trees. Keep. 
+
+### Sapindaceae Paullinia cf. capreolata ###
+
+## throw out, see above Paullinia
+
+### Rubiaceae Palicourea sp. ###
+
+## Palicourea are generally trees, with a few
+## exceptions, as climbers on other trees. 
+## Keep it.
+
+### Menispermaceae Abuta aff. chocoensis ###
+
+## EOL calls this a liana
+## Gentry says this genus almost entirely scandent in NW SA, 
+## maybe a few treelets
+
+aa = specObs['genusSpecies'].str.contains('Abuta')
+specObs[aa] 
+## no adults
+
+bb = juvSpecObs['genusSpecies'].str.contains('Abuta')
+juvSpecObs[bb] 
+## think we have to throw this out. 
+
+### Rubiaceae Faramea aff. calyptrata ###
+
+## farameas are all trees, right?
+## EOL, TRY agrees with this. 
+## keep it.  
+
+### Rubiaceae Faramea flavicans ###
+
+## See above. Keep. 
+
+### Myrtaceae Eugenia cf. florida ###
+
+## Keeping Eugenias. 
+
+### Olacaceae Heisteria sp. ###
+
+## Gentry says small/medium trees, except for H. scandens
+## TRY agrees
+
+aa = specObs['genusSpecies'].str.contains('Heisteria')
+specObs[aa] 
+## nada
+
+## keep it. 
+
+### Ochnaceae Ouratea aff. weberbaueri ###
+
+aa = specObs['genusSpecies'].str.contains('Ouratea')
+specObs[aa] 
+
+## lots of O. weberbaueri in the adult data
+## keep
+
+### Clusiaceae Clusia aff. dixonii ###
+
+## Clusias are pretty much trees and hemi-epiphytes,
+## and C. dixonii is listed as a Tree in EOL, via Stevens 2007
+## keep it.
+
+### Lauraceae Beilschmedia sp. ###
+
+aa = specObs['genusSpecies'].str.contains('Beilschmedia')
+specObs[aa] 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Beilschmedia')
+juvSpecObs[bb] 
+
+## typo? "Beilschmedia" should be "Beilschmiedia" 
+
+aa = specObs['genusSpecies'].str.contains('Beilschmiedia')
+specObs[aa] ## lots
+
+bb = juvSpecObs['genusSpecies'].str.contains('Beilschmiedia')
+juvSpecObs[bb] ## misspelled in all juv entries.
+
+## fix typo, and keep
+
+### Araliaceae Schefflera lasiogyne ###
+
+## Schefflera, hmm. Not normally very big...
+
+aa = specObs['genusSpecies'].str.contains('Schefflera')
+specObs[aa] ## 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Schefflera')
+juvSpecObs[bb] ## 
+
+## EOL calls it a tree. TRY says trees/small trees for entire genus. 
+## A little strange that no Schefflera were observed in the 
+## the mature data, though. How can that be? Makes me think that
+## they were too small. 
+
+aa = specObs['genusSpecies'].str.contains('Araliaceae')
+specObs[aa] ## probably not a typo issue, just no Scheffleras. 
+
+## don't like it. such a common genus, I bet they were 
+## not included because they were too small. 
+## which means we should throw them out here, I think. 
+
+### Myrtaceae Myrcia cf. aliena ###
+### Lauraceae Beilschmedia alloiophylla ###
+
+## typo:
+## "Beilschmedia" should be "Beilschmiedia" 
+
+## this is solidly a tree, check out the herbarium label:
+<https://fm-digital-assets.fieldmuseum.org/983/545/LAUR_beil_allo_1929039.jpg>
+
+## anyway, fixing the typo will make this go away, it is also
+## in the adult dataset, properly spelled. 
+
+### Indeterminado sp.26 ###
+
+## gotta throw it out. 
+
+### Rubiaceae Palicourea aff. sodiroi ###
+
+## they call this a tree, but I have only seen it 
+## as a climber. There is probably a reason it was 
+## only observed in the juv data
+
+## I'm okay keeping hemiepiphytes etc if they are 
+## in the adult set, but not if they are small 
+## and only appear in the juv data. At least, 
+## as I am using this data. 
+
+aa = specObs['genusSpecies'].str.contains('sodiroi')
+specObs[aa] ## 
+
+bb = juvSpecObs['genusSpecies'].str.contains('sodiroi')
+juvSpecObs[bb] ## 
+
+## so rather than introduce another small species that may
+## indicate another small woody species that may cause 
+## artificial differences to appear between the adult and 
+## juvenile data sets...
+
+## throw these out.
+ 
+### Rubiaceae Palicourea sodiroi ###
+
+## see above
+
+### Indeterminado sp.27 ###
+
+## useless, out it goes. 
+
+### Rubiaceae Isertia pittieri ###
+
+aa = specObs['genusSpecies'].str.contains('Isertia')
+specObs[aa] ## 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Isertia')
+juvSpecObs[bb] ## 
+
+## sources say trees. there are plenty of adult Isertias.
+## keep it.
+
+### Sapindaceae Paullinia cf. nobilis ###
+
+## see Paullinia capreolata above
+
+### Dennstaedtiaceae Saccoloma inaequale ###
+
+## this is a fern. Not a tree fern. What the fuck. 
+
+### Malvaceae Wercklea sp. ###
+
+## not in TRY, but Gentry says small trees,
+## STRI shows a large shrub in this genus, Wecklea ferox
+## STRI shows a large shrub in this genus...
+
+aa = specObs['genusSpecies'].str.contains('Wercklea')
+specObs[aa]  
+
+## we have W. ferox in the mature data...
+
+## keep it.
+
+
+### Meliaceae Trichilia sp.1 ###
+
+## lots of Trichilia in the mature data:
+aa = specObs['genusSpecies'].str.contains('Trichilia')
+specObs[aa]  
+
+## keep it
+
+### Lauraceae Ocotea cernua ###
+
+aa = specObs['genusSpecies'].str.contains('Ocotea')
+specObs[aa]
+
+aa = specObs['genusSpecies'].str.contains('cernua')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Ocotea')
+juvSpecObs[bb]
+
+## lots of Ocotea in our adults, including something that 
+## looks a lot like ("aff") Ocotea cernua
+
+## keep it
+
+### Burseraceae sp. ###
+
+## easy. keep it
+
+### Gesneriaceae sp. ###
+
+## Gesner tree? seems unlikely. ditch it.
+
+### typos ###
+
+"Siparuna salviodes"
+## to
+"Siparuna salvioides"
+
+"Thymelaeaceae Shoenobiblus cf. daphnoides" 
+## to 
+"Thymelaeaceae Schoenobiblus cf. daphnoides"
+
+"Asteraceae Criptoniosis cf. occidentalis"
+## to 
+"Asteraceae Critoniopsis occidentalis"
+
+"Piperaceae Piper cf. imperale"
+## is probably:
+"Piperaceae Piper cf. imperiale"
+
+"Lauraceae Beilschmedia sp."
+## to 
+"Lauraceae Beilschmiedia sp."
+
+"Lauraceae Beilschmedia alloiophylla"
+## to 
+"Lauraceae Beilschmiedia alloiophylla"
+
+### throw out list: ###
+
+## Euphorbiaceae sp. 
+## Rubiaceae Notopleura anomothyrsa 
+## Urticaceae sp.
+## Sapindaceae Paullinia capreolata
+## Sapindaceae Paullinia cf. nobilis
+## Asteraceae Neurolaena cf. lobata
+## Boraginaceae sp. ##
+## Rubiaceae Psychotria cf. stipularis
+## Solanaceae sp.
+## Indeterminado sp.22
+## Indeterminado sp.21
+## Arecaceae Aiphanes erinaceae
+## Melastomataceae sp.4 
+## Arecaceae sp.
+## Fab-faboideae sp.1
+## Indeterminado sp.20 
+## Malvaceae sp.
+## Moraceae sp.2 
+## Sapindaceae Paullinia cf. capreolata
+## Menispermaceae Abuta aff. chocoensis 
+## Araliaceae Schefflera lasiogyne
+## Indeterminado sp.26 
+## Rubiaceae Palicourea aff. sodiroi
+## Rubiaceae Palicourea sodiroi
+## Indeterminado sp.27
+## Dennstaedtiaceae Saccoloma inaequale
+## Gesneriaceae sp.
+
+## and that's it. So correct typos, and remove the above from the 
+## juvenile dataframe
+
+## do this way back in the chunk of code where we made juvSpecObs
+
+## and tomorrow, rerun all analyses involving the juvspecObs:
+
+####### rerun juvenile clustering analysis ########
+
+## let's rerun the juv clustering, both with the 
+## new, cleaner data and a closer look
+
+library(stats)
+library(vegan)
+## where is our community matrix of juveniles?
+juvComm <- read.csv('juvComm.csv', header=TRUE, row.names='PsubP')
+## checks
+rowSums(juvComm)
+any(colSums(juvComm) == 0)
+all(colSums(juvComm) > 0)
+
+juvCommBray <- vegdist(juvComm)
+juvComm.ward <- hclust(juvCommBray, method='ward.D2')
+
+## originally we tried 3 groups, and it seemed like no 
+## real signals there. 2 groups seem to make more sense: 
+
+plot(juvComm.ward)
+k=2
+juvGrp <- rect.hclust(juvComm.ward, border=c('purple','yellow','blue'), k=k)
+
+## nms of juveniles only:
+juvNMS <- metaMDS(juvComm)
+#save(juvNMS, file='juvNMS.rda')
+
+par(mfrow=c(1,2))
+k=2
+plot(juvComm.ward)
+juvGrp <- rect.hclust(juvComm.ward,
+    border=(1:k+4),
+    #border=c(5,6,7),  
+    k=k)
+jvgr <- NULL
+for (i in 1:k){
+groupNu <- rep(i, length(juvGrp[[i]]))
+jvgr <- c(jvgr, groupNu)
+}
+names(jvgr) <- names(unlist(juvGrp))
+## sort these to match the order of our NMS
+jvgr <- jvgr[rownames(juvNMS$points)]
+plot(juvNMS$points,
+    cex=1.5,
+    bg=jvgr+4,
+    pch=24,
+)
+text(juvNMS$points[,'MDS1'],
+    juvNMS$points[,'MDS2'] - 0.02,
+    rownames(juvNMS$points),
+    cex=1)
+############### stop here thursday
+
+## debug this tomorrow: 
+
+## regenerate our community matrix of sites with adults and juveniles:
+par(mfrow=c(1,1))
+comboCommMat <- read.csv('comboMat.csv')
+jovenes <- comboCommMat[comboCommMat$X == 'joven',]
+adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
+adultosDejovenes <- comboCommMat[adultosInjovenes,]
+comboInfo <- adultosDejovenes[,1:2]
+colnames(comboInfo) <- c("ageClass","PsubP")
+
+
+## our adult cluster results were here:
+cGroup <- read.csv('cGroup.csv')
+adultGroupMaps <- cGroup$gr
+names(adultGroupMaps) <- cGroup$PsubP
+## our juvenile cluster results were here:
+load('juvSpecClustMap.rda')
+PsubP <- as.character(comboInfo[comboInfo$ageClass == 'adulto','PsubP'])
+
+## this can be a column in our dataframe 
+comboInfo$Clust <- c(adultGroupMaps[PsubP], juvSpecClustMap[PsubP] + max(adultGroupMaps[PsubP]))
+## make our symbols 
+symbs <- vector(length = nrow(comboInfo))
+for (i in 1:length(symbs)){
+    if (comboInfo[i,'ageClass'] == 'adulto'){
+        symbs[i] <- 21} else {
+            if (comboInfo[i,'ageClass'] == 'joven'){
+                symbs[i] <- 24}
+}}
+comboInfo$symbs <- symbs
+## we also want to retain the original parent cluster
+## info for the juveniles:
+comboInfo$parentClust <- adultGroupMaps[as.character(comboInfo$PsubP)]
+
+## so can we use this to color our NMS graphic?
+load('comboNMS.rda')
+MDS1 <- comboNMS$points[,'MDS1']
+MDS2 <- comboNMS$points[,'MDS2']
+plot(MDS1, MDS2,
+    bg=comboInfo$Clust,
+    pch=comboInfo$symbs,
+    col=comboInfo$parentClust,
+    lwd=4.0,
+    cex=2.0,
+)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+#ordihull(comboNMS, comboInfo$Clust, col=comboInfo$Clust, lwd=3)
+ordihull(comboNMS, comboInfo$Clust, col=names(table(comboInfo$Clust)), lwd=3)
+legend( x='bottomright',
+        legend = 1:7,
+        pch = c(rep(21,4), rep(24,3)),
+        pt.bg = 1:7,
+        ncol = 2,
+        cex = 1.5,
+        title='Cluster',
+        )
+
+
