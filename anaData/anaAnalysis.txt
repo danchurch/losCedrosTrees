@@ -5075,6 +5075,8 @@ juvComm.set_index('PsubP', inplace=True)
 subParcelComm.index
 juvComm.index
 
+
+
 combCommMat = pd.concat([subParcelComm, juvComm], keys=['adulto','joven'], sort=True)
 ## how can we get zeroes instead of NA's?
 combCommMat.fillna(0, inplace=True)
@@ -5118,7 +5120,6 @@ R
 
 library(vegan)
 library(RColorBrewer)
-
 comboCommMat <- read.csv('comboMat.csv')
 
 comboCommMat[,'X']
@@ -5411,7 +5412,7 @@ text(juvNMS$points[,'MDS1'],
 juvSpecClustMap <- jvgr
 #save(juvSpecClustMap, file='juvSpecClustMap.rda')
 
-## k=3 seems like the most natural split here.
+## k=2 seems like the most natural split here.
 
 ## works okay... we should probably export that tree
 ## as a svg and work on it a little...later
@@ -7840,10 +7841,24 @@ text(juvNMS$points[,'MDS1'],
 
 ## regenerate our community matrix of sites with adults and juveniles:
 par(mfrow=c(1,1))
+
 comboCommMat <- read.csv('comboMat.csv')
+
+dim(comboCommMat)
+
+edit(comboCommMat)
+
+## why are the PsubP values not in the adult?
+
+
+
+
 jovenes <- comboCommMat[comboCommMat$X == 'joven',]
+
 adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
+
 adultosDejovenes <- comboCommMat[adultosInjovenes,]
+
 comboInfo <- adultosDejovenes[,1:2]
 colnames(comboInfo) <- c("ageClass","PsubP")
 
@@ -7893,5 +7908,89 @@ legend( x='bottomright',
         cex = 1.5,
         title='Cluster',
         )
+
+
+## are we sure we updated everything? Are any of the deleted 
+
+grep "Sapindaceae Paullinia capreolata" comboMat.csv
+## seems clean
+
+## there are some issues with the combo matrix - why doesn't the adult section
+## have proper a PsubP index? back to python...
+
+aa = pd.read_csv("subParcelComm.csv")
+## th
+
+bb = pd.read_csv("juvComm.csv")
+## this is missing the PsubP index 
+
+## well, that's sort of the opposite of what I expected...
+## so to start with, looks like I left off the the PsubP 
+## values for the juvenile dataframe...
+
+## does it behave on R:
+
+library(vegan)
+library(RColorBrewer)
+
+comboCommMat <- read.csv('comboMat.csv')
+load('comboInfo.rda')
+
+jovenes <- comboCommMat[comboCommMat$X == 'joven',]
+adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
+adultosDejovenes <- comboCommMat[adultosInjovenes,]
+## get rid of outlier point from community matrix
+aa <- adultosDejovenes[adultosDejovenes$PsubP != '1.1',]
+## get rid of outlier point from nmsInfo 
+aaInfo <- comboInfo[comboInfo$PsubP != 1.1,]
+all(aa$PsubP == aaInfo$PsubP)
+## get rid of label columns
+bb <- aa[,c(3:ncol(aa))]
+## check row names
+all(bb$PsubP == aaInfo$PsubP)
+## redo NMS without outlier:
+#comboNMS_noOut <- metaMDS(bb)
+load('comboNMS_noOut.rda')
+
+MDS1 <- comboNMS_noOut$points[,'MDS1']
+MDS2 <- comboNMS_noOut$points[,'MDS2']
+
+plot(MDS1, MDS2,
+    bg=aaInfo$Clust,
+    pch=aaInfo$symbs,
+    col=aaInfo$parentClust,
+    lwd=3.0,
+    cex=2.0,
+)
+text(MDS1, MDS2 - 0.015, aaInfo$PsubP, cex=1.5)
+legend( x='bottomright',
+    legend = 1:6,
+    pch = c(rep(21,4), rep(24,2)),
+    pt.bg = 1:6,
+    ncol = 1,
+    cex = 1.5,
+    bty='n',
+    )
+
+ordihull(comboNMS_noOut$points, aaInfo$Clust, col=names(table(aaInfo$Clust)), lwd=3, lty = c(rep(1,4), rep(2,3)))
+## fix legend,
+## get hull around original adult groups
+## put ellipse around juvenile groups
+
+ordiellipse(ord, 
+    groups, 
+    display="sites", 
+    kind = c("sd","se", "ehull"),
+    conf, 
+    draw = c("lines","polygon", "none"),
+    w = weights(ord, display), 
+    col = NULL, 
+    alpha = 127, 
+    show.groups,
+    label = FALSE, 
+    border = NULL, 
+    lty = NULL, 
+    lwd=NULL
+)
 
 
