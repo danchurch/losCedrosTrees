@@ -7954,28 +7954,42 @@ load('comboNMS_noOut.rda')
 
 MDS1 <- comboNMS_noOut$points[,'MDS1']
 MDS2 <- comboNMS_noOut$points[,'MDS2']
-
+## empty plot
 plot(MDS1, MDS2,
     bg=aaInfo$Clust,
     pch=aaInfo$symbs,
     col=aaInfo$parentClust,
+    type='n',
     lwd=3.0,
     cex=2.0,
 )
 text(MDS1, MDS2 - 0.015, aaInfo$PsubP, cex=1.5)
-legend( x='bottomright',
-    legend = 1:6,
-    pch = c(rep(21,4), rep(24,2)),
-    pt.bg = 1:6,
-    ncol = 1,
-    cex = 1.5,
-    bty='n',
-    )
-
-ordihull(comboNMS_noOut$points, aaInfo$Clust, col=names(table(aaInfo$Clust)), lwd=3, lty = c(rep(1,4), rep(2,3)))
-## fix legend,
-## get hull around original adult groups
-## put ellipse around juvenile groups
+ordiellipse(ord=comboNMS_noOut$points, 
+    groups=aaInfo$ageClass, 
+    col='gray72',
+    kind = c("ehull"),
+    draw="polygon", 
+    border="grey72", 
+    show.groups='adulto',
+)
+## now put in actual points
+points(MDS1, MDS2,
+    bg=aaInfo$Clust,
+    pch=21,
+    col=aaInfo$parentClust,
+    lwd=3.0,
+    cex=2.0,
+)
+## ellipse around the juvenile groups
+ordiellipse(comboNMS_noOut$points, 
+    groups=aaInfo$Clust,
+    kind=c("ehull"),
+    col=6, 
+    show.groups=6,
+    lty='dashed', 
+    lwd=2,
+)
+## centroids?
 
 ordiellipse(ord, 
     groups, 
@@ -7993,4 +8007,9 @@ ordiellipse(ord,
     lwd=NULL
 )
 
-
+## get hull around original adult groups
+## put ellipse around juvenile groups
+## check to see if there is a relationship
+## between habitat type and juvenile cluster relationship
+## = relabel hierarchical clustering diagram with 
+## habitat type...
