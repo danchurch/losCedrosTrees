@@ -8075,18 +8075,7 @@ azedia
 
 
 all(rownames(juvComm) == juvComm.ward$labels)
-
-rownames(juvComm)
-
-all(rownames(cGroup) == juvComm.ward$labels)
-
-
-plot(juvComm.ward)
-rect.hclust(juvComm.ward, k=k, border=c(5,6))
-
-plot(juvComm.ward, labels=cGroup$habitat)
-rect.hclust(juvComm.ward, k=k, border=c(5,6))
-## well, that's weird looking. Did I mess something up?
+all(cGroup$PsubP == juvComm.ward$labels)
 
 par(mfrow=c(1,2))
 plot(juvComm.ward, labels=cGroup$habitat)
@@ -8095,17 +8084,13 @@ plot(juvComm.ward)
 rect.hclust(juvComm.ward, k=k, border=c(5,6))
 par(mfrow=c(1,1))
 
+
 ## some spot checks
 envOnly[envOnly$PsubP == 5.3,]
-
 envOnly[envOnly$PsubP == 8.3,]
-
 envOnly[envOnly$PsubP == 10.2,]
-
 envOnly[envOnly$PsubP == 10.3,]
-
 envOnly[envOnly$PsubP == 4.1,]
-
 envOnly[envOnly$PsubP == 2.4,]
 
 ## looks okay. What do we do with this?
@@ -8123,7 +8108,6 @@ envOnly[envOnly$PsubP == 2.4,]
 ## hybrid adult-habitat and child-cluster info:
 
 ## before we did our graphic something like this:
-
 
 
 envOnly <- read.csv('envOnly.csv')
@@ -8155,12 +8139,12 @@ colnames(juvClustHabPlotInfo) <- c(
                                     "juvCluster", 
                                     "adultHab"
                                     )
+juvClustHabPlotInfo <- juvClustHabPlotInfo[juvClustHabPlotInfo$PsubP != 1.1,]
 
 
 ## we can remove our outlier, 1.1, to make it compatible
 ## with our NMS results
 
-juvClustHabPlotInfo <- juvClustHabPlotInfo[juvClustHabPlotInfo$PsubP != 1.1,]
 load(file='comboNMS_noOut.rda')
 MDS1 <- comboNMS_noOut$points[,'MDS1']
 MDS2 <- comboNMS_noOut$points[,'MDS2']
@@ -8171,12 +8155,16 @@ MDS2 <- comboNMS_noOut$points[,'MDS2']
 hullColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', NA)
 names(hullColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', 'juv')
 ## points, core colors
-pointsCoreColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '#72f7fd','#e882ff')
+pointsCoreColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '5','6')
 names(pointsCoreColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', '1','2' )
 
+## points, shell colors:
+pointsShellColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00')
+names(pointsShellColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG')
+
 ## check this
-#plot(1:7,rep(1,7), pch=21, bg=pointsCoreColrsMap, cex=4)
-#text(1:7,rep(1,7), names(pointsCoreColrsMap))
+#plot(1:5,rep(1,5), pch=21, bg=pointsShellColrsMap, cex=4)
+#text(1:5,rep(1,5), names(pointsShellColrsMap))
 ## works...
 
 plot(MDS1, MDS2,
@@ -8185,25 +8173,24 @@ plot(MDS1, MDS2,
 points(MDS1, MDS2,
     #bg=aaInfo$Clust,
     pch=21,
-    col=pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster],
+    bg=pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster],
+    col=pointsShellColrsMap[juvClustHabPlotInfo$habType],
     lwd=6.0,
     cex=4.0,
 )
-
 ## hull around parent habitat groups, but not child points
 ordihull(comboNMS_noOut$points,
     groups=juvClustHabPlotInfo$adultHab,
-    show.groups=c("BC","BS","CLB","RCA","RG"),
+#    show.groups=c("BC","BS","CLB","RCA","RG"),
     col = hullColrsMap[names(table(juvClustHabPlotInfo$adultHab))],
     lwd=4,
 )
+text(MDS1, MDS2 - 0.02, juvClustHabPlotInfo$PsubP, cex=1.5)
 ## color adults as simple solid circles, child points as
 ## cores with their cluster info, and their shells from their
 ## parents
 
-juvClustHabPlotInfo$juvCluster
 
-text(MDS1, MDS2 - 0.03, juvClustHabPlotInfo$PsubP, cex=1.5)
 
 pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster]
 
@@ -8238,8 +8225,6 @@ names(colrsMap) <- names(table(comboHab))
 ## does this work?
 colrs <- colrsMap[comboHab]
 
-
-
 ordihull(comboNMS, comboHabAdOnly, col=hullColrsMap, lwd=3)
 text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
 legend( x='bottomright',
@@ -8257,3 +8242,5 @@ legend( x='bottomleft',
         )
 
 
+## increasing obvious that we need to do three clusters, 
+## breaking up the 
