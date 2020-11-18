@@ -7851,8 +7851,6 @@ edit(comboCommMat)
 ## why are the PsubP values not in the adult?
 
 
-
-
 jovenes <- comboCommMat[comboCommMat$X == 'joven',]
 
 adultosInjovenes <- comboCommMat$PsubP %in% jovenes$PsubP
@@ -8007,9 +8005,255 @@ ordiellipse(ord,
     lwd=NULL
 )
 
-## get hull around original adult groups
-## put ellipse around juvenile groups
 ## check to see if there is a relationship
 ## between habitat type and juvenile cluster relationship
 ## = relabel hierarchical clustering diagram with 
 ## habitat type...
+
+#### habitat type in juvenile cluster groups ####
+
+library(stats)
+library(vegan)
+
+## where is our community matrix of juveniles?
+juvComm <- read.csv('juvComm.csv', header=TRUE, row.names='PsubP')
+## checks
+rowSums(juvComm)
+any(colSums(juvComm) == 0)
+all(colSums(juvComm) > 0)
+
+juvCommBray <- vegdist(juvComm)
+juvComm.ward <- hclust(juvCommBray, method='ward.D2')
+
+plot(juvComm.ward)
+k=2
+juvGrp <- rect.hclust(juvComm.ward, border=c(5,6), k=k)
+
+## how can we relabel this? 
+
+str(juvGrp)
+
+names(juvGrp)
+
+names(juvGrp[[1]])
+
+names(juvGrp[[2]])
+
+## we did this before like this:
+k=2
+juvCommBray <- vegdist(juvComm)
+juvComm.ward <- hclust(juvCommBray, method='ward.D2')
+juvGrp <- rect.hclust(juvComm.ward, k=k, border=c(5,6))
+## get out cluster group:
+cmem <- vector(length=k)
+PsubP <- vector()
+gr <- vector()
+for (i in 1:k){
+    cmem.i <- as.numeric(attr(juvGrp[[i]], "names"))
+    PsubP <- c(PsubP, cmem.i)
+    gr <- c(gr, rep(i, length(cmem.i)))
+    }
+cGroup <- data.frame(cbind(PsubP, gr))
+## jeezus. there has got to be an easier way to do that.
+## we need to get the habitat type of these
+envOnly <- read.csv('envOnly.csv')
+findG = function(psubp){
+    return(envOnly[envOnly$PsubP == psubp,'habitat'])
+}
+cGroup$habitat <- sapply(cGroup$PsubP, findG)
+## order by PsubP, because as is this is not working 
+## for labels:
+cGroup <- cGroup[order(cGroup$PsubP),]
+all(rownames(juvComm) == cGroup$PsubP)
+
+aa <- hclust(juvCommBray, method='ward.D2')
+plot(aa, labels=cGroup$habitat)
+bb <- rect.hclust(aa, k=k, border=c(5,6))
+
+azedia
+
+
+
+all(rownames(juvComm) == juvComm.ward$labels)
+
+rownames(juvComm)
+
+all(rownames(cGroup) == juvComm.ward$labels)
+
+
+plot(juvComm.ward)
+rect.hclust(juvComm.ward, k=k, border=c(5,6))
+
+plot(juvComm.ward, labels=cGroup$habitat)
+rect.hclust(juvComm.ward, k=k, border=c(5,6))
+## well, that's weird looking. Did I mess something up?
+
+par(mfrow=c(1,2))
+plot(juvComm.ward, labels=cGroup$habitat)
+rect.hclust(juvComm.ward, k=k, border=c(5,6))
+plot(juvComm.ward)
+rect.hclust(juvComm.ward, k=k, border=c(5,6))
+par(mfrow=c(1,1))
+
+## some spot checks
+envOnly[envOnly$PsubP == 5.3,]
+
+envOnly[envOnly$PsubP == 8.3,]
+
+envOnly[envOnly$PsubP == 10.2,]
+
+envOnly[envOnly$PsubP == 10.3,]
+
+envOnly[envOnly$PsubP == 4.1,]
+
+envOnly[envOnly$PsubP == 2.4,]
+
+## looks okay. What do we do with this?
+
+### redo juvenile habitat NMS with clust results ###
+
+## does this inform the above NMS, where we examine the habitat type
+## of the juveniles?
+
+## we need two vectors - one for adult colors and hulls, and one for child points
+
+## here, we want the adults to retain their habitat info.
+## and we want the child points to have both - habitat info, and cluster info
+## we already have comboHab, with the habitat info, now make a 
+## hybrid adult-habitat and child-cluster info:
+
+## before we did our graphic something like this:
+
+
+
+envOnly <- read.csv('envOnly.csv')
+adultosDejovenes <- read.csv('adultosDejovenes.csv')
+## habitat info, this will give our bg color for the child point, and total color for adults
+comboHab <- sapply(adultosDejovenes$PsubP, function(x){ envOnly[envOnly$PsubP == x,'habitat']})
+## cluster info. Adults are just given their habitat info:
+juvGroups <- vector()
+juvGroups = as.character(comboHab[1:37])
+juvGroups = c(juvGroups, as.character(cGroup$gr))
+## we also need a vector that shows habitat type, but excludes juveniles, 
+## for hulls of adults:
+adultHab <- comboHab
+levels(adultHab) <- c(levels(comboHab), 'juv')
+adultHab[38:74] <- 'juv'
+## let's bind these all together:
+juvClustHabPlotInfo <- data.frame(
+                                adultosDejovenes$PsubP, 
+                                adultosDejovenes$X, 
+                                comboHab, 
+                                as.character(juvGroups), 
+                                as.character(adultHab),
+                                stringsAsFactors=FALSE
+                                )
+colnames(juvClustHabPlotInfo) <- c(
+                                    "PsubP", 
+                                    "ageClass", 
+                                    "habType", 
+                                    "juvCluster", 
+                                    "adultHab"
+                                    )
+
+
+## we can remove our outlier, 1.1, to make it compatible
+## with our NMS results
+
+juvClustHabPlotInfo <- juvClustHabPlotInfo[juvClustHabPlotInfo$PsubP != 1.1,]
+load(file='comboNMS_noOut.rda')
+MDS1 <- comboNMS_noOut$points[,'MDS1']
+MDS2 <- comboNMS_noOut$points[,'MDS2']
+
+## now how to translate this into plotting colors?
+
+## parent hull colors
+hullColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', NA)
+names(hullColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', 'juv')
+## points, core colors
+pointsCoreColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '#72f7fd','#e882ff')
+names(pointsCoreColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', '1','2' )
+
+## check this
+#plot(1:7,rep(1,7), pch=21, bg=pointsCoreColrsMap, cex=4)
+#text(1:7,rep(1,7), names(pointsCoreColrsMap))
+## works...
+
+plot(MDS1, MDS2,
+    type='n',
+)
+points(MDS1, MDS2,
+    #bg=aaInfo$Clust,
+    pch=21,
+    col=pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster],
+    lwd=6.0,
+    cex=4.0,
+)
+
+## hull around parent habitat groups, but not child points
+ordihull(comboNMS_noOut$points,
+    groups=juvClustHabPlotInfo$adultHab,
+    show.groups=c("BC","BS","CLB","RCA","RG"),
+    col = hullColrsMap[names(table(juvClustHabPlotInfo$adultHab))],
+    lwd=4,
+)
+## color adults as simple solid circles, child points as
+## cores with their cluster info, and their shells from their
+## parents
+
+juvClustHabPlotInfo$juvCluster
+
+text(MDS1, MDS2 - 0.03, juvClustHabPlotInfo$PsubP, cex=1.5)
+
+pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster]
+
+pointsCoreColrsMap
+
+juvClustHabPlotInfo$juvCluster
+
+juvClustHabPlotInfo
+
+head(juvClustHabPlotInfo)
+
+cbind(juvClustHabPlotInfo$PsubP, 
+    hullColrsMap[juvClustHabPlotInfo$adultHab],
+    as.character(juvClustHabPlotInfo$habType))
+
+head(juvClustHabPlotInfo)
+
+    lty='dashed',
+    col=6,
+)
+
+levels(juvClustHabPlotInfo$adultHab)
+
+head(juvClustHabPlotInfo)
+
+as.character(juvClustHabPlotInfo$adultHab)
+
+
+## regular colors, all points need this juv or adult:
+colrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00')
+names(colrsMap) <- names(table(comboHab))
+## does this work?
+colrs <- colrsMap[comboHab]
+
+
+
+ordihull(comboNMS, comboHabAdOnly, col=hullColrsMap, lwd=3)
+text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
+legend( x='bottomright',
+        legend = levels(droplevels(comboHab)),
+        fill = colrsMap[levels(droplevels(comboHab))],
+        col = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
+        cex = 1.0,
+        )
+legend( x='bottomleft',
+        pch = c(2,1),
+        legend = c('juvenile','adult'),
+        cex = 1.0,
+        pt.cex = c(1.0,1.5),
+        title='Age class',
+        )
+
+
