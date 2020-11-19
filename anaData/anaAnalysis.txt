@@ -8026,8 +8026,8 @@ juvCommBray <- vegdist(juvComm)
 juvComm.ward <- hclust(juvCommBray, method='ward.D2')
 
 plot(juvComm.ward)
-k=2
-juvGrp <- rect.hclust(juvComm.ward, border=c(5,6), k=k)
+k=3
+juvGrp <- rect.hclust(juvComm.ward, border=c(5,6,7), k=k)
 
 ## how can we relabel this? 
 
@@ -8040,7 +8040,7 @@ names(juvGrp[[1]])
 names(juvGrp[[2]])
 
 ## we did this before like this:
-k=2
+k=3
 juvCommBray <- vegdist(juvComm)
 juvComm.ward <- hclust(juvCommBray, method='ward.D2')
 juvGrp <- rect.hclust(juvComm.ward, k=k, border=c(5,6))
@@ -8068,7 +8068,7 @@ all(rownames(juvComm) == cGroup$PsubP)
 
 aa <- hclust(juvCommBray, method='ward.D2')
 plot(aa, labels=cGroup$habitat)
-bb <- rect.hclust(aa, k=k, border=c(5,6))
+bb <- rect.hclust(aa, k=k, border=(1:k)+4)
 
 azedia
 
@@ -8079,9 +8079,9 @@ all(cGroup$PsubP == juvComm.ward$labels)
 
 par(mfrow=c(1,2))
 plot(juvComm.ward, labels=cGroup$habitat)
-rect.hclust(juvComm.ward, k=k, border=c(5,6))
+rect.hclust(juvComm.ward, k=k, border=(1:k)+4)
 plot(juvComm.ward)
-rect.hclust(juvComm.ward, k=k, border=c(5,6))
+rect.hclust(juvComm.ward, k=k, border=(1:k)+4)
 par(mfrow=c(1,1))
 
 
@@ -8155,9 +8155,8 @@ MDS2 <- comboNMS_noOut$points[,'MDS2']
 hullColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', NA)
 names(hullColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', 'juv')
 ## points, core colors
-pointsCoreColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '5','6')
-names(pointsCoreColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', '1','2' )
-
+pointsCoreColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00', '5','6','7')
+names(pointsCoreColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG', '1','2','3' )
 ## points, shell colors:
 pointsShellColrsMap <- c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00')
 names(pointsShellColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG')
@@ -8170,13 +8169,14 @@ names(pointsShellColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG')
 plot(MDS1, MDS2,
     type='n',
 )
-points(MDS1, MDS2,
-    #bg=aaInfo$Clust,
-    pch=21,
-    bg=pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster],
-    col=pointsShellColrsMap[juvClustHabPlotInfo$habType],
-    lwd=6.0,
-    cex=4.0,
+## ellipse around all parent groups?
+ordiellipse(comboNMS_noOut$points,
+    groups=juvClustHabPlotInfo$ageClass,
+    kind="ehull",
+    draw="polygon",
+    show.groups=c("adulto"),
+    col = 'gray72',
+    border=FALSE,
 )
 ## hull around parent habitat groups, but not child points
 ordihull(comboNMS_noOut$points,
@@ -8185,12 +8185,39 @@ ordihull(comboNMS_noOut$points,
     col = hullColrsMap[names(table(juvClustHabPlotInfo$adultHab))],
     lwd=4,
 )
+## get hulls or ellipses on those two child groups:
+juvHulls=ordihull(ord=comboNMS_noOut$points,
+    groups=juvClustHabPlotInfo$juvClust,
+    draw="polygon",
+    alpha=25,
+    col=c(6,7),
+    border=c(6,7),
+    show.groups=c("2","3"),
+)
+## centroids for these
+juvCentroids <- t(summary(juvHulls))
+points(centroids[,1],centroids[,2], 
+    pch=4, 
+    cex=3, 
+    col=c(6,7))
+points(MDS1, MDS2,
+    #bg=aaInfo$Clust,
+    pch=21,
+    bg=pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster],
+    col=pointsShellColrsMap[juvClustHabPlotInfo$habType],
+    lwd=6.0,
+    cex=4.0,
+)
+
 text(MDS1, MDS2 - 0.02, juvClustHabPlotInfo$PsubP, cex=1.5)
+
+
+head(juvClustHabPlotInfo)
 ## color adults as simple solid circles, child points as
 ## cores with their cluster info, and their shells from their
 ## parents
 
-
+## consider orditest to see if these groupings are meaningfull?
 
 pointsCoreColrsMap[juvClustHabPlotInfo$juvCluster]
 
@@ -8227,20 +8254,26 @@ colrs <- colrsMap[comboHab]
 
 ordihull(comboNMS, comboHabAdOnly, col=hullColrsMap, lwd=3)
 text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
-legend( x='bottomright',
-        legend = levels(droplevels(comboHab)),
-        fill = colrsMap[levels(droplevels(comboHab))],
-        col = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00'),
-        cex = 1.0,
-        )
-legend( x='bottomleft',
-        pch = c(2,1),
-        legend = c('juvenile','adult'),
-        cex = 1.0,
-        pt.cex = c(1.0,1.5),
-        title='Age class',
-        )
 
+## looks good, but honestly, too confusing for readers. 
+## don't think, after all that, that it adds to the first 
+## NMS of land use history. Just shows that mostly that
+## the closed forest tends to have a really unique juvenile
+## community. The hierarchical clustering hints at this, 
+## basically says the same thing, and we are trying to force
+## the results onto the same figure. Probably best to present
+## them separately, not mix them. 
 
-## increasing obvious that we need to do three clusters, 
-## breaking up the 
+## restructure notebook for juvenile analysis to make more sense. 
+
+## in general, the hierarchical clustering doesn't seem to add 
+## much to the juveniles. The story is too messy. Just track the 
+## original adult group evolution, adult clusters and land uses
+## to their new spaces on the NMS. 
+
+## so, cleanup the notebook with +/- publishable figures for the juveniles:
+## hierarchical clustering, without forcing groups (just highlight the 
+## clade that comes entirely from bosque cerrado
+
+## the main looming analysis is the spatial analysis. Think about that
+## next...
