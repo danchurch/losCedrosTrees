@@ -8166,6 +8166,7 @@ names(pointsShellColrsMap) <- c('BC', 'BS', 'CLB', 'RCA', 'RG')
 #text(1:5,rep(1,5), names(pointsShellColrsMap))
 ## works...
 
+png(file='habtype2naturalClusterJuv.png', height=1000, width=1000)
 plot(MDS1, MDS2,
     type='n',
 )
@@ -8208,9 +8209,8 @@ points(MDS1, MDS2,
     lwd=6.0,
     cex=4.0,
 )
-
 text(MDS1, MDS2 - 0.02, juvClustHabPlotInfo$PsubP, cex=1.5)
-
+dev.off()
 
 head(juvClustHabPlotInfo)
 ## color adults as simple solid circles, child points as
@@ -8255,14 +8255,10 @@ colrs <- colrsMap[comboHab]
 ordihull(comboNMS, comboHabAdOnly, col=hullColrsMap, lwd=3)
 text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
 
-## looks good, but honestly, too confusing for readers. 
-## don't think, after all that, that it adds to the first 
-## NMS of land use history. Just shows that mostly that
-## the closed forest tends to have a really unique juvenile
-## community. The hierarchical clustering hints at this, 
-## basically says the same thing, and we are trying to force
-## the results onto the same figure. Probably best to present
-## them separately, not mix them. 
+## this is a cool but confusing figure...
+## perhaps best to just use the land use + children figure, 
+## and add a hull 
+
 
 ## restructure notebook for juvenile analysis to make more sense. 
 
@@ -8277,3 +8273,5 @@ text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
 
 ## the main looming analysis is the spatial analysis. Think about that
 ## next...
+
+
