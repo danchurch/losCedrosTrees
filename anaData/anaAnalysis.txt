@@ -6651,95 +6651,6 @@ https://github.com/mdbartos/pysheds
 ## hierarchical models
 ## develop watershed models 
 
-########################## watershed ##########################
-
-## both are interesting. We have an hour, let's start by playing around with 
-## watersheds....
-
-import os
-import openpyxl
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-import matplotlib.pyplot as plt
-import pickle
-import geopandas as gpd
-import rasterio
-import pysheds
-import scipy.spatial as sp
-import scipy.stats
-import rasterio.plot
-import copy
-import random
-import math
-import re
-import matplotlib.colors as colors
-from pysheds.grid import Grid
-import mplleaflet
-
-plt.ion()
-
-## and following the 
-
-linregress
-
-help('Grid.from_raster')
-
-grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
-
-def plotFigure(data, label, cmap='Blues'):
-    plt.figure(figsize=(12,10))
-    plt.imshow(data, extent=grid.extent, cmap=cmap)
-    plt.colorbar(label=label)
-    plt.grid()
-
-plotFigure(grid.dem, 'Elevation (m)')
-
-#N    NE    E    SE    S    SW    W    NW
-dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
-## this is just a color map. Don't think about it too much.
-
-grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
-
-plotFigure(grid.dir,'Flow Directiom','viridis')
-
-## defining catchement:
-
-# Specify pour point
-x, y = 747657,10033134
-
-# Delineate the catchment
-grid.catchment(data='dir', x=x, y=y, dirmap=dirmap, out_name='catch',
-               recursionlimit=15000, xytype='label', nodata_out=0)
-
-# Clip the bounding box to the catchment
-grid.clip_to('catch')
-
-# Get a view of the catchment
-demView = grid.view('dem', nodata=np.nan)
-
-plotFigure(demView,'Elevation')
-
-Define accumulation grid and stream network
-
-grid.accumulation(data='catch', dirmap=dirmap, pad_inplace=False, out_name='acc')
-
-accView = grid.view('acc', nodata=np.nan)
-plotFigure(accView,"Cell Number",'PuRd')
-
-streams = grid.extract_river_network('catch', 'acc', threshold=200, dirmap=dirmap)
-streams["features"][:2]
-
-def saveDict(dic,file):
-    f = open(file,'w')
-    f.write(str(dic))
-    f.close()
-
-#save geojson as separate file
-saveDict(streams,'./testingPySheds.geojson')
-
-## going to have to get back to this... TRY database just came
-## in 
 
 ############################ try database ################################
 
@@ -8274,4 +8185,457 @@ text(MDS1, MDS2 - 0.02, adultosDejovenes$PsubP, cex=1)
 ## the main looming analysis is the spatial analysis. Think about that
 ## next...
 
+########################## watersheds ##########################
 
+## both are interesting. We have an hour, let's start by playing around with 
+## watersheds....
+
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import rasterio
+import pysheds
+import scipy.spatial as sp
+import scipy.stats
+import rasterio.plot
+from pysheds.grid import Grid
+import mplleaflet
+plt.ion()
+
+## and following the example here: https://mattbartos.com/pysheds/
+## and here:
+## https://github.com/mdbartos/pysheds/blob/master/examples/quickstart.ipynb
+
+## good mmindless music here: https://youtu.be/l9nh1l8ZIJQ
+
+## I think the basic object of a 
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+fig, ax = plt.subplots(figsize=(8,6))
+fig.patch.set_alpha(0)
+plt.imshow(grid.dem, extent=grid.extent, cmap='cubehelix', zorder=1)
+plt.colorbar(label='Elevation (m)')
+plt.grid(zorder=0)
+plt.title('Digital elevation map')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.tight_layout()
+## pretty
+#plt.savefig('img/conditioned_dem.png', bbox_inches='tight')
+
+## get an error with this:
+grid.resolve_flats('dem', out_name='inflated_dem')
+## is this because we haven't done a flow direction array yet?
+## not sure. there is something about this here:
+https://www.hatarilabs.com/ih-en/elevation-model-conditioning-and-stream-network-delimitation-with-python-and-pysheds-tutorial
+
+depressions = grid.detect_depressions('dem')
+# Plot depressions
+plt.imshow(depressions)
+## none?
+
+flats = grid.detect_flats('dem')
+plt.imshow(flats)
+## also none?
+
+aa = ('asdf'
+'asdf')
+
+############## tutorial ###################
+## let's try the example data for a bit:
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+import geopandas as gpd
+import pandas as pd
+from pysheds.grid import Grid
+import mplleaflet
+import copy
+
+pathSD = ('/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/'
+'ElevationModelConditioningandStreamNetwork'
+'DelimitationwithPythonandPysheds/Rst/20190109125130_1063922483.tif')
+
+grid = Grid.from_raster(pathSD, data_name='dem')
+
+#Define a function to plot the digital elevation model 
+def plotFigure(data, label, cmap='Blues'):
+    plt.figure(figsize=(12,10))
+    plt.imshow(data, extent=grid.extent)
+    plt.colorbar(label=label)
+    plt.grid()
+
+elevDem=grid.dem[:-1,:-1]
+plotFigure(elevDem, 'Elevation (m)')
+
+plt.figure(figsize=(8,8))
+plt.imshow(elevDem)
+
+# Detect depressions
+depressions = grid.detect_depressions('dem')
+
+# Plot depressions
+plt.imshow(depressions)
+## that works, makes me think I really just don't have 
+## them in my data
+
+# Fill depressions
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+# Test result
+depressions = grid.detect_depressions('flooded_dem')
+plt.imshow(depressions)
+## still some spots in the very south?
+
+# Detect flats
+flats = grid.detect_flats('flooded_dem')
+# Plot flats
+plt.imshow(flats)
+## also works well, makes me think my data just doesn't 
+## have these issues?
+
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+
+plt.figure(figsize=(8,8))
+plt.imshow(elevDem)
+
+plt.figure(figsize=(8,8))
+plt.imshow(grid.inflated_dem[:-1,:-1])
+## can't really see them with your eye, but I 
+## guess they cause hell on the algorithms.
+
+          #N    NE    E    SE    S    SW    W    NW
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+
+plotFigure(grid.dir,'Flow Direction','viridis')
+
+# Specify discharge point
+x, y = -107.91663,27.83479
+
+# Delineate the catchment
+grid.catchment(data='dir', x=x, y=y, dirmap=dirmap, out_name='catch',
+               recursionlimit=15000, xytype='label', nodata_out=0)
+
+# Clip the bounding box to the catchment
+grid.clip_to('catch')
+
+# Get a view of the catchment
+demView = grid.view('dem', nodata=np.nan)
+
+plotFigure(demView,'Elevation')
+
+## works perfectly...of course...
+## so the perennial question, what's wrong with my data?
+
+#########################################################
+
+fig, ax = plt.subplots(figsize=(8,6))
+fig.patch.set_alpha(0)
+plt.imshow(grid.dem, extent=grid.extent, cmap='cubehelix', zorder=1)
+
+plt.colorbar(label='Elevation (m)')
+plt.grid(zorder=0)
+plt.title('Digital elevation map')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.tight_layout()
+
+
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+## make a color map for our flow directions:
+         #N    NE    E    SE    S    SW    W    NW
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+## don't this is necessary, these are the defaults for the flowdir method, anyway
+## oh, but we need them to make the color bar for the next graphic...
+
+## create the flowdir 
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+plotFigure(grid.dir,'Flow Direction','viridis')
+
+## why does it look like half the spots are flowing north? 
+## anyway, cool, that's the flow direction
+
+## so now, I think we should be able to define upstream and
+## downstream, i.e. make catchments. Can we get the 
+## catchment for +/- basecamp?
+
+x, y = 747500, (4000 + 1.003*10**7)
+
+x, y = 747500, (3500 + 1.003*10**7)
+
+x, y = 747000, (3500 + 1.003*10**7)
+
+x, y = 748000, (3000 + 1.003*10**7)
+
+x, y = 748722, (590 + 1.0032*10**7)
+
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+grid2 = copy.deepcopy(grid)
+grid2.catchment(data=grid2.dir, x=x, y=y, dirmap=dirmap, out_name='catch',
+               recursionlimit=15000, xytype='label', nodata_out=0)
+grid2.clip_to('catch')
+## I think you can reverse this with:
+#grid2.clip_to('dem')
+demView = grid2.view('dem', nodata=np.nan)
+plotFigure(demView,'Elevation')
+
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap, inplace=False)
+
+grid.shape
+
+
+plotFigure(grid.dem,'viridis')
+
+# Plot the catchment
+## okay, that really didn't work...
+demView = grid.view('dem', nodata=np.nan)
+plotFigure(demView,'Elevation')
+
+## all of our rasters get clipped to 6 pixels or somethiing:
+
+grid.shape
+
+grid2.shape
+
+## why?
+## looks like we are really sensitive to the pour point? 
+
+## can we tile this, look at a lot of different pour points?
+
+## output variable of interest is the extent of the grid.
+
+
+round(grid2.extent[0])
+
+grid2.extent[0:2]
+grid2.extent[2:3]
+
+grid2.extent
+
+list(range(grid2.extent[1]
+grid2.extent
+grid.extent
+
+
+## okay, let's do this the hard way. This should tell us if it 
+## really is a question of the pour point selection, or if our 
+## data is screwed:
+
+
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+with open('checkPour.txt', 'w') as f:
+    for i in range(745020, 749211):
+        for j in range(10031757, 10035794):
+            try:
+                grid2 = copy.deepcopy(grid)
+                grid2.catchment(data=grid2.dir, x=i, y=j, dirmap=dirmap, 
+                               out_name='catch', recursionlimit=15000, 
+                               xytype='label', nodata_out=0)
+                grid2.clip_to('catch')
+                f.write(str(i) + ', ' + str(j) + ', ' + str(np.prod(grid2.shape)) + ' \n')
+            except (ValueError, IndexError):
+                f.write(str(i) + ', ' + str(j) + ', ' + 'pourpoint outside \n')
+                
+## well, that dumped.
+
+## makes sense, that's lots of cycles:
+(749211-745020)*(10035794-10031757)
+
+## 16,919,067 
+
+## let's check what happened before it failed:
+
+pourTest = pd.read_csv('checkPour.txt', header=0, names=['X','Y', 'Pixels'])
+pourTest.head()
+## oops, I printed some trailing whitespace in the pixel area column:
+pourTest.Pixels = pourTest.Pixels.str.strip()
+## get rid of outside points:
+pourTest = pourTest[~(pourTest.Pixels == 'pourpoint outside')]
+pourTest.Pixels = pd.to_numeric(pourTest.Pixels, downcast='integer')
+pourTest.Pixels.max() 
+## 540, okay, not bad. Should be much bigger, but look at this
+pourTest = pourTest.sort_values('Pixels')
+
+plt.ion()
+
+plt, ax = plt.subplots(1,1)
+ax.hist(pourTest.Pixels, bins=50)
+
+## the vast majority of these pixels yield a catchment of very small 
+## size. But let's look at the ones that yield more cells...
+ 
+## the largest catchment is here:
+maxes = pourTest.Pixels == pourTest.Pixels.max() 
+maxPours = pourTest[maxes].reset_index(drop=True)
+
+## there are also several midsize catchments in this:
+
+mid240 = pourTest.Pixels == 240
+mid240Pours = pourTest[mid240].reset_index(drop=True)
+
+
+pourTest.Pixels.gt(150)
+
+pourTest.Pixels > 150
+
+pourTest.Pixels < 200
+
+pourTest.Pixels > 150 and pourTest.Pixels < 200
+
+pourTest.Pixels.gt(150) and pourTest.Pixels.lt(200) 
+
+mid160 = ((pourTest.Pixels > 150) & (pourTest.Pixels < 200))
+mid160Pours = pourTest[mid160].reset_index(drop=True)
+## actually, that contains 4 possible catchments:
+mid160Pours.Pixels.unique()
+## break it up?:
+
+mid156 = (pourTest.Pixels == 156)
+mid156Pours = pourTest[mid156].reset_index(drop=True)
+
+## why is the max pours data graphing weird?
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+x, y = maxPours.iloc[0,0:2]
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+grid.catchment(data=grid.dir, x=x, y=y, dirmap=dirmap, out_name=nameOfCatch,
+                   recursionlimit=15000, xytype='label', nodata_out=0)
+
+def plotFigure(data, label, cmap='Blues'):
+    plt.figure(figsize=(12,10))
+    plt.imshow(data, extent=grid.extent)
+    plt.colorbar(label=label)
+    plt.grid()
+
+## what do these catchments look like?
+
+x, y = maxPours.iloc[0,0:2]
+
+def addCatchment(pt, dat, nameOfCatch, grid=None):
+    if grid is None: 
+        grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+    x, y = dat.iloc[pt,0:2]
+    dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+    grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+    grid.catchment(data=grid.dir, x=x, y=y, dirmap=dirmap, out_name=nameOfCatch,
+                   recursionlimit=15000, xytype='label', nodata_out=0)
+    return(grid)
+
+muck = addCatchment(pt=10, 
+              dat=maxPours, 
+              nameOfCatch='maxPours',
+              grid=None)
+
+addCatchment(pt=0, 
+              dat=mid240Pours, 
+              nameOfCatch='mid240Pours',
+              grid=muck)
+
+addCatchment(pt=0, 
+              dat=mid156Pours, 
+              nameOfCatch='mid156Pours',
+              grid=muck)
+
+
+## to look at one of these, export the view as a np.array, with
+## the "view" method:
+
+#muck.clip_to('mid156Pours')
+
+#muck.clip_to('dem')
+
+plt.figure()
+plt.imshow(muck.view('mid156Pours', nodata=np.nan), extent=muck.extent)
+plt.colorbar()
+
+plt.figure()
+plt.imshow(muck.view('mid240Pours'), extent=muck.extent)
+plt.colorbar()
+
+plt.figure()
+plt.imshow(muck.view('maxPours'), extent=muck.extent)
+plt.colorbar()
+
+plt.imshow(muck.view('dem'), extent=muck.extent)
+
+
+fig, axes = plt.subplots(1,3)
+
+
+
+plotFigure(aa,'Elevation')
+
+plotFigure(bb,'Elevation')
+
+dir(mid240Pours)
+
+
+
+## huh, well it definitely works sometimes. Where are these pour points?
+
+min(maxPours.X) #745020
+max(maxPours.X) #745035
+min(maxPours.Y) #10035225
+max(maxPours.Y) #10035255
+
+## Seems like they all fall in the same area:
+fig, ax = plt.subplots(figsize=(8,6))
+fig.patch.set_alpha(0)
+plt.imshow(grid.dem, extent=grid.extent, cmap='cubehelix', zorder=1)
+
+## for example, max pours:
+ax.hlines(max(maxPours.Y), min(maxPours.X), max(maxPours.X), 'red')
+ax.hlines(min(maxPours.Y), min(maxPours.X), max(maxPours.X), 'red')
+ax.vlines(max(maxPours.X), min(maxPours.Y), max(maxPours.Y), 'red')
+ax.vlines(min(maxPours.X), min(maxPours.Y), max(maxPours.Y), 'red')
+## weird, that is at the top of the mountain.
+
+## for example, max pours:
+ax.hlines(max(maxPours.Y), min(maxPours.X), max(maxPours.X), 'red')
+ax.hlines(min(maxPours.Y), min(maxPours.X), max(maxPours.X), 'red')
+ax.vlines(max(maxPours.X), min(maxPours.Y), max(maxPours.Y), 'red')
+ax.vlines(min(maxPours.X), min(maxPours.Y), max(maxPours.Y), 'red')
+
+## weird, that is at the top of the mountain.
+## not sure what is going on here - how can a pour point at the top of a 
+## mountain yield a catchment that drains most of the study area?
+
+## anyway, this seems to work, if we have good pour points. 
+## how do we find them? I think we really only need two, to 
+## get the pour points for the Rio Los Cedros and the Rio Magdalena Chico
+
+## how to get these? I think we need to run through the cells as we did 
+## above, but for the southwest corner. 
+
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+
+grid.extent
+
+eastMin=748750 
+eastMax=749200 
+northMin=10032300
+northMax=10033300
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+with open('checkSouthEastPour.txt', 'w') as f:
+    for i in range(eastMin, eastMax):
+        for j in range(northMin, northMax):
+            try:
+                grid2 = copy.deepcopy(grid)
+                grid2.catchment(data=grid2.dir, x=i, y=j, dirmap=dirmap, 
+                               out_name='catch', recursionlimit=15000, 
+                               xytype='label', nodata_out=0)
+                grid2.clip_to('catch')
+                f.write(str(i) + ',' + str(j) + ',' + str(np.prod(grid2.shape)) + '\n')
+            except (ValueError, IndexError):
+                f.write(str(i) + ',' + str(j) + ',' + 'pourpoint outside\n')
+
+## I think I may need to buffer this map quite a bit to do the river calculations, 
+## but we may be able to get the pour points this way...
+
+eastMax - eastMin
+northMax - northMin
