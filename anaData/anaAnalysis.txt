@@ -8253,6 +8253,9 @@ import pandas as pd
 from pysheds.grid import Grid
 import mplleaflet
 import copy
+import rasterio
+import rasterio.plot
+plt.ion()
 
 pathSD = ('/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/'
 'ElevationModelConditioningandStreamNetwork'
@@ -8456,6 +8459,7 @@ pourTest.Pixels = pourTest.Pixels.str.strip()
 ## get rid of outside points:
 pourTest = pourTest[~(pourTest.Pixels == 'pourpoint outside')]
 pourTest.Pixels = pd.to_numeric(pourTest.Pixels, downcast='integer')
+pourTest.shape ## 187,000 coords tested, out of 16,000,000. Shit
 pourTest.Pixels.max() 
 ## 540, okay, not bad. Should be much bigger, but look at this
 pourTest = pourTest.sort_values('Pixels')
@@ -8619,8 +8623,11 @@ eastMin=748750
 eastMax=749200 
 northMin=10032300
 northMax=10033300
+
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
 grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
 grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+
 with open('checkSouthEastPour.txt', 'w') as f:
     for i in range(eastMin, eastMax):
         for j in range(northMin, northMax):
@@ -8637,5 +8644,238 @@ with open('checkSouthEastPour.txt', 'w') as f:
 ## I think I may need to buffer this map quite a bit to do the river calculations, 
 ## but we may be able to get the pour points this way...
 
-eastMax - eastMin
-northMax - northMin
+(eastMax - eastMin) * (northMax - northMin) # = 450,000 coordinate pairs. 
+
+pourTest = pd.read_csv('checkSouthEastPour.txt', header=0, names=['X','Y', 'Pixels'])
+
+## did we have any outside coords?
+pourTest.Pixels.dtype
+## looks good
+
+len(pourTest.Pixels.unique())
+pourTest.Pixels.unique()
+## 16 sizes detected, biggest are 180 and 216 cells...
+## how many cells in the map, generally?
+
+dir(grid)
+
+## I think this is our size in cells?
+grid.size
+## or is that an actual area measurement (m2)?
+## not sure.
+pourTest.shape ## 15000 cells coords tested before failure. ~1/3.
+
+## anyway, find these catchments, see where they map
+
+p216 = (pourTest.Pixels == 216)
+pour216 = pourTest[p216]
+pour216.reset_index(inplace=True, drop=True)
+
+pour216.head()
+
+def plExt(pr,ax=None,col='red'):
+    if ax is not None:
+        ax.hlines(max(pr.Y), min(pr.X), max(pr.X), col)
+        ax.hlines(min(pr.Y), min(pr.X), max(pr.X), col)
+        ax.vlines(max(pr.X), min(pr.Y), max(pr.Y), col)
+        ax.vlines(min(pr.X), min(pr.Y), max(pr.Y), col)
+    ext={"xmin":min(pr.X),
+         "xmax":max(pr.X),
+         "ymin":min(pr.Y),
+         "ymax":max(pr.Y)
+        }
+    return(ext)
+
+fig = plt.figure()
+ax = fig.add_subplot()
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+ax.imshow(grid.dem, extent=grid.extent)
+plExt(pour216, ax=ax)
+
+pour216.X.unique()
+## interesting, this is a strip of cells along x=748765. 
+
+## make the catchment from one of them:
+
+pr = pour216
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+grid2 = copy.deepcopy(grid)
+grid2.catchment(data=grid2.dir, x=pr.X[0], y=pr.Y[0], dirmap=dirmap, 
+               out_name='catch', recursionlimit=15000, 
+               xytype='label', nodata_out=0)
+grid2.clip_to('catch')
+
+plt.imshow(grid.dem, extent = grid.extent)
+
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+lcPoly.boundary.plot(color='purple', linewidth=3)
+
+lcPoly.boundary.plot(color='purple', linewidth=3, ax=ax)
+
+## we have to find these damn pour points.
+
+## function for outputing catchment size:
+
+def catchSize(X,Y):
+    grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+    grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+    grid2 = copy.deepcopy(grid)
+    grid2.catchment(data=grid2.dir, x=X, y=Y, dirmap=dirmap, 
+                   out_name='catch', recursionlimit=15000, 
+                   xytype='label', nodata_out=0)
+    return(grid2.catch.view_size)
+
+
+catchSize(748810, 10032700)
+
+X,Y = (748710, 10032700)
+grid = Grid.from_raster('./GIS/anaPlotDEM.tif', data_name='dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+grid2 = copy.deepcopy(grid)
+grid2.catchment(data=grid2.dir, x=X, y=Y, dirmap=dirmap, 
+               out_name='catch', recursionlimit=15000, 
+               xytype='label', nodata_out=0)
+grid2.clip_to('catch')
+
+grid2.clip_to('dem')
+
+demView = grid.view('dem', nodata=np.nan)
+
+plt.imshow(grid2.catch)
+
+
+## ugh, this is so fucked. What if we try this on our more raw data? As in, maybe the tile
+## that we got that LC DEM from?
+
+## can we read this in?
+## I think we are going to need to put the metadata into the dem file itself...
+
+## can we read this?
+
+bigAstpath = "/home/daniel/Documents/LosCed/Ecuador_GIS/losced/ASTGTM2_N00W079/ASTGTM2_N00W079_dem_UTM17S.tif"
+
+X,Y = (748710, 10032700)
+
+X,Y = (747865, 10026800)
+
+grid = Grid.from_raster(bigAstpath, data_name='dem')
+plt.imshow(grid.view('dem'))
+
+depressions1 = grid.detect_depressions('dem')
+
+plt.imshow(depressions1)
+
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+
+depressions2 = grid.detect_depressions('flooded_dem')
+
+fig, axs  = plt.subplots(1,2)
+
+depressions2.any() ## there are still a lot. why?:
+
+axs[0].imshow(depressions1)
+axs[1].imshow(depressions2)
+
+## just some weirdness on the western border
+
+flats = grid.detect_flats('flooded_dem')
+
+plt.imshow(flats)
+
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+
+
+fig, axs  = plt.subplots(1,2)
+axs[0].imshow(grid.view('dem'))
+axs[1].imshow(grid.view('inflated_dem'))
+
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+
+grid.flowdir(data='dem', out_name='dir', dirmap=dirmap)
+
+grid.catchment(data=grid.dir, x=X, y=Y, dirmap=dirmap, 
+               out_name='catch', recursionlimit=15000, 
+               xytype='label', nodata_out=0)
+grid.clip_to('catch')
+
+## that blew out the memory...
+
+plt.imshow(grid.view('dem'))
+
+## condense, try again
+
+bigAstpath = "/home/daniel/Documents/LosCed/Ecuador_GIS/losced/ASTGTM2_N00W079/ASTGTM2_N00W079_dem_UTM17S.tif"
+grid = Grid.from_raster(bigAstpath, data_name='dem')
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+
+
+plt.imshow(grid.view('dir'), extent=grid.extent)
+
+plt.imshow(grid.view('dir'))
+
+
+## might as well save this somewhere:
+
+grid.to_raster('dir', 'test_dir.tif', view=False)
+## doesn't work...to ascii?
+
+grid.to_ascii('dir', 'losCedFullTileFlow.asc')
+
+
+
+
+## can't view as is...use rasterio and take a look:
+
+fig, ax = plt.subplots()
+
+bigAstRast = rasterio.open(bigAstpath)
+
+bigAstFlow = rasterio.open('/home/daniel/Documents/analyses/bigfiles/anaBigFiles/losCedFullTileFlow.asc')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+
+plt.close('all')
+rasterio.plot.show(bigAstFlow)
+lcPoly.boundary.plot(color='red', linewidth=3, ax=plt.gca())
+hydro.plot(color='Blue', ax=plt.gca())
+
+## yeah, that looks much better. Let's try a catchment:
+
+## let's try to pick a pourpoint interactively:
+
+X,Y = plt.ginput(1)[0]
+
+## that is not working. Can we force the issue by calculating 
+## the locations of rivers?
+
+## we supposedly can use 
+## notebook for this here:
+## https://github.com/mdbartos/pysheds/blob/master/examples/snap_to_mask.ipynb
+
+grid.clip_to('dem')
+
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
+
+aa = grid.snap_to_mask(grid.acc > 50, np.array([X,Y]), return_dist=False)
+
+grid.catchment(data='dir', x=aa[0], y=aa[1], out_name='catch',
+                   recursionlimit=15000, xytype='label')
+grid.clip_to('catch')
+plt.close('all')
+plt.imshow(grid.view('dem'), extent=grid.catch.extent)
+## that works a lot better. finally. 
+
+branches = grid.extract_river_network('catch', 'acc')
+
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    plt.plot(line[:, 0], line[:, 1])
+
+
+
