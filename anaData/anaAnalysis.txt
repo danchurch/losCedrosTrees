@@ -8250,11 +8250,17 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import geopandas as gpd
 import pandas as pd
+
+import pyproj
+
 from pysheds.grid import Grid
 import mplleaflet
 import copy
 import rasterio
 import rasterio.plot
+import pprint
+import fiona
+import shapely
 plt.ion()
 
 pathSD = ('/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/'
@@ -8805,38 +8811,44 @@ grid.clip_to('catch')
 
 plt.imshow(grid.view('dem'))
 
-## condense, try again
-
+## condense, start pipeline over
 bigAstpath = "/home/daniel/Documents/LosCed/Ecuador_GIS/losced/ASTGTM2_N00W079/ASTGTM2_N00W079_dem_UTM17S.tif"
 grid = Grid.from_raster(bigAstpath, data_name='dem')
 grid.fill_depressions(data='dem', out_name='flooded_dem')
 grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
 dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
-grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
-
-
-plt.imshow(grid.view('dir'), extent=grid.extent)
-
-plt.imshow(grid.view('dir'))
-
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap) 
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
 
 ## might as well save this somewhere:
-
-grid.to_raster('dir', 'test_dir.tif', view=False)
+#grid.to_raster('dir', 'test_dir.tif', view=False)
 ## doesn't work...to ascii?
+#grid.to_ascii('dir', 'losCedFullTileFlow.asc')
+## and to load our huge ascii file here?
+#anaFlowAsciiPath = "/home/daniel/Documents/analyses/bigfiles/anaBigFiles/losCedFullTileFlowNoDat-1.asc"
+#grid.read_ascii(anaFlowAsciiPath, 
+#                crs=pyproj.proj.Proj('+proj=utm +zone=17 +south +ellps=WGS84 +datum=WGS84 +units=m +no_defs'),  
+#                data_name='dir')
+## hmmm, it is having trouble with our "nodata" value not being a number, I think...
+## can we change this?
+#cd /home/daniel/Documents/analyses/bigfiles/anaBigFiles
+#cp losCedFullTileFlow.asc losCedFullTileFlowNoDat-1.asc
+#sed 's/nan/-1/' losCedFullTileFlow.asc > losCedFullTileFlowNoDat-1.asc
+#head -n 6 losCedFullTileFlowNoDat-1.asc
+## did that work?
+## it's okay, but the two rasters don't quite align anymore:
+#grid.dem.extent
+#grid.dir.extent
+## so maybe better to work from scratch, regenerate the flow direction raster
+## maybe pickle it instead?
 
-grid.to_ascii('dir', 'losCedFullTileFlow.asc')
-
-
-
-
-## can't view as is...use rasterio and take a look:
+## use rasterio and take a look, and pick some spots interactively
 
 fig, ax = plt.subplots()
 
 bigAstRast = rasterio.open(bigAstpath)
-
 bigAstFlow = rasterio.open('/home/daniel/Documents/analyses/bigfiles/anaBigFiles/losCedFullTileFlow.asc')
+
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
 hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 
@@ -8851,31 +8863,93 @@ hydro.plot(color='Blue', ax=plt.gca())
 
 X,Y = plt.ginput(1)[0]
 
-## that is not working. Can we force the issue by calculating 
-## the locations of rivers?
-
-## we supposedly can use 
-## notebook for this here:
+## now snap it to a high flow point
 ## https://github.com/mdbartos/pysheds/blob/master/examples/snap_to_mask.ipynb
-
-grid.clip_to('dem')
-
-grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
 
 aa = grid.snap_to_mask(grid.acc > 50, np.array([X,Y]), return_dist=False)
 
+## these should be the main watershed of the study area (the Rio Los 
+## Cedros watershed)
+
 grid.catchment(data='dir', x=aa[0], y=aa[1], out_name='catch',
                    recursionlimit=15000, xytype='label')
+
 grid.clip_to('catch')
+
 plt.close('all')
 plt.imshow(grid.view('dem'), extent=grid.catch.extent)
+
+plt.imshow(grid.view('acc'), extent=grid.catch.extent)
+
 ## that works a lot better. finally. 
 
+## can that be exported as a polygon?
+
+help(grid.polygonize)
+
+shapes = grid.polygonize()
+lsh = list(shapes)
+
+pprint.pprint(lsh[0])
+
+
+## looks like just one polygon, must be the outline?
+
+## can we plot it?
+
+fig, ax = plt.subplots()
+
+plt.plot(lsh[0][0]['coordinates'])
+
+## meh, think we're going to have use shapely and geopandas
+
+## can geopandas read this?
+
+help(shapely.geometry.polygon.Polygon)
+
+type(lsh[0][0])
+
+## it's buried pretty deep in there:
+
+len(lsh[0][0]['coordinates'][0])
+
+pprint.pprint(lsh[0][0]['coordinates'][0])
+
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+
+plt.close('all')
+## make a prettier version to look at?:
+bb = aa.buffer(100)
+p = gpd.GeoSeries(aa)
+p2 = gpd.GeoSeries(bb)
+fig, axes = plt.subplots(1,2)
+p.plot(ax=axes[0])
+p2.plot(ax=axes[1])
+
+## just using fiona fucks up the geojson, it is strict 
+## about only allowing WGS84, I want UTM17S
+
+## so, maybe we use geopandas?
+
+p = p.set_crs('EPSG:32717')
+p.to_file("./GIS/rioLCwatershed.geojson", driver='GeoJSON')
+
+## yup, good old geopandas found a way, geojson with 
+## UTM17S. I love that package.
+
+aa = grid.snap_to_mask(grid.acc > 50, np.array([X,Y]), return_dist=False)
+
+## condense the above pipeline, for jupyter:
+
+## what do we want? We want the two watersheds combined, and then divide
+## them in catchments of equal size that can test our hypothesis that 
+## plant communities are different in each small watershed.
+
+##### draw rivers #####
 branches = grid.extract_river_network('catch', 'acc')
 
 for branch in branches['features']:
     line = np.asarray(branch['geometry']['coordinates'])
     plt.plot(line[:, 0], line[:, 1])
-
 
 
