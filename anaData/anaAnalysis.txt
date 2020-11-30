@@ -8244,15 +8244,14 @@ aa = ('asdf'
 
 ############## tutorial ###################
 ## let's try the example data for a bit:
+## https://www.hatarilabs.com/ih-en/elevation-model-conditioning-and-stream-network-delimitation-with-python-and-pysheds-tutorial
 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import geopandas as gpd
 import pandas as pd
-
 import pyproj
-
 from pysheds.grid import Grid
 import mplleaflet
 import copy
@@ -8261,13 +8260,30 @@ import rasterio.plot
 import pprint
 import fiona
 import shapely
+import pickle
 plt.ion()
 
-pathSD = ('/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/'
-'ElevationModelConditioningandStreamNetwork'
-'DelimitationwithPythonandPysheds/Rst/20190109125130_1063922483.tif')
-
-grid = Grid.from_raster(pathSD, data_name='dem')
+### toybox for pickle error ###
+#from pysheds.grid import Grid
+#import pickle
+#
+#pathSD = ('/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/'
+#'ElevationModelConditioningandStreamNetwork'
+#'DelimitationwithPythonandPysheds/Rst/20190109125130_1063922483.tif')
+#
+#grid = Grid.from_raster(pathSD, data_name='dem')
+#
+### play around with pickle:
+#
+#pickle.dump(grid, open("testPicklePyshed.p", "wb"))
+#
+#grid2 = pickle.load(open('testPicklePyshed.p', 'rb'))
+#
+#grid.view('dem')
+#
+#grid2.view('dem')
+#
+### end toybox ###
 
 #Define a function to plot the digital elevation model 
 def plotFigure(data, label, cmap='Blues'):
@@ -8292,6 +8308,7 @@ plt.imshow(depressions)
 
 # Fill depressions
 grid.fill_depressions(data='dem', out_name='flooded_dem')
+
 # Test result
 depressions = grid.detect_depressions('flooded_dem')
 plt.imshow(depressions)
@@ -8334,6 +8351,7 @@ grid.clip_to('catch')
 demView = grid.view('dem', nodata=np.nan)
 
 plotFigure(demView,'Elevation')
+
 
 ## works perfectly...of course...
 ## so the perennial question, what's wrong with my data?
@@ -8845,13 +8863,10 @@ grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
 ## use rasterio and take a look, and pick some spots interactively
 
 fig, ax = plt.subplots()
-
 bigAstRast = rasterio.open(bigAstpath)
 bigAstFlow = rasterio.open('/home/daniel/Documents/analyses/bigfiles/anaBigFiles/losCedFullTileFlow.asc')
-
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
 hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
-
 plt.close('all')
 rasterio.plot.show(bigAstFlow)
 lcPoly.boundary.plot(color='red', linewidth=3, ax=plt.gca())
@@ -8945,11 +8960,139 @@ aa = grid.snap_to_mask(grid.acc > 50, np.array([X,Y]), return_dist=False)
 ## them in catchments of equal size that can test our hypothesis that 
 ## plant communities are different in each small watershed.
 
+## 1) get the other watershed, make sure we can do this and that it makes sense.
+
+## 2) develop a method for getting +/- equal k-watersheds. 
+
+## 3) Find the K that makes sense, given sample locations
+
+## 4) conduct turnover analysis
+
+### rio magdalena chico delineation: ###
+
+## as above
+fig, ax = plt.subplots()
+bigAstRast = rasterio.open(bigAstpath)
+bigAstFlow = rasterio.open('/home/daniel/Documents/analyses/bigfiles/anaBigFiles/losCedFullTileFlow.asc')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+plt.close('all')
+rasterio.plot.show(bigAstFlow)
+lcPoly.boundary.plot(color='red', linewidth=3, ax=plt.gca())
+hydro.plot(color='Blue', ax=plt.gca())
+
+X,Y = plt.ginput(1)[0]
+
+snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([X,Y]), return_dist=False)
+grid.clip_to('dem')
+grid.catchment(data='dir', x=snapX, y=snapY, out_name='RMCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.clip_to('RMCcatch')
+
+plt.close('all')
+plt.imshow(grid.view('dem'), extent=grid.RMCcatch.extent)
+
+shapes = grid.polygonize()
+lsh = list(shapes)
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+
+p.plot() ## looks right
+p.to_file("./GIS/rioMagChicWatershed.geojson", driver='GeoJSON')
+
+### end RMC delineation ###
+
+## now what?
+
+## let's back up a bit. We are going to need to be careful about labeling, etc,
+## so "catch" has got to go...
+
+gridPath="/home/daniel/Documents/analyses/bigfiles/anaBigFiles/asterFlowAccum.p"
+grid = pickle.load(open(gridPath, "rb"))
+
+## rerun our RLC and RMC delineations with more appropriate names
+
+## in both cases, let's use coordinates that put the pourpoints
+## at the border of the reserve
+
+## having some issues with unpickling...
+
+grid = pickle.load(open(gridPath, "rb"))
+
+## looks okay...but now some features don't work...
+
+plt.imshow(grid.view('dem'), extent=grid.dem.extent)
+
+aa = grid.view('dem')
+
+aa = grid.clip_to('dem')
+
+## meh. if we can't pickle, and the ascii grid and 
+## tif outfile formats aren't working well for me, 
+## wtf do I do? Just rerun the same computer-crashing
+## analysis everytime I work on this?
+
+## I think we have to cut the tile down to a smaller 
+## size. 
+
+## best way to do this? In or out of pysheds?
+## as above
+
+## find a good chunk of the tile to use 
+
+bigAstpath = "/home/daniel/Documents/LosCed/Ecuador_GIS/losced/ASTGTM2_N00W079/ASTGTM2_N00W079_dem_UTM17S.tif"
+fig, ax = plt.subplots()
+bigAstRast = rasterio.open(bigAstpath)
+
+bigAstFlow = rasterio.open('/home/daniel/Documents/analyses/bigfiles/anaBigFiles/losCedFullTileFlow.asc')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+
+plt.close('all')
+#rasterio.plot.show(bigAstFlow)
+rasterio.plot.show(bigAstRast)
+lcPoly.boundary.plot(color='red', linewidth=3, ax=plt.gca())
+hydro.plot(color='Blue', ax=plt.gca())
+
+## we'll take the southwest corner: 
+
+neCorner = plt.ginput(1)
+
+## the southwest corner is the SW corner
+## of the bounding box of the tile:
+
+dir(bigAstRast.bounds)
+
+bigAstRast.bounds.left
+bigAstRast.bounds.bottom
+
+722546.2651 
+
+9999984.6274
+
+## so our points are
+
+766393.3839281744, 10057694.120238958
+
+## and in the command line version of Rasterio:
+#rio clip input.tif output.tif --bounds xmin ymin xmax ymax
+
+rio clip LosCedAster.tif test.tif --bounds "722546 9999985 766393 10057694" 
+
+astTile="/home/daniel/Documents/LosCed/Ecuador_GIS/losced/ASTGTM2_N00W079/ASTGTM2_N00W079_dem_UTM17S.tif"
+
 ##### draw rivers #####
+
+## seems like an essential step here is get the main 
+## stream/river areas. These can then be walked up 
+## to find the small catchments, I think.
+
 branches = grid.extract_river_network('catch', 'acc')
 
 for branch in branches['features']:
     line = np.asarray(branch['geometry']['coordinates'])
     plt.plot(line[:, 0], line[:, 1])
+
 
 
