@@ -9078,21 +9078,318 @@ bigAstRast.bounds.bottom
 ## and in the command line version of Rasterio:
 #rio clip input.tif output.tif --bounds xmin ymin xmax ymax
 
-rio clip LosCedAster.tif test.tif --bounds "722546 9999985 766393 10057694" 
-
 astTile="/home/daniel/Documents/LosCed/Ecuador_GIS/losced/ASTGTM2_N00W079/ASTGTM2_N00W079_dem_UTM17S.tif"
 
-##### draw rivers #####
+rio clip $astTile GIS/smallAster.tif --bounds "722546 9999985 766393 10057694" 
+
+
+## try the above pipelines for this 
+
+## plot with Rasterio for finding the pour points
+smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
+plt.close('all')
+smallAstRast = rasterio.open(smallAstpath)
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+rasterio.plot.show(smallAstRast)
+lcPoly.boundary.plot(color='red', linewidth=3, ax=plt.gca())
+hydro.plot(color='Blue', ax=plt.gca())
+
+## build grid
+grid = Grid.from_raster(smallAstpath, data_name='dem')
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap) 
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
+
+### get RLC polygons ###
+## for the LC watershed, this was the pourpoint
+X, Y = (748696, 10032703) ## handpicked, not actual points
+grid.clip_to('dem')
+snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([X,Y]), return_dist=False)
+snapX, snapY ## (749325.889708213, 10032267.125889309), actual points
+## label the catchment particularly this time 
+grid.catchment(data='dir', x=snapX, y=snapY, out_name='RLCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.clip_to('RLCcatch')
+shapes = grid.polygonize()
+lsh = list(shapes)
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+#p.to_file("./GIS/rioLCwatershed.geojson", driver='GeoJSON')
+
+
+### get RMC polygons ###
+
+handX, handY = plt.ginput(1)[0]
+
+grid.clip_to('dem')
+
+handX, handY ## (748748.2402529713, 10032948.871108945)
+snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([handX,handY]), return_dist=False)
+snapX, snapY ## (748769.2693352941, 10032974.829728188), actual points
+## label the catchment particularly this time 
+grid.catchment(data='dir', x=snapX, y=snapY, out_name='RMCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.clip_to('RMCcatch')
+shapes = grid.polygonize()
+lsh = list(shapes)
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+#p.to_file("./GIS/rioMCwatershed.geojson", driver='GeoJSON')
+
+## fine, now what? 
+
+## how to do we find k=ten watersheds of equal size?
+
+##### play with rivers #####
 
 ## seems like an essential step here is get the main 
 ## stream/river areas. These can then be walked up 
 ## to find the small catchments, I think.
 
-branches = grid.extract_river_network('catch', 'acc')
-
+grid.clip_to('RLCcatch')
+branches = grid.extract_river_network('RLCcatch', 'acc', threshold=50)
+fig, ax = plt.subplots()
 for branch in branches['features']:
     line = np.asarray(branch['geometry']['coordinates'])
     plt.plot(line[:, 0], line[:, 1])
 
+## neat. how do we get the pourpoint and the area of catchment from one of these?
 
+## to get one branch:
+aa = branches['features'][0]['geometry']['coordinates']
+bb = np.asarray(aa)
+fig, ax = plt.subplots()
+plt.plot(bb[:, 0], bb[:, 1])
+
+## how do we use these geo coords to look up the accumulations?
+## how does the snap function do it?
+
+less /usr/local/lib/python3.8/dist-packages/pysheds/grid.py
+
+## doesn't seem to be very complicated...but not sure how that
+## works. I think that the function uses the affine to go between 
+## the numpy array and 
+
+snapX, snapY
+
+aa = grid.view('acc')
+
+## not sure where they make the conversion between 
+
+help(grid.acc)
+
+## this is what we need:
+
+grid.nearest_cell(snapX, snapY)
+
+## seems like the way to get the total 
+## accumulation for a catchment is to 
+## clip to it, get a view of the clipped
+## accumulation grid, and take the max value:
+
+grid.clip_to('RLCcatch')
+gva = grid.view("acc")
+drainage = gva.max()
+drainage
+
+grid.clip_to('RMCcatch')
+gva = grid.view("acc")
+drainage = gva.max()
+drainage
+
+def getAcc(gr, catchment):
+    gr.clip_to(catchment)
+    gva = gr.view("acc")
+    drainage = gva.max()
+    grid.clip_to('dem')
+    return(drainage)
+
+getAcc(grid, "RMCcatch")
+getAcc(grid, "RLCcatch")
+
+
+
+## just checking, where is this pourpoint? Should be the southeast point 
+## of LC, but good to check:
+
+grid.clip_to('RMCcatch')
+gva = grid.view("acc")
+drainage = gva.max()
+drainage
+maxAc = np.where(gva == gva.max())
+yy = maxAc[0].item(0)
+xx = maxAc[1].item(0)
+
+fig, ax = plt.subplots()
+RMCdem = grid.view("dem")
+plt.imshow(RMCdem)
+## possible pourpoint here:
+ax.plot(xx, yy, 'bo', markersize=10)
+
+## we've also found our two watershed accumulations:
+
+getAcc(grid, "RMCcatch") ## 11576
+getAcc(grid, "RLCcatch") ## 15836
+## these are the number of cells (30x30m2 each) that drain 
+## into these pour points. 
+
+getAcc(grid, "RMCcatch") + getAcc(grid, "RLCcatch") ## 27412 cells in both watershed
+
+getAcc(grid, "RMCcatch") / (getAcc(grid, "RMCcatch") + getAcc(grid, "RLCcatch"))
+## Rio Magdalena takes up 42% of their combined area, 
+
+getAcc(grid, "RLCcatch") / (getAcc(grid, "RMCcatch") + getAcc(grid, "RLCcatch"))
+## Rio Magdalena takes up 58% of their combined area
+
+## so, works. If we want to go through all of the branch 
+## points on our rivers and check their catchment size?
+
+dir(maxAc[0])
+
+grid.clip_to('RLCcatch')
+
+plt.imshow(grid.view('dem'), extent=grid.dem.extent)
+
+#branches = grid.extract_river_network('RLCcatch', 'acc', threshold=50)
+## extract_river_network defaults to a catchment size of 100, try this 
+
+grid.clip_to('RLCcatch')
+RLCcatchview = grid.view('RLCcatch')
+RLCdemview = grid.view('dem')
+RLCcatchview.extent ## this is the extent we need.
+RLCdemview.extent ## this is the extent we need.
+## I think this just means you have to make a view 
+## even after clipping, to get your true extent for 
+## a sub-watershed...
+
+grid.dem.extent
+
+
+dir(RLCview)
+
+branches = grid.extract_river_network('RLCcatch', 'acc', threshold=50)
+
+help(grid.extract_river_network)
+
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+ax.imshow(
+
+## don't know why I can't lay the dem raster on this
+
+## river layer extent: 744000 - 749000
+## RLC extent:         722546 - 766426
+
+## why is the river layer so small?
+
+## our branch points should be the ends/beginnings of these lines. How to extract?
+
+branches[0]['geometry']['coordinates'][0] ## first point on a line
+
+branches[0]['geometry']['coordinates'][-1] ## last point on a line
+
+X,Y = branches[0]['geometry']['coordinates'][0] ## first point on a line
+
+X,Y = branches[0]['geometry']['coordinates'][-1] ## last point on a line
+
+## function to get the catchment size for each point
+
+def getCatchSize(x,y,grid,watershed, out='tempCatch'):
+    grid.clip_to(watershed)
+    grid.catchment(data='dir', x=x, y=y, out_name=out,
+                       recursionlimit=15000, xytype='label')
+    grid.clip_to(out)
+    catchsize = grid.view(out).size
+    grid.clip_to('dem')
+    delattr(grid, out)
+    return(catchsize)
+
+def plotEndpoints(num, ax=plt.gca()):
+    X1,Y1 = branches[num]['geometry']['coordinates'][0] ## first point in list
+    X2,Y2 = branches[num]['geometry']['coordinates'][-1] ## last point in list
+    ax.plot(X1,Y1, 'bo', markersize=10)
+    ax.plot(X2,Y2, 'ro', markersize=10)
+
+## so this works for plotting the rivers over the watershed:
+
+grid.clip_to('RLCcatch')
+fig, ax = plt.subplots()
+plt.imshow(grid.view('dem'), extent=grid.view('dem').extent)
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+
+plotEndpoints(-4, ax=ax)
+
+## seems like these line segments are actually listed lowest-elevation-to-highest?
+## meh, not so clean... so how do we "creep" up this to find our subwatersheds?
+
+## not sure I understand...check the tiny branch...
+
+handX, handY = plt.ginput(1)[0]
+
+snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([handX,handY]), return_dist=False)
+getCatchSize(snapX, snapY, grid, 'RLCcatch') 
+
+
+## maybe walking up the rivers isn't the right approach here.
+## Bartwell may have already solved a lot of the problem here simply 
+## by including a threshold size. We know the total number of pixels
+## pouring into our watershed:
+
+getAcc(grid, "RLCcatch") ## 15836
+
+## so if we six sub watersheds of roughly equal size, we should be able to 
+## set our threshhold to 15 836 / 6 :
+
+thresh = round( 15836 / 6)
+
+branches = grid.extract_river_network('RLCcatch', 'acc', threshold=thresh)
+
+branches = grid.extract_river_network('RLCcatch', 'acc', threshold=1000)
+
+branches = grid.extract_river_network('RLCcatch', 'acc', threshold=2000)
+
+branches = grid.extract_river_network('RLCcatch', 'acc', threshold=50)
+
+fig, ax = plt.subplots()
+
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+## is there a better way to plot this? can we make a geopanda object?
+
+dir(shapely.geometry.linestring)
+
+shapely.geometry.LineString(branches[0])
+
+aa = shapely.geometry.LineString(branches[0]['geometry']['coordinates'])
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+
+branches[0]['geometry']['coordinates']
+
+dir(shapely.geometry.multilinestring)
+
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+
+p.plot()
+
+
+ax, fig = plt.subplots()
 
