@@ -9373,7 +9373,12 @@ dir(shapely.geometry.linestring)
 
 shapely.geometry.LineString(branches[0])
 
+grid.clip_to('RLCcatch')
+shapes = grid.polygonize()
+lsh = list(shapes)
+
 aa = shapely.geometry.LineString(branches[0]['geometry']['coordinates'])
+
 p = gpd.GeoSeries(aa)
 p = p.set_crs('EPSG:32717')
 
@@ -9381,7 +9386,7 @@ branches[0]['geometry']['coordinates']
 
 dir(shapely.geometry.multilinestring)
 
-aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+lsh[0][0]['coordinates'][0]
 
 aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
 
@@ -9393,3 +9398,158 @@ p.plot()
 
 ax, fig = plt.subplots()
 
+### start watersheds over, think about problem ###
+
+## let's condense the above, and start over. 
+
+import numpy as np
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import pandas as pd
+import pyproj
+from pysheds.grid import Grid
+import copy
+import rasterio
+import rasterio.plot
+import pprint
+import shapely
+import geojson
+plt.ion()
+
+## get our dem as a grid object for pysheds
+smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
+grid = Grid.from_raster(smallAstpath, data_name='dem')
+## clean it up as per recommendations by pyshed.
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+## make our flowdir and accumulation 
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
+
+XL, YL = (748696, 10032712) ## Rio Los Cedros
+XM, YM = (748696, 10032942) ## Rio Magdalena Chico
+snapXL, snapYL = grid.snap_to_mask(grid.acc > 50, np.array([XL,YL]), return_dist=False)
+snapXM, snapYM = grid.snap_to_mask(grid.acc > 50, np.array([XM,YM]), return_dist=False)
+grid.clip_to('dem')
+grid.catchment(data='dir', x=snapXL, y=snapYL, out_name='RLCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.catchment(data='dir', x=snapXM, y=snapYM, out_name='RMCcatch',
+                   recursionlimit=15000, xytype='label')
+
+## plot two watersheds we have so far:
+rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
+rioMCWatershedPoly = gpd.read_file('GIS/rioMCwatershed.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+smallAstRast = rasterio.open(smallAstpath)
+alpha = {'alpha':0.5}
+fig, ax = plt.subplots(figsize=(10,10))
+lcPoly.boundary.plot(color='red', linewidth=3, ax=ax)
+rioLCWatershedPoly.boundary.plot(ax=ax, color='Green', linewidth= 4)
+rioLCWatershedPoly.plot(ax=ax, color='Green', **alpha)
+rioMCWatershedPoly.boundary.plot(ax=ax, color='purple', linewidth= 4)
+rioMCWatershedPoly.plot(ax=ax, color='Purple', **alpha)
+rasterio.plot.show(smallAstRast, ax=ax)
+hydro.plot(color='Blue', ax=ax)
+ax.set_xlim(lcPoly.bounds.iloc[0,0], lcPoly.bounds.iloc[0,2]+1000)
+ax.set_ylim(lcPoly.bounds.iloc[0,1]-300, lcPoly.bounds.iloc[0,3])
+
+
+
+grid.clip_to('RMCcatch') ## there it is. Clipping to the 
+## subwatershed seems to be important...
+branches = grid.extract_river_network('RMCcatch', 'acc')
+
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+
+grid.clip_to('RLCcatch') 
+branches = grid.extract_river_network('RLCcatch', 'acc')
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+## yup, fixed it. 
+
+## these can go to geopanda objects, too:
+
+branches = grid.extract_river_network('RLCcatch', 'acc')
+
+aa = shapely.geometry.LineString(branches[0]['geometry']['coordinates'])
+
+## how do we iterate over the geojson and make shapely out of each
+## feature?
+
+## how about:
+
+grid.clip_to('RLCcatch') 
+branches = grid.extract_river_network('RLCcatch', 'acc')
+listOfLSes = [ shapely.geometry.LineString(i['geometry']['coordinates']) for i in branches['features'] ]
+RLC_multistring = shapely.geometry.MultiLineString(listOfLSes)
+RLCgpd = gpd.GeoSeries(RLC_multistring)
+RLCgpd = RLCgpd.set_crs('EPSG:32717')
+#RLCgpd.to_file("./GIS/rioLCpredicted.geojson", driver='GeoJSON')
+
+grid.clip_to('RMCcatch') 
+branches = grid.extract_river_network('RMCcatch', 'acc')
+listOfLSes = [ shapely.geometry.LineString(i['geometry']['coordinates']) for i in branches['features'] ]
+RMC_multistring = shapely.geometry.MultiLineString(listOfLSes)
+RMCgpd = gpd.GeoSeries(RMC_multistring)
+RMCgpd = RMCgpd.set_crs('EPSG:32717')
+#RMCgpd.to_file("./GIS/rioMCpredicted.geojson", driver='GeoJSON')
+
+RLCgpd.bounds
+
+streamsClippedRLC = gpd.clip(hydro, RLCgpd.boundary)
+
+RLCgpd.boundary
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+streamsClippedRLC.plot(ax=ax)
+
+RLCgpd.plot(ax=ax)
+
+RLCgpd.boundary
+
+streamsClippedRMC = gpd.clip(hydro, RMCgpd)
+
+
+fig, ax = plt.subplots(1,2, figsize=(10,5))
+## RLC
+RLCgpd.plot(color='Black', ax=ax[0])
+hydro.plot(color='Blue', ax=ax[0])
+ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+## RMC
+RMCgpd.plot(color='Black', ax=ax[1])
+hydro.plot(color='Blue', ax=ax[1])
+ax[1].set_xlim(RMCgpd.bounds.minx[0],RMCgpd.bounds.maxx[0])
+ax[1].set_ylim(RMCgpd.bounds.miny[0],RMCgpd.bounds.maxy[0])
+
+RLCgpd.bounds
+
+RLCgpd.boundary
+
+dir(RLCgpd)
+
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+
+RLCgpd.plot(color = 'black', ax=ax[0])
+
+hydro.plot(color='Blue', ax=ax[0])
+
+#streamStyleI = {'linewidth':3, 'linestyle':':'}
+
+aa = shapely.geometry.MultiLineString(branches)
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+
+## what do we want to do? Need a break...
+
+## diagram the differences between the two 
