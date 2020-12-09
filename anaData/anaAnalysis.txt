@@ -9404,6 +9404,8 @@ ax, fig = plt.subplots()
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import random
 import geopandas as gpd
 import pandas as pd
 import pyproj
@@ -9415,6 +9417,17 @@ import pprint
 import shapely
 import geojson
 plt.ion()
+
+### data for plots ###
+rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
+rioMCWatershedPoly = gpd.read_file('GIS/rioMCwatershed.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+smallAstRast = rasterio.open(smallAstpath)
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
+RLCgpd = gpd.read_file("./GIS/rioLCpredicted.geojson")
+RMCgpd = gpd.read_file("./GIS/rioMCpredicted.geojson")
+##---------------##
 
 ## get our dem as a grid object for pysheds
 smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
@@ -9458,7 +9471,7 @@ ax.set_ylim(lcPoly.bounds.iloc[0,1]-300, lcPoly.bounds.iloc[0,3])
 
 
 grid.clip_to('RMCcatch') ## there it is. Clipping to the 
-## subwatershed seems to be important...
+## subwatershed seems to be very necessary...
 branches = grid.extract_river_network('RMCcatch', 'acc')
 
 fig, ax = plt.subplots()
@@ -9526,30 +9539,243 @@ RLCgpd.plot(color='Black', ax=ax[0])
 hydro.plot(color='Blue', ax=ax[0])
 ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
 ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+circCent = (745145, 10034629)
+circ = plt.Circle(circCent, radius=300, alpha=0.5, color='red')
+ax[0].add_artist(circ)
 ## RMC
 RMCgpd.plot(color='Black', ax=ax[1])
 hydro.plot(color='Blue', ax=ax[1])
 ax[1].set_xlim(RMCgpd.bounds.minx[0],RMCgpd.bounds.maxx[0])
 ax[1].set_ylim(RMCgpd.bounds.miny[0],RMCgpd.bounds.maxy[0])
 
-RLCgpd.bounds
+## so now what? we need to divy up watersheds in a way that make sense. 
 
-RLCgpd.boundary
+## put points on there, and start chopping up the watersheds
 
-dir(RLCgpd)
 
-hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
-
-RLCgpd.plot(color = 'black', ax=ax[0])
-
+RLCgpd.plot(color='Black', ax=ax[0])
 hydro.plot(color='Blue', ax=ax[0])
+ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
 
-#streamStyleI = {'linewidth':3, 'linestyle':':'}
+## if we want to divide up the watersheds along the primary 
+## tributories, how do we do this?
 
-aa = shapely.geometry.MultiLineString(branches)
+## the junctions must be the endpoints:
+
+def plotEndpoints(num, ax=plt.gca()):
+    X1,Y1 = branches[num]['geometry']['coordinates'][0] ## first point in list
+    X2,Y2 = branches[num]['geometry']['coordinates'][-1] ## last point in list
+    ax.plot(X1,Y1, 'bo', markersize=10)
+    ax.plot(X2,Y2, 'ro', markersize=10)
+
+## maybe the best thing to do is to define the largest branch,
+## and get the watersheds of the secondary tributaries 
+
+grid.clip_to('RLCcatch') 
+branches = grid.extract_river_network('RLCcatch', 'acc')
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+plotEndpoints(71, ax=ax)
+
+
+## let's see if we can clip away the upper watershed
+
+handX, handY = plt.ginput(1)[0]
+
+handX, handY ## (745877.5533121668, 10034590.348697523)
+
+snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([handX,handY]), return_dist=False)
+
+snapX, snapY ## (745862.474054495, 10034604.327270983)
+
+grid.catchment(data='dir', np.array(snapX, snapY), out_name='upperLC_Catch',
+                   recursionlimit=15000, xytype='label')
+
+grid.clip_to('upperLC_Catch')
+shapes = grid.polygonize()
+lsh = list(shapes)
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
 p = gpd.GeoSeries(aa)
 p = p.set_crs('EPSG:32717')
 
-## what do we want to do? Need a break...
+#p.to_file("./GIS/rioMCwatershed.geojson", driver='GeoJSON')
+## look at it
 
-## diagram the differences between the two 
+plt.close('all')
+rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
+fig, ax = plt.subplots()
+rioLCWatershedPoly.plot(ax=ax, color='red')
+RLCgpd.plot(color='Black', ax=ax)
+
+p.plot(ax=ax, color='blue')
+
+## goal is to define a matrix of watersheds across the extent of study,
+## roughly equal size
+
+## starting with RLC watershed, we need the main river stem. 
+
+## this is easily defined for the lower part of the water shed,
+## and we don't need the upper. Get the branches for that...
+
+## we can start by defining all the catchments of the primary 
+## tributaries on the lower RLC. I'll define the pourpoints manually
+
+## bring up plot of model and observed RLC:
+
+plt.close('all')
+fig, ax = plt.subplots()
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+lcPoly.plot(color='green', ax=ax, alpha=0.5)
+anaPt.plot(ax=ax, color='purple')
+ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+
+coords = plt.ginput(n=-1, timeout=0)
+
+## add a couple more
+coords.append(plt.ginput(n=-1, timeout=0))
+
+## get colorset to match
+
+
+coords_snapped = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+
+
+def getCatchGPD(grid, coords):
+    grid2 = copy.deepcopy(grid)
+    snapX, snapY = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+    grid2.catchment(y=snapY, x=snapX, data='dir', out_name=('littleCatch'),
+                       recursionlimit=15000, xytype='label')
+    grid2.clip_to('littleCatch')
+    shapes = grid2.polygonize()
+    lsh = list(shapes)
+    aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+    p = gpd.GeoSeries(aa)
+    p = p.set_crs('EPSG:32717')
+    return(p)
+
+## use this function to make a polygon-based geoseries of our catchments
+rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
+
+
+RLCCatchPolys = gpd.GeoSeries(rlccatchpolys, crs='EPSG:32717')
+
+## get plot colors
+Xcolors = [ random.choice(list(mcolors.XKCD_COLORS.values())) for i in range(len(coords)) ] 
+
+plt.close('all')
+
+## summary plot so far
+
+fig, ax = plt.subplots()
+RLCCatchPolys.plot(ax = ax, cmap='Dark2')
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+anaPt.plot(color='green', ax=ax)
+x, y = zip(*coords)
+ax.plot(x, y, "bo")
+ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+riverCorridor.plot(ax=ax, alpha=0.5) ## created below
+for i,_ in enumerate(RLCCatchPolys):
+    ax.text(coords[i][0], coords[i][1], str(i))
+
+RLCCatchPolys.area
+
+## actually, that is starting to look good...
+
+## a lot of error, though. how do we reconcile this? it starts to matter, if we are trying to
+## create polygons of roughly equal size...
+## seems like maybe the dem isn't meant for this local of a delineation.
+## it's what we got, go with it.
+
+### define main stem of RLC
+
+## our main stem up until the waterfall is pretty obvious. How do we extract this as some sort of 
+## geoseries?
+
+breakat = plt.ginput(n=1, timeout=0)
+breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+
+## get the main stem of the river by upping the accumumlation threshold
+grid.clip_to('RLCcatch') 
+branch = grid.extract_river_network('RLCcatch', 'acc', threshold=3000)
+line = np.asarray(branches['features'][0]['geometry']['coordinates'])
+## get rid of rows north of break point:
+masc = line[:,1] < breakat_snapped[1]
+lineSouth = line[masc,:]
+## make this into a geoseries
+shLine = shapely.geometry.LineString(lineSouth)
+mainRLC = gpd.GeoSeries(shLine)
+mainRLC = mainRLC.set_crs('EPSG:32717')
+
+#mainRLC.to_file('GIS/mainRLC.geojson', driver='GeoJSON')
+## buffer it 
+riverCorridor = mainRLC.buffer(200)
+
+
+## take intersection of buffer and tributaries as pourpoints
+
+## 
+
+## looks like trying to catch the small tributary south of the LC campus failed, just catches the next one over.  
+## if we go with the buffering plan, this little catchment will probably mostly get swallowed. 
+
+RLCgpd
+
+riverCorridor
+
+aa = RLCgpd.difference(riverCorridor)
+
+
+riverCorridor.geometry[0].boundary.coords
+
+dir(RLCgpd.geometry)
+
+len(RLCgpd.geometry[0])
+
+list(RLCgpd.geometry[0][0].coords)
+
+
+bb = RLCgpd.intersection(riverCorridor)
+
+## our intersection should have the points of intersection 
+## as the ends of the line segments, no?
+
+## just the first line segment
+bb.geometry[0][0].coords
+
+line = np.asarray(bb.geometry[0][0].coords)
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.plot(line[:, 0], line[:, 1], color='red')
+
+bb.plot(ax = ax)
+
+## okay, the endpoint of this should be a common
+## coordinate between both the line segment and the
+## buffered polygon:
+
+cc = list(bb[0][0].coords) ## our line segment coords, as x,y tuples
+
+dd = list(riverCorridor.geometry[0].boundary.coords) ## our river buffer, as x,y tuples
+
+plt.close('all')
+riverbuffoutline = np.asarray(dd)
+fig, ax = plt.subplots()
+ax.plot(riverbuffoutline[:, 0], riverbuffoutline[:, 1], color='red')
+
+[ i in dd for i in cc ] ## all false - no shared points?
+
+
+sum([ i in cc for i in dd ] ) ## also all false. 
+
+
+
+
