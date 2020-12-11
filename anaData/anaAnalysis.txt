@@ -9427,6 +9427,10 @@ smallAstRast = rasterio.open(smallAstpath)
 anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
 RLCgpd = gpd.read_file("./GIS/rioLCpredicted.geojson")
 RMCgpd = gpd.read_file("./GIS/rioMCpredicted.geojson")
+mainRLC = gpd.read_file("./GIS/mainRLC.geojson")
+mainRMC = gpd.read_file("./GIS/mainRMC.geojson")
+RLCCatchPolys = gpd.read_file('GIS/RLCCatchPolys.geojson')
+RMCCatchPolys = gpd.read_file('GIS/RMCCatchPolys.geojson')
 ##---------------##
 
 ## get our dem as a grid object for pysheds
@@ -9661,8 +9665,6 @@ def getCatchGPD(grid, coords):
 
 ## use this function to make a polygon-based geoseries of our catchments
 rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
-
-
 RLCCatchPolys = gpd.GeoSeries(rlccatchpolys, crs='EPSG:32717')
 
 ## get plot colors
@@ -9718,7 +9720,6 @@ mainRLC = mainRLC.set_crs('EPSG:32717')
 ## buffer it 
 riverCorridor = mainRLC.buffer(200)
 
-
 ## take intersection of buffer and tributaries as pourpoints
 
 ## 
@@ -9727,7 +9728,6 @@ riverCorridor = mainRLC.buffer(200)
 ## if we go with the buffering plan, this little catchment will probably mostly get swallowed. 
 
 RLCgpd
-
 riverCorridor
 
 aa = RLCgpd.difference(riverCorridor)
@@ -9740,7 +9740,6 @@ dir(RLCgpd.geometry)
 len(RLCgpd.geometry[0])
 
 list(RLCgpd.geometry[0][0].coords)
-
 
 bb = RLCgpd.intersection(riverCorridor)
 
@@ -9773,9 +9772,200 @@ ax.plot(riverbuffoutline[:, 0], riverbuffoutline[:, 1], color='red')
 
 [ i in dd for i in cc ] ## all false - no shared points?
 
-
 sum([ i in cc for i in dd ] ) ## also all false. 
 
+## so that method doesn't work. I am thinking about this wrong way.
 
+## how about the intersections between the boundary line string of the 
+## polygon and the river line segments? 
+
+plt.close('all')
+fig, ax = plt.subplots()
+RLCgpd.plot(ax=ax)
+riverCorridor.boundary.plot(ax=ax)
+
+dir(riverCorridor.boundary)
+
+aa = riverCorridor.boundary.intersection(RLCgpd)
+aa.plot(ax=ax, color='green', markersize=10)
+
+## much better. can we use these as the pour points for our catchments?
+## actually, I think we will want to river buffer polygons: one for 
+## the riparian zone around the river that we are calling its own watershed,
+## and another, tighter buffer that defines the pour points. 
+
+## so the tighter one, for pourpoints. Start with 50 m?  Might be too tight...let's see...
+
+pourPtsPoly = mainRLC.buffer(50)
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+RLCgpd.plot(ax=ax)
+
+pourPts = pourPtsPoly.boundary.intersection(RLCgpd)
+pourPts = pourPts.explode()
+pourPts.reset_index(inplace=True, drop=True)
+pourPts.plot(ax=ax, color='green', markersize=10)
+mainRLC.plot(ax=ax, color='purple')
+
+## use these as pourpoints, repeating the above pipeline.
+## we're going to need to break some of these catchments up
+## but for now, start with these
+
+
+## get plot colors
+Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=len(pourPts))
+cmap = mcolors.ListedColormap(Xcolors)
+
+## get our catchments as a geoseries, using getCatch function defined above,
+## and our new pourpoints:
+
+grid2 = copy.deepcopy(grid)
+
+coords2 = [ i.coords[0] for i in pourPts ]
+
+
+rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
+RLCCatchPolys2 = gpd.GeoSeries(rlccatchpolys2, crs='EPSG:32717')
+## looks like that works
+
+## do our summary plot again:
+
+gpd.read_file("./GIS/mainRMC.geojson")
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+RLCCatchPolys2.plot(ax = ax, cmap=cmap)
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+anaPt.plot(color='green', ax=ax)
+x, y = zip(*coords2)
+ax.plot(x, y, "bo")
+mainRLC.plot(ax=ax, color='purple', linewidth=5)
+
+ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+riverCorridor.plot(ax=ax, alpha=0.5) 
+for i,_ in enumerate(RLCCatchPolys):
+    ax.text(coords[i][0], coords[i][1], str(i))
+
+## looking better everytime...
+RLCCatchPolys.area
+
+## all watersheds are at least in the same area of 
+## magnitude, except the river corridor, which we
+## are going to chop up anyway. 
+
+## can we clean up the pipeline and repeat for the 
+## RMC watershed? 
+
+## take a break after that and write the humboldt,
+## then 
+
+## where to start... the notebook is up to the river 
+## extraction point for both RLC and RMC. 
+
+## get main stem of the river, both catchments:
+
+## RLC main stem, lower
+grid.clip_to('RLCcatch') 
+branch = grid.extract_river_network('RLCcatch', 'acc', threshold=3000)
+line = np.asarray(branch['features'][0]['geometry']['coordinates'])
+
+## get our most upstream point (for RLC, +/- at the old waterfall)
+fig, ax = plt.subplots()
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+#breakat = plt.ginput(n=1, timeout=0)
+breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+
+breakat_snapped ## 745893.39740855, 10033958.6773012
+
+masc = line[:,1] < breakat_snapped[1]
+lineSouth = line[masc,:]
+
+## make this into a geoseries
+shLine = shapely.geometry.LineString(lineSouth)
+mainRLC = gpd.GeoSeries(shLine)
+mainRLC = mainRLC.set_crs('EPSG:32717')
+
+## RMC main stem, lower
+
+## other than a large tributary to east that is outside
+## the study area
+
+plt.close('all')
+
+grid.clip_to('RMCcatch') 
+
+branch = grid.extract_river_network('RMCcatch', 'acc', threshold=3000)
+line = np.asarray(branch['features'][0]['geometry']['coordinates'])
+
+## get breakpoint
+fig, ax = plt.subplots()
+RMCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+
+breakat = plt.ginput(n=1, timeout=0)
+breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+
+breakat_snapped ## array([  746975.71480033, 10035711.15579062])
+
+masc = line[:,1] < breakat_snapped[1]
+lineSouth = line[masc,:]
+
+## make this into a geoseries
+
+shLine = shapely.geometry.LineString(lineSouth)
+
+mainRMC = gpd.GeoSeries(shLine)
+mainRMC = mainRMC.set_crs('EPSG:32717')
+
+mainRMC = gpd.read_file('GIS/mainRMC.geojson')
+
+## check tributaries for RMC, don't think there were many that
+## qualified:
+
+## pour point for each tributary:
+pourPtsPoly = mainRMC.buffer(50)
+
+fig, ax = plt.subplots()
+pourPtsPoly.plot(ax=ax)
+RMCgpd.plot(ax=ax, color='green')
+
+pourPts = pourPtsPoly.boundary.intersection(RMCgpd)
+pourPts = pourPts.explode()
+pourPts.reset_index(inplace=True, drop=True)
+
+## make subwatersheds:
+coords = [ i.coords[0] for i in pourPts ]
+grid.clip_to('dem')
+
+## this can be a little memory intensive:
+rmccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
+RMCCatchPolys = gpd.GeoSeries(rmccatchpolys, crs='EPSG:32717')
+RMCCatchPolys.to_file('GIS/RMCCatchPolys.geojson', driver='GeoJSON')
+
+def genXKCDColors(nu):
+    Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=nu)
+    cmap = mcolors.ListedColormap(Xcolors)
+    return(cmap)
+
+## look at the RMC subwatersheds
+
+rlcCorridor = mainRLC.buffer(200)
+rmcCorridor = mainRMC.buffer(200)
+
+fig, ax = plt.subplots()
+rlcCorridor.plot(ax=ax, alpha=0.5)
+rmcCorridor.plot(ax=ax, alpha=0.5)
+cmap=genXKCDColors(len(RMCCatchPolys)):
+RMCCatchPolys.plot(ax=ax, cmap=cmap)
+cmap=genXKCDColors(len(RLCCatchPolys)):
+RLCCatchPolys.plot(ax=ax, cmap=cmap)
+RMCgpd.plot(ax=ax)
+RLCgpd.plot(ax=ax)
 
 
