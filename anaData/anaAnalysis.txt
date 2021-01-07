@@ -9954,18 +9954,25 @@ def genXKCDColors(nu):
     return(cmap)
 
 ## look at the RMC subwatersheds
-
-rlcCorridor = mainRLC.buffer(200)
-rmcCorridor = mainRMC.buffer(200)
-
 fig, ax = plt.subplots()
-rlcCorridor.plot(ax=ax, alpha=0.5)
-rmcCorridor.plot(ax=ax, alpha=0.5)
-cmap=genXKCDColors(len(RMCCatchPolys)):
+cmap=genXKCDColors(len(RMCCatchPolys))
 RMCCatchPolys.plot(ax=ax, cmap=cmap)
-cmap=genXKCDColors(len(RLCCatchPolys)):
+cmap=genXKCDColors(len(RLCCatchPolys))
 RLCCatchPolys.plot(ax=ax, cmap=cmap)
 RMCgpd.plot(ax=ax)
 RLCgpd.plot(ax=ax)
 
+## do we need a corridor?
+rlcCorridor = mainRLC.buffer(200)
+rmcCorridor = mainRMC.buffer(200)
+rlcCorridor.plot(ax=ax, alpha=0.5)
+rmcCorridor.plot(ax=ax, alpha=0.5)
 
+## okay, so now what?
+
+## so, we want to be able to categorize the sample sites by water shed. 
+## as is, are all points are included in a watershed? 
+
+anaPt.plot(ax=ax, color='black') 
+
+## I think it is time to hand curate the watersheds
