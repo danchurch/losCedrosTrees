@@ -9646,9 +9646,7 @@ coords.append(plt.ginput(n=-1, timeout=0))
 
 ## get colorset to match
 
-
 coords_snapped = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
-
 
 def getCatchGPD(grid, coords):
     grid2 = copy.deepcopy(grid)
@@ -9968,11 +9966,259 @@ rmcCorridor = mainRMC.buffer(200)
 rlcCorridor.plot(ax=ax, alpha=0.5)
 rmcCorridor.plot(ax=ax, alpha=0.5)
 
+
+anaPt.plot(ax=ax, color='black') 
+
+##########################################
+
+## because there is no easy way to keep these pyshed objects
+## from session to session, so rebuild  
+
 ## okay, so now what?
 
 ## so, we want to be able to categorize the sample sites by water shed. 
 ## as is, are all points are included in a watershed? 
 
-anaPt.plot(ax=ax, color='black') 
-
 ## I think it is time to hand curate the watersheds
+
+## or not. Not sure how to split these large watersheds 
+
+## seems like we need some sort of system for declaring a new microwatershed.
+
+## first rule seems to be, if a flowing stream comes off the main stem, 
+
+## where did we make the calls for whether 
+
+smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
+grid = Grid.from_raster(smallAstpath, data_name='dem')
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
+XL, YL = (748696, 10032712) ## Rio Los Cedros
+XM, YM = (748696, 10032942) ## Rio Magdalena Chico
+snapXL, snapYL = grid.snap_to_mask(grid.acc > 50, np.array([XL,YL]), return_dist=False)
+snapXM, snapYM = grid.snap_to_mask(grid.acc > 50, np.array([XM,YM]), return_dist=False)
+grid.clip_to('dem')
+grid.catchment(data='dir', x=snapXL, y=snapYL, out_name='RLCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.catchment(data='dir', x=snapXM, y=snapYM, out_name='RMCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.clip_to('RLCcatch')
+branches = grid.extract_river_network('RLCcatch', 'acc')
+
+## looks like there is a default threshhold of 100 cells, which 
+## how do we use this to find our flow accumulation, it fit our 
+## observed rivers pretty well. 
+
+## but what now? play around with splitting the water sheds, find out 
+## what our "ideal" size might be, and be consistent
+
+## so what we want here is a point and click function to get relative 
+## size of 
+
+## bring up our river system as is, and funnel clicks through a cell calculator
+
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+## we need to be able pick a point with a mouse, and make a catchment
+
+## we have the above function getCatchGPD, can we raise it from the dead for a
+## moment 
+
+## what did it do? 
+
+## takes the grid object, a set of coords, spit out a geoseries with a polygon for 
+## a sub-watershed  
+
+## for instance:
+
+#grid.clip_to('dem')
+
+grid.clip_to('RLCcatch')
+
+grid.size
+
+grid.shape
+
+coords = [748696, 10032712] ## Rio Los Cedros
+aa = getCatchGPD(grid, coords)
+
+aa.area 
+## this agrees with the qgis area calculations...
+
+grid.cellsize
+## this sort of makes sense, I think the pixels from the dem are 
+## 30m on a side. 
+
+grid.size
+
+aa.area / grid.cellsize**2
+
+## that doesn't make sense to me, the grid size and 
+
+## anyway, we can use the area output as our metric for 
+## splitting, but we need to think in terms of these 
+## actual areas, a bit far from the pysheds. 
+
+## I think we need a max cutoff. We have a min, sort of,
+## in that tributary that touches the main rivers as observed on our topo
+## is given its own watershed. But we need a max size, for the 
+## stream complexes, to define our neighborhoods and get our 
+## adjaceny
+
+## how can we make this useful for splitting up the watersheds? 
+## make it report the number of cells, can this be 
+## held as info in the geoseries?
+
+## hmm, looks like we're going to have to make a geopanda? this could mess up our previous code...
+## so let's not mess with  getCatchGPD()
+## just build something else with it. 
+
+## combine our catchements 
+
+catches = 
+
+RLCCatchPolys
+
+RMCCatchPolys
+
+aa = pd.concat([RLCCatchPolys,RMCCatchPolys])
+aa.reset_index(inplace=True, drop=True)
+
+## and what do we want here? to detect which are above a certain 
+## threshold?
+
+## this would really be better done in pysheds, in terms of cells
+
+## maybe a new function, that generates pyshed grid objects on the fly,
+## that we check for size 
+
+## basically break this function up a little:
+
+## make a duplicate grid with the sub catchment
+def makeCheckCatches(grid, coords):
+    grid2 = copy.deepcopy(grid)
+    snapX, snapY = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+    grid2.catchment(y=snapY, x=snapX, data='dir', out_name=('littleCatch'),
+                       recursionlimit=15000, xytype='label')
+    grid2.clip_to('littleCatch')
+    return(grid2)
+
+## create geopandas series from this
+def makegeo(grid, catchname='littleCatch'):
+    grid.clip_to(catchname)
+    shapes = grid.polygonize()
+    lsh = list(shapes)
+    aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+    p = gpd.GeoSeries(aa)
+    p = p.set_crs('EPSG:32717')
+    return(p)
+
+## get coords of a matplot map
+def getCoordClick():
+    return(list(plt.ginput(1)[0]))
+
+## try these out:
+
+## plot figure first 
+
+RLCgpd.plot()
+
+coords = getCoordClick()
+
+
+aa = makeCheckCatches(grid, coords)
+bb = makegeo(aa)
+
+## 
+fig, ax = plt.subplots()
+bb.plot(ax=ax)
+
+## this should create a grid object with view already set to sub watershed of 
+## interest
+
+## so we need to pick a threshold max size, and any of the subcuencas that exceeds it, 
+## we need to break up into smaller watersheds.  
+
+## our existing watersheds are:
+
+fig, ax = plt.subplots()
+autoCuencas = (pd.concat([RLCCatchPolys,RMCCatchPolys]).
+                reset_index(drop=True))
+colmap = genXKCDColors(autoCuencas.shape[0])
+autoCuencas.plot(ax=ax, cmap=colmap)
+
+
+## ugh. when is a watershed "adjacent"? 
+## seems like when they share a ridgeline. 
+## what is causing the problems here are the rivers. 
+## cuencas that are on the same side are obvious.
+## but the central, shared riparian areas cause all the 
+## confusion. If you treat the river margins are a single
+## continuous watershed, it unites all the subcuencas so 
+## are all just two steps away from each other.
+## if you break it up, it is highly subjective and/over
+## inflates the steps between water sheds. 
+## eliminating it (bring all the subwatersheds into 
+## continuity with no river buffer) also sometimes 
+## unites watersheds that are otherwise distance to 
+## each other. 
+## the basic hypothesis is that dispersal across watersheds
+## can be difficult. 
+## comes back to a max size cutoff, because I think the 
+## best solution here is generate a river buffer and then divide 
+## up evenly to max polygon size chunks.  
+
+## so what is a good max?
+
+## our golden area is the south, where the watersheds are +/- regularly spaced 
+## and sized. Can we get an average size from these?
+ 
+## I think when we get these, we'll just need the shapely polygon.touches method to make an 
+## adjacency matrix
+
+## here's a draft set of rules:
+
+## base set of watershed polygons are set as in the notebook:
+
+## 0. a model of the los cedros rivers was generated using the pysheds package.
+## from this model, 
+
+## 1. initially every tributary that directly enters the Rio Los Cedros
+## and Rio Magdalena Chico from the south/west side gets its own watershed,
+## within a small buffer of the 
+
+## 2. we only go as far as the waterfalls, roughly. Meaning that for now the 
+## watersheds of the upper los cedros are left alone. They are too big, but 
+## it doesn't matter because, only their lower regions are important for the 
+## the study.
+
+## 3. these predicted watersheds are hand-curated, to match observed actual river 
+## topology. There were some errors in the predicted river flows.
+
+## 3. where significant sub-watersheds remain hidden,  we creep up
+## the buffer size from the stream to split them. As in, the first candidate 
+## for splitting is from the "bottom-up" of a stream. The first, and only,
+## splitting event of this type occurred by increasing the river buffer from 
+## 50m to 200m, resulting in a new sub-watershed in the north central portion of 
+## the RLC watershed
+
+## 4. We try to eliminate the river buffer, as in it does not get its own 
+## watershed status, and other watersheds are expanded within reason to the 
+## river. This is to bring watersheds that are directly across from each other
+## on the rivers. But this is not forced beyond a reasonable extent, 
+## such that we do not attempt to cover all surface area of the map, there
+## are blank areas allowed that do not belong to any watershed. Technically
+## these are tiny microcuencas that feed directly into the river. 
+
+## Also, some of these microcuencas areas are included in adjacent sub-watersheds 
+## of which they are not technically tributaries. I think? Did I do this?
+
+## the magdalena chico is really tough. It is one long strip of really steep mountainside,
+## with a few small streams. There are some large flats that are pasture, and 
+## 
