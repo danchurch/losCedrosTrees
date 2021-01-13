@@ -9416,6 +9416,7 @@ import rasterio.plot
 import pprint
 import shapely
 import geojson
+from shapely.validation import explain_validity
 plt.ion()
 
 ### data for plots ###
@@ -9431,6 +9432,7 @@ mainRLC = gpd.read_file("./GIS/mainRLC.geojson")
 mainRMC = gpd.read_file("./GIS/mainRMC.geojson")
 RLCCatchPolys = gpd.read_file('GIS/RLCCatchPolys.geojson')
 RMCCatchPolys = gpd.read_file('GIS/RMCCatchPolys.geojson')
+curatedMicrocuencas = gpd.read_file('GIS/losCedcatchpolys_subjective_closed.geojson')
 ##---------------##
 
 ## get our dem as a grid object for pysheds
@@ -10220,5 +10222,158 @@ autoCuencas.plot(ax=ax, cmap=colmap)
 ## of which they are not technically tributaries. I think? Did I do this?
 
 ## the magdalena chico is really tough. It is one long strip of really steep mountainside,
-## with a few small streams. There are some large flats that are pasture, and 
-## 
+## with a few small streams. There are some large flats that are pasture, and some 
+## really steep hillsides. If we consider it one continuous watershed, this 
+## seems incongruous with our microcuencas carved from the RLC...
+
+## not sure. for the moment, I have basically considered the RMC a single
+## watershed, but broken it apart at an especially steep cliff. I also took the 
+## liberty of including the points in the southeast portion of Ana's study, 
+## even though they are across the RMC. Some inconsistencies, but I think they
+## are in the spirit of testing the general idea that it is hard to get around
+## in the tropical Andes, slowing dispersal. 
+
+########## adjacency matrix for watersheds ############
+
+## and now, it looks like we need to get an adjacency matrix. I don't see a ready
+## made function or package for this in my usual libraries. Shouldn't be too 
+## hard to code with shapely or geopandas...famous last words...
+
+curatedMicrocuencas.plot()
+
+aa = gpd.GeoSeries(curatedMicrocuencas.iloc[0])
+bb = gpd.GeoSeries(curatedMicrocuencas.iloc[1])
+
+fig, ax = plt.subplots()
+aa.plot(ax=ax, color='blue')
+bb.plot(ax=ax, color='red')
+
+aa.touches(bb) ## no. why not?
+
+aa.intersects(bb) ## true. 
+
+aa.overlaps(bb) ## true. why? They should be complementary, share boundaries but not internal space
+
+## where is the intersection?
+
+cc = aa.intersection(bb)
+
+
+cc.plot(ax=ax, color='yellow')
+
+cc.area
+
+aa.touches(bb).geometry
+
+aa.intersects(bb).geometry
+
+
+## is this going to cause problems at corners etc.? probably not, we have pretty coarse, obvious polygons
+
+## we're going to be using NetworkX, <https://networkx.org/documentation/stable/index.html>
+## looks like that package accepts dictionaries of descriptors. 
+## So let's just march forward, let's make an adjacency matrix, maybe as a numpy array?
+
+## to make on row, take one polygon and iterate it through all the others:
+
+def checkAdjacency(microcuencaA, microcuencaB):
+    '''use two, single row geoseries'''
+    if microcuencaA[0].touches(microcuencaB[0]):
+        a=True
+    elif microcuencaA[0].intersects(microcuencaB[0]):
+        a=True
+    elif microcuencaA[0].overlaps(microcuencaB[0]): 
+        a=True
+    else: a=False
+    return(a)
+
+checkAdjacency(aa, bb)
+
+curatedMicrocuencas
+
+ee = gpd.GeoSeries(curatedMicrocuencas.iloc[10])
+
+ee.plot(ax=plt.gca(), color='red')
+
+checkAdjacency(aa, ee)
+
+checkAdjacency(ee, aa)
+
+## right along their boundary. Probably some sort of projection issue, or
+## minor mistake with the digitizing. 
+
+## anyway, don't think it matters as long as we can establish some sort of 
+## contact, and prevent false positives
+
+## is there a way to do this recursively?
+
+i=0
+checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[i+10])
+
+
+for j in curatedMicrocuencas.index: 
+    print(j)
+    [ checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j]) for i in curatedMicrocuencas.index ]
+    
+for i in curatedMicrocuencas.index:
+    print(i)
+    checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j])
+
+curatedMicrocuencas
+
+curatedMicrocuencas.is_valid
+
+## breakdown here:
+i=8
+j=6
+checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j])
+
+dir(curatedMicrocuencas.iloc[i][0])
+
+curatedMicrocuencas.iloc[i][0].is_valid ## nope
+
+curatedMicrocuencas.iloc[j][0].is_valid ## yup
+
+## hunt down the invalidities
+i=8
+
+explain_validity(curatedMicrocuencas.iloc[i][0]) ## self-intersection
+
+curatedMicrocuencas.iloc[i].plot()
+
+#i=8 ## fixed
+#i=15 ## fixed
+explain_validity(curatedMicrocuencas.iloc[i][0]) ## self-intersection
+fig, ax = plt.subplots()
+curatedMicrocuencas.plot(ax=ax)
+gpd.GeoSeries(curatedMicrocuencas.iloc[i]).plot(ax=ax, color='red')
+plt.scatter(746450.017781465, 10035311.4677141, c='blue')
+
+## okay, all are now valid, try again:  
+
+lOfadj = []
+for j in curatedMicrocuencas.index: 
+    print(j)
+    lOfadj.append(
+        [ checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j]) for i in curatedMicrocuencas.index ]
+        )
+
+## so this should be our adjaceny matrix:
+adjMat = pd.DataFrame(lOfadj)
+
+
+## do we need to change this to 0s and 1s?
+
+## can we do a sanity check here? show map:
+
+fig, ax = plt.subplots()
+colmap = genXKCDColors(curatedMicrocuencas.shape[0])
+curatedMicrocuencas.plot(ax=ax, cmap=colmap)
+for i in curatedMicrocuencas.index:
+    ax.annotate(s=i,
+                xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
+                )
+
+## looks promising, spotchecks work out. 
+
+## what's next? get this into a format that NetworkX can handle.
