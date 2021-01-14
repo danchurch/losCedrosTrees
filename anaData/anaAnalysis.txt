@@ -10397,15 +10397,13 @@ list(range(1,17))
 
 mapG.nodes ## looks like it worked
 
-Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=17)
-
 ## but can we do this directly from our adjacency matrix
 
 help(networkx.from_pandas_adjacency)
 
-aa = networkx.from_pandas_adjacency(adjMat)
-print(networkx.info(aa))
-layout = networkx.spring_layout(aa)
+gMicrocuencas = networkx.from_pandas_adjacency(adjMat)
+print(networkx.info(gMicrocuencas))
+layout = networkx.spring_layout(gMicrocuencas)
 
 fig, ax = plt.subplots(1,2)
 colmap = genXKCDColors(curatedMicrocuencas.shape[0])
@@ -10416,7 +10414,7 @@ for i in curatedMicrocuencas.index:
                 )
 
 ## reuse our colormap 
-networkx.draw(aa, 
+networkx.draw(gMicrocuencas, 
               layout, 
               with_labels=True, 
               node_color=colmap.colors,
@@ -10427,9 +10425,9 @@ networkx.draw(aa,
 
 help(networkx.dijkstra_path_length)
 
-networkx.dijkstra_path_length(aa, 0, 5)
+networkx.dijkstra_path_length(gMicrocuencas, 0, 5)
 
-networkx.dijkstra_path_length(aa, 0, 13)
+networkx.dijkstra_path_length(gMicrocuencas, 0, 13)
 
 ## great, so we can use this to make a distance matrix, I think...
 
@@ -10437,7 +10435,7 @@ networkx.dijkstra_path_length(aa, 0, 13)
 
 jumps = []
 for j in range(17):
-    jumps.append([ networkx.dijkstra_path_length(aa, i, j) for i in range(17) ])
+    jumps.append([ networkx.dijkstra_path_length(gMicrocuencas, i, j) for i in range(17) ])
 
 watershedDistMat = pd.DataFrame(jumps)
 
