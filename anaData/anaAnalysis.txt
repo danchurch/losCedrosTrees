@@ -9416,6 +9416,7 @@ import rasterio.plot
 import pprint
 import shapely
 import geojson
+import networkx
 from shapely.validation import explain_validity
 plt.ion()
 
@@ -10366,14 +10367,85 @@ adjMat = pd.DataFrame(lOfadj)
 
 ## can we do a sanity check here? show map:
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(1,2)
 colmap = genXKCDColors(curatedMicrocuencas.shape[0])
-curatedMicrocuencas.plot(ax=ax, cmap=colmap)
+curatedMicrocuencas.plot(ax=ax[0], cmap=colmap)
 for i in curatedMicrocuencas.index:
-    ax.annotate(s=i,
+    ax[0].annotate(s=i,
                 xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
                 )
 
 ## looks promising, spotchecks work out. 
 
 ## what's next? get this into a format that NetworkX can handle.
+
+## NetworkX can solve our problems
+## if so do it, update notebook
+
+## what does networkX need? Our nodes are the polygons, and edges 
+## are physical adjancencies
+
+## graph object:
+
+mapG = networkx.graph()
+
+## nodes
+
+mapG.add_nodes_from(range(1,17))
+
+list(range(1,17))
+
+mapG.nodes ## looks like it worked
+
+Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=17)
+
+## but can we do this directly from our adjacency matrix
+
+help(networkx.from_pandas_adjacency)
+
+aa = networkx.from_pandas_adjacency(adjMat)
+print(networkx.info(aa))
+layout = networkx.spring_layout(aa)
+
+fig, ax = plt.subplots(1,2)
+colmap = genXKCDColors(curatedMicrocuencas.shape[0])
+curatedMicrocuencas.plot(ax=ax[0], cmap=colmap)
+for i in curatedMicrocuencas.index:
+    ax[0].annotate(s=i,
+                xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
+                )
+
+## reuse our colormap 
+networkx.draw(aa, 
+              layout, 
+              with_labels=True, 
+              node_color=colmap.colors,
+              ax=ax[1])
+
+## okay, nice, can we get a table of shortest paths? djikstra's algorithm 
+## is readymade in networkx:
+
+help(networkx.dijkstra_path_length)
+
+networkx.dijkstra_path_length(aa, 0, 5)
+
+networkx.dijkstra_path_length(aa, 0, 13)
+
+## great, so we can use this to make a distance matrix, I think...
+
+[ i for i in range(17) ]
+
+jumps = []
+for j in range(17):
+    jumps.append([ networkx.dijkstra_path_length(aa, i, j) for i in range(17) ])
+
+watershedDistMat = pd.DataFrame(jumps)
+
+## great! how do we use this for a turnover diagram?
+
+## well, this isn't quite our distance matrix. We need a sample x sample
+## comparison. So 
+
+## and we need to make sure this is in the formats needed for vegan. 
+
+## start on this tomorrow, update notebook for now.  
