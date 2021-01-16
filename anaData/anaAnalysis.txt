@@ -10439,6 +10439,11 @@ for j in range(17):
 
 watershedDistMat = pd.DataFrame(jumps)
 
+
+help(watershedDistMat.to_pickle)
+
+#watershedDistMat.to_csv('watershedDistMat.csv')
+
 ## great! how do we use this for a turnover diagram?
 
 ## well, this isn't quite our distance matrix. We need a sample x sample
@@ -10446,4 +10451,69 @@ watershedDistMat = pd.DataFrame(jumps)
 
 ## and we need to make sure this is in the formats needed for vegan. 
 
+anaPt
+
 ## start on this tomorrow, update notebook for now.  
+
+## and so now we need to create a function that finds the number of 
+## watershed jumps between any two sample sites. 
+
+anaPt.within(curatedMicrocuencas)
+
+anaPt.within(curatedMicrocuencas).any() ## doesn't work
+
+curatedMicrocuencas.iloc[0][0]
+
+anaPt.within(curatedMicrocuencas.iloc[0])
+
+anaPt.within(curatedMicrocuencas.iloc[0][0]).any()
+
+anaPt.within(curatedMicrocuencas.iloc[13][0]).any()
+
+## given a point, how do we get it's microcuenca?
+
+## our unique ID is the PsubP
+aa = anaPt.set_index('PsubP')
+bb = aa.geometry.apply(lambda x: curatedMicrocuencas.contains(x))
+
+## looks like that worked. Do all of the sample sites belong to one,
+## and just one, polygon?
+
+(bb.sum(axis=1) == 1).all()
+## looks right.  
+
+## simplify:
+cc = pd.melt(bb, var_name='microcuenca', ignore_index=False) 
+dd = (cc[cc.value]
+        .drop('value', axis=1).sort_index())
+
+## we might want to add this to our environmental matrix
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+envOnly['microcuenca'] = dd['microcuenca']
+#envOnly.to_csv('envOnly.csv')
+
+## so now, how to make a "hops" distance matrix between sites?
+
+psubp1 = 1.2
+
+psubp2 = 7.7
+
+
+microcuenca1 = envOnly.loc[psubp1,'microcuenca']
+microcuenca2 = envOnly.loc[psubp2,'microcuenca']
+
+
+watershedDistMat.loc[microcuenca1, microcuenca2]
+
+psubpHops = []
+for i in envOnly.microcuenca:
+    psubpHops.append(
+        [ watershedDistMat.loc[i, j] for j in envOnly.microcuenca ]
+    )
+
+psubpHopsDF = pd.DataFrame(psubpHops, index=envOnly.index, columns=envOnly.index)
+
+## spotchecks look good. save it:
+
+psubpHopsDF.to_csv('psubpHopsDF.csv')
