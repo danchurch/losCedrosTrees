@@ -9408,6 +9408,7 @@ import matplotlib.colors as mcolors
 import random
 import geopandas as gpd
 import pandas as pd
+import scipy.spatial as sp
 import pyproj
 from pysheds.grid import Grid
 import copy
@@ -9418,6 +9419,7 @@ import shapely
 import geojson
 import networkx
 from shapely.validation import explain_validity
+from sklearn.linear_model import LinearRegression
 plt.ion()
 
 ### data for plots ###
@@ -10444,6 +10446,11 @@ help(watershedDistMat.to_pickle)
 
 #watershedDistMat.to_csv('watershedDistMat.csv')
 
+watershedDistMat = pd.read_csv('watershedDistMat.csv', header=0, index_col=0) 
+watershedDistMat.columns = watershedDistMat.columns.astype('int')
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+
 ## great! how do we use this for a turnover diagram?
 
 ## well, this isn't quite our distance matrix. We need a sample x sample
@@ -10458,9 +10465,7 @@ anaPt
 ## and so now we need to create a function that finds the number of 
 ## watershed jumps between any two sample sites. 
 
-anaPt.within(curatedMicrocuencas)
-
-anaPt.within(curatedMicrocuencas).any() ## doesn't work
+curatedMicrocuencas
 
 curatedMicrocuencas.iloc[0][0]
 
@@ -10490,21 +10495,36 @@ dd = (cc[cc.value]
 ## we might want to add this to our environmental matrix
 
 envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
-envOnly['microcuenca'] = dd['microcuenca']
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+#envOnly['microcuenca'] = dd['microcuenca']
 #envOnly.to_csv('envOnly.csv')
 
 ## so now, how to make a "hops" distance matrix between sites?
 
 psubp1 = 1.2
-
 psubp2 = 7.7
 
-
 microcuenca1 = envOnly.loc[psubp1,'microcuenca']
+
 microcuenca2 = envOnly.loc[psubp2,'microcuenca']
 
+type(microcuenca1)
 
+envOnly.loc[psubp2,'microcuenca']
+
+[microcuenca1, microcuenca2]
+
+[str(microcuenca1), str(microcuenca2)]
+
+
+watershedDistMat.loc[str(microcuenca1), str(microcuenca2)]
+
+## huh, this works. 
 watershedDistMat.loc[microcuenca1, microcuenca2]
+## we want our columns names to be integers, not strings
+
+watershedDistMat.loc['9','13']
 
 psubpHops = []
 for i in envOnly.microcuenca:
@@ -10514,6 +10534,83 @@ for i in envOnly.microcuenca:
 
 psubpHopsDF = pd.DataFrame(psubpHops, index=envOnly.index, columns=envOnly.index)
 
+
 ## spotchecks look good. save it:
 
 psubpHopsDF.to_csv('psubpHopsDF.csv')
+
+## can we use this to do a turnover graph? 
+
+## we need to use the above as a physical distance matrix
+## and then we need a bray-curtis distance for ecological distance
+
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+## not sure how these outputs work. Muck around with numpy triangular matrices
+
+aa = sp.distance.squareform(bcDist)
+
+
+bb = np.array([[0,1,2],[3,4,5],[6,7,8]])
+np.triu(bb, k=0)
+
+help(np.triu)
+
+help(np.triu_indices)
+
+np.triu_indices(bb, k=0)
+
+cc = bb[np.triu_indices(bb.shape[0], k = 0)]
+
+## okay, so can we check the outputs of pdist this way? 
+
+dd = aa[np.triu_indices(aa.shape[0], k=1)]
+len(bcDist)
+len(dd)
+
+## they match. so likely the output of the pdist function 
+## is a triangular matrix with no diagonal. 
+## I don't know if they se the upper or lower triangle,
+## don't think it matters, but let's see:
+
+dd[0] == bcDist[0]
+
+## upper, I guess, or it doesn't matter
+
+## so we need the upper triangle of our physical
+## distance matrix:
+
+psubpHopsNP = np.array(psubpHopsDF)
+psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
+
+len(psubpHopsTriU)
+len(bcDist)
+
+## I guess we can just make a model from these:
+
+X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
+
+fig, ax = plt.subplots()
+
+ax.scatter(psubpHopsTriU, bcDist)
+
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_title('Overall Turnover')
+
+## this would be better shown as a violin or box plot. 
+## and the sub categories would be better modeled as a
+## hierarchical model of landuse types and disturbance
+## types (anthropogenic vs. natural). 
+
+## after that, the MEM analysis needs to be looked at again. 
+## it's not that useful
+
+##### hierarchical model of turnover #####
+
+## we have an overall model of regression 
+
+## but we need to give each type of habitat the ability to 
+## have its own rate of turnover (B1 coefficient). 
+
+## maybe the first step is to get  
