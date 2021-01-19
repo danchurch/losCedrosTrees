@@ -10539,6 +10539,12 @@ psubpHopsDF = pd.DataFrame(psubpHops, index=envOnly.index, columns=envOnly.index
 
 psubpHopsDF.to_csv('psubpHopsDF.csv')
 
+#####################
+
+help(pd.read_csv)
+
+psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+
 ## can we use this to do a turnover graph? 
 
 ## we need to use the above as a physical distance matrix
@@ -10571,7 +10577,7 @@ len(dd)
 
 ## they match. so likely the output of the pdist function 
 ## is a triangular matrix with no diagonal. 
-## I don't know if they se the upper or lower triangle,
+## I don't know if they use the upper or lower triangle,
 ## don't think it matters, but let's see:
 
 dd[0] == bcDist[0]
@@ -10590,15 +10596,47 @@ len(bcDist)
 ## I guess we can just make a model from these:
 
 X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
-
 fig, ax = plt.subplots()
-
 ax.scatter(psubpHopsTriU, bcDist)
-
 ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
 ax.set_title('Overall Turnover')
 
-## this would be better shown as a violin or box plot. 
+## this would be better shown as a violin or box plot at each distance.
+## how can we do this?
+
+## the violin of one bin (hops = 1):
+
+aa = X[X == 1]
+bb = Y[X == 1]
+
+fig, ax = plt.subplots()
+ax.violinplot(bb)
+
+## but we want to do this for all the physical distance bins
+
+X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
+
+## can we do this with series instead of np arrays?
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+
+
+plt.close('all')
+aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ] 
+fig, ax = plt.subplots()
+## that works...add points?
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.05,))
+            .apply( lambda x: x+1)
+            )
+ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+ax.violinplot(aa)
+ax.set_xticklabels(['',0,1,2,3,4])
+
+## looks okay. Can we draw lines between the means?
+
+
+
 ## and the sub categories would be better modeled as a
 ## hierarchical model of landuse types and disturbance
 ## types (anthropogenic vs. natural). 
@@ -10608,9 +10646,67 @@ ax.set_title('Overall Turnover')
 
 ##### hierarchical model of turnover #####
 
+psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+
 ## we have an overall model of regression 
 
 ## but we need to give each type of habitat the ability to 
 ## have its own rate of turnover (B1 coefficient). 
 
-## maybe the first step is to get  
+## first separate and visualize
+
+## how do we divide the above community data? 
+
+subParcelComm.head()
+
+## make a dictionary, keys are habitat types and values are lists of PsubP sample names
+
+aa = envOnly.groupby('habitat')
+
+aa.groups
+## huh, the groupby object looks like a dictionary...can we treat it that way?
+
+envOnly.loc[ aa.groups['BC'] ]
+
+subParcelComm.loc[ aa.groups['BC'] ]
+
+## seems so...
+
+## for each group we need to construct a turnover diagram, 
+## so repeat the above pipeline for each submatrix:
+
+psubpHopsNP = np.array(psubpHopsDF)
+psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
+
+i = 'BC'
+
+## physical distance
+psubpHopsDF_i = psubpHopsDF.loc[ aa.groups[i] ]
+psubpHopsNP_i = np.array(psubpHopsDF_i)
+psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
+
+
+## bc distance
+subParcelComm_i = subParcelComm.loc[ aa.groups[i] ]
+bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
+
+## plot it 
+
+X, Y = psubpHopsTriU_i.reshape(-1,1), bcDist_i.reshape(-1,1)
+fig, ax = plt.subplots()
+ax.scatter(X, Y)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_title(i)
+
+for i in aa.groups.keys():
+    ## physical distance
+    psubpHopsDF_i = psubpHopsDF.loc[ aa.groups[i] ]
+    psubpHopsNP_i = np.array(psubpHopsDF_i)
+    psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
+    ## bc distance
+    subParcelComm_i = subParcelComm.loc[ aa.groups[i] ]
+    bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
+
+
