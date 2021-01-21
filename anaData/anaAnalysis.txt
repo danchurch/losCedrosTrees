@@ -10623,6 +10623,9 @@ XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
 
 plt.close('all')
 aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ] 
+
+[ np.mean(i) for i in aa ]
+
 fig, ax = plt.subplots()
 ## that works...add points?
 XSjitted = (XS
@@ -10630,11 +10633,13 @@ XSjitted = (XS
             .apply( lambda x: x+1)
             )
 ax.scatter(XSjitted, YS, alpha=0.15, color='red')
-ax.violinplot(aa)
+ax.violinplot(aa, showmeans=True)
 ax.set_xticklabels(['',0,1,2,3,4])
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
 
 ## looks okay. Can we draw lines between the means?
-
 
 
 ## and the sub categories would be better modeled as a
@@ -10644,7 +10649,7 @@ ax.set_xticklabels(['',0,1,2,3,4])
 ## after that, the MEM analysis needs to be looked at again. 
 ## it's not that useful
 
-##### hierarchical model of turnover #####
+### subdivide by habitat types ###
 
 psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
 subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
@@ -10663,50 +10668,119 @@ subParcelComm.head()
 
 ## make a dictionary, keys are habitat types and values are lists of PsubP sample names
 
-aa = envOnly.groupby('habitat')
+habGroups = envOnly.groupby('habitat')
 
-aa.groups
+habGroups.groups
 ## huh, the groupby object looks like a dictionary...can we treat it that way?
 
-envOnly.loc[ aa.groups['BC'] ]
+envOnly.loc[ habGroups.groups['BC'] ]
 
-subParcelComm.loc[ aa.groups['BC'] ]
+subParcelComm.loc[ habGroups.groups['BC'] ]
 
 ## seems so...
 
 ## for each group we need to construct a turnover diagram, 
 ## so repeat the above pipeline for each submatrix:
 
-psubpHopsNP = np.array(psubpHopsDF)
-psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
-
-i = 'BC'
-
+i = 'RCA'
 ## physical distance
-psubpHopsDF_i = psubpHopsDF.loc[ aa.groups[i] ]
+psubpHopsDF_i = psubpHopsDF.loc[ habGroups.groups[i], habGroups.groups[i].astype('str') ]
 psubpHopsNP_i = np.array(psubpHopsDF_i)
 psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
 
-
 ## bc distance
-subParcelComm_i = subParcelComm.loc[ aa.groups[i] ]
+subParcelComm_i = subParcelComm.loc[ habGroups.groups[i] ]
 bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
 
-## plot it 
-
+## plot
 X, Y = psubpHopsTriU_i.reshape(-1,1), bcDist_i.reshape(-1,1)
 fig, ax = plt.subplots()
 ax.scatter(X, Y)
 ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
 ax.set_title(i)
 
-for i in aa.groups.keys():
+
+psubpHopsDF.index
+
+psubpHopsDF_i
+## oops, only subsetting rows, not columns....does this matter?
+
+## apply this to all groups
+
+## plotting function for old turnover diagrams
+def oldTurnPlot(physDist, ecoDist, ax, tit=None):
+    ax.scatter(physDist, ecoDist)
+    X, Y = physDist.reshape(-1,1), ecoDist.reshape(-1,1)
+    ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+    ax.set_title(tit)
+
+plt.close('all')
+psubpHopsTriU_byHab = []
+bcDist_byHab = []
+fig, axes = plt.subplots(2,3, sharey=True, sharex=True )
+axes = axes.flatten()
+for nu,i in enumerate(habGroups.groups.keys()):
+    print('i='+i)
+    print('nu='+str(nu))
     ## physical distance
-    psubpHopsDF_i = psubpHopsDF.loc[ aa.groups[i] ]
+    psubpHopsDF_i = psubpHopsDF.loc[ habGroups.groups[i], habGroups.groups[i].astype('str') ]
     psubpHopsNP_i = np.array(psubpHopsDF_i)
     psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
+    psubpHopsTriU_byHab.append(psubpHopsTriU_i)
     ## bc distance
-    subParcelComm_i = subParcelComm.loc[ aa.groups[i] ]
+    subParcelComm_i = subParcelComm.loc[ habGroups.groups[i] ]
     bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
+    bcDist_byHab.append(bcDist_i)
+    ## plot it
+    #oldTurnPlot(physDist=psubpHopsTriU_i, 
+    #            ecoDist=bcDist_i, 
+    #            ax=axes[nu], 
+    #            tit=i,
+    #                )
+    violinTurnPlot(physDist=psubpHopsTriU_i, 
+                ecoDist=bcDist_i, 
+                ax=axes[nu], 
+                tit=i,
+                    )
+
+## plotting function for new-style turnover diagrams
+fig, ax = plt.subplots(figsize=(10,10))
+
+def violinTurnPlot(physDist, ecoDist, ax, tit=None):
+    XS, YS = pd.Series(physDist), pd.Series(ecoDist)
+    aa = [ YS[XS == i].to_list() for i in np.unique(physDist) ]
+    ## that works...add points?
+    XSjitted = (XS
+                .apply(np.random.normal, args=(0.03,))
+                .apply( lambda x: x+1)
+                )
+    ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+    ax.violinplot(aa, showmeans=True)
+    _=ax.set_xticklabels(['',0,1,2,3,4])
+    ax.set_title(tit)
 
 
+plt.close('all')
+fig, ax = plt.subplots(figsize=(10,10))
+
+aa = violinTurnPlot(physDist=psubpHopsTriU_byHab[0], 
+            ecoDist=bcDist_byHab[0], 
+            ax=ax, 
+            tit=None)
+
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ]
+fig, ax = plt.subplots(figsize=(10,10))
+## that works...add points?
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.03,))
+            .apply( lambda x: x+1)
+            )
+ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+ax.violinplot(aa, showmeans=True)
+_=ax.set_xticklabels(['',0,1,2,3,4])
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
+[ np.mean(i) for i in aa ]
