@@ -9433,1356 +9433,1334 @@ sudo apt install libopenblas-base
 
 sudo apt install libopenblas-dev
 
-    plt.ion()
+plt.ion()
 
-    ### data for plots ###
-    rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
-    rioMCWatershedPoly = gpd.read_file('GIS/rioMCwatershed.geojson')
-    lcPoly = gpd.read_file('GIS/lcPoly.geojson')
-    hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
-    smallAstRast = rasterio.open(smallAstpath)
-    anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
-    RLCgpd = gpd.read_file("./GIS/rioLCpredicted.geojson")
-    RMCgpd = gpd.read_file("./GIS/rioMCpredicted.geojson")
-    mainRLC = gpd.read_file("./GIS/mainRLC.geojson")
-    mainRMC = gpd.read_file("./GIS/mainRMC.geojson")
-    RLCCatchPolys = gpd.read_file('GIS/RLCCatchPolys.geojson')
-    RMCCatchPolys = gpd.read_file('GIS/RMCCatchPolys.geojson')
-    curatedMicrocuencas = gpd.read_file('GIS/losCedcatchpolys_subjective_closed.geojson')
-    ##---------------##
+### data for plots ###
+rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
+rioMCWatershedPoly = gpd.read_file('GIS/rioMCwatershed.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+smallAstRast = rasterio.open(smallAstpath)
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
+RLCgpd = gpd.read_file("./GIS/rioLCpredicted.geojson")
+RMCgpd = gpd.read_file("./GIS/rioMCpredicted.geojson")
+mainRLC = gpd.read_file("./GIS/mainRLC.geojson")
+mainRMC = gpd.read_file("./GIS/mainRMC.geojson")
+RLCCatchPolys = gpd.read_file('GIS/RLCCatchPolys.geojson')
+RMCCatchPolys = gpd.read_file('GIS/RMCCatchPolys.geojson')
+curatedMicrocuencas = gpd.read_file('GIS/losCedcatchpolys_subjective_closed.geojson')
+##---------------##
 
-    ## get our dem as a grid object for pysheds
-    smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
-    grid = Grid.from_raster(smallAstpath, data_name='dem')
-    ## clean it up as per recommendations by pyshed.
-    grid.fill_depressions(data='dem', out_name='flooded_dem')
-    grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
-    dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
-    ## make our flowdir and accumulation 
-    grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
-    grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
+## get our dem as a grid object for pysheds
+smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
+grid = Grid.from_raster(smallAstpath, data_name='dem')
+## clean it up as per recommendations by pyshed.
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+## make our flowdir and accumulation 
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
 
-    XL, YL = (748696, 10032712) ## Rio Los Cedros
-    XM, YM = (748696, 10032942) ## Rio Magdalena Chico
-    snapXL, snapYL = grid.snap_to_mask(grid.acc > 50, np.array([XL,YL]), return_dist=False)
-    snapXM, snapYM = grid.snap_to_mask(grid.acc > 50, np.array([XM,YM]), return_dist=False)
-    grid.clip_to('dem')
-    grid.catchment(data='dir', x=snapXL, y=snapYL, out_name='RLCcatch',
+XL, YL = (748696, 10032712) ## Rio Los Cedros
+XM, YM = (748696, 10032942) ## Rio Magdalena Chico
+snapXL, snapYL = grid.snap_to_mask(grid.acc > 50, np.array([XL,YL]), return_dist=False)
+snapXM, snapYM = grid.snap_to_mask(grid.acc > 50, np.array([XM,YM]), return_dist=False)
+grid.clip_to('dem')
+grid.catchment(data='dir', x=snapXL, y=snapYL, out_name='RLCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.catchment(data='dir', x=snapXM, y=snapYM, out_name='RMCcatch',
+                   recursionlimit=15000, xytype='label')
+
+## plot two watersheds we have so far:
+rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
+rioMCWatershedPoly = gpd.read_file('GIS/rioMCwatershed.geojson')
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+smallAstRast = rasterio.open(smallAstpath)
+alpha = {'alpha':0.5}
+fig, ax = plt.subplots(figsize=(10,10))
+lcPoly.boundary.plot(color='red', linewidth=3, ax=ax)
+rioLCWatershedPoly.boundary.plot(ax=ax, color='Green', linewidth= 4)
+rioLCWatershedPoly.plot(ax=ax, color='Green', **alpha)
+rioMCWatershedPoly.boundary.plot(ax=ax, color='purple', linewidth= 4)
+rioMCWatershedPoly.plot(ax=ax, color='Purple', **alpha)
+rasterio.plot.show(smallAstRast, ax=ax)
+hydro.plot(color='Blue', ax=ax)
+ax.set_xlim(lcPoly.bounds.iloc[0,0], lcPoly.bounds.iloc[0,2]+1000)
+ax.set_ylim(lcPoly.bounds.iloc[0,1]-300, lcPoly.bounds.iloc[0,3])
+
+
+
+grid.clip_to('RMCcatch') ## there it is. Clipping to the 
+## subwatershed seems to be very necessary...
+branches = grid.extract_river_network('RMCcatch', 'acc')
+
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+
+grid.clip_to('RLCcatch') 
+branches = grid.extract_river_network('RLCcatch', 'acc')
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+## yup, fixed it. 
+
+## these can go to geopanda objects, too:
+
+branches = grid.extract_river_network('RLCcatch', 'acc')
+
+aa = shapely.geometry.LineString(branches[0]['geometry']['coordinates'])
+
+## how do we iterate over the geojson and make shapely out of each
+## feature?
+
+## how about:
+
+grid.clip_to('RLCcatch') 
+branches = grid.extract_river_network('RLCcatch', 'acc')
+listOfLSes = [ shapely.geometry.LineString(i['geometry']['coordinates']) for i in branches['features'] ]
+RLC_multistring = shapely.geometry.MultiLineString(listOfLSes)
+RLCgpd = gpd.GeoSeries(RLC_multistring)
+RLCgpd = RLCgpd.set_crs('EPSG:32717')
+#RLCgpd.to_file("./GIS/rioLCpredicted.geojson", driver='GeoJSON')
+
+grid.clip_to('RMCcatch') 
+branches = grid.extract_river_network('RMCcatch', 'acc')
+listOfLSes = [ shapely.geometry.LineString(i['geometry']['coordinates']) for i in branches['features'] ]
+RMC_multistring = shapely.geometry.MultiLineString(listOfLSes)
+RMCgpd = gpd.GeoSeries(RMC_multistring)
+RMCgpd = RMCgpd.set_crs('EPSG:32717')
+#RMCgpd.to_file("./GIS/rioMCpredicted.geojson", driver='GeoJSON')
+
+RLCgpd.bounds
+
+streamsClippedRLC = gpd.clip(hydro, RLCgpd.boundary)
+
+RLCgpd.boundary
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+streamsClippedRLC.plot(ax=ax)
+
+RLCgpd.plot(ax=ax)
+
+RLCgpd.boundary
+
+streamsClippedRMC = gpd.clip(hydro, RMCgpd)
+
+
+fig, ax = plt.subplots(1,2, figsize=(10,5))
+## RLC
+RLCgpd.plot(color='Black', ax=ax[0])
+hydro.plot(color='Blue', ax=ax[0])
+ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+circCent = (745145, 10034629)
+circ = plt.Circle(circCent, radius=300, alpha=0.5, color='red')
+ax[0].add_artist(circ)
+## RMC
+RMCgpd.plot(color='Black', ax=ax[1])
+hydro.plot(color='Blue', ax=ax[1])
+ax[1].set_xlim(RMCgpd.bounds.minx[0],RMCgpd.bounds.maxx[0])
+ax[1].set_ylim(RMCgpd.bounds.miny[0],RMCgpd.bounds.maxy[0])
+
+## so now what? we need to divy up watersheds in a way that make sense. 
+
+## put points on there, and start chopping up the watersheds
+
+
+RLCgpd.plot(color='Black', ax=ax[0])
+hydro.plot(color='Blue', ax=ax[0])
+ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+
+## if we want to divide up the watersheds along the primary 
+## tributories, how do we do this?
+
+## the junctions must be the endpoints:
+
+def plotEndpoints(num, ax=plt.gca()):
+    X1,Y1 = branches[num]['geometry']['coordinates'][0] ## first point in list
+    X2,Y2 = branches[num]['geometry']['coordinates'][-1] ## last point in list
+    ax.plot(X1,Y1, 'bo', markersize=10)
+    ax.plot(X2,Y2, 'ro', markersize=10)
+
+## maybe the best thing to do is to define the largest branch,
+## and get the watersheds of the secondary tributaries 
+
+grid.clip_to('RLCcatch') 
+branches = grid.extract_river_network('RLCcatch', 'acc')
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+plotEndpoints(71, ax=ax)
+
+
+## let's see if we can clip away the upper watershed
+
+handX, handY = plt.ginput(1)[0]
+
+handX, handY ## (745877.5533121668, 10034590.348697523)
+
+snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([handX,handY]), return_dist=False)
+
+snapX, snapY ## (745862.474054495, 10034604.327270983)
+
+grid.catchment(data='dir', np.array(snapX, snapY), out_name='upperLC_Catch',
+                   recursionlimit=15000, xytype='label')
+
+grid.clip_to('upperLC_Catch')
+shapes = grid.polygonize()
+lsh = list(shapes)
+aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+p = gpd.GeoSeries(aa)
+p = p.set_crs('EPSG:32717')
+
+#p.to_file("./GIS/rioMCwatershed.geojson", driver='GeoJSON')
+## look at it
+
+plt.close('all')
+rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
+fig, ax = plt.subplots()
+rioLCWatershedPoly.plot(ax=ax, color='red')
+RLCgpd.plot(color='Black', ax=ax)
+
+p.plot(ax=ax, color='blue')
+
+## goal is to define a matrix of watersheds across the extent of study,
+## roughly equal size
+
+## starting with RLC watershed, we need the main river stem. 
+
+## this is easily defined for the lower part of the water shed,
+## and we don't need the upper. Get the branches for that...
+
+## we can start by defining all the catchments of the primary 
+## tributaries on the lower RLC. I'll define the pourpoints manually
+
+## bring up plot of model and observed RLC:
+
+plt.close('all')
+fig, ax = plt.subplots()
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+lcPoly.plot(color='green', ax=ax, alpha=0.5)
+anaPt.plot(ax=ax, color='purple')
+ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+
+coords = plt.ginput(n=-1, timeout=0)
+
+## add a couple more
+coords.append(plt.ginput(n=-1, timeout=0))
+
+## get colorset to match
+
+coords_snapped = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+
+def getCatchGPD(grid, coords):
+    grid2 = copy.deepcopy(grid)
+    snapX, snapY = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+    grid2.catchment(y=snapY, x=snapX, data='dir', out_name=('littleCatch'),
                        recursionlimit=15000, xytype='label')
-    grid.catchment(data='dir', x=snapXM, y=snapYM, out_name='RMCcatch',
+    grid2.clip_to('littleCatch')
+    shapes = grid2.polygonize()
+    lsh = list(shapes)
+    aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
+    p = gpd.GeoSeries(aa)
+    p = p.set_crs('EPSG:32717')
+    return(p)
+
+## use this function to make a polygon-based geoseries of our catchments
+rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
+RLCCatchPolys = gpd.GeoSeries(rlccatchpolys, crs='EPSG:32717')
+
+## get plot colors
+Xcolors = [ random.choice(list(mcolors.XKCD_COLORS.values())) for i in range(len(coords)) ] 
+
+plt.close('all')
+
+## summary plot so far
+
+fig, ax = plt.subplots()
+RLCCatchPolys.plot(ax = ax, cmap='Dark2')
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+anaPt.plot(color='green', ax=ax)
+x, y = zip(*coords)
+ax.plot(x, y, "bo")
+ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+riverCorridor.plot(ax=ax, alpha=0.5) ## created below
+for i,_ in enumerate(RLCCatchPolys):
+    ax.text(coords[i][0], coords[i][1], str(i))
+
+RLCCatchPolys.area
+
+## actually, that is starting to look good...
+
+## a lot of error, though. how do we reconcile this? it starts to matter, if we are trying to
+## create polygons of roughly equal size...
+## seems like maybe the dem isn't meant for this local of a delineation.
+## it's what we got, go with it.
+
+### define main stem of RLC
+
+## our main stem up until the waterfall is pretty obvious. How do we extract this as some sort of 
+## geoseries?
+
+breakat = plt.ginput(n=1, timeout=0)
+breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+
+## get the main stem of the river by upping the accumumlation threshold
+grid.clip_to('RLCcatch') 
+branch = grid.extract_river_network('RLCcatch', 'acc', threshold=3000)
+line = np.asarray(branches['features'][0]['geometry']['coordinates'])
+## get rid of rows north of break point:
+masc = line[:,1] < breakat_snapped[1]
+lineSouth = line[masc,:]
+## make this into a geoseries
+shLine = shapely.geometry.LineString(lineSouth)
+mainRLC = gpd.GeoSeries(shLine)
+mainRLC = mainRLC.set_crs('EPSG:32717')
+
+#mainRLC.to_file('GIS/mainRLC.geojson', driver='GeoJSON')
+## buffer it 
+riverCorridor = mainRLC.buffer(200)
+
+## take intersection of buffer and tributaries as pourpoints
+
+## 
+
+## looks like trying to catch the small tributary south of the LC campus failed, just catches the next one over.  
+## if we go with the buffering plan, this little catchment will probably mostly get swallowed. 
+
+RLCgpd
+riverCorridor
+
+aa = RLCgpd.difference(riverCorridor)
+
+
+riverCorridor.geometry[0].boundary.coords
+
+dir(RLCgpd.geometry)
+
+len(RLCgpd.geometry[0])
+
+list(RLCgpd.geometry[0][0].coords)
+
+bb = RLCgpd.intersection(riverCorridor)
+
+## our intersection should have the points of intersection 
+## as the ends of the line segments, no?
+
+## just the first line segment
+bb.geometry[0][0].coords
+
+line = np.asarray(bb.geometry[0][0].coords)
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.plot(line[:, 0], line[:, 1], color='red')
+
+bb.plot(ax = ax)
+
+## okay, the endpoint of this should be a common
+## coordinate between both the line segment and the
+## buffered polygon:
+
+cc = list(bb[0][0].coords) ## our line segment coords, as x,y tuples
+
+dd = list(riverCorridor.geometry[0].boundary.coords) ## our river buffer, as x,y tuples
+
+plt.close('all')
+riverbuffoutline = np.asarray(dd)
+fig, ax = plt.subplots()
+ax.plot(riverbuffoutline[:, 0], riverbuffoutline[:, 1], color='red')
+
+[ i in dd for i in cc ] ## all false - no shared points?
+
+sum([ i in cc for i in dd ] ) ## also all false. 
+
+## so that method doesn't work. I am thinking about this wrong way.
+
+## how about the intersections between the boundary line string of the 
+## polygon and the river line segments? 
+
+plt.close('all')
+fig, ax = plt.subplots()
+RLCgpd.plot(ax=ax)
+riverCorridor.boundary.plot(ax=ax)
+
+dir(riverCorridor.boundary)
+
+aa = riverCorridor.boundary.intersection(RLCgpd)
+aa.plot(ax=ax, color='green', markersize=10)
+
+## much better. can we use these as the pour points for our catchments?
+## actually, I think we will want to river buffer polygons: one for 
+## the riparian zone around the river that we are calling its own watershed,
+## and another, tighter buffer that defines the pour points. 
+
+## so the tighter one, for pourpoints. Start with 50 m?  Might be too tight...let's see...
+
+pourPtsPoly = mainRLC.buffer(50)
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+RLCgpd.plot(ax=ax)
+
+pourPts = pourPtsPoly.boundary.intersection(RLCgpd)
+pourPts = pourPts.explode()
+pourPts.reset_index(inplace=True, drop=True)
+pourPts.plot(ax=ax, color='green', markersize=10)
+mainRLC.plot(ax=ax, color='purple')
+
+## use these as pourpoints, repeating the above pipeline.
+## we're going to need to break some of these catchments up
+## but for now, start with these
+
+
+## get plot colors
+Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=len(pourPts))
+cmap = mcolors.ListedColormap(Xcolors)
+
+## get our catchments as a geoseries, using getCatch function defined above,
+## and our new pourpoints:
+
+grid2 = copy.deepcopy(grid)
+
+coords2 = [ i.coords[0] for i in pourPts ]
+
+
+rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
+RLCCatchPolys2 = gpd.GeoSeries(rlccatchpolys2, crs='EPSG:32717')
+## looks like that works
+
+## do our summary plot again:
+
+gpd.read_file("./GIS/mainRMC.geojson")
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+RLCCatchPolys2.plot(ax = ax, cmap=cmap)
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+anaPt.plot(color='green', ax=ax)
+x, y = zip(*coords2)
+ax.plot(x, y, "bo")
+mainRLC.plot(ax=ax, color='purple', linewidth=5)
+
+ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
+ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+riverCorridor.plot(ax=ax, alpha=0.5) 
+for i,_ in enumerate(RLCCatchPolys):
+    ax.text(coords[i][0], coords[i][1], str(i))
+
+## looking better everytime...
+RLCCatchPolys.area
+
+## all watersheds are at least in the same area of 
+## magnitude, except the river corridor, which we
+## are going to chop up anyway. 
+
+## can we clean up the pipeline and repeat for the 
+## RMC watershed? 
+
+## take a break after that and write the humboldt,
+## then 
+
+## where to start... the notebook is up to the river 
+## extraction point for both RLC and RMC. 
+
+## get main stem of the river, both catchments:
+
+## RLC main stem, lower
+grid.clip_to('RLCcatch') 
+branch = grid.extract_river_network('RLCcatch', 'acc', threshold=3000)
+line = np.asarray(branch['features'][0]['geometry']['coordinates'])
+
+## get our most upstream point (for RLC, +/- at the old waterfall)
+fig, ax = plt.subplots()
+RLCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+#breakat = plt.ginput(n=1, timeout=0)
+breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+
+breakat_snapped ## 745893.39740855, 10033958.6773012
+
+masc = line[:,1] < breakat_snapped[1]
+lineSouth = line[masc,:]
+
+## make this into a geoseries
+shLine = shapely.geometry.LineString(lineSouth)
+mainRLC = gpd.GeoSeries(shLine)
+mainRLC = mainRLC.set_crs('EPSG:32717')
+
+## RMC main stem, lower
+
+## other than a large tributary to east that is outside
+## the study area
+
+plt.close('all')
+
+grid.clip_to('RMCcatch') 
+
+branch = grid.extract_river_network('RMCcatch', 'acc', threshold=3000)
+line = np.asarray(branch['features'][0]['geometry']['coordinates'])
+
+## get breakpoint
+fig, ax = plt.subplots()
+RMCgpd.plot(color='Black', ax=ax)
+hydro.plot(color='Blue', ax=ax)
+
+breakat = plt.ginput(n=1, timeout=0)
+breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+
+breakat_snapped ## array([  746975.71480033, 10035711.15579062])
+
+masc = line[:,1] < breakat_snapped[1]
+lineSouth = line[masc,:]
+
+## make this into a geoseries
+
+shLine = shapely.geometry.LineString(lineSouth)
+
+mainRMC = gpd.GeoSeries(shLine)
+mainRMC = mainRMC.set_crs('EPSG:32717')
+
+mainRMC = gpd.read_file('GIS/mainRMC.geojson')
+
+## check tributaries for RMC, don't think there were many that
+## qualified:
+
+## pour point for each tributary:
+pourPtsPoly = mainRMC.buffer(50)
+
+fig, ax = plt.subplots()
+pourPtsPoly.plot(ax=ax)
+RMCgpd.plot(ax=ax, color='green')
+
+pourPts = pourPtsPoly.boundary.intersection(RMCgpd)
+pourPts = pourPts.explode()
+pourPts.reset_index(inplace=True, drop=True)
+
+## make subwatersheds:
+coords = [ i.coords[0] for i in pourPts ]
+grid.clip_to('dem')
+
+## this can be a little memory intensive:
+rmccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
+RMCCatchPolys = gpd.GeoSeries(rmccatchpolys, crs='EPSG:32717')
+RMCCatchPolys.to_file('GIS/RMCCatchPolys.geojson', driver='GeoJSON')
+
+def genXKCDColors(nu):
+    Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=nu)
+    cmap = mcolors.ListedColormap(Xcolors)
+    return(cmap)
+
+## look at the RMC subwatersheds
+fig, ax = plt.subplots()
+cmap=genXKCDColors(len(RMCCatchPolys))
+RMCCatchPolys.plot(ax=ax, cmap=cmap)
+cmap=genXKCDColors(len(RLCCatchPolys))
+RLCCatchPolys.plot(ax=ax, cmap=cmap)
+RMCgpd.plot(ax=ax)
+RLCgpd.plot(ax=ax)
+
+## do we need a corridor?
+rlcCorridor = mainRLC.buffer(200)
+rmcCorridor = mainRMC.buffer(200)
+rlcCorridor.plot(ax=ax, alpha=0.5)
+rmcCorridor.plot(ax=ax, alpha=0.5)
+
+
+anaPt.plot(ax=ax, color='black') 
+
+##########################################
+
+## because there is no easy way to keep these pyshed objects
+## from session to session, so rebuild  
+
+## okay, so now what?
+
+## so, we want to be able to categorize the sample sites by water shed. 
+## as is, are all points are included in a watershed? 
+
+## I think it is time to hand curate the watersheds
+
+## or not. Not sure how to split these large watersheds 
+
+## seems like we need some sort of system for declaring a new microwatershed.
+
+## first rule seems to be, if a flowing stream comes off the main stem, 
+
+## where did we make the calls for whether 
+
+smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
+grid = Grid.from_raster(smallAstpath, data_name='dem')
+grid.fill_depressions(data='dem', out_name='flooded_dem')
+grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
+dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
+grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
+grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
+XL, YL = (748696, 10032712) ## Rio Los Cedros
+XM, YM = (748696, 10032942) ## Rio Magdalena Chico
+snapXL, snapYL = grid.snap_to_mask(grid.acc > 50, np.array([XL,YL]), return_dist=False)
+snapXM, snapYM = grid.snap_to_mask(grid.acc > 50, np.array([XM,YM]), return_dist=False)
+grid.clip_to('dem')
+grid.catchment(data='dir', x=snapXL, y=snapYL, out_name='RLCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.catchment(data='dir', x=snapXM, y=snapYM, out_name='RMCcatch',
+                   recursionlimit=15000, xytype='label')
+grid.clip_to('RLCcatch')
+branches = grid.extract_river_network('RLCcatch', 'acc')
+
+## looks like there is a default threshhold of 100 cells, which 
+## how do we use this to find our flow accumulation, it fit our 
+## observed rivers pretty well. 
+
+## but what now? play around with splitting the water sheds, find out 
+## what our "ideal" size might be, and be consistent
+
+## so what we want here is a point and click function to get relative 
+## size of 
+
+## bring up our river system as is, and funnel clicks through a cell calculator
+
+fig, ax = plt.subplots()
+for branch in branches['features']:
+    line = np.asarray(branch['geometry']['coordinates'])
+    ax.plot(line[:, 0], line[:, 1])
+
+## we need to be able pick a point with a mouse, and make a catchment
+
+## we have the above function getCatchGPD, can we raise it from the dead for a
+## moment 
+
+## what did it do? 
+
+## takes the grid object, a set of coords, spit out a geoseries with a polygon for 
+## a sub-watershed  
+
+## for instance:
+
+#grid.clip_to('dem')
+
+grid.clip_to('RLCcatch')
+
+grid.size
+
+grid.shape
+
+coords = [748696, 10032712] ## Rio Los Cedros
+aa = getCatchGPD(grid, coords)
+
+aa.area 
+## this agrees with the qgis area calculations...
+
+grid.cellsize
+## this sort of makes sense, I think the pixels from the dem are 
+## 30m on a side. 
+
+grid.size
+
+aa.area / grid.cellsize**2
+
+## that doesn't make sense to me, the grid size and 
+
+## anyway, we can use the area output as our metric for 
+## splitting, but we need to think in terms of these 
+## actual areas, a bit far from the pysheds. 
+
+## I think we need a max cutoff. We have a min, sort of,
+## in that tributary that touches the main rivers as observed on our topo
+## is given its own watershed. But we need a max size, for the 
+## stream complexes, to define our neighborhoods and get our 
+## adjaceny
+
+## how can we make this useful for splitting up the watersheds? 
+## make it report the number of cells, can this be 
+## held as info in the geoseries?
+
+## hmm, looks like we're going to have to make a geopanda? this could mess up our previous code...
+## so let's not mess with  getCatchGPD()
+## just build something else with it. 
+
+## combine our catchements 
+
+catches = 
+
+RLCCatchPolys
+
+RMCCatchPolys
+
+aa = pd.concat([RLCCatchPolys,RMCCatchPolys])
+aa.reset_index(inplace=True, drop=True)
+
+## and what do we want here? to detect which are above a certain 
+## threshold?
+
+## this would really be better done in pysheds, in terms of cells
+
+## maybe a new function, that generates pyshed grid objects on the fly,
+## that we check for size 
+
+## basically break this function up a little:
+
+## make a duplicate grid with the sub catchment
+def makeCheckCatches(grid, coords):
+    grid2 = copy.deepcopy(grid)
+    snapX, snapY = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+    grid2.catchment(y=snapY, x=snapX, data='dir', out_name=('littleCatch'),
                        recursionlimit=15000, xytype='label')
+    grid2.clip_to('littleCatch')
+    return(grid2)
 
-    ## plot two watersheds we have so far:
-    rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
-    rioMCWatershedPoly = gpd.read_file('GIS/rioMCwatershed.geojson')
-    lcPoly = gpd.read_file('GIS/lcPoly.geojson')
-    hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
-    smallAstRast = rasterio.open(smallAstpath)
-    alpha = {'alpha':0.5}
-    fig, ax = plt.subplots(figsize=(10,10))
-    lcPoly.boundary.plot(color='red', linewidth=3, ax=ax)
-    rioLCWatershedPoly.boundary.plot(ax=ax, color='Green', linewidth= 4)
-    rioLCWatershedPoly.plot(ax=ax, color='Green', **alpha)
-    rioMCWatershedPoly.boundary.plot(ax=ax, color='purple', linewidth= 4)
-    rioMCWatershedPoly.plot(ax=ax, color='Purple', **alpha)
-    rasterio.plot.show(smallAstRast, ax=ax)
-    hydro.plot(color='Blue', ax=ax)
-    ax.set_xlim(lcPoly.bounds.iloc[0,0], lcPoly.bounds.iloc[0,2]+1000)
-    ax.set_ylim(lcPoly.bounds.iloc[0,1]-300, lcPoly.bounds.iloc[0,3])
-
-
-
-    grid.clip_to('RMCcatch') ## there it is. Clipping to the 
-    ## subwatershed seems to be very necessary...
-    branches = grid.extract_river_network('RMCcatch', 'acc')
-
-    fig, ax = plt.subplots()
-    for branch in branches['features']:
-        line = np.asarray(branch['geometry']['coordinates'])
-        ax.plot(line[:, 0], line[:, 1])
-
-
-    grid.clip_to('RLCcatch') 
-    branches = grid.extract_river_network('RLCcatch', 'acc')
-    fig, ax = plt.subplots()
-    for branch in branches['features']:
-        line = np.asarray(branch['geometry']['coordinates'])
-        ax.plot(line[:, 0], line[:, 1])
-    ## yup, fixed it. 
-
-    ## these can go to geopanda objects, too:
-
-    branches = grid.extract_river_network('RLCcatch', 'acc')
-
-    aa = shapely.geometry.LineString(branches[0]['geometry']['coordinates'])
-
-    ## how do we iterate over the geojson and make shapely out of each
-    ## feature?
-
-    ## how about:
-
-    grid.clip_to('RLCcatch') 
-    branches = grid.extract_river_network('RLCcatch', 'acc')
-    listOfLSes = [ shapely.geometry.LineString(i['geometry']['coordinates']) for i in branches['features'] ]
-    RLC_multistring = shapely.geometry.MultiLineString(listOfLSes)
-    RLCgpd = gpd.GeoSeries(RLC_multistring)
-    RLCgpd = RLCgpd.set_crs('EPSG:32717')
-    #RLCgpd.to_file("./GIS/rioLCpredicted.geojson", driver='GeoJSON')
-
-    grid.clip_to('RMCcatch') 
-    branches = grid.extract_river_network('RMCcatch', 'acc')
-    listOfLSes = [ shapely.geometry.LineString(i['geometry']['coordinates']) for i in branches['features'] ]
-    RMC_multistring = shapely.geometry.MultiLineString(listOfLSes)
-    RMCgpd = gpd.GeoSeries(RMC_multistring)
-    RMCgpd = RMCgpd.set_crs('EPSG:32717')
-    #RMCgpd.to_file("./GIS/rioMCpredicted.geojson", driver='GeoJSON')
-
-    RLCgpd.bounds
-
-    streamsClippedRLC = gpd.clip(hydro, RLCgpd.boundary)
-
-    RLCgpd.boundary
-
-    plt.close('all')
-
-    fig, ax = plt.subplots()
-    streamsClippedRLC.plot(ax=ax)
-
-    RLCgpd.plot(ax=ax)
-
-    RLCgpd.boundary
-
-    streamsClippedRMC = gpd.clip(hydro, RMCgpd)
-
-
-    fig, ax = plt.subplots(1,2, figsize=(10,5))
-    ## RLC
-    RLCgpd.plot(color='Black', ax=ax[0])
-    hydro.plot(color='Blue', ax=ax[0])
-    ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
-    ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
-    circCent = (745145, 10034629)
-    circ = plt.Circle(circCent, radius=300, alpha=0.5, color='red')
-    ax[0].add_artist(circ)
-    ## RMC
-    RMCgpd.plot(color='Black', ax=ax[1])
-    hydro.plot(color='Blue', ax=ax[1])
-    ax[1].set_xlim(RMCgpd.bounds.minx[0],RMCgpd.bounds.maxx[0])
-    ax[1].set_ylim(RMCgpd.bounds.miny[0],RMCgpd.bounds.maxy[0])
-
-    ## so now what? we need to divy up watersheds in a way that make sense. 
-
-    ## put points on there, and start chopping up the watersheds
-
-
-    RLCgpd.plot(color='Black', ax=ax[0])
-    hydro.plot(color='Blue', ax=ax[0])
-    ax[0].set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
-    ax[0].set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
-
-    ## if we want to divide up the watersheds along the primary 
-    ## tributories, how do we do this?
-
-    ## the junctions must be the endpoints:
-
-    def plotEndpoints(num, ax=plt.gca()):
-        X1,Y1 = branches[num]['geometry']['coordinates'][0] ## first point in list
-        X2,Y2 = branches[num]['geometry']['coordinates'][-1] ## last point in list
-        ax.plot(X1,Y1, 'bo', markersize=10)
-        ax.plot(X2,Y2, 'ro', markersize=10)
-
-    ## maybe the best thing to do is to define the largest branch,
-    ## and get the watersheds of the secondary tributaries 
-
-    grid.clip_to('RLCcatch') 
-    branches = grid.extract_river_network('RLCcatch', 'acc')
-    fig, ax = plt.subplots()
-    for branch in branches['features']:
-        line = np.asarray(branch['geometry']['coordinates'])
-        ax.plot(line[:, 0], line[:, 1])
-
-    plotEndpoints(71, ax=ax)
-
-
-    ## let's see if we can clip away the upper watershed
-
-    handX, handY = plt.ginput(1)[0]
-
-    handX, handY ## (745877.5533121668, 10034590.348697523)
-
-    snapX, snapY = grid.snap_to_mask(grid.acc > 50, np.array([handX,handY]), return_dist=False)
-
-    snapX, snapY ## (745862.474054495, 10034604.327270983)
-
-    grid.catchment(data='dir', np.array(snapX, snapY), out_name='upperLC_Catch',
-                       recursionlimit=15000, xytype='label')
-
-    grid.clip_to('upperLC_Catch')
+## create geopandas series from this
+def makegeo(grid, catchname='littleCatch'):
+    grid.clip_to(catchname)
     shapes = grid.polygonize()
     lsh = list(shapes)
     aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
     p = gpd.GeoSeries(aa)
     p = p.set_crs('EPSG:32717')
+    return(p)
+
+## get coords of a matplot map
+def getCoordClick():
+    return(list(plt.ginput(1)[0]))
+
+## try these out:
 
-    #p.to_file("./GIS/rioMCwatershed.geojson", driver='GeoJSON')
-    ## look at it
+## plot figure first 
+
+RLCgpd.plot()
+
+coords = getCoordClick()
+
+
+aa = makeCheckCatches(grid, coords)
+bb = makegeo(aa)
+
+## 
+fig, ax = plt.subplots()
+bb.plot(ax=ax)
+
+## this should create a grid object with view already set to sub watershed of 
+## interest
 
-    plt.close('all')
-    rioLCWatershedPoly = gpd.read_file('GIS/rioLCwatershed.geojson')
-    fig, ax = plt.subplots()
-    rioLCWatershedPoly.plot(ax=ax, color='red')
-    RLCgpd.plot(color='Black', ax=ax)
-
-    p.plot(ax=ax, color='blue')
-
-    ## goal is to define a matrix of watersheds across the extent of study,
-    ## roughly equal size
-
-    ## starting with RLC watershed, we need the main river stem. 
+## so we need to pick a threshold max size, and any of the subcuencas that exceeds it, 
+## we need to break up into smaller watersheds.  
 
-    ## this is easily defined for the lower part of the water shed,
-    ## and we don't need the upper. Get the branches for that...
+## our existing watersheds are:
 
-    ## we can start by defining all the catchments of the primary 
-    ## tributaries on the lower RLC. I'll define the pourpoints manually
+fig, ax = plt.subplots()
+autoCuencas = (pd.concat([RLCCatchPolys,RMCCatchPolys]).
+                reset_index(drop=True))
+colmap = genXKCDColors(autoCuencas.shape[0])
+autoCuencas.plot(ax=ax, cmap=colmap)
 
-    ## bring up plot of model and observed RLC:
 
-    plt.close('all')
-    fig, ax = plt.subplots()
-    RLCgpd.plot(color='Black', ax=ax)
-    hydro.plot(color='Blue', ax=ax)
-    lcPoly.plot(color='green', ax=ax, alpha=0.5)
-    anaPt.plot(ax=ax, color='purple')
-    ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
-    ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
+## ugh. when is a watershed "adjacent"? 
+## seems like when they share a ridgeline. 
+## what is causing the problems here are the rivers. 
+## cuencas that are on the same side are obvious.
+## but the central, shared riparian areas cause all the 
+## confusion. If you treat the river margins are a single
+## continuous watershed, it unites all the subcuencas so 
+## are all just two steps away from each other.
+## if you break it up, it is highly subjective and/over
+## inflates the steps between water sheds. 
+## eliminating it (bring all the subwatersheds into 
+## continuity with no river buffer) also sometimes 
+## unites watersheds that are otherwise distance to 
+## each other. 
+## the basic hypothesis is that dispersal across watersheds
+## can be difficult. 
+## comes back to a max size cutoff, because I think the 
+## best solution here is generate a river buffer and then divide 
+## up evenly to max polygon size chunks.  
 
-    coords = plt.ginput(n=-1, timeout=0)
+## so what is a good max?
 
-    ## add a couple more
-    coords.append(plt.ginput(n=-1, timeout=0))
+## our golden area is the south, where the watersheds are +/- regularly spaced 
+## and sized. Can we get an average size from these?
+ 
+## I think when we get these, we'll just need the shapely polygon.touches method to make an 
+## adjacency matrix
 
-    ## get colorset to match
+## here's a draft set of rules:
 
-    coords_snapped = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
+## base set of watershed polygons are set as in the notebook:
 
-    def getCatchGPD(grid, coords):
-        grid2 = copy.deepcopy(grid)
-        snapX, snapY = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
-        grid2.catchment(y=snapY, x=snapX, data='dir', out_name=('littleCatch'),
-                           recursionlimit=15000, xytype='label')
-        grid2.clip_to('littleCatch')
-        shapes = grid2.polygonize()
-        lsh = list(shapes)
-        aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
-        p = gpd.GeoSeries(aa)
-        p = p.set_crs('EPSG:32717')
-        return(p)
+## 0. a model of the los cedros rivers was generated using the pysheds package.
+## from this model, 
 
-    ## use this function to make a polygon-based geoseries of our catchments
-    rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
-    RLCCatchPolys = gpd.GeoSeries(rlccatchpolys, crs='EPSG:32717')
+## 1. initially every tributary that directly enters the Rio Los Cedros
+## and Rio Magdalena Chico from the south/west side gets its own watershed,
+## within a small buffer of the 
 
-    ## get plot colors
-    Xcolors = [ random.choice(list(mcolors.XKCD_COLORS.values())) for i in range(len(coords)) ] 
+## 2. we only go as far as the waterfalls, roughly. Meaning that for now the 
+## watersheds of the upper los cedros are left alone. They are too big, but 
+## it doesn't matter because, only their lower regions are important for the 
+## the study.
 
-    plt.close('all')
+## 3. these predicted watersheds are hand-curated, to match observed actual river 
+## topology. There were some errors in the predicted river flows.
 
-    ## summary plot so far
+## 3. where significant sub-watersheds remain hidden,  we creep up
+## the buffer size from the stream to split them. As in, the first candidate 
+## for splitting is from the "bottom-up" of a stream. The first, and only,
+## splitting event of this type occurred by increasing the river buffer from 
+## 50m to 200m, resulting in a new sub-watershed in the north central portion of 
+## the RLC watershed
 
-    fig, ax = plt.subplots()
-    RLCCatchPolys.plot(ax = ax, cmap='Dark2')
-    RLCgpd.plot(color='Black', ax=ax)
-    hydro.plot(color='Blue', ax=ax)
-    anaPt.plot(color='green', ax=ax)
-    x, y = zip(*coords)
-    ax.plot(x, y, "bo")
-    ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
-    ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
-    riverCorridor.plot(ax=ax, alpha=0.5) ## created below
-    for i,_ in enumerate(RLCCatchPolys):
-        ax.text(coords[i][0], coords[i][1], str(i))
+## 4. We try to eliminate the river buffer, as in it does not get its own 
+## watershed status, and other watersheds are expanded within reason to the 
+## river. This is to bring watersheds that are directly across from each other
+## on the rivers. But this is not forced beyond a reasonable extent, 
+## such that we do not attempt to cover all surface area of the map, there
+## are blank areas allowed that do not belong to any watershed. Technically
+## these are tiny microcuencas that feed directly into the river. 
 
-    RLCCatchPolys.area
+## Also, some of these microcuencas areas are included in adjacent sub-watersheds 
+## of which they are not technically tributaries. I think? Did I do this?
 
-    ## actually, that is starting to look good...
+## the magdalena chico is really tough. It is one long strip of really steep mountainside,
+## with a few small streams. There are some large flats that are pasture, and some 
+## really steep hillsides. If we consider it one continuous watershed, this 
+## seems incongruous with our microcuencas carved from the RLC...
 
-    ## a lot of error, though. how do we reconcile this? it starts to matter, if we are trying to
-    ## create polygons of roughly equal size...
-    ## seems like maybe the dem isn't meant for this local of a delineation.
-    ## it's what we got, go with it.
+## not sure. for the moment, I have basically considered the RMC a single
+## watershed, but broken it apart at an especially steep cliff. I also took the 
+## liberty of including the points in the southeast portion of Ana's study, 
+## even though they are across the RMC. Some inconsistencies, but I think they
+## are in the spirit of testing the general idea that it is hard to get around
+## in the tropical Andes, slowing dispersal. 
 
-    ### define main stem of RLC
+########## adjacency matrix for watersheds ############
 
-    ## our main stem up until the waterfall is pretty obvious. How do we extract this as some sort of 
-    ## geoseries?
+## and now, it looks like we need to get an adjacency matrix. I don't see a ready
+## made function or package for this in my usual libraries. Shouldn't be too 
+## hard to code with shapely or geopandas...famous last words...
 
-    breakat = plt.ginput(n=1, timeout=0)
-    breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
+curatedMicrocuencas.plot()
 
-    ## get the main stem of the river by upping the accumumlation threshold
-    grid.clip_to('RLCcatch') 
-    branch = grid.extract_river_network('RLCcatch', 'acc', threshold=3000)
-    line = np.asarray(branches['features'][0]['geometry']['coordinates'])
-    ## get rid of rows north of break point:
-    masc = line[:,1] < breakat_snapped[1]
-    lineSouth = line[masc,:]
-    ## make this into a geoseries
-    shLine = shapely.geometry.LineString(lineSouth)
-    mainRLC = gpd.GeoSeries(shLine)
-    mainRLC = mainRLC.set_crs('EPSG:32717')
+aa = gpd.GeoSeries(curatedMicrocuencas.iloc[0])
+bb = gpd.GeoSeries(curatedMicrocuencas.iloc[1])
 
-    #mainRLC.to_file('GIS/mainRLC.geojson', driver='GeoJSON')
-    ## buffer it 
-    riverCorridor = mainRLC.buffer(200)
+fig, ax = plt.subplots()
+aa.plot(ax=ax, color='blue')
+bb.plot(ax=ax, color='red')
 
-    ## take intersection of buffer and tributaries as pourpoints
+aa.touches(bb) ## no. why not?
 
-    ## 
+aa.intersects(bb) ## true. 
 
-    ## looks like trying to catch the small tributary south of the LC campus failed, just catches the next one over.  
-    ## if we go with the buffering plan, this little catchment will probably mostly get swallowed. 
+aa.overlaps(bb) ## true. why? They should be complementary, share boundaries but not internal space
 
-    RLCgpd
-    riverCorridor
+## where is the intersection?
 
-    aa = RLCgpd.difference(riverCorridor)
+cc = aa.intersection(bb)
 
 
-    riverCorridor.geometry[0].boundary.coords
+cc.plot(ax=ax, color='yellow')
 
-    dir(RLCgpd.geometry)
+cc.area
 
-    len(RLCgpd.geometry[0])
+aa.touches(bb).geometry
 
-    list(RLCgpd.geometry[0][0].coords)
+aa.intersects(bb).geometry
 
-    bb = RLCgpd.intersection(riverCorridor)
 
-    ## our intersection should have the points of intersection 
-    ## as the ends of the line segments, no?
+## is this going to cause problems at corners etc.? probably not, we have pretty coarse, obvious polygons
 
-    ## just the first line segment
-    bb.geometry[0][0].coords
+## we're going to be using NetworkX, <https://networkx.org/documentation/stable/index.html>
+## looks like that package accepts dictionaries of descriptors. 
+## So let's just march forward, let's make an adjacency matrix, maybe as a numpy array?
 
-    line = np.asarray(bb.geometry[0][0].coords)
+## to make on row, take one polygon and iterate it through all the others:
 
-    plt.close('all')
-    fig, ax = plt.subplots()
-    ax.plot(line[:, 0], line[:, 1], color='red')
+def checkAdjacency(microcuencaA, microcuencaB):
+    '''use two, single row geoseries'''
+    if microcuencaA[0].touches(microcuencaB[0]):
+        a=True
+    elif microcuencaA[0].intersects(microcuencaB[0]):
+        a=True
+    elif microcuencaA[0].overlaps(microcuencaB[0]): 
+        a=True
+    else: a=False
+    return(a)
 
-    bb.plot(ax = ax)
+checkAdjacency(aa, bb)
 
-    ## okay, the endpoint of this should be a common
-    ## coordinate between both the line segment and the
-    ## buffered polygon:
+curatedMicrocuencas
 
-    cc = list(bb[0][0].coords) ## our line segment coords, as x,y tuples
+ee = gpd.GeoSeries(curatedMicrocuencas.iloc[10])
 
-    dd = list(riverCorridor.geometry[0].boundary.coords) ## our river buffer, as x,y tuples
+ee.plot(ax=plt.gca(), color='red')
 
-    plt.close('all')
-    riverbuffoutline = np.asarray(dd)
-    fig, ax = plt.subplots()
-    ax.plot(riverbuffoutline[:, 0], riverbuffoutline[:, 1], color='red')
+checkAdjacency(aa, ee)
 
-    [ i in dd for i in cc ] ## all false - no shared points?
+checkAdjacency(ee, aa)
 
-    sum([ i in cc for i in dd ] ) ## also all false. 
+## right along their boundary. Probably some sort of projection issue, or
+## minor mistake with the digitizing. 
 
-    ## so that method doesn't work. I am thinking about this wrong way.
+## anyway, don't think it matters as long as we can establish some sort of 
+## contact, and prevent false positives
 
-    ## how about the intersections between the boundary line string of the 
-    ## polygon and the river line segments? 
+## is there a way to do this recursively?
 
-    plt.close('all')
-    fig, ax = plt.subplots()
-    RLCgpd.plot(ax=ax)
-    riverCorridor.boundary.plot(ax=ax)
+i=0
+checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[i+10])
 
-    dir(riverCorridor.boundary)
 
-    aa = riverCorridor.boundary.intersection(RLCgpd)
-    aa.plot(ax=ax, color='green', markersize=10)
-
-    ## much better. can we use these as the pour points for our catchments?
-    ## actually, I think we will want to river buffer polygons: one for 
-    ## the riparian zone around the river that we are calling its own watershed,
-    ## and another, tighter buffer that defines the pour points. 
-
-    ## so the tighter one, for pourpoints. Start with 50 m?  Might be too tight...let's see...
-
-    pourPtsPoly = mainRLC.buffer(50)
-
-    plt.close('all')
-
-    fig, ax = plt.subplots()
-    RLCgpd.plot(ax=ax)
-
-    pourPts = pourPtsPoly.boundary.intersection(RLCgpd)
-    pourPts = pourPts.explode()
-    pourPts.reset_index(inplace=True, drop=True)
-    pourPts.plot(ax=ax, color='green', markersize=10)
-    mainRLC.plot(ax=ax, color='purple')
-
-    ## use these as pourpoints, repeating the above pipeline.
-    ## we're going to need to break some of these catchments up
-    ## but for now, start with these
-
-
-    ## get plot colors
-    Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=len(pourPts))
-    cmap = mcolors.ListedColormap(Xcolors)
-
-    ## get our catchments as a geoseries, using getCatch function defined above,
-    ## and our new pourpoints:
-
-    grid2 = copy.deepcopy(grid)
-
-    coords2 = [ i.coords[0] for i in pourPts ]
-
-
-    rlccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
-    RLCCatchPolys2 = gpd.GeoSeries(rlccatchpolys2, crs='EPSG:32717')
-    ## looks like that works
-
-    ## do our summary plot again:
-
-    gpd.read_file("./GIS/mainRMC.geojson")
-
-    plt.close('all')
-
-    fig, ax = plt.subplots()
-    RLCCatchPolys2.plot(ax = ax, cmap=cmap)
-    RLCgpd.plot(color='Black', ax=ax)
-    hydro.plot(color='Blue', ax=ax)
-    anaPt.plot(color='green', ax=ax)
-    x, y = zip(*coords2)
-    ax.plot(x, y, "bo")
-    mainRLC.plot(ax=ax, color='purple', linewidth=5)
-
-    ax.set_xlim(RLCgpd.bounds.minx[0],RLCgpd.bounds.maxx[0])
-    ax.set_ylim(RLCgpd.bounds.miny[0],RLCgpd.bounds.maxy[0])
-    riverCorridor.plot(ax=ax, alpha=0.5) 
-    for i,_ in enumerate(RLCCatchPolys):
-        ax.text(coords[i][0], coords[i][1], str(i))
-
-    ## looking better everytime...
-    RLCCatchPolys.area
-
-    ## all watersheds are at least in the same area of 
-    ## magnitude, except the river corridor, which we
-    ## are going to chop up anyway. 
-
-    ## can we clean up the pipeline and repeat for the 
-    ## RMC watershed? 
-
-    ## take a break after that and write the humboldt,
-    ## then 
-
-    ## where to start... the notebook is up to the river 
-    ## extraction point for both RLC and RMC. 
-
-    ## get main stem of the river, both catchments:
-
-    ## RLC main stem, lower
-    grid.clip_to('RLCcatch') 
-    branch = grid.extract_river_network('RLCcatch', 'acc', threshold=3000)
-    line = np.asarray(branch['features'][0]['geometry']['coordinates'])
-
-    ## get our most upstream point (for RLC, +/- at the old waterfall)
-    fig, ax = plt.subplots()
-    RLCgpd.plot(color='Black', ax=ax)
-    hydro.plot(color='Blue', ax=ax)
-    #breakat = plt.ginput(n=1, timeout=0)
-    breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
-
-    breakat_snapped ## 745893.39740855, 10033958.6773012
-
-    masc = line[:,1] < breakat_snapped[1]
-    lineSouth = line[masc,:]
-
-    ## make this into a geoseries
-    shLine = shapely.geometry.LineString(lineSouth)
-    mainRLC = gpd.GeoSeries(shLine)
-    mainRLC = mainRLC.set_crs('EPSG:32717')
-
-    ## RMC main stem, lower
-
-    ## other than a large tributary to east that is outside
-    ## the study area
-
-    plt.close('all')
-
-    grid.clip_to('RMCcatch') 
-
-    branch = grid.extract_river_network('RMCcatch', 'acc', threshold=3000)
-    line = np.asarray(branch['features'][0]['geometry']['coordinates'])
-
-    ## get breakpoint
-    fig, ax = plt.subplots()
-    RMCgpd.plot(color='Black', ax=ax)
-    hydro.plot(color='Blue', ax=ax)
-
-    breakat = plt.ginput(n=1, timeout=0)
-    breakat_snapped = grid.snap_to_mask(grid.acc > 50, breakat[0], return_dist=False)
-
-    breakat_snapped ## array([  746975.71480033, 10035711.15579062])
-
-    masc = line[:,1] < breakat_snapped[1]
-    lineSouth = line[masc,:]
-
-    ## make this into a geoseries
-
-    shLine = shapely.geometry.LineString(lineSouth)
-
-    mainRMC = gpd.GeoSeries(shLine)
-    mainRMC = mainRMC.set_crs('EPSG:32717')
-
-    mainRMC = gpd.read_file('GIS/mainRMC.geojson')
-
-    ## check tributaries for RMC, don't think there were many that
-    ## qualified:
-
-    ## pour point for each tributary:
-    pourPtsPoly = mainRMC.buffer(50)
-
-    fig, ax = plt.subplots()
-    pourPtsPoly.plot(ax=ax)
-    RMCgpd.plot(ax=ax, color='green')
-
-    pourPts = pourPtsPoly.boundary.intersection(RMCgpd)
-    pourPts = pourPts.explode()
-    pourPts.reset_index(inplace=True, drop=True)
-
-    ## make subwatersheds:
-    coords = [ i.coords[0] for i in pourPts ]
-    grid.clip_to('dem')
-
-    ## this can be a little memory intensive:
-    rmccatchpolys = [ getCatchGPD(grid, i).geometry[0] for i in coords ]
-    RMCCatchPolys = gpd.GeoSeries(rmccatchpolys, crs='EPSG:32717')
-    RMCCatchPolys.to_file('GIS/RMCCatchPolys.geojson', driver='GeoJSON')
-
-    def genXKCDColors(nu):
-        Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=nu)
-        cmap = mcolors.ListedColormap(Xcolors)
-        return(cmap)
-
-    ## look at the RMC subwatersheds
-    fig, ax = plt.subplots()
-    cmap=genXKCDColors(len(RMCCatchPolys))
-    RMCCatchPolys.plot(ax=ax, cmap=cmap)
-    cmap=genXKCDColors(len(RLCCatchPolys))
-    RLCCatchPolys.plot(ax=ax, cmap=cmap)
-    RMCgpd.plot(ax=ax)
-    RLCgpd.plot(ax=ax)
-
-    ## do we need a corridor?
-    rlcCorridor = mainRLC.buffer(200)
-    rmcCorridor = mainRMC.buffer(200)
-    rlcCorridor.plot(ax=ax, alpha=0.5)
-    rmcCorridor.plot(ax=ax, alpha=0.5)
-
-
-    anaPt.plot(ax=ax, color='black') 
-
-    ##########################################
-
-    ## because there is no easy way to keep these pyshed objects
-    ## from session to session, so rebuild  
-
-    ## okay, so now what?
-
-    ## so, we want to be able to categorize the sample sites by water shed. 
-    ## as is, are all points are included in a watershed? 
-
-    ## I think it is time to hand curate the watersheds
-
-    ## or not. Not sure how to split these large watersheds 
-
-    ## seems like we need some sort of system for declaring a new microwatershed.
-
-    ## first rule seems to be, if a flowing stream comes off the main stem, 
-
-    ## where did we make the calls for whether 
-
-    smallAstpath = "/home/daniel/Documents/analyses/losCedrosTrees/anaData/GIS/smallAster.tif"
-    grid = Grid.from_raster(smallAstpath, data_name='dem')
-    grid.fill_depressions(data='dem', out_name='flooded_dem')
-    grid.resolve_flats(data='flooded_dem', out_name='inflated_dem')
-    dirmap = (64,  128,  1,   2,    4,   8,    16,  32)
-    grid.flowdir(data='inflated_dem', out_name='dir', dirmap=dirmap)
-    grid.accumulation(data='dir', dirmap=dirmap, out_name='acc', apply_mask=False)
-    XL, YL = (748696, 10032712) ## Rio Los Cedros
-    XM, YM = (748696, 10032942) ## Rio Magdalena Chico
-    snapXL, snapYL = grid.snap_to_mask(grid.acc > 50, np.array([XL,YL]), return_dist=False)
-    snapXM, snapYM = grid.snap_to_mask(grid.acc > 50, np.array([XM,YM]), return_dist=False)
-    grid.clip_to('dem')
-    grid.catchment(data='dir', x=snapXL, y=snapYL, out_name='RLCcatch',
-                       recursionlimit=15000, xytype='label')
-    grid.catchment(data='dir', x=snapXM, y=snapYM, out_name='RMCcatch',
-                       recursionlimit=15000, xytype='label')
-    grid.clip_to('RLCcatch')
-    branches = grid.extract_river_network('RLCcatch', 'acc')
-
-    ## looks like there is a default threshhold of 100 cells, which 
-    ## how do we use this to find our flow accumulation, it fit our 
-    ## observed rivers pretty well. 
-
-    ## but what now? play around with splitting the water sheds, find out 
-    ## what our "ideal" size might be, and be consistent
-
-    ## so what we want here is a point and click function to get relative 
-    ## size of 
-
-    ## bring up our river system as is, and funnel clicks through a cell calculator
-
-    fig, ax = plt.subplots()
-    for branch in branches['features']:
-        line = np.asarray(branch['geometry']['coordinates'])
-        ax.plot(line[:, 0], line[:, 1])
-
-    ## we need to be able pick a point with a mouse, and make a catchment
-
-    ## we have the above function getCatchGPD, can we raise it from the dead for a
-    ## moment 
-
-    ## what did it do? 
-
-    ## takes the grid object, a set of coords, spit out a geoseries with a polygon for 
-    ## a sub-watershed  
-
-    ## for instance:
-
-    #grid.clip_to('dem')
-
-    grid.clip_to('RLCcatch')
-
-    grid.size
-
-    grid.shape
-
-    coords = [748696, 10032712] ## Rio Los Cedros
-    aa = getCatchGPD(grid, coords)
-
-    aa.area 
-    ## this agrees with the qgis area calculations...
-
-    grid.cellsize
-    ## this sort of makes sense, I think the pixels from the dem are 
-    ## 30m on a side. 
-
-    grid.size
-
-    aa.area / grid.cellsize**2
-
-    ## that doesn't make sense to me, the grid size and 
-
-    ## anyway, we can use the area output as our metric for 
-    ## splitting, but we need to think in terms of these 
-    ## actual areas, a bit far from the pysheds. 
-
-    ## I think we need a max cutoff. We have a min, sort of,
-    ## in that tributary that touches the main rivers as observed on our topo
-    ## is given its own watershed. But we need a max size, for the 
-    ## stream complexes, to define our neighborhoods and get our 
-    ## adjaceny
-
-    ## how can we make this useful for splitting up the watersheds? 
-    ## make it report the number of cells, can this be 
-    ## held as info in the geoseries?
-
-    ## hmm, looks like we're going to have to make a geopanda? this could mess up our previous code...
-    ## so let's not mess with  getCatchGPD()
-    ## just build something else with it. 
-
-    ## combine our catchements 
-
-    catches = 
-
-    RLCCatchPolys
-
-    RMCCatchPolys
-
-    aa = pd.concat([RLCCatchPolys,RMCCatchPolys])
-    aa.reset_index(inplace=True, drop=True)
-
-    ## and what do we want here? to detect which are above a certain 
-    ## threshold?
-
-    ## this would really be better done in pysheds, in terms of cells
-
-    ## maybe a new function, that generates pyshed grid objects on the fly,
-    ## that we check for size 
-
-    ## basically break this function up a little:
-
-    ## make a duplicate grid with the sub catchment
-    def makeCheckCatches(grid, coords):
-        grid2 = copy.deepcopy(grid)
-        snapX, snapY = grid.snap_to_mask(grid.acc > 50, coords, return_dist=False)
-        grid2.catchment(y=snapY, x=snapX, data='dir', out_name=('littleCatch'),
-                           recursionlimit=15000, xytype='label')
-        grid2.clip_to('littleCatch')
-        return(grid2)
-
-    ## create geopandas series from this
-    def makegeo(grid, catchname='littleCatch'):
-        grid.clip_to(catchname)
-        shapes = grid.polygonize()
-        lsh = list(shapes)
-        aa = shapely.geometry.polygon.Polygon(lsh[0][0]['coordinates'][0])
-        p = gpd.GeoSeries(aa)
-        p = p.set_crs('EPSG:32717')
-        return(p)
-
-    ## get coords of a matplot map
-    def getCoordClick():
-        return(list(plt.ginput(1)[0]))
-
-    ## try these out:
-
-    ## plot figure first 
-
-    RLCgpd.plot()
-
-    coords = getCoordClick()
-
-
-    aa = makeCheckCatches(grid, coords)
-    bb = makegeo(aa)
-
-    ## 
-    fig, ax = plt.subplots()
-    bb.plot(ax=ax)
-
-    ## this should create a grid object with view already set to sub watershed of 
-    ## interest
-
-    ## so we need to pick a threshold max size, and any of the subcuencas that exceeds it, 
-    ## we need to break up into smaller watersheds.  
-
-    ## our existing watersheds are:
-
-    fig, ax = plt.subplots()
-    autoCuencas = (pd.concat([RLCCatchPolys,RMCCatchPolys]).
-                    reset_index(drop=True))
-    colmap = genXKCDColors(autoCuencas.shape[0])
-    autoCuencas.plot(ax=ax, cmap=colmap)
-
-
-    ## ugh. when is a watershed "adjacent"? 
-    ## seems like when they share a ridgeline. 
-    ## what is causing the problems here are the rivers. 
-    ## cuencas that are on the same side are obvious.
-    ## but the central, shared riparian areas cause all the 
-    ## confusion. If you treat the river margins are a single
-    ## continuous watershed, it unites all the subcuencas so 
-    ## are all just two steps away from each other.
-    ## if you break it up, it is highly subjective and/over
-    ## inflates the steps between water sheds. 
-    ## eliminating it (bring all the subwatersheds into 
-    ## continuity with no river buffer) also sometimes 
-    ## unites watersheds that are otherwise distance to 
-    ## each other. 
-    ## the basic hypothesis is that dispersal across watersheds
-    ## can be difficult. 
-    ## comes back to a max size cutoff, because I think the 
-    ## best solution here is generate a river buffer and then divide 
-    ## up evenly to max polygon size chunks.  
-
-    ## so what is a good max?
-
-    ## our golden area is the south, where the watersheds are +/- regularly spaced 
-    ## and sized. Can we get an average size from these?
-     
-    ## I think when we get these, we'll just need the shapely polygon.touches method to make an 
-    ## adjacency matrix
-
-    ## here's a draft set of rules:
-
-    ## base set of watershed polygons are set as in the notebook:
-
-    ## 0. a model of the los cedros rivers was generated using the pysheds package.
-    ## from this model, 
-
-    ## 1. initially every tributary that directly enters the Rio Los Cedros
-    ## and Rio Magdalena Chico from the south/west side gets its own watershed,
-    ## within a small buffer of the 
-
-    ## 2. we only go as far as the waterfalls, roughly. Meaning that for now the 
-    ## watersheds of the upper los cedros are left alone. They are too big, but 
-    ## it doesn't matter because, only their lower regions are important for the 
-    ## the study.
-
-    ## 3. these predicted watersheds are hand-curated, to match observed actual river 
-    ## topology. There were some errors in the predicted river flows.
-
-    ## 3. where significant sub-watersheds remain hidden,  we creep up
-    ## the buffer size from the stream to split them. As in, the first candidate 
-    ## for splitting is from the "bottom-up" of a stream. The first, and only,
-    ## splitting event of this type occurred by increasing the river buffer from 
-    ## 50m to 200m, resulting in a new sub-watershed in the north central portion of 
-    ## the RLC watershed
-
-    ## 4. We try to eliminate the river buffer, as in it does not get its own 
-    ## watershed status, and other watersheds are expanded within reason to the 
-    ## river. This is to bring watersheds that are directly across from each other
-    ## on the rivers. But this is not forced beyond a reasonable extent, 
-    ## such that we do not attempt to cover all surface area of the map, there
-    ## are blank areas allowed that do not belong to any watershed. Technically
-    ## these are tiny microcuencas that feed directly into the river. 
-
-    ## Also, some of these microcuencas areas are included in adjacent sub-watersheds 
-    ## of which they are not technically tributaries. I think? Did I do this?
-
-    ## the magdalena chico is really tough. It is one long strip of really steep mountainside,
-    ## with a few small streams. There are some large flats that are pasture, and some 
-    ## really steep hillsides. If we consider it one continuous watershed, this 
-    ## seems incongruous with our microcuencas carved from the RLC...
-
-    ## not sure. for the moment, I have basically considered the RMC a single
-    ## watershed, but broken it apart at an especially steep cliff. I also took the 
-    ## liberty of including the points in the southeast portion of Ana's study, 
-    ## even though they are across the RMC. Some inconsistencies, but I think they
-    ## are in the spirit of testing the general idea that it is hard to get around
-    ## in the tropical Andes, slowing dispersal. 
-
-    ########## adjacency matrix for watersheds ############
-
-    ## and now, it looks like we need to get an adjacency matrix. I don't see a ready
-    ## made function or package for this in my usual libraries. Shouldn't be too 
-    ## hard to code with shapely or geopandas...famous last words...
-
-    curatedMicrocuencas.plot()
-
-    aa = gpd.GeoSeries(curatedMicrocuencas.iloc[0])
-    bb = gpd.GeoSeries(curatedMicrocuencas.iloc[1])
-
-    fig, ax = plt.subplots()
-    aa.plot(ax=ax, color='blue')
-    bb.plot(ax=ax, color='red')
-
-    aa.touches(bb) ## no. why not?
-
-    aa.intersects(bb) ## true. 
-
-    aa.overlaps(bb) ## true. why? They should be complementary, share boundaries but not internal space
-
-    ## where is the intersection?
-
-    cc = aa.intersection(bb)
-
-
-    cc.plot(ax=ax, color='yellow')
-
-    cc.area
-
-    aa.touches(bb).geometry
-
-    aa.intersects(bb).geometry
-
-
-    ## is this going to cause problems at corners etc.? probably not, we have pretty coarse, obvious polygons
-
-    ## we're going to be using NetworkX, <https://networkx.org/documentation/stable/index.html>
-    ## looks like that package accepts dictionaries of descriptors. 
-    ## So let's just march forward, let's make an adjacency matrix, maybe as a numpy array?
-
-    ## to make on row, take one polygon and iterate it through all the others:
-
-    def checkAdjacency(microcuencaA, microcuencaB):
-        '''use two, single row geoseries'''
-        if microcuencaA[0].touches(microcuencaB[0]):
-            a=True
-        elif microcuencaA[0].intersects(microcuencaB[0]):
-            a=True
-        elif microcuencaA[0].overlaps(microcuencaB[0]): 
-            a=True
-        else: a=False
-        return(a)
-
-    checkAdjacency(aa, bb)
-
-    curatedMicrocuencas
-
-    ee = gpd.GeoSeries(curatedMicrocuencas.iloc[10])
-
-    ee.plot(ax=plt.gca(), color='red')
-
-    checkAdjacency(aa, ee)
-
-    checkAdjacency(ee, aa)
-
-    ## right along their boundary. Probably some sort of projection issue, or
-    ## minor mistake with the digitizing. 
-
-    ## anyway, don't think it matters as long as we can establish some sort of 
-    ## contact, and prevent false positives
-
-    ## is there a way to do this recursively?
-
-    i=0
-    checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[i+10])
-
-
-    for j in curatedMicrocuencas.index: 
-        print(j)
-        [ checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j]) for i in curatedMicrocuencas.index ]
-        
-    for i in curatedMicrocuencas.index:
-        print(i)
-        checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j])
-
-    curatedMicrocuencas
-
-    curatedMicrocuencas.is_valid
-
-    ## breakdown here:
-    i=8
-    j=6
+for j in curatedMicrocuencas.index: 
+    print(j)
+    [ checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j]) for i in curatedMicrocuencas.index ]
+    
+for i in curatedMicrocuencas.index:
+    print(i)
     checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j])
 
-    dir(curatedMicrocuencas.iloc[i][0])
+curatedMicrocuencas
 
-    curatedMicrocuencas.iloc[i][0].is_valid ## nope
+curatedMicrocuencas.is_valid
 
-    curatedMicrocuencas.iloc[j][0].is_valid ## yup
+## breakdown here:
+i=8
+j=6
+checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j])
 
-    ## hunt down the invalidities
-    i=8
+dir(curatedMicrocuencas.iloc[i][0])
 
-    explain_validity(curatedMicrocuencas.iloc[i][0]) ## self-intersection
+curatedMicrocuencas.iloc[i][0].is_valid ## nope
 
-    curatedMicrocuencas.iloc[i].plot()
+curatedMicrocuencas.iloc[j][0].is_valid ## yup
 
-    #i=8 ## fixed
-    #i=15 ## fixed
-    explain_validity(curatedMicrocuencas.iloc[i][0]) ## self-intersection
-    fig, ax = plt.subplots()
-    curatedMicrocuencas.plot(ax=ax)
-    gpd.GeoSeries(curatedMicrocuencas.iloc[i]).plot(ax=ax, color='red')
-    plt.scatter(746450.017781465, 10035311.4677141, c='blue')
+## hunt down the invalidities
+i=8
 
-    ## okay, all are now valid, try again:  
+explain_validity(curatedMicrocuencas.iloc[i][0]) ## self-intersection
 
-    lOfadj = []
-    for j in curatedMicrocuencas.index: 
-        print(j)
-        lOfadj.append(
-            [ checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j]) for i in curatedMicrocuencas.index ]
-            )
+curatedMicrocuencas.iloc[i].plot()
 
-    ## so this should be our adjaceny matrix:
-    adjMat = pd.DataFrame(lOfadj)
+#i=8 ## fixed
+#i=15 ## fixed
+explain_validity(curatedMicrocuencas.iloc[i][0]) ## self-intersection
+fig, ax = plt.subplots()
+curatedMicrocuencas.plot(ax=ax)
+gpd.GeoSeries(curatedMicrocuencas.iloc[i]).plot(ax=ax, color='red')
+plt.scatter(746450.017781465, 10035311.4677141, c='blue')
 
+## okay, all are now valid, try again:  
 
-    ## do we need to change this to 0s and 1s?
-
-    ## can we do a sanity check here? show map:
-
-    fig, ax = plt.subplots(1,2)
-    colmap = genXKCDColors(curatedMicrocuencas.shape[0])
-    curatedMicrocuencas.plot(ax=ax[0], cmap=colmap)
-    for i in curatedMicrocuencas.index:
-        ax[0].annotate(s=i,
-                    xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
-                    )
-
-    ## looks promising, spotchecks work out. 
-
-    ## what's next? get this into a format that NetworkX can handle.
-
-    ## NetworkX can solve our problems
-    ## if so do it, update notebook
-
-    ## what does networkX need? Our nodes are the polygons, and edges 
-    ## are physical adjancencies
-
-    ## graph object:
-
-    mapG = networkx.graph()
-
-    ## nodes
-
-    mapG.add_nodes_from(range(1,17))
-
-    list(range(1,17))
-
-    mapG.nodes ## looks like it worked
-
-    ## but can we do this directly from our adjacency matrix
-
-    help(networkx.from_pandas_adjacency)
-
-    gMicrocuencas = networkx.from_pandas_adjacency(adjMat)
-    print(networkx.info(gMicrocuencas))
-    layout = networkx.spring_layout(gMicrocuencas)
-
-    fig, ax = plt.subplots(1,2)
-    colmap = genXKCDColors(curatedMicrocuencas.shape[0])
-    curatedMicrocuencas.plot(ax=ax[0], cmap=colmap)
-    for i in curatedMicrocuencas.index:
-        ax[0].annotate(s=i,
-                    xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
-                    )
-
-    ## reuse our colormap 
-    networkx.draw(gMicrocuencas, 
-                  layout, 
-                  with_labels=True, 
-                  node_color=colmap.colors,
-                  ax=ax[1])
-
-    ## okay, nice, can we get a table of shortest paths? djikstra's algorithm 
-    ## is readymade in networkx:
-
-    help(networkx.dijkstra_path_length)
-
-    networkx.dijkstra_path_length(gMicrocuencas, 0, 5)
-
-    networkx.dijkstra_path_length(gMicrocuencas, 0, 13)
-
-    ## great, so we can use this to make a distance matrix, I think...
-
-    [ i for i in range(17) ]
-
-    jumps = []
-    for j in range(17):
-        jumps.append([ networkx.dijkstra_path_length(gMicrocuencas, i, j) for i in range(17) ])
-
-    watershedDistMat = pd.DataFrame(jumps)
-
-
-    help(watershedDistMat.to_pickle)
-
-    #watershedDistMat.to_csv('watershedDistMat.csv')
-
-    watershedDistMat = pd.read_csv('watershedDistMat.csv', header=0, index_col=0) 
-    watershedDistMat.columns = watershedDistMat.columns.astype('int')
-
-    envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
-
-    ## great! how do we use this for a turnover diagram?
-
-    ## well, this isn't quite our distance matrix. We need a sample x sample
-    ## comparison. So 
-
-    ## and we need to make sure this is in the formats needed for vegan. 
-
-    anaPt
-
-    ## start on this tomorrow, update notebook for now.  
-
-    ## and so now we need to create a function that finds the number of 
-    ## watershed jumps between any two sample sites. 
-
-    curatedMicrocuencas
-
-    curatedMicrocuencas.iloc[0][0]
-
-    anaPt.within(curatedMicrocuencas.iloc[0])
-
-    anaPt.within(curatedMicrocuencas.iloc[0][0]).any()
-
-    anaPt.within(curatedMicrocuencas.iloc[13][0]).any()
-
-    ## given a point, how do we get it's microcuenca?
-
-    ## our unique ID is the PsubP
-    aa = anaPt.set_index('PsubP')
-    bb = aa.geometry.apply(lambda x: curatedMicrocuencas.contains(x))
-
-    ## looks like that worked. Do all of the sample sites belong to one,
-    ## and just one, polygon?
-
-    (bb.sum(axis=1) == 1).all()
-    ## looks right.  
-
-    ## simplify:
-    cc = pd.melt(bb, var_name='microcuenca', ignore_index=False) 
-    dd = (cc[cc.value]
-            .drop('value', axis=1).sort_index())
-
-    ## we might want to add this to our environmental matrix
-
-    envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
-
-    envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
-    #envOnly['microcuenca'] = dd['microcuenca']
-    #envOnly.to_csv('envOnly.csv')
-
-    ## so now, how to make a "hops" distance matrix between sites?
-
-    psubp1 = 1.2
-    psubp2 = 7.7
-
-    microcuenca1 = envOnly.loc[psubp1,'microcuenca']
-
-    microcuenca2 = envOnly.loc[psubp2,'microcuenca']
-
-    type(microcuenca1)
-
-    envOnly.loc[psubp2,'microcuenca']
-
-    [microcuenca1, microcuenca2]
-
-    [str(microcuenca1), str(microcuenca2)]
-
-
-    watershedDistMat.loc[str(microcuenca1), str(microcuenca2)]
-
-    ## huh, this works. 
-    watershedDistMat.loc[microcuenca1, microcuenca2]
-    ## we want our columns names to be integers, not strings
-
-    watershedDistMat.loc['9','13']
-
-    psubpHops = []
-    for i in envOnly.microcuenca:
-        psubpHops.append(
-            [ watershedDistMat.loc[i, j] for j in envOnly.microcuenca ]
+lOfadj = []
+for j in curatedMicrocuencas.index: 
+    print(j)
+    lOfadj.append(
+        [ checkAdjacency(curatedMicrocuencas.iloc[i], curatedMicrocuencas.iloc[j]) for i in curatedMicrocuencas.index ]
         )
 
-    psubpHopsDF = pd.DataFrame(psubpHops, index=envOnly.index, columns=envOnly.index)
+## so this should be our adjaceny matrix:
+adjMat = pd.DataFrame(lOfadj)
 
 
-    ## spotchecks look good. save it:
+## do we need to change this to 0s and 1s?
 
-    psubpHopsDF.to_csv('psubpHopsDF.csv')
+## can we do a sanity check here? show map:
 
-    #####################
-
-    help(pd.read_csv)
-
-    psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
-
-    ## can we use this to do a turnover graph? 
-
-    ## we need to use the above as a physical distance matrix
-    ## and then we need a bray-curtis distance for ecological distance
-
-    subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
-
-    bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
-    ## not sure how these outputs work. Muck around with numpy triangular matrices
-
-    aa = sp.distance.squareform(bcDist)
-
-
-    bb = np.array([[0,1,2],[3,4,5],[6,7,8]])
-    np.triu(bb, k=0)
-
-    help(np.triu)
-
-    help(np.triu_indices)
-
-    np.triu_indices(bb, k=0)
-
-    cc = bb[np.triu_indices(bb.shape[0], k = 0)]
-
-    ## okay, so can we check the outputs of pdist this way? 
-
-    dd = aa[np.triu_indices(aa.shape[0], k=1)]
-    len(bcDist)
-    len(dd)
-
-    ## they match. so likely the output of the pdist function 
-    ## is a triangular matrix with no diagonal. 
-    ## I don't know if they use the upper or lower triangle,
-    ## don't think it matters, but let's see:
-
-    dd[0] == bcDist[0]
-
-    ## upper, I guess, or it doesn't matter
-
-    ## so we need the upper triangle of our physical
-    ## distance matrix:
-
-    psubpHopsNP = np.array(psubpHopsDF)
-    psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
-
-    len(psubpHopsTriU)
-    len(bcDist)
-
-    ## I guess we can just make a model from these:
-
-    X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
-    fig, ax = plt.subplots()
-    ax.scatter(psubpHopsTriU, bcDist)
-    ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
-    ax.set_title('Overall Turnover')
-
-    ## this would be better shown as a violin or box plot at each distance.
-    ## how can we do this?
-
-    ## the violin of one bin (hops = 1):
-
-    aa = X[X == 1]
-    bb = Y[X == 1]
-
-    fig, ax = plt.subplots()
-    ax.violinplot(bb)
-
-    ## but we want to do this for all the physical distance bins
-
-    X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
-
-    ## can we do this with series instead of np arrays?
-
-    XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
-
-
-    plt.close('all')
-    aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ] 
-
-    [ np.mean(i) for i in aa ]
-
-    fig, ax = plt.subplots()
-    ## that works...add points?
-    XSjitted = (XS
-                .apply(np.random.normal, args=(0.05,))
-                .apply( lambda x: x+1)
+fig, ax = plt.subplots(1,2)
+colmap = genXKCDColors(curatedMicrocuencas.shape[0])
+curatedMicrocuencas.plot(ax=ax[0], cmap=colmap)
+for i in curatedMicrocuencas.index:
+    ax[0].annotate(s=i,
+                xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
                 )
-    ax.scatter(XSjitted, YS, alpha=0.15, color='red')
-    ax.violinplot(aa, showmeans=True)
-    ax.set_xticklabels(['',0,1,2,3,4])
-    ax.set_title('Overall Microcuenca Turnover')
-    ax.set_ylabel('Bray-Curtis dissimilarity')
-    ax.set_xlabel('distance in watershed hops')
 
-    ## looks okay. Can we draw lines between the means?
+## looks promising, spotchecks work out. 
+
+## what's next? get this into a format that NetworkX can handle.
+
+## NetworkX can solve our problems
+## if so do it, update notebook
+
+## what does networkX need? Our nodes are the polygons, and edges 
+## are physical adjancencies
+
+## graph object:
+
+mapG = networkx.graph()
+
+## nodes
+
+mapG.add_nodes_from(range(1,17))
+
+list(range(1,17))
+
+mapG.nodes ## looks like it worked
+
+## but can we do this directly from our adjacency matrix
+
+help(networkx.from_pandas_adjacency)
+
+gMicrocuencas = networkx.from_pandas_adjacency(adjMat)
+print(networkx.info(gMicrocuencas))
+layout = networkx.spring_layout(gMicrocuencas)
+
+fig, ax = plt.subplots(1,2)
+colmap = genXKCDColors(curatedMicrocuencas.shape[0])
+curatedMicrocuencas.plot(ax=ax[0], cmap=colmap)
+for i in curatedMicrocuencas.index:
+    ax[0].annotate(s=i,
+                xy=curatedMicrocuencas.loc[i][0].centroid.coords[0],
+                )
+
+## reuse our colormap 
+networkx.draw(gMicrocuencas, 
+              layout, 
+              with_labels=True, 
+              node_color=colmap.colors,
+              ax=ax[1])
+
+## okay, nice, can we get a table of shortest paths? djikstra's algorithm 
+## is readymade in networkx:
+
+help(networkx.dijkstra_path_length)
+
+networkx.dijkstra_path_length(gMicrocuencas, 0, 5)
+
+networkx.dijkstra_path_length(gMicrocuencas, 0, 13)
+
+## great, so we can use this to make a distance matrix, I think...
+
+[ i for i in range(17) ]
+
+jumps = []
+for j in range(17):
+    jumps.append([ networkx.dijkstra_path_length(gMicrocuencas, i, j) for i in range(17) ])
+
+watershedDistMat = pd.DataFrame(jumps)
 
 
-    ## and the sub categories would be better modeled as a
-    ## hierarchical model of landuse types and disturbance
-    ## types (anthropogenic vs. natural). 
+help(watershedDistMat.to_pickle)
 
-    ## after that, the MEM analysis needs to be looked at again. 
-    ## it's not that useful
+#watershedDistMat.to_csv('watershedDistMat.csv')
 
-    ### subdivide by habitat types ###
+watershedDistMat = pd.read_csv('watershedDistMat.csv', header=0, index_col=0) 
+watershedDistMat.columns = watershedDistMat.columns.astype('int')
 
-    psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
-    subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
-    envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
 
-    ## we have an overall model of regression 
+## great! how do we use this for a turnover diagram?
 
-    ## but we need to give each type of habitat the ability to 
-    ## have its own rate of turnover (B1 coefficient). 
+## well, this isn't quite our distance matrix. We need a sample x sample
+## comparison. So 
 
-    ## first separate and visualize
+## and we need to make sure this is in the formats needed for vegan. 
 
-    ## how do we divide the above community data? 
+anaPt
 
-    subParcelComm.head()
+## start on this tomorrow, update notebook for now.  
 
-    ## make a dictionary, keys are habitat types and values are lists of PsubP sample names
+## and so now we need to create a function that finds the number of 
+## watershed jumps between any two sample sites. 
 
-    habGroups = envOnly.groupby('habitat')
+curatedMicrocuencas
 
-    habGroups.groups
-    ## huh, the groupby object looks like a dictionary...can we treat it that way?
+curatedMicrocuencas.iloc[0][0]
 
-    envOnly.loc[ habGroups.groups['BC'] ]
+anaPt.within(curatedMicrocuencas.iloc[0])
 
-    subParcelComm.loc[ habGroups.groups['BC'] ]
+anaPt.within(curatedMicrocuencas.iloc[0][0]).any()
 
-    ## seems so...
+anaPt.within(curatedMicrocuencas.iloc[13][0]).any()
 
-    ## for each group we need to construct a turnover diagram, 
-    ## so repeat the above pipeline for each submatrix:
+## given a point, how do we get it's microcuenca?
 
-    i = 'RCA'
+## our unique ID is the PsubP
+aa = anaPt.set_index('PsubP')
+bb = aa.geometry.apply(lambda x: curatedMicrocuencas.contains(x))
+
+## looks like that worked. Do all of the sample sites belong to one,
+## and just one, polygon?
+
+(bb.sum(axis=1) == 1).all()
+## looks right.  
+
+## simplify:
+cc = pd.melt(bb, var_name='microcuenca', ignore_index=False) 
+dd = (cc[cc.value]
+        .drop('value', axis=1).sort_index())
+
+## we might want to add this to our environmental matrix
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+#envOnly['microcuenca'] = dd['microcuenca']
+#envOnly.to_csv('envOnly.csv')
+
+## so now, how to make a "hops" distance matrix between sites?
+
+psubp1 = 1.2
+psubp2 = 7.7
+
+microcuenca1 = envOnly.loc[psubp1,'microcuenca']
+
+microcuenca2 = envOnly.loc[psubp2,'microcuenca']
+
+type(microcuenca1)
+
+envOnly.loc[psubp2,'microcuenca']
+
+[microcuenca1, microcuenca2]
+
+[str(microcuenca1), str(microcuenca2)]
+
+
+watershedDistMat.loc[str(microcuenca1), str(microcuenca2)]
+
+## huh, this works. 
+watershedDistMat.loc[microcuenca1, microcuenca2]
+## we want our columns names to be integers, not strings
+
+watershedDistMat.loc['9','13']
+
+psubpHops = []
+for i in envOnly.microcuenca:
+    psubpHops.append(
+        [ watershedDistMat.loc[i, j] for j in envOnly.microcuenca ]
+    )
+
+psubpHopsDF = pd.DataFrame(psubpHops, index=envOnly.index, columns=envOnly.index)
+
+
+## spotchecks look good. save it:
+
+psubpHopsDF.to_csv('psubpHopsDF.csv')
+
+#####################
+
+help(pd.read_csv)
+
+psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+
+## can we use this to do a turnover graph? 
+
+## we need to use the above as a physical distance matrix
+## and then we need a bray-curtis distance for ecological distance
+
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+## not sure how these outputs work. Muck around with numpy triangular matrices
+
+aa = sp.distance.squareform(bcDist)
+
+
+bb = np.array([[0,1,2],[3,4,5],[6,7,8]])
+np.triu(bb, k=0)
+
+help(np.triu)
+
+help(np.triu_indices)
+
+np.triu_indices(bb, k=0)
+
+cc = bb[np.triu_indices(bb.shape[0], k = 0)]
+
+## okay, so can we check the outputs of pdist this way? 
+
+dd = aa[np.triu_indices(aa.shape[0], k=1)]
+len(bcDist)
+len(dd)
+
+## they match. so likely the output of the pdist function 
+## is a triangular matrix with no diagonal. 
+## I don't know if they use the upper or lower triangle,
+## don't think it matters, but let's see:
+
+dd[0] == bcDist[0]
+
+## upper, I guess, or it doesn't matter
+
+## so we need the upper triangle of our physical
+## distance matrix:
+
+psubpHopsNP = np.array(psubpHopsDF)
+psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
+
+len(psubpHopsTriU)
+len(bcDist)
+
+## I guess we can just make a model from these:
+
+X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
+fig, ax = plt.subplots()
+ax.scatter(psubpHopsTriU, bcDist)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_title('Overall Turnover')
+
+## this would be better shown as a violin or box plot at each distance.
+## how can we do this?
+
+## the violin of one bin (hops = 1):
+
+aa = X[X == 1]
+bb = Y[X == 1]
+
+fig, ax = plt.subplots()
+ax.violinplot(bb)
+
+## but we want to do this for all the physical distance bins
+
+X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
+
+## can we do this with series instead of np arrays?
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+
+
+plt.close('all')
+aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ] 
+
+[ np.mean(i) for i in aa ]
+
+fig, ax = plt.subplots()
+## that works...add points?
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.05,))
+            .apply( lambda x: x+1)
+            )
+ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+ax.violinplot(aa, showmeans=True)
+ax.set_xticklabels(['',0,1,2,3,4])
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
+
+## looks okay. Can we draw lines between the means?
+
+
+## and the sub categories would be better modeled as a
+## hierarchical model of landuse types and disturbance
+## types (anthropogenic vs. natural). 
+
+## after that, the MEM analysis needs to be looked at again. 
+## it's not that useful
+
+### subdivide by habitat types ###
+
+psubpHopsDF = pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+
+## we have an overall model of regression 
+
+## but we need to give each type of habitat the ability to 
+## have its own rate of turnover (B1 coefficient). 
+
+## first separate and visualize
+
+## how do we divide the above community data? 
+
+subParcelComm.head()
+
+## make a dictionary, keys are habitat types and values are lists of PsubP sample names
+
+habGroups = envOnly.groupby('habitat')
+
+habGroups.groups
+## huh, the groupby object looks like a dictionary...can we treat it that way?
+
+envOnly.loc[ habGroups.groups['BC'] ]
+
+subParcelComm.loc[ habGroups.groups['BC'] ]
+
+## seems so...
+
+## for each group we need to construct a turnover diagram, 
+## so repeat the above pipeline for each submatrix:
+
+i = 'RCA'
+## physical distance
+psubpHopsDF_i = psubpHopsDF.loc[ habGroups.groups[i], habGroups.groups[i].astype('str') ]
+psubpHopsNP_i = np.array(psubpHopsDF_i)
+psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
+
+## bc distance
+subParcelComm_i = subParcelComm.loc[ habGroups.groups[i] ]
+bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
+
+## plot
+X, Y = psubpHopsTriU_i.reshape(-1,1), bcDist_i.reshape(-1,1)
+fig, ax = plt.subplots()
+ax.scatter(X, Y)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_title(i)
+
+psubpHopsDF.index
+
+psubpHopsDF_i
+## oops, only subsetting rows, not columns....does this matter?
+
+## apply this to all groups
+
+## plotting function for old turnover diagrams
+def oldTurnPlot(physDist, ecoDist, ax, tit=None):
+    ax.scatter(physDist, ecoDist)
+    X, Y = physDist.reshape(-1,1), ecoDist.reshape(-1,1)
+    ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+    ax.set_title(tit)
+
+plt.close('all')
+psubpHopsTriU_byHab = []
+bcDist_byHab = []
+fig, axes = plt.subplots(2,3, sharey=True, sharex=True )
+axes = axes.flatten()
+for nu,i in enumerate(habGroups.groups.keys()):
+    print('i='+i)
+    print('nu='+str(nu))
     ## physical distance
     psubpHopsDF_i = psubpHopsDF.loc[ habGroups.groups[i], habGroups.groups[i].astype('str') ]
     psubpHopsNP_i = np.array(psubpHopsDF_i)
     psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
-
+    psubpHopsTriU_byHab.append(psubpHopsTriU_i)
     ## bc distance
     subParcelComm_i = subParcelComm.loc[ habGroups.groups[i] ]
     bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
-
-    ## plot
-    X, Y = psubpHopsTriU_i.reshape(-1,1), bcDist_i.reshape(-1,1)
-    fig, ax = plt.subplots()
-    ax.scatter(X, Y)
-    ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
-    ax.set_title(i)
-
-    psubpHopsDF.index
-
-    psubpHopsDF_i
-    ## oops, only subsetting rows, not columns....does this matter?
-
-    ## apply this to all groups
-
-    ## plotting function for old turnover diagrams
-    def oldTurnPlot(physDist, ecoDist, ax, tit=None):
-        ax.scatter(physDist, ecoDist)
-        X, Y = physDist.reshape(-1,1), ecoDist.reshape(-1,1)
-        ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
-        ax.set_title(tit)
-
-    plt.close('all')
-    psubpHopsTriU_byHab = []
-    bcDist_byHab = []
-    fig, axes = plt.subplots(2,3, sharey=True, sharex=True )
-    axes = axes.flatten()
-    for nu,i in enumerate(habGroups.groups.keys()):
-        print('i='+i)
-        print('nu='+str(nu))
-        ## physical distance
-        psubpHopsDF_i = psubpHopsDF.loc[ habGroups.groups[i], habGroups.groups[i].astype('str') ]
-        psubpHopsNP_i = np.array(psubpHopsDF_i)
-        psubpHopsTriU_i = psubpHopsNP_i[np.triu_indices(psubpHopsNP_i.shape[0], k=1)]
-        psubpHopsTriU_byHab.append(psubpHopsTriU_i)
-        ## bc distance
-        subParcelComm_i = subParcelComm.loc[ habGroups.groups[i] ]
-        bcDist_i = sp.distance.pdist(subParcelComm_i, metric='brayCurtis')
-        bcDist_byHab.append(bcDist_i)
-        ## plot it
-        #oldTurnPlot(physDist=psubpHopsTriU_i, 
-        #            ecoDist=bcDist_i, 
-        #            ax=axes[nu], 
-        #            tit=i,
-        #                )
-        violinTurnPlot(physDist=psubpHopsTriU_i, 
-                    ecoDist=bcDist_i, 
-                    ax=axes[nu], 
-                    tit=i,
-                        )
-
-    ## plotting function for new-style turnover diagrams
-    fig, ax = plt.subplots(figsize=(10,10))
-
-    def violinTurnPlot(physDist, ecoDist, ax, tit=None):
-        XS, YS = pd.Series(physDist), pd.Series(ecoDist)
-        aa = [ YS[XS == i].to_list() for i in np.unique(physDist) ]
-        ## that works...add points?
-        XSjitted = (XS
-                    .apply(np.random.normal, args=(0.03,))
-                    .apply( lambda x: x+1)
+    bcDist_byHab.append(bcDist_i)
+    ## plot it
+    #oldTurnPlot(physDist=psubpHopsTriU_i, 
+    #            ecoDist=bcDist_i, 
+    #            ax=axes[nu], 
+    #            tit=i,
+    #                )
+    violinTurnPlot(physDist=psubpHopsTriU_i, 
+                ecoDist=bcDist_i, 
+                ax=axes[nu], 
+                tit=i,
                     )
-        ax.scatter(XSjitted, YS, alpha=0.15, color='red')
-        ax.violinplot(aa, showmeans=True)
-        _=ax.set_xticklabels(['',0,1,2,3,4])
-        ax.set_title(tit)
 
+## plotting function for new-style turnover diagrams
+fig, ax = plt.subplots(figsize=(10,10))
 
-    plt.close('all')
-    fig, ax = plt.subplots(figsize=(10,10))
-
-    aa = violinTurnPlot(physDist=psubpHopsTriU_byHab[0], 
-                ecoDist=bcDist_byHab[0], 
-                ax=ax, 
-                tit=None)
-
-    XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
-    aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ]
-    fig, ax = plt.subplots(figsize=(10,10))
+def violinTurnPlot(physDist, ecoDist, ax, tit=None):
+    XS, YS = pd.Series(physDist), pd.Series(ecoDist)
+    aa = [ YS[XS == i].to_list() for i in np.unique(physDist) ]
     ## that works...add points?
     XSjitted = (XS
                 .apply(np.random.normal, args=(0.03,))
@@ -10791,28 +10769,50 @@ sudo apt install libopenblas-dev
     ax.scatter(XSjitted, YS, alpha=0.15, color='red')
     ax.violinplot(aa, showmeans=True)
     _=ax.set_xticklabels(['',0,1,2,3,4])
-    ax.set_title('Overall Microcuenca Turnover')
-    ax.set_ylabel('Bray-Curtis dissimilarity')
-    ax.set_xlabel('distance in watershed hops')
-    [ np.mean(i) for i in aa ]
+    ax.set_title(tit)
 
-    ## can we build a model? 
-    ## I think we should work the one pertinent example I have on hand for this.
-    ## Martin 2018 has an example of a non-linear function, with variable 
-    ## with variance?
 
-    dataPath=(
-    "/home/daniel/Documents/learn/Bayesian/martinBayesianAnalysis/"
-    "Bayesian-Analysis-with-Python-Second-Edition/data/babies.csv"
-    )
+plt.close('all')
+fig, ax = plt.subplots(figsize=(10,10))
 
-    data = pd.read_csv(dataPath)
+aa = violinTurnPlot(physDist=psubpHopsTriU_byHab[0], 
+            ecoDist=bcDist_byHab[0], 
+            ax=ax, 
+            tit=None)
 
-    data.plot.scatter('Month', 'Lenght')
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ]
+fig, ax = plt.subplots(figsize=(10,10))
+## that works...add points?
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.03,))
+            .apply( lambda x: x+1)
+            )
+ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+ax.violinplot(aa, showmeans=True)
+_=ax.set_xticklabels(['',0,1,2,3,4])
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
+[ np.mean(i) for i in aa ]
 
-    data.head()
+## can we build a model? 
+## I think we should work the one pertinent example I have on hand for this.
+## Martin 2018 has an example of a non-linear function, with variable 
+## with variance?
 
-    with pm.Model() as model_vv:
+dataPath=(
+"/home/daniel/Documents/learn/Bayesian/martinBayesianAnalysis/"
+"Bayesian-Analysis-with-Python-Second-Edition/data/babies.csv"
+)
+
+data = pd.read_csv(dataPath)
+
+data.plot.scatter('Month', 'Lenght')
+
+data.head()
+
+with pm.Model() as model_vv:
 
 α = pm.Normal('α', sd=10)
 β = pm.Normal('β', sd=10)
@@ -10823,6 +10823,247 @@ x_shared = shared(data.Months.Values * 1.)
 
 ## this is not working. I think our version of python is too new?
 
-## we've  got get a venv going, I think:
+## we've  got get a venv going, I think
 
- 
+## alias for our bayes environment:
+
+bayesVenv
+
+## I think we need the following:
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import pymc3 as pm
+from theano import shared
+import scipy.stats as stats
+import arviz as az
+import geopandas as gpd
+import scipy.spatial as sp
+from sklearn.linear_model import LinearRegression
+plt.ion()
+
+
+## venv is not working. Let's try conda
+
+## I think we need to make an environment for the project
+
+## for the moment, let's contain this to a subdirectory:
+
+bayesAna="/home/daniel/Documents/analyses/losCedrosTrees/anaData/bayesModels"
+
+## try out python3.7. Don't think we have this locally installed, 
+## unless anaconda put it on there. But try.
+
+conda create --name bayesAna python=3.7
+
+conda install pymc3
+
+conda activate bayesAna
+
+## using this new environment, does pymc3 behave?
+
+## looks good...
+
+
+## how do we use conda with jupyter? 
+
+## I think we need to install jupyter within the environment...
+
+## these websites may be useful
+## https://bytesofcomputerwisdom.home.blog/2019/03/31/jupyter-notebook-running-the-wrong-python-version/
+## https://stackoverflow.com/questions/58068818/how-to-use-jupyter-notebooks-in-a-conda-environment
+
+## this file looks like this:
+## /usr/share/jupyter/kernels/python3/kernel.json
+
+cd /usr/share/jupyter/kernels/python3/
+
+{
+ "argv": [
+  "/usr/bin/python3",
+  "-m",
+  "ipykernel_launcher",
+  "-f",
+  "{connection_file}"
+ ],
+ "display_name": "Python 3",
+ "language": "python"
+}
+
+## there may be a another kernel spec here:
+ls ~/.local/share/jupyter/kernels/python3/kernel.json 
+## doesn't exist, not the problem.
+
+## our python 3.7 for the bayesAna env is stored here
+ls /home/daniel/anaconda3/envs/bayesAna/bin
+
+## can we use this for the above kernel spec file?
+## as long as we are using the bayesAna environment, we can use to find our kernels
+
+jupyter kernelspec list
+
+## which points here
+cd /home/daniel/anaconda3/envs/bayesAna/share/jupyter/kernels/python3
+
+## which has a kernel.json file that lists:
+
+ls -l /home/daniel/anaconda3/envs/bayesAna/bin/python
+
+## ... which is a symlink to python3.7
+## very labrynthine, but correct 
+
+## huh, it works all of a sudden
+
+## well, keep on
+
+## so back to our example above...p138 in the martin book
+
+dataPath=(
+"/home/daniel/Documents/learn/Bayesian/martinBayesianAnalysis/"
+"Bayesian-Analysis-with-Python-Second-Edition/data/babies.csv"
+)
+data = pd.read_csv(dataPath)
+
+data.plot.scatter('Month', 'Lenght')
+
+data.head()
+
+with pm.Model() as model_vv:
+    α = pm.Normal('α', sd=10)
+    β = pm.Normal('β', sd=10)
+    γ = pm.HalfNormal('γ', sd=10)
+    δ = pm.HalfNormal('δ', sd=10)
+    x_shared = shared(data.Month.values * 1.)
+    μ = pm.Deterministic('μ', α + β * x_shared**0.5) 
+    ε = pm.Deterministic('ε', γ + δ * x_shared)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=data.Lenght) 
+    trace_vv = pm.sample(1000, tune=1000)
+
+##  
+
+data.plot.scatter('Month', 'Lenght', alpha=0.5)
+ax=plt.gca()
+μ_m = trace_vv['μ'].mean(0)
+ε_m = trace_vv['ε'].mean(0)
+
+ax.plot(data.Month, μ_m, c='k')
+ax.fill_between(data.Month, μ_m + 1 * ε_m, μ_m - 
+                1 * ε_m, alpha=0.6, color = 'C1')
+ax.fill_between(data.Month, μ_m + 2 * ε_m, μ_m - 
+                2 * ε_m, alpha=0.4, color = 'C1')
+
+plt.xlabel('x')
+plt.ylabel('y', rotation=0)
+
+## that worked, I think
+
+## so adapt this to our situation. ε is our variance
+## and we think it has its own dependence on the the 
+## x value (x = distance between comparisons). 
+## so it will have its own linear model that is   
+## a function of x. 
+## our deterministic model is asymptotic, y = x/(k+x), 
+## where x varies between 0 and 1. 
+
+from sympy import symbols
+from sympy import Function
+
+x, y, z, t = symbols('x y z t')
+k, m, n = symbols('k m n', integer=True)
+f, g, h = symbols('f g h', cls=Function)
+
+x = symbols('x')
+
+k=1
+
+a = x/(k+x) 
+b = x/(k+x) + 0.5
+c = (x/(k+x) + 0.5)*(3/4)
+
+p1 = plot((a), show=False)
+p2 = plot((b), show=False)
+p3 = plot((c), show=False)
+p1.xlim = (0,15)
+p1.ylim = (0,2)
+p2[0].line_color = 'red'
+p3[0].line_color = 'green'
+p1.append(p2[0])
+p1.append(p3[0])
+p1.show()
+
+## having trouble with the asymptote
+## just use pyplot
+
+plt.close('all')
+meanBC = [0.8202427173225738, 0.8803880579382168, 0.8718442882110651,
+         0.8910368558226932, 0.881123053179186]
+x = pd.Series(np.linspace(0,20,100))
+y = x.apply(lambda x: x/(1+x))
+y1 = x.apply(lambda x: x/(2+x))
+y2 = x.apply(lambda x: (2*x)/(1+x))
+fig, ax = plt.subplots()
+ax.plot(x,y, color='red')
+ax.plot(x,y1, color='blue')
+ax.plot(x,y2, color='black')
+
+ax.scatter(range(0,5), meanBC)
+
+## while we're at it, let's revisit the 
+## pure distance comparisons (vs the microcuenca distance)
+## this might be easier to model in our first effort 
+
+specObs = pd.read_csv('specObs.csv', index_col='PsubP').sort_index()
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP').sort_index()
+subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
+pts = ((gpd.read_file('GIS/ana30meterPlots.geojson')
+        .set_index('PsubP')
+        .sort_index())
+        )
+## sanity check
+(pts.index == envOnly.index).all()
+(pts.index == subParcelComm.index).all()
+
+## shape and plot the data
+plt.close('all')
+fig, ax = plt.subplots()
+d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
+physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+ax.scatter(physDist, bcDist, alpha=0.2, s=50)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_title('Overall Turnover')
+## any lines from our function work well here?
+x = pd.Series(np.linspace(0,3700,500))
+y = x.apply(lambda x: x/(1+x))
+y1 = x.apply(lambda x: x/(100+x))
+y2 = x.apply(lambda x: (x+100)/(100+(x+100)))
+#ax.plot(x,y, color='red', linewidth=3)
+ax.plot(x,y1, color='blue', linewidth=3)
+ax.plot(x,y2, color='black', linewidth=3)
+
+ax.set_xlim(0,1000)
+ax.set_ylim(0,1)
+## looks promising. so how to fit this as a model?
+
+μ = pm.Deterministic('μ', 
+
+## assume there is a base level of variation even
+## among samples 
+
+with pm.Model as model_dis:
+
+
+
+with pm.Model() as model_vv:
+    α = pm.Normal('α', sd=10)
+    β = pm.Normal('β', sd=10)
+    γ = pm.HalfNormal('γ', sd=10)
+    δ = pm.HalfNormal('δ', sd=10)
+    x_shared = shared(data.Month.values * 1.)
+    μ = pm.Deterministic('μ', α + β * x_shared**0.5) 
+    ε = pm.Deterministic('ε', γ + δ * x_shared)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=data.Lenght) 
+    trace_vv = pm.sample(1000, tune=1000)
+
+## make our function 
