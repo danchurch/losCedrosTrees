@@ -437,6 +437,9 @@ specpool(subParcelComm)
 All     343 516.3946 39.15056 483.6557 21.60728 566.8038 404.4403 10.54889 61
 ##########
 
+Species,chao,chao.se,jack1,jack1.se,jack2,boot,boot.se,n
+All,343,516.3946,39.15056,483.6557,21.60728,566.8038,404.4403,10.54889,61
+
 ## neat. lots of tree species
 
 ## what about some sort of turnover chart?
@@ -10824,10 +10827,11 @@ x_shared = shared(data.Months.Values * 1.)
 ## this is not working. I think our version of python is too new?
 
 ## we've  got get a venv going, I think
+## not working. try condas
 
-## alias for our bayes environment:
-
-bayesVenv
+## in terminal, our condas environment is called (see below)
+conda activate bayesAna
+python3
 
 ## I think we need the following:
 import numpy as np
@@ -10843,13 +10847,7 @@ from sklearn.linear_model import LinearRegression
 plt.ion()
 
 
-## venv is not working. Let's try conda
-
 ## I think we need to make an environment for the project
-
-## for the moment, let's contain this to a subdirectory:
-
-bayesAna="/home/daniel/Documents/analyses/losCedrosTrees/anaData/bayesModels"
 
 ## try out python3.7. Don't think we have this locally installed, 
 ## unless anaconda put it on there. But try.
@@ -10895,7 +10893,9 @@ ls ~/.local/share/jupyter/kernels/python3/kernel.json
 ## doesn't exist, not the problem.
 
 ## our python 3.7 for the bayesAna env is stored here
+
 ls /home/daniel/anaconda3/envs/bayesAna/bin
+
 
 ## can we use this for the above kernel spec file?
 ## as long as we are using the bayesAna environment, we can use to find our kernels
@@ -11005,7 +11005,6 @@ fig, ax = plt.subplots()
 ax.plot(x,y, color='red')
 ax.plot(x,y1, color='blue')
 ax.plot(x,y2, color='black')
-
 ax.scatter(range(0,5), meanBC)
 
 ## while we're at it, let's revisit the 
@@ -11041,7 +11040,6 @@ y2 = x.apply(lambda x: (x+100)/(100+(x+100)))
 #ax.plot(x,y, color='red', linewidth=3)
 ax.plot(x,y1, color='blue', linewidth=3)
 ax.plot(x,y2, color='black', linewidth=3)
-
 ax.set_xlim(0,1000)
 ax.set_ylim(0,1)
 ## looks promising. so how to fit this as a model?
@@ -11097,14 +11095,72 @@ ax.set_ylim(0,1.3)
 ## now fit a model...
 
 with pm.Model() as model_g:
+    #ε = pm.Normal('ε', mu=0, sd = 0.1) ## doesn't work 
     #ε = pm.HalfNormal('ε', sigma = 0.05) ## why does that miss the mark so much?
     ε = pm.Gamma('ε', mu=0.05, sigma = 0.01)
     y_pred = pm.Normal('y_pred', mu= xx/(xx+100), sd=ε, observed=yy)
     trace_g = pm.sample(2000, tune=1000)
 
+## ah, the issue was that I was using a normal dist for the 
+## variance around the curve. Switched to gamma as recommended by
+## the fellow on my posting here:
+
+## https://discourse.pymc.io/t/need-help-with-simple-asymptote-model-using-toy-data/6673
+ 
+## so now the above is modified to use a gamma. 
+## can we visualize this?
+
 plt.close('all')
 az.plot_trace(trace_g, var_names=['ε'])
 
+## can we plot how it fits our model?:
+
+draws = range(0, len(trace_g['ε']), 10)
+
+xp=np.array(draws)
+yp = (xp/(xp+100)) + trace_g['ε'][draws]
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(xp, yp, c='b')
+ax.scatter(xx,yy, c='r', alpha=0.4)
+ax.plot(xx,yy_real, 'k')
+ax.set_ylim(0,1.3)
+
+## meh, it's okay. anyway, we don't need to 
+## make it perfect, the point right now is the getting the syntax
+## we also need to model k and vary the variance with X
+
+## so if we want to vary "k"? 
+## start over. k is essentially a 
+## measure of how far (meters) it takes to 
+## reach BC = 0.5, I think. 
+
+## so k is the closest thing we have to a slope,
+## if this were a linear equation. 
+## so it can be thought of as a measure of 
+## how long (far) it takes for a community turns over in space:
+## if very large the system turns over slowly
+
+## not as intuitive as a linear coefficient, but not bad. 
+## how do we model it? 
+
+## can't be negative,  
+## will be on an order of magnitude that makes sense from an ecological 
+## perspective. 
+## not sure how much time to spend on this, do we need some values 
+## from other literature? 
+
+xx = pd.Series(range(0,3500,100))
+yy_real = xx/(xx + 100)
+εε = np.random.normal(0, 0.05, size=len(xx))
+yy = yy_real + εε
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(xx,yy, alpha=0.4)
+ax.plot(xx,yy_real, 'k')
+ax.set_ylim(0,1.3)
 
 ## works. What about with our real data?
 
@@ -11142,8 +11198,6 @@ ax.scatter(x, y)
 ## In each case we are adding this sampled value
 ## to our deterministic y curve...
 
-
-
 ### 
 
 np.random.seed(1)
@@ -11162,3 +11216,5 @@ plt.plot(x, alpha_m + beta_m * x, c='k',
 plt.xlabel('x')
 plt.ylabel('y', rotation=0)
 plt.legend()
+
+
