@@ -555,6 +555,9 @@ specObs['genusSpecies'].unique().shape
 ## this is getting complicated...
 ## let's get all the specObs creation commands here, at once:
 
+## this is getting complicated...
+## let's get all the specObs creation commands here, at once:
+
 wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
 sheet = wb['Base dat final 6 29 2012']
 bdfDF = pd.DataFrame(sheet.values)
@@ -10831,11 +10834,12 @@ x_shared = shared(data.Months.Values * 1.)
 
 ## in terminal, our condas environment is called (see below)
 conda activate bayesAna
+
 python3
 
 ## I think we need the following:
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt; plt.ion()
 import pandas as pd
 import pymc3 as pm
 from theano import shared
@@ -10844,7 +10848,7 @@ import arviz as az
 import geopandas as gpd
 import scipy.spatial as sp
 from sklearn.linear_model import LinearRegression
-plt.ion()
+from theano import shared
 
 
 ## I think we need to make an environment for the project
@@ -10997,15 +11001,25 @@ p1.show()
 plt.close('all')
 meanBC = [0.8202427173225738, 0.8803880579382168, 0.8718442882110651,
          0.8910368558226932, 0.881123053179186]
-x = pd.Series(np.linspace(0,20,100))
+x = pd.Series(np.linspace(0,10,100))
 y = x.apply(lambda x: x/(1+x))
-y1 = x.apply(lambda x: x/(2+x))
-y2 = x.apply(lambda x: (2*x)/(1+x))
+y1 = x.apply(lambda x: x/(10+x))
+#y2 = x.apply(lambda x: (2*x)/(1+x))
+y3 = x.apply(lambda x: (x+3)/(10+x+3))
 fig, ax = plt.subplots()
 ax.plot(x,y, color='red')
 ax.plot(x,y1, color='blue')
-ax.plot(x,y2, color='black')
+#ax.plot(x,y2, color='black')
+ax.plot(x,y3, color='purple')
 ax.scatter(range(0,5), meanBC)
+ax.set_xlim(0,10)
+ax.set_ylim(0,1)
+
+## how do modify the y intercept? as in, shift the 
+## plot to the left or right, without modifying the ymax
+## we do this by adding a constant to x whereever it appears
+## but that is too complex. Let's keep it simple, 
+## with a classic michaelis-menton with a k constant
 
 ## while we're at it, let's revisit the 
 ## pure distance comparisons (vs the microcuenca distance)
@@ -11104,117 +11118,766 @@ with pm.Model() as model_g:
 ## ah, the issue was that I was using a normal dist for the 
 ## variance around the curve. Switched to gamma as recommended by
 ## the fellow on my posting here:
+aa = specObs['genusSpecies'].str.contains('Boraginaceae')
+specObs[aa]
 
-## https://discourse.pymc.io/t/need-help-with-simple-asymptote-model-using-toy-data/6673
- 
-## so now the above is modified to use a gamma. 
-## can we visualize this?
+## If they weren't able to call it as a Cordia sp., not sure 
+## what it could be, Cordia seems to be the main tree genus..
 
-plt.close('all')
-az.plot_trace(trace_g, var_names=['ε'])
+## I think we gotta throw this out. There is just no information.
 
-## can we plot how it fits our model?:
+### Rubiaceae Psychotria cf. stipularis ###
 
-draws = range(0, len(trace_g['ε']), 10)
+## I think we just decided above we are keeping all 
+## Psychotrias...
 
-xp=np.array(draws)
-yp = (xp/(xp+100)) + trace_g['ε'][draws]
+## this may have been renamed to Palicourea stipularis...
+## which EOL says is a woody climber:
+
+https://eol.org/pages/1108085
+
+## I guess err on the side of caution and throw this out.
+
+### Myrsinaceae Cybianthus humilis ###
+
+## this genus is mostly trees in the TRY data, though
+## no exact species match.
+
+## no help from EOL on growth form 
+
+aa = specObs['genusSpecies'].str.contains('Cybianthus')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Cybianthus')
+juvSpecObs[bb]
+
+## all this species
+
+## gentry says small trees, shrubs, subcanopy. But big enough
+## to be noticed in our mature data? Not sure.
+## not a lot of  information. I guess keep it. 
+
+### Solanaceae sp. ###
+
+## no fucking way. this could be anything. 
+
+aa = specObs['genusSpecies'].str.contains('Solanaceae')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Solanaceae')
+juvSpecObs[bb]
+
+## gotta ditch it
+
+### Rubiaceae Agouticarpa grandistipula ###
+
+aa = specObs['genusSpecies'].str.contains('Agouticarpa')
+specObs[aa]
+
+bb = juvSpecObs['genusSpecies'].str.contains('Agouticarpa')
+juvSpecObs[bb]
+
+## TRY has a different species, a tree or small tree:
+grep "Agouticarpa" justGrowthForm.tsv
+## EOL lists this species as a tree <https://eol.org/pages/1097921>
+
+## let's keep it.
+
+### Indeterminado sp.22 ###
+### Indeterminado sp.21 ###
+
+## i think we have ditch these. Not much we can do with them. 
+
+### Arecaceae Aiphanes erinaceae ###
+
+aa = specObs['genusSpecies'].str.contains('Aiphanes')
+specObs[aa]
+## no adults
+
+bb = juvSpecObs['genusSpecies'].str.contains('Aiphanes')
+juvSpecObs[bb]
+
+## based on this:
+Svenning, Jens-Christian, and Henrik Balslev. "The palm flora of the Maquipucuna montane forest reserve, Ecuador." Principes 42 (1998): 218-226.
+## I think we gotta exclude this. This is a small palm, not known 
+## to exceed 5 cm, at least if I'm reading this article right. 
+
+
+### Lauraceae Ocotea aff. insularis ###
+
+aa = specObs['genusSpecies'].str.contains('Ocotea')
+specObs[aa]
+
+specObs[aa].shape ## lots of hits, 77
+
+specObs[aa].head() ## lots of hits, 77
+
+specObs.loc[aa, 'genusSpecies'].unique()
+
+len(specObs.loc[aa, 'genusSpecies'].unique()) ## eleven Ocoteas in the mature set. 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Ocotea')
+juvSpecObs[bb]
+
+## so basically, this is something that looks really similar to 
+## some of our adults, but something made them think it was
+## different. Jeez. Well, keep it I guess. 
+
+### Asteraceae Criptoniosis cf. occidentalis ###
+
+aa = specObs['genusSpecies'].str.contains('Criptoniosis')
+specObs[aa] 
+## none
+
+bb = juvSpecObs['genusSpecies'].str.contains('Criptoniosis')
+juvSpecObs[bb]
+## one site
+
+## I'm betting this is also a typo, and they meant:
+"Critoniopsis cf. occidentalis"
+
+## so check that again...
+aa = specObs['genusSpecies'].str.contains('Critoniopsis')
+specObs[aa] 
+##  lots of the C. occidentalis, in several types of plots 
+
+bb = juvSpecObs['genusSpecies'].str.contains('Critoniopsis')
+juvSpecObs[bb]
+
+aa = np.array(xx)/(np.array(xx)+kdraws[:,np.newaxis]) + edraws.reshape(-1,1)
 
 plt.close('all')
 fig, ax = plt.subplots()
-ax.scatter(xp, yp, c='b')
-ax.scatter(xx,yy, c='r', alpha=0.4)
-ax.plot(xx,yy_real, 'k')
-ax.set_ylim(0,1.3)
+plt.plot(x, aa.T, c='gray', alpha=0.5, zorder=1)
+## add the mean values plot:
+ax.plot(xx, (xx/(xx+κ_m) + ε_m), color='k', zorder=2)
+## add data
+ax.scatter(xx,yy,zorder=3, alpha=0.5)
 
-## meh, it's okay. anyway, we don't need to 
-## make it perfect, the point right now is the getting the syntax
-## we also need to model k and vary the variance with X
+## looks good. if this were a real model, we would actually try to
+## catch the variance more with our estimates of epsilon.
 
-## so if we want to vary "k"? 
-## start over. k is essentially a 
-## measure of how far (meters) it takes to 
-## reach BC = 0.5, I think. 
-
-## so k is the closest thing we have to a slope,
-## if this were a linear equation. 
-## so it can be thought of as a measure of 
-## how long (far) it takes for a community turns over in space:
-## if very large the system turns over slowly
-
-## not as intuitive as a linear coefficient, but not bad. 
-## how do we model it? 
-
-## can't be negative,  
-## will be on an order of magnitude that makes sense from an ecological 
-## perspective. 
-## not sure how much time to spend on this, do we need some values 
-## from other literature? 
+## now, can we add in variance that varies with distance?
 
 xx = pd.Series(range(0,3500,100))
-yy_real = xx/(xx + 100)
+k = 100
+yy_real = xx/(xx + k)
 εε = np.random.normal(0, 0.05, size=len(xx))
-yy = yy_real + εε
+## but now we want to start out with wide 
+## variance and narrow with increasing distance
+εvv5 = εε*(5*xx/max(xx))
+εvv-5 = εε*(-5*xx/max(xx))
+y0 = yy_real + εε
+y1 = yy_real + εvv5
+y2 = yy_real + εvv-5
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(xx,y0,c='green', alpha=0.3)
+ax.scatter(xx,y1,c='blue', alpha=0.3)
+#ax.scatter(xx,y2,c='red', alpha=0.3)
+ax.plot(xx, yy_real, c='black')
+
+######### gamma dist ##########
+## side note what does a gamma look like?:
+fig, ax = plt.subplots()
+import scipy.special as sps
+shape, scale = 1, .1  
+s = np.random.gamma(shape, scale, 1000)
+count, bins, ignored = plt.hist(s, 50, density=True)
+y = bins**(shape-1)*(np.exp(-bins/scale) /  # doctest: +SKIP
+                     (sps.gamma(shape)*scale**shape))
+ax.plot(bins, y, linewidth=2, color='r')  # doctest: +SKIP
+############################
+
+## anyway try again. seems like we need a negative linear relationship.
+## our y-intercept will be a quantity that estimates the spread
+## of the data that we are seeing at the start of the curve,
+## and our slope will describe how that spread tightens with
+## distance:
+
+plt.close('all')
+
+xx = np.array(range(0,3500,100))
+#yy = np.full(len(xx),1) ## for straight line.
+yy = xx/(100+xx)
+## normalize xx, so not insane
+xnorm = pd.Series(xx/xx.max())
+## here we try a starting SD of 0.2, and a rate of tightening of 0.2
+ee = xnorm.apply(lambda x: np.random.normal(0,.2-0.2*x)).values
+fig, ax = plt.subplots()
+ax.plot(xx, yy, c='k')
+ax.scatter(xx, yy+ee, c='blue')
+ax.set_ylim(0,1.2)
+
+xx = np.array(range(0,3500,100))
+yy_real = xx/(100+xx)
+## normalize xx, so not insane
+xnorm = pd.Series(xx/xx.max())
+## make our noise. Linear function where y-intercept is our max initial variance
+## our neg slope is the rate at which the variance decreases with distance
+## so here we try a starting SD of 0.2, and a rate of tightening of 0.2
+ee = xnorm.apply(lambda x: np.random.normal(0,.2-0.2*x)).values
+fig, ax = plt.subplots()
+yy = yy_real+ee
+ax.scatter(xx, yy, c='blue')
+ax.set_ylim(0,1.2)
+
+## Let's try to model this as is.
+## in this case, ε will change with x... following Martin,
+## we turn epsilon into a deterministic function
+
+with pm.Model() as model_vv:
+    γ = pm.Gamma('γ', mu=0.2, sigma = 0.01) ## y-int, = initial maximum spread of variance
+    δ = pm.Normal('δ', mu=(-0.2), sd=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', γ + δ*xnorm)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
+    trace_g = pm.sample(2000, tune=1000)
+
+## lots of divergence...syntax is good but doesn't work
+## the samplers can't handle the posterior, I guess.  
+## maybe the gamma? try bounding a normal?
+
+with pm.Model() as model_vv:
+    γ = pm.Gamma('γ', mu=0.2, sigma = 0.01) ## y-int, = initial maximum spread of variance
+    δ = pm.Normal('δ', mu=(0.2), sd=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', γ + δ*xnorm)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
+    trace_g = pm.sample(2000, tune=1000)
+
+
+## what could be wrong? maybe the gamma: 
+
+az.plot_trace(trace_g, var_names = ['μ', 'ε'])
+## that's a big nope. Something is very wrong.
+
+
+### okay, back after a couple of weeks. where were we?...
+
+## got a response of the pymc site: 
+
+https://discourse.pymc.io/t/modeling-noising-parameter-that-decreases-negatively-varying-variance/6728
+
+## they recommend exponentiating the variance function
+
+## how do we do this?
+
+
+## but I think that means we change the behavior of γ and δ  
+## originally γ estimated at -.2, with sd of 0.05 
+## originally δ estimated -.2, with sd of 0.05 
+
+## doing a little algebra, the exponeniated version gives us
+γ_mean = np.log(0.2)
+δ_mean = -0.00134475
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+
+## how does this look on a graph?
+plt.close('all')
+fig, ax = plt.subplots()
+
+xx = np.arange(1,3501,20)
+yy_real = xx/(100+xx)
+γ_mean = np.log(0.2)
+δ_mean = -0.0004
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+δ_real = a(xx)
+#ax.plot(xx, δ_real, c='red')
+## δ is sensitive. I think we need something like δ = 0.0008
+## anyway, its just a prior. put a wide spread on it 
+## toy data again:
+## to add in noise? in any given spot, the predicted variance is a function of x:
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+ee = np.random.normal(0, a(xx))
+yy = yy_real + ee
 
 plt.close('all')
 fig, ax = plt.subplots()
-ax.scatter(xx,yy, alpha=0.4)
-ax.plot(xx,yy_real, 'k')
-ax.set_ylim(0,1.3)
+ax.plot(xx, yy_real)
+ax.scatter(xx,yy, c='r')
 
-## works. What about with our real data?
 
-y = bcDist 
-x = physDist
-with pm.Model() as model_g:
-    ε = pm.HalfNormal('ε', sd = 0.1)
-    y_pred = pm.Normal('y_pred', mu= xx/(xx+100), sd=ε, observed=yy)
+
+np.log(0.2)
+
+
+with pm.Model() as model_vv:
+    γ = pm.Gamma('γ', mu=1.5, sigma = 0.5) ## analagous to initial spread of variance (take natural log)
+    δ = pm.Normal('δ', mu=0.0008, sd=0.0002) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
     trace_g = pm.sample(2000, tune=1000)
 
-az.plot_trace(trace_g, var_names=['ε'])
+## still zeroes or neg inf or something like that. where is the problem? 
+## not sure.
 
-## okay that works. if we plot the posterior does it seem reasonable at all?
 
-plt.plot(x, y, 'C0.')
+##################### clean up pymc discourse model ########################
+
+successful = []
+notSuccessful = []
+
+xx = np.array(range(0,3500,100))
+yy_real = xx/(100+xx)
+## normalize xx
+xnorm = pd.Series(xx/xx.max())
+ee = xnorm.apply(lambda x: np.random.normal(0,.2-0.2*x)).values
+yy = yy_real+ee
+with pm.Model() as model_vv:  
+    γ = pm.Gamma('γ', mu=0.2, sigma = 0.01) ## y-int, = initial maximum spread of variance
+    δ = pm.Normal('δ', mu=(-0.2), sd=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', γ + δ*xnorm)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
+    trace_g = pm.sample(2000, tune=1000)
+
+successful.append(yy)
+
+notSuccessful.append(yy)
+
+meh, works 
+
+################
+
+## back to exponential model
+
+xx = np.arange(1,3501,20)
+yy_real = xx/(100+xx)
+γ_mean = np.log(0.2)
+δ_mean = -0.0004
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+ee = np.random.normal(0, a(xx))
+yy = yy_real + ee
+
+with pm.Model() as model_vv:
+    γ = pm.Gamma('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (take natural log)
+    δ = pm.Normal('δ', mu=-0.0004, sd=0.0002) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
+    trace_g = pm.sample(2000, tune=1000)
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(xx,yy)
+ax.plot(xx,yy_real, c='black')
+
+### suggested changes by folks at pymc discourse:
+
+https://discourse.pymc.io/t/modeling-noising-parameter-that-decreases-negatively-varying-variance/6728/8
+
+xx = np.arange(1,3501,20)
+yy_real = xx/(100+xx)
+γ_mean = np.log(0.2)
+δ_mean = -0.0004
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+ee = np.random.normal(0, a(xx))
+yy = yy_real + ee
+with pm.Model() as model_vv:
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (take natural log)
+    #γ = pm.Gamma('γ', mu=1.5, sigma = 0.5) ## gamma version
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    #ε = pm.Deterministic('ε', np.power(np.e, -γ + δ*xx)) ## use with gamma, neg
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
+    #trace_g = pm.sample(2000, tune=1000)
+    trace_g = pm.sample(init='adapt_diag')
+
+
+## whoah, actually works now. can we visualize?
+μ_m = trace_g['μ'].mean(0)
+ε_m = trace_g['ε'].mean(0)
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(xx,yy)
+ax.plot(xx, μ_m, c='k')
+#ax.plot(xx, yy_real)
+ax.fill_between(xx, μ_m + 1*ε_m, μ_m - 1*ε_m, alpha=0.6, color='C1')
+ax.fill_between(xx, μ_m + 2*ε_m, μ_m - 2*ε_m, alpha=0.4, color='C1')
+
+####### our data
+## great! can we try this on our data?
+
+specObs = pd.read_csv('specObs.csv', index_col='PsubP').sort_index()
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP').sort_index()
+subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
+pts = ((gpd.read_file('GIS/ana30meterPlots.geojson')
+        .set_index('PsubP')
+        .sort_index())
+        )
+d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
+physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+
+lw=5
+fig, ax = plt.subplots(figsize=(10,10))
+ax.scatter(physDist, bcDist, s=100, alpha=0.3)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k', linewidth=lw)
+ax.set_title('Overall Turnover')
+## any lines from our function work well here?
+x = pd.Series(np.linspace(0,3700,500))
+#y = x.apply(lambda x: x/(1+x))
+y1 = x.apply(lambda x: x/(100+x))
+#ax.plot(x,y, color='orange', linewidth=lw)
+ax.plot(x,y1, color='red', linewidth=lw)
+
+## our observed would be our bcDist variable
+## x-axis is  physDist  
+
+xx = physDist.copy()
+with pm.Model() as model_vv:
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
+    #trace_g = pm.sample(2000, tune=1000)
+    trace_g = pm.sample(init='adapt_diag')
+
+## looks okay. how do we plot this? I think we need to sort this...
+μ_m = trace_g['μ'].mean(0)
+ε_m = trace_g['ε'].mean(0)
+aa = pd.DataFrame({ "μ_m": μ_m, 
+                    "ε_m": ε_m,
+                    "physDist": physDist, 
+                    "bcDist": bcDist})
+bb = aa.sort_values(by=['physDist'])
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+ax.scatter(bb.physDist,bb.bcDist)
+ax.plot(bb.physDist,bb.μ_m, c='k')
+ax.fill_between(bb.physDist, bb.μ_m + 1*bb.ε_m, bb.μ_m - 1*bb.ε_m, alpha=0.6, color='C1')
+ax.fill_between(bb.physDist, bb.μ_m + 2*bb.ε_m, bb.μ_m - 2*bb.ε_m, alpha=0.6, color='C2')
+
+## actually, that went suprisingly well...
+## but what about our family of errors? 
+
+#### use different family of error ###
+ 
+## can we try a gamma? 
+
+xx = physDist.copy()
+with pm.Model() as model_vv:
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Gamma('y_pred', mu=μ, sd=ε, observed=bcDist)
+    trace_g = pm.sample(init='adapt_diag')
+
+μ_m = trace_g['μ'].mean(0)
+
+len(trace_g['μ'])
+
+trace_g['μ'][0]
+
+ε_m = trace_g['ε'].mean(0)
+
+aa = pd.DataFrame({ "μ_m": μ_m, 
+                    "ε_m": ε_m,
+                    "physDist": physDist, 
+                    "bcDist": bcDist})
+model_vvSort = aa.sort_values(by=['physDist'])
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(model_vvSort.physDist,model_vvSort.bcDist)
+ax.fill_between(model_vvSort.physDist, model_vvSort.μ_m + 1*model_vvSort.ε_m, model_vvSort.μ_m - 1*model_vvSort.ε_m, alpha=0.6, color='C1')
+ax.fill_between(model_vvSort.physDist, model_vvSort.μ_m + 2*model_vvSort.ε_m, model_vvSort.μ_m - 2*model_vvSort.ε_m, alpha=0.4, color='C2')
+
+## that doesn't work, I think because we're just putting mirror images of the 
+## gamma sigma on both sides of our curve. We have to look at the shape whole posterior dist,
+
+az.plot_trace(trace_g, var_names=['γ'])
+
+az.plot_trace(trace_g, var_names=['δ'])
+
+az.plot_trace(trace_g, var_names=['κ'])
+
+az.plot_trace(trace_g, var_names=['μ']) ## yeah, doesn't work.
+## i think I'm thinking about deterministic variables the wrong way. 
+
+az.plot_trace(trace_g, var_names=['μ']) ## yeah, doesn't work.
+
+trace_g['γ']
+
+trace_g['μ']
+
+len(trace_g['μ'])
+
+pm.model_to_graphviz(model_vv)
+
+help(pm.model_to_graphviz)
+
+## so deterministic variables contain ~1000 (or whatever)
+## arrays, each of which has a trace the size of the run, the x-value
+len(trace_g['μ'][0])
+
+len(trace_g['μ'][1])
 
 trace_g['ε'][0]
 
-eps_m = trace_g['ε'].mean()
+## so we should be able to order these, then plot a gamma distribution at each site?
+## meh, doesn't make sense to me. 
 
-draws = range(0, len(trace_g['ε']), 10)
+## can we get a highest posterior density on this plot?:
 
-trDrs = trace_g['ε'][draws] 
-xreshape = x.reshape(-1,1)
-cc = trDrs + xreshape/(xreshape + 100)
+ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_vv)
+
+trace_g['γ'].mean()
+trace_g['δ'].mean()
+trace_g['κ'].mean()
+
+gamma_m = trace_g['γ'].mean()
+delta_m = trace_g['δ'].mean()
+kappa_m = trace_g['κ'].mean()
+
+model_vvSort
+
+model_vvSort.head()
+
+model_vvSort.tail()
+
+plt.close('all')
+
 fig, ax = plt.subplots()
-ax.plot(x, cc, c='gray', alpha=0.05)
-ax.scatter(x, y)
+plt.scatter(physDist, bcDist, c='b', alpha=0.4)
+## credible interval. Not sure what difference here is from the hpd...
+sig = az.plot_hpd(physDist, trace_g['μ'], credible_interval=0.99, color='green')
 
-## dot product? I think. Each 
+xx = model_vvSort.physDist.copy()
 
-## since the trace is an unordered walk through
-## the values of posterior (right?), we are 
-## basically sampling our sample of the posterior.
-## In each case we are adding this sampled value
-## to our deterministic y curve...
+plt.plot(xx, xx/(xx+kappa_m), c='k',)
 
-### 
+az.plot_hpd(physDist, ppc['y_pred'], color='gray')
 
-np.random.seed(1)
+## meh, still symmetric...why? shouldn't the gamma dist take care of this?
+
+## toy example?
+
+## this is over my head, get help.
+
+## what would this look like? toy data:
+
+
+xx = np.arange(1,3501,20)
+yy_real = xx/(100+xx)
+γ_mean = np.log(0.2)
+δ_mean = -0.0004
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+ee = np.random.normal(0, a(xx))
+yy = yy_real + ee
+
+help(np.random.gamma)
+from scipy.stats import gamma
+
+
+dat = pd.DataFrame(
+    data = { 'a': [2, 3, 2, 2],
+            'loca': [2, 2, 3, 2],
+            'scale': [2, 2, 2, 3],
+            'colr': ['red','blue','green','purple']},
+    index = ['all2', 'chA', 'chLoc', 'chScale']
+    )
+
+def paintDist(a,loc,scale,colr,lege, ax=plt.gca()):
+    x = np.linspace(gamma.ppf(0.01, a, loc, scale),
+                    gamma.ppf(0.99,a, loc, scale), 100)
+    ax.plot(x, gamma.pdf(x, a, loc, scale),
+           c=colr, lw=3, alpha=1.0, label= lege)
+
+plt.close('all')
+fig, ax = plt.subplots()
+[ paintDist(dat.a[i], dat.loca[i], dat.scale[i], dat.colr[i], dat.index[i], ax=ax) for i in range(0, dat.shape[1]) ]
+
+gamma.stats(2, moments='mvsk')
+
+## so I think what we want is a gamma dist, but after generating it we shift
+## it to have its mean over zero? in the case of our toy data...
+
+plt.close('all')
+xx = np.arange(1,3501,20)
+yy_real = xx/(100+xx)
+γ_mean = np.log(0.2)
+δ_mean = -0.0004
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+ee = np.random.gamma(1, a(xx))
+ff = -(ee - ee.mean())
+yy = yy_real + ff
+fig, ax = plt.subplots()
+ax.scatter(xx, yy)
+ax.plot(xx, yy_real)
+
+
+##  maybe a new strategy is needed here. I think what we are really trying to do here
+## is make a comparison between the linear model and the asymptotic one. 
+## can we do this fairly easily?
+
+## we have a working model for the asymptote. I think we can build a simple 
+## regression for the linear, then compare them. Then put this damn 
+## turnover section to bed. 
+
+### linear model of turnover ###
+
+## because I am a child with this, a toy model first:
+
+## toy data linear
 N = 100
 alpha_real = 2.5
 beta_real = 0.9
 eps_real = np.random.normal(0, 0.5, size=N)
 x = np.random.normal(10, 1, N)
+y_real = alpha_real + beta_real*x
+y = y_real + eps_real
 
-plt.plot(x, trace_g['α'][draws] + trace_g['β'][draws]
-         * x[:, np.newaxis], c='gray', alpha=0.5)
+_, ax = plt.subplots()
+ax.scatter(x, y)
+ax.set_xlabel('x')
+ax.set_ylabel('y', rotation=0)
+ax.plot(x, y_real, 'k')
+plt.tight_layout()
 
-plt.plot(x, alpha_m + beta_m * x, c='k',
-         label=f'y = {alpha_m:.2f} + {beta_m:.2f} * x')
+with pm.Model() as linModel:
+    α = pm.Normal('α', mu=0, sd=10)
+    β = pm.Normal('β', mu=0, sd=1)
+    ε = pm.HalfCauchy('ε', 5)
+    μ = pm.Deterministic('μ', α + β*x)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=y)
+    trace_linModel = pm.sample(2000, tune=1000)
 
-plt.xlabel('x')
-plt.ylabel('y', rotation=0)
-plt.legend()
+az.plot_trace(trace_linModel, var_names=['α', 'β', 'ε'])
+
+## real data linear
+
+## our actual turnover data is recreated above, "####### our data"
+
+physDist
+bcDist 
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+
+## what are our priors?
+## the least squares fit is:
+
+LinearRegression().fit(X, Y).predict(X)
+
+lr = LinearRegression().fit(X, Y)
+
+R2 = lr.score(X, Y) ## 0.05, pretty horrible, but I guess that's the point.
+
+## but to do this as a bayesian model. I think we can make a vague prior
+## from the Draper et al (2019) paper (https://doi.org/10.1002/ecy.2636)
+## Their curves for terra firme Amazonian forest (A of figure 4) 
+## look pretty similar to ours. As in, a fairly shallow linear coefficient β
+## and a y-int of similarity α ~ 0.1 or 0.2 (in our case, 0.8-0.9). 
+## I think we need a shrinking error term, just as we have with the
+## asymptote model.
+
+## in this case, a shallow β would be a drop in similarity of ~0.02 hellinger
+## distance in 500m. They have plotted results as similarity, in Hellinger distance 
+## which therefor I think  goes from sqrt(2) (~1.4) for maximum similarity, 
+## and 0 for total disimilarity. I gather it is a chord-type similarity, that 
+## tries to scale abundances, focusing on congruencies/relative-abundances 
+## I think that as things approach zero, it probably going to behave fairly 
+## similarly to BC distance. 
+
+## so, set our α = 0.85, our β = (0.02/500), or .00004
+
+N = 200
+maxDist = 3500
+alpha_real = 0.85
+beta_real = 0.00004
+eps_real = np.random.normal(0, 0.01, size=N)
+x = np.linspace(1,maxDist,N)
+y_real = alpha_real + beta_real*x
+y = y_real + eps_real
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(x, y)
+ax.set_xlabel('x')
+ax.set_ylabel('y', rotation=0)
+ax.set_ylim(0,1.1)
+ax.plot(x, y_real, 'k')
+
+γ_mean = np.log(0.2)
+δ_mean = -0.0004
+a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
+ee = np.random.gamma(1, a(xx))
+ff = -(ee - ee.mean())
+yy = yy_real + ff
+fig, ax = plt.subplots()
+ax.scatter(xx, yy)
+ax.plot(xx, yy_real)
+
+## okay, but we need that epsilon term in the same
+## format as the above term for our asymptote function
+
+
+
+
+
+
+###### MEMs continued #####
+
+## back into R to look at the MEMs again:
+
+library(vegan)
+library(ade4)
+
+library(adespatial)
+
+library(adegraphics)
+
+library(spdep)
+
+library(maptools)
+
+library(sp)
+
+load('sigMEM.rda')
+
+load('lcPoly.rda')
+load('lcPolyMoved.rda')
+
+s.value(pJ, sigMEM, symbol="circle", Sp=lcPolyMoved)
+
+## so, what do we do with these?
+
+## the classic approach is to regress them against 
+## environmental variables.
+
+## but we don't have much as far as environmental variables
+
+## does it make sense to see if these mems predict our 
+## clustering? 
+
+## we need an estimate of their importance again - RDA?
+
+## rda  
+
+## get data:
+pts <- read.csv('pts.csv', row.names='PsubP')
+env <- read.csv('envOnly.csv', row.names='PsubP')
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+## are these in order?
+all(rownames(comM) == rownames(pts))
+all(rownames(comM) == rownames(env))
+s.label(pts, labels=row.names(pts), ppoint.col = "darkseagreen4", Sp = lcPoly)
+
+s.label(pts, labels=row.names(pts), ppoint.col = "darkseagreen4", Sp = lcPoly)
 
 
