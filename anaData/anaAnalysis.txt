@@ -11797,39 +11797,43 @@ R2 = lr.score(X, Y) ## 0.05, pretty horrible, but I guess that's the point.
 
 ## so, set our α = 0.85, our β = (0.02/500), or .00004
 
+## toy data
 N = 200
 maxDist = 3500
-alpha_real = 0.85
-beta_real = 0.00004
-eps_real = np.random.normal(0, 0.01, size=N)
-x = np.linspace(1,maxDist,N)
-y_real = alpha_real + beta_real*x
-y = y_real + eps_real
-plt.close('all')
-fig, ax = plt.subplots()
-ax.scatter(x, y)
-ax.set_xlabel('x')
-ax.set_ylabel('y', rotation=0)
-ax.set_ylim(0,1.1)
-ax.plot(x, y_real, 'k')
+xx = np.linspace(1,maxDist,N)
+alpha = 0.85
+beta = 0.00004
+γ_mean = np.log(0.2) ## initial spread
+δ_mean = -0.0004 ## rate of tightening
+a = lambda x: np.power(np.e, δ_mean*xx + γ_mean)
+#ee = np.random.normal(0, a(physDist))
+ee = np.random.normal(0, a(physDist))
+yy_real = alpha + beta*x
+yy = yy_real + ee
 
-γ_mean = np.log(0.2)
-δ_mean = -0.0004
-a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
-ee = np.random.gamma(1, a(xx))
-ff = -(ee - ee.mean())
-yy = yy_real + ff
 fig, ax = plt.subplots()
 ax.scatter(xx, yy)
-ax.plot(xx, yy_real)
+ax.plot(xx, yy_real, color='k')
 
 ## okay, but we need that epsilon term in the same
 ## format as the above term for our asymptote function
+## a negatively-varying variance
 
+## well, generally this might be sort of a dead end. It seems
+## like a lot of analyses frame the discussion with 
+## exponential decay, as loglinear expressions
 
+## so what do we report? we have a working model, report it. 
+## maybe just show the model with a graphic of the first
 
+## and maybe check our priors - what can be gleaned from 
+## the literature, and does our estimate of half
 
+## so maybe the first step here is to update the notebook
+## with the working model, so I can keep track of where I
+## actually am in all this. 
 
+## then check the priors again. 
 
 ###### MEMs continued #####
 
