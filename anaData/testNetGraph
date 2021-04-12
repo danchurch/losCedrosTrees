@@ -1,0 +1,16 @@
+digraph {
+	"κ" [label="κ ~ Normal"]
+	"γ" [label="γ ~ Normal"]
+	"δ" [label="δ ~ Normal"]
+	subgraph cluster175 {
+		"ε" [label="ε ~ Deterministic" shape=box]
+		"μ" [label="μ ~ Deterministic" shape=box]
+		y_pred [label="y_pred ~ Normal" style=filled]
+		label=175 labeljust=r labelloc=b style=rounded
+	}
+	"κ" -> "μ"
+	"γ" -> "ε"
+	"δ" -> "ε"
+	"ε" -> y_pred
+	"μ" -> y_pred
+}

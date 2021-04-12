@@ -10850,7 +10850,6 @@ import scipy.spatial as sp
 from sklearn.linear_model import LinearRegression
 from theano import shared
 
-
 ## I think we need to make an environment for the project
 
 ## try out python3.7. Don't think we have this locally installed, 
@@ -11494,10 +11493,9 @@ with pm.Model() as model_vv:
 
 
 ## whoah, actually works now. can we visualize?
+plt.close('all')
 μ_m = trace_g['μ'].mean(0)
 ε_m = trace_g['ε'].mean(0)
-
-plt.close('all')
 fig, ax = plt.subplots()
 ax.scatter(xx,yy)
 ax.plot(xx, μ_m, c='k')
@@ -11511,10 +11509,10 @@ ax.fill_between(xx, μ_m + 2*ε_m, μ_m - 2*ε_m, alpha=0.4, color='C1')
 specObs = pd.read_csv('specObs.csv', index_col='PsubP').sort_index()
 envOnly = pd.read_csv('envOnly.csv', index_col='PsubP').sort_index()
 subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
-pts = ((gpd.read_file('GIS/ana30meterPlots.geojson')
+pts = (gpd.read_file('GIS/ana30meterPlots.geojson')
         .set_index('PsubP')
-        .sort_index())
-        )
+        .sort_index()
+      )
 d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
 physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
 bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
@@ -11543,7 +11541,7 @@ with pm.Model() as model_vv:
     μ = pm.Deterministic('μ', xx/(xx+κ))
     ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
     y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
-    #trace_g = pm.sample(2000, tune=1000)
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
     trace_g = pm.sample(init='adapt_diag')
 
 ## looks okay. how do we plot this? I think we need to sort this...
@@ -11571,10 +11569,11 @@ ax.fill_between(bb.physDist, bb.μ_m + 2*bb.ε_m, bb.μ_m - 2*bb.ε_m, alpha=0.6
 ## can we try a gamma? 
 
 xx = physDist.copy()
-with pm.Model() as model_vv:
+
+with pm.Model() as model_gamma:
     γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
     δ = pm.Normal('δ', mu=-0.0006, sigma=0.05) ## slope, rate of tightening of variance
-    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    κ = pm.Normal('κ', mu=200, sigma = 10) ## same old k
     μ = pm.Deterministic('μ', xx/(xx+κ))
     ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
     y_pred = pm.Gamma('y_pred', mu=μ, sd=ε, observed=bcDist)
@@ -11603,22 +11602,37 @@ ax.fill_between(model_vvSort.physDist, model_vvSort.μ_m + 2*model_vvSort.ε_m, 
 ## that doesn't work, I think because we're just putting mirror images of the 
 ## gamma sigma on both sides of our curve. We have to look at the shape whole posterior dist,
 
+## anyway, I think that will produce the wrong direction for our long tail, 
+## with the highest probably density under (less than) μ. How do we check this 
+## out? For instance, what is the distribution around x=500, y (or μ)?
+## I think there are two ways to answer this, one by using 
+
 az.plot_trace(trace_g, var_names=['γ'])
 
 az.plot_trace(trace_g, var_names=['δ'])
 
 az.plot_trace(trace_g, var_names=['κ'])
 
+trace_g['κ'].mean() ## interesting, the data moved our prior for κ to 135.
+
 az.plot_trace(trace_g, var_names=['μ']) ## yeah, doesn't work.
 ## i think I'm thinking about deterministic variables the wrong way. 
 
-az.plot_trace(trace_g, var_names=['μ']) ## yeah, doesn't work.
+az.plot_trace(trace_g, var_names=['γ','δ','κ']) 
 
-trace_g['γ']
 
 trace_g['μ']
 
-len(trace_g['μ'])
+trace_g['μ'].shape
+
+## each data we gave has 
+len(trace_g['μ'][0]) 
+
+## so, we should be able to get the distribution for μ at x = 500, 
+## or xx/(xx+135) = 0.787 
+
+## which should be  
+
 
 pm.model_to_graphviz(model_vv)
 
@@ -11636,9 +11650,11 @@ trace_g['ε'][0]
 ## meh, doesn't make sense to me. 
 
 ## can we get a highest posterior density on this plot?:
+ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_gamma)
 
-ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_vv)
+## why is this different than using the trace
 
+ppc['y_pred'].shape
 trace_g['γ'].mean()
 trace_g['δ'].mean()
 trace_g['κ'].mean()
@@ -11824,16 +11840,46 @@ ax.plot(xx, yy_real, color='k')
 ## exponential decay, as loglinear expressions
 
 ## so what do we report? we have a working model, report it. 
-## maybe just show the model with a graphic of the first
+## maybe just show the model with a graphic of the first SD or something.
+
+## we also need some sort of verification that the model 
+## works, so maybe just some posterior predictive checks.
 
 ## and maybe check our priors - what can be gleaned from 
-## the literature, and does our estimate of half
+## the literature, and does our estimate of M_k = 200 work as
+## a prior
 
 ## so maybe the first step here is to update the notebook
 ## with the working model, so I can keep track of where I
 ## actually am in all this. 
 
-## then check the priors again. 
+## then check the priors again. Is this technically a hierarchical 
+## model?
+
+## get posterior predictive check
+
+## summary graphic?
+
+help(pm.model_to_graphviz)
+
+## needs graphviz, which I have for my up2date python install, 
+## but not for bayesAna environment... to install it we need 
+## something like:
+
+conda install -n bayesAna python-graphviz=0.14
+
+## this is an older version of the graph-viz, let's see how 
+## it does.
+aa = pm.model_to_graphviz(model_vv)
+aa.render('testNetGraph')
+## meh, underwhelming
+
+## but I'm pretty convinced this is not a hierarchical model,
+## we don't have different groups with independent priors. 
+## you could "flatten" it, and plug in all the priors to
+## the same level 
+
+
 
 ###### MEMs continued #####
 
