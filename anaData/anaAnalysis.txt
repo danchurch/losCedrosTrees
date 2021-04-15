@@ -11749,12 +11749,13 @@ az.plot_hpd(physDist, ppc['y_pred'], color='gray')
 
 ## meh, still symmetric...why? shouldn't the gamma dist take care of this?
 
-## toy example?
+#### constructing question about symmetric variance ####
 
 ## this is over my head, get help.
 
-## what would this look like? toy data:
-
+## what would this look like? toy data and model should follow
+## our existing example at 
+## https://discourse.pymc.io/t/modeling-noising-parameter-that-decreases-negatively-varying-variance/6728/8
 
 xx = np.arange(1,3501,20)
 yy_real = xx/(100+xx)
@@ -11764,56 +11765,42 @@ a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
 ee = np.random.normal(0, a(xx))
 yy = yy_real + ee
 
-help(np.random.gamma)
-from scipy.stats import gamma
+with pm.Model() as model_gammaToy:
+    γ = pm.Gamma('γ', mu=1.5, sigma = 0.5) ## gamma version
+    δ = pm.Normal('δ', mu=-0.0004, sigma=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, -γ + δ*xx)) ## use with gamma, neg coefficient
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=yy)
+    trace_g = pm.sample(init='adapt_diag')
 
+## get mu, posterior predictive 
+trace_g['μ'].mean(axis=0)
+ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_gammaToy)
 
-dat = pd.DataFrame(
-    data = { 'a': [2, 3, 2, 2],
-            'loca': [2, 2, 3, 2],
-            'scale': [2, 2, 2, 3],
-            'colr': ['red','blue','green','purple']},
-    index = ['all2', 'chA', 'chLoc', 'chScale']
-    )
-
-def paintDist(a,loc,scale,colr,lege, ax=plt.gca()):
-    x = np.linspace(gamma.ppf(0.01, a, loc, scale),
-                    gamma.ppf(0.99,a, loc, scale), 100)
-    ax.plot(x, gamma.pdf(x, a, loc, scale),
-           c=colr, lw=3, alpha=1.0, label= lege)
+## now visualize with some different credible intervals
 
 plt.close('all')
-fig, ax = plt.subplots()
-[ paintDist(dat.a[i], dat.loca[i], dat.scale[i], dat.colr[i], dat.index[i], ax=ax) for i in range(0, dat.shape[1]) ]
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(xx,yy, c='blue', alpha=0.5)
+ax.plot(xx,yy_real, c='k')
 
-gamma.stats(2, moments='mvsk')
 
-## so I think what we want is a gamma dist, but after generating it we shift
-## it to have its mean over zero? in the case of our toy data...
+az.plot_hpd(xx, ppc['y_pred'], credible_interval=0.5, color='orange')
+az.plot_hpd(xx, ppc['y_pred'], color='orange')
 
+## can we make the question now?
+
+## for the data graphic
+lw=5
 plt.close('all')
-xx = np.arange(1,3501,20)
-yy_real = xx/(100+xx)
-γ_mean = np.log(0.2)
-δ_mean = -0.0004
-a = lambda x: np.power(np.e, δ_mean*x + γ_mean)
-ee = np.random.gamma(1, a(xx))
-ff = -(ee - ee.mean())
-yy = yy_real + ff
-fig, ax = plt.subplots()
-ax.scatter(xx, yy)
-ax.plot(xx, yy_real)
+fig, ax = plt.subplots(figsize=(10,10))
+ax.scatter(physDist, bcDist, s=100, alpha=0.3)
+ax.plot(xx, trace_g['μ'].mean(axis=0), c='k', linewidth=4)
 
 
-##  maybe a new strategy is needed here. I think what we are really trying to do here
-## is make a comparison between the linear model and the asymptotic one. 
-## can we do this fairly easily?
 
-## we have a working model for the asymptote. I think we can build a simple 
-## regression for the linear, then compare them. Then put this damn 
-## turnover section to bed. 
-
-### linear model of turnover ###
+#### linear model of turnover ####
 
 ## because I am a child with this, a toy model first:
 
