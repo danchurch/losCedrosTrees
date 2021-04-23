@@ -11538,7 +11538,7 @@ xx = physDist.copy()
 with pm.Model() as model_vv:
     γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
     δ = pm.Normal('δ', mu=-0.0006, sigma=0.05) ## slope, rate of tightening of variance
-    κ = pm.Normal('κ', mu=100, sigma = 10) ## same old k
+    κ = pm.Normal('κ', mu=200, sigma = 10) ## same old k
     μ = pm.Deterministic('μ', xx/(xx+κ))
     ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
     y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
@@ -11553,13 +11553,34 @@ aa = pd.DataFrame({ "μ_m": μ_m,
                     "bcDist": bcDist})
 bb = aa.sort_values(by=['physDist'])
 
-plt.close('all')
+## get ppc:
+ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_vv)
 
-fig, ax = plt.subplots()
-ax.scatter(bb.physDist,bb.bcDist)
-ax.plot(bb.physDist,bb.μ_m, c='k')
-ax.fill_between(bb.physDist, bb.μ_m + 1*bb.ε_m, bb.μ_m - 1*bb.ε_m, alpha=0.6, color='C1')
-ax.fill_between(bb.physDist, bb.μ_m + 2*bb.ε_m, bb.μ_m - 2*bb.ε_m, alpha=0.6, color='C2')
+## plot ppc ε
+plt.close('all')
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(bb.physDist,bb.bcDist, c='b', s=5)
+ax.plot(bb.physDist, 
+        bb.μ_m, 
+        c='r', 
+        linestyle= "solid", 
+        label=r'$\mu$',
+        linewidth=4)
+az.plot_hpd(physDist, ppc['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+az.plot_hpd(physDist, ppc['y_pred'],  color='orange', ax=ax)
+ax.legend(bbox_to_anchor=(0.95,0.05), loc='lower right')
+ax.set_title(r'$\epsilon$ as normal dist')
+
+az.r2_score(bcDist, ppc['y_pred'])
+
+## plot by standard devs 
+#fig, ax = plt.subplots()
+#ax.scatter(bb.physDist,bb.bcDist)
+#ax.plot(bb.physDist,bb.μ_m, c='k')
+#ax.fill_between(bb.physDist, bb.μ_m + 1*bb.ε_m, bb.μ_m - 1*bb.ε_m, alpha=0.6, color='C1')
+#ax.fill_between(bb.physDist, bb.μ_m + 2*bb.ε_m, bb.μ_m - 2*bb.ε_m, alpha=0.6, color='C2')
+
+
 
 ## actually, that went suprisingly well...
 ## but what about our family of errors? 
@@ -11933,7 +11954,112 @@ aa.render('testNetGraph')
 ## you could "flatten" it, and plug in all the priors to
 ## the same level 
 
+#### skewed normal variance model ####
 
+## now we need to account for the hanging "curtain"
+## of the data, in that the variance around μ is 
+## dense at the mean but drops off steeply above it
+## and has a long tail toward lower values
+
+## as per the discussion at:
+https://discourse.pymc.io/t/gamma-noise-prior-upside-down/7249
+## the answer might be to assign a skewed normal 
+## distribution here. 
+
+## Example source code available here: https://docs.pymc.io/api/distributions/continuous-21.py 
+
+def plotSkewNorm():
+    plt.close('all')
+    #plt.style.use('seaborn-darkgrid')
+    x = np.linspace(-4, 4, 200)
+    alpha=-1
+    loc=0.9
+    scale=0.1
+    for alpha in [-1, 0, 1]:
+        pdf = stats.skewnorm.pdf(x, [alpha], loc=loc, scale=scale)
+        plt.plot(x, pdf, label=r'$\mu$ = {}, $\sigma$ = {}, $\alpha$ = {}'.format(loc, scale, alpha))
+    plt.vlines([loc,1],0,10,colors=['red','black'], linestyles=['dashed','solid'])
+    plt.xlabel('x', fontsize=12)
+    plt.ylabel('f(x)', fontsize=12)
+    #plt.ylim(0,1)
+    plt.xlim(0,1.5)
+    plt.legend(loc=2)
+
+plotSkewNorm()
+
+plt.style.use('classic')
+
+## seems like σ=0.1 works okay, might need to loosen it since 
+## we don't have a good source for the prior 
+
+## and for the skew, α=-1, also looks okay. 
+
+## so how do we implement it in the model?
+## do we need to modify our SD in the for ε?
+## what does it look like if we just change
+## the distribution to a skewed normal, 
+## with a prior for the skew term α. 
+
+xx = physDist.copy()
+with pm.Model() as model_skewNormal:
+    γ = pm.Normal('γ', mu=1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.005) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=200, sigma = 10) ## same old k
+    α = pm.Normal('α', mu=-1.0, sigma = 0.5)
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, -γ + δ*xx))
+    y_pred = pm.SkewNormal('y_pred', mu=μ, sd=ε, alpha=α, observed=bcDist)
+    trace_sn = pm.sample(init='adapt_diag')
+
+## okay, how does that look? 
+
+az.plot_trace(trace_sn, var_names = ['γ','δ','κ','α']) 
+
+## whoah, why did α shift so hard? 
+## and why did kappa drop so hard?
+
+## look at the model generally:
+
+
+aa = pd.DataFrame({ "μ_m": trace_sn['μ'].mean(0),
+                    "ε_m": trace_sn['ε'].mean(0),
+                    "physDist": physDist,
+                    "bcDist": bcDist})
+
+model_skewNormSort = aa.sort_values(by=['physDist'])
+
+ppc_skewNorm = pm.sample_posterior_predictive(trace_sn, samples=2000, model=model_skewNormal)
+
+plt.close('all')
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(model_skewNormSort.physDist,model_skewNormSort.bcDist, c='b', s=5)
+ax.plot(model_skewNormSort.physDist, 
+        model_skewNormSort.μ_m, 
+        c='r', 
+        linestyle= "solid", 
+        label=r'$\mu$',
+        linewidth=4)
+az.plot_hpd(physDist, ppc_skewNorm['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+
+az.plot_hpd(physDist, ppc_skewNorm['y_pred'],  color='orange', ax=ax)
+
+ax.legend(bbox_to_anchor=(0.95,0.05), loc='lower right')
+ax.set_title(r'$\epsilon$ as skewed-normal')
+
+
+#X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+#ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k', linewidth=4, linestyle= "dotted")
+
+az.r2_score(bcDist, ppc_skewNorm['y_pred'])
+
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+LinearRegression().fit(X, Y).score(X, Y)
+
+## hmm, something is very wrong, methinks. 
+
+trace_sn['α'].shape
+
+trace_sn['γ','δ','κ','α']) 
 
 ###### MEMs continued #####
 
@@ -11941,47 +12067,158 @@ aa.render('testNetGraph')
 
 library(vegan)
 library(ade4)
-
 library(adespatial)
-
 library(adegraphics)
-
 library(spdep)
-
 library(maptools)
-
 library(sp)
 
 load('sigMEM.rda')
-
 load('lcPoly.rda')
 load('lcPolyMoved.rda')
+pts <- read.csv('pts.csv')
 
+## to look at the PCNMs in R easily:
+## our UTM coords for LC poly
+xx <- lcPoly@polygons[[1]]@Polygons[[1]]@coords[,'LCpolE']
+yy <- lcPoly@polygons[[1]]@Polygons[[1]]@coords[,'LCpolN']
+pJ <- as.matrix(pts[,2:3])
+colnames(pJ) <- c('x','y')
+mx <- min(pJ[,1])
+my <- min(pJ[,2])
+pJ <- cbind(pJ[,1] - mx, pJ[,2] - my)
+## transform our polygon points with these values?
+xx <- xx - mx
+yy <- yy - my
 s.value(pJ, sigMEM, symbol="circle", Sp=lcPolyMoved)
 
-## so, what do we do with these?
+## great, so, what do we do with these?
+## can we get them into python as a geopanda?
 
-## the classic approach is to regress them against 
-## environmental variables.
+## let's first try the easy way, hope all the pt orders
+## are conserved (should be):
 
-## but we don't have much as far as environmental variables
+aa <- cbind(pts,sigMEM) 
 
-## does it make sense to see if these mems predict our 
-## clustering? 
+write.csv(aa, file='sigMEM.csv', row.names=FALSE)
 
-## we need an estimate of their importance again - RDA?
+## now see if a geopandas can be made from this
+## back to python:
 
-## rda  
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt; plt.ion()
+import matplotlib.colors as mcolors
+import geopandas as gpd
+import rasterio
+import rasterio.plot
+import copy
 
-## get data:
-pts <- read.csv('pts.csv', row.names='PsubP')
-env <- read.csv('envOnly.csv', row.names='PsubP')
-comM <- read.csv('subParcelComm.csv', row.names="PsubP")
-## are these in order?
-all(rownames(comM) == rownames(pts))
-all(rownames(comM) == rownames(env))
-s.label(pts, labels=row.names(pts), ppoint.col = "darkseagreen4", Sp = lcPoly)
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
 
-s.label(pts, labels=row.names(pts), ppoint.col = "darkseagreen4", Sp = lcPoly)
+aa = pd.read_csv('sigMEM.csv', index_col='PsubP')
+mems = gpd.GeoDataFrame(aa, geometry=gpd.points_from_xy(aa.X, aa.Y))
+mems.drop(['X', 'Y'], axis='columns', inplace=True)
+mems = mems[['MEM1', 'MEM2', 'MEM3', 'MEM4', 'MEM5', 'MEM6', 'MEM7', 'MEM8', 'MEM9', 'MEM10', 'MEM11', 'MEM12', 'MEM13', 'geometry']]
+mems.set_crs('EPSG:32717', inplace=True)
+
+## how does this look, if we plot over a los Cedros poly?
+
+plt.close('all')
+
+cmap = mcolors.ListedColormap(['black','white'])
+
+mem='MEM1'
+
+scale=50
+ms = mems[mem].abs()*scale
+marg = 650
+fig, ax = plt.subplots()
+lcPoly.boundary.plot(ax=ax)
+mems.plot(column=mem, 
+    edgecolor = "black",
+    ax=ax, 
+    markersize = ms,
+    c=mem,
+    cmap=cmap,
+    )
+ax.set_xlim(mems.total_bounds[0]-marg, mems.total_bounds[2]+marg)
+ax.set_ylim(mems.total_bounds[1]-marg, mems.total_bounds[3]+marg)
+ax.set_title(mem)
+
+## we need a colors that shows pos/neg...
+fCols = pd.Series(data=[None]*len(mems[mem]), index=mems.index)
+eCols = pd.Series(data=[None]*len(mems[mem]), index=mems.index)
+negMask = (mems[mem] <= 0)
+fCols[negMask] = 'black'
+fCols[~negMask] = 'white'
+eCols[~negMask] = 'black'
+eCols[negMask] = 'white'
 
 
+## https://stackoverflow.com/questions/26610389/defining-a-binary-matplotlib-colormap
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(pts.FinalRep_E, pts.FinalRep_N, 
+    facecolors=fCols,
+    s=20,
+    edgecolors=eCols,
+)
+ax.set_title(mem)
+
+mems[mem] > 0
+
+## we need to simplify to pos/neg for our binary color scheme
+cmap = mcolors.ListedColormap(['black','white'])
+aa = mems[mem].copy()
+aa[aa >= 0 ] = 1
+aa[aa < 0 ] = -1
+
+## great. can we make this into a function and repeat?
+
+def plotMEM(mem, ax, scale=50):
+    mem=mem
+    ax=ax
+    scale=scale
+    ms = mems[mem].abs()*scale
+    marg = 650
+    negPos = mems[mem].copy()
+    negPos[negPos >= 0 ] = 1
+    negPos[negPos < 0 ] = -1
+    cmap = mcolors.ListedColormap(['white','black'])
+    lcPoly.boundary.plot(ax=ax)
+    mems.plot(column=mem, 
+        c=negPos,
+        cmap=cmap,
+        edgecolor='black',
+        ax=ax, 
+        markersize = ms,
+        vmin=-1., vmax=1.,
+        )
+    ax.set_xlim(mems.total_bounds[0]-marg, mems.total_bounds[2]+marg)
+    ax.set_ylim(mems.total_bounds[1]-marg, mems.total_bounds[3]+marg)
+    ax.set_title(mem)
+
+plt.close('all')
+scale=50
+mem = 'MEM12'
+fig, ax = plt.subplots()
+plotMEM(mem, ax)
+
+mems.plot(column=mem, 
+    c=aa,
+    cmap=cmap,
+    edgecolor='black',
+    ax=ax, 
+    markersize = ms,
+    )
+
+fig, axes = plt.subplots(3,5, figsize=(10,15), sharex=True, sharey=True)
+memList = mems.columns.to_list()[:-1]
+flatAx = axes.ravel()
+for i,j in enumerate(memList):
+    plotMEM(j,flatAx[i])
+
+flatAx[13].set_axis_off()
+flatAx[14].set_axis_off()
