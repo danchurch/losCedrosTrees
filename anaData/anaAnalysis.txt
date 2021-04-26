@@ -12078,6 +12078,8 @@ load('lcPoly.rda')
 load('lcPolyMoved.rda')
 pts <- read.csv('pts.csv')
 
+
+
 ## to look at the PCNMs in R easily:
 ## our UTM coords for LC poly
 xx <- lcPoly@polygons[[1]]@Polygons[[1]]@coords[,'LCpolE']
@@ -12107,6 +12109,8 @@ write.csv(aa, file='sigMEM.csv', row.names=FALSE)
 
 import pandas as pd
 import numpy as np
+import scipy.stats as stats
+from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt; plt.ion()
 import matplotlib.colors as mcolors
 import geopandas as gpd
@@ -12115,6 +12119,9 @@ import rasterio.plot
 import copy
 
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+dem = rasterio.open("GIS/anaPlotDEM.tif")
+paths = gpd.read_file('GIS/PathsLC.geojson')
 
 aa = pd.read_csv('sigMEM.csv', index_col='PsubP')
 mems = gpd.GeoDataFrame(aa, geometry=gpd.points_from_xy(aa.X, aa.Y))
@@ -12171,34 +12178,43 @@ mems[mem] > 0
 
 ## we need to simplify to pos/neg for our binary color scheme
 cmap = mcolors.ListedColormap(['black','white'])
+
 aa = mems[mem].copy()
 aa[aa >= 0 ] = 1
 aa[aa < 0 ] = -1
+cDict = { -1 : "white", 1 : "black" }
+faceCols = [ cDict[i] for i in aa ]
+edgeCols = [ cDict[i] for i in -aa ]
+
 
 ## great. can we make this into a function and repeat?
 
-def plotMEM(mem, ax, scale=50):
+
+def plotMEM(mem, ax, scale=50, marg=650):
     mem=mem
     ax=ax
     scale=scale
     ms = mems[mem].abs()*scale
-    marg = 650
+    marg = marg
     negPos = mems[mem].copy()
     negPos[negPos >= 0 ] = 1
     negPos[negPos < 0 ] = -1
+    cDict = { 1 : "white", -1 : "black" }
+    edgeCols = [ cDict[i] for i in negPos ]
     cmap = mcolors.ListedColormap(['white','black'])
-    lcPoly.boundary.plot(ax=ax)
     mems.plot(column=mem, 
         c=negPos,
         cmap=cmap,
-        edgecolor='black',
+        edgecolors=edgeCols,
         ax=ax, 
         markersize = ms,
+        ## these are to center our color map to -1,1 w/b scheme:
         vmin=-1., vmax=1.,
         )
     ax.set_xlim(mems.total_bounds[0]-marg, mems.total_bounds[2]+marg)
     ax.set_ylim(mems.total_bounds[1]-marg, mems.total_bounds[3]+marg)
     ax.set_title(mem)
+
 
 plt.close('all')
 scale=50
@@ -12206,19 +12222,98 @@ mem = 'MEM12'
 fig, ax = plt.subplots()
 plotMEM(mem, ax)
 
-mems.plot(column=mem, 
-    c=aa,
-    cmap=cmap,
-    edgecolor='black',
-    ax=ax, 
-    markersize = ms,
-    )
-
+plt.close('all')
 fig, axes = plt.subplots(3,5, figsize=(10,15), sharex=True, sharey=True)
 memList = mems.columns.to_list()[:-1]
 flatAx = axes.ravel()
-for i,j in enumerate(memList):
-    plotMEM(j,flatAx[i])
-
 flatAx[13].set_axis_off()
 flatAx[14].set_axis_off()
+for i,j in enumerate(memList):
+    lcPoly.plot(ax=flatAx[i], color="slategrey")
+    plotMEM(j,flatAx[i])
+
+
+## okay, that works pretty well. 
+## tomorrow or whenever, catch up the notebook
+## start check correlations with environmental data
+
+## to start:
+## MEM8 looks like a ridge-top vs. valley pattern, something to check
+
+## plot it over the elevation gradient map:
+
+plt.close('all') 
+fig, ax = plt.subplots()
+rasterio.plot.show(dem, ax=ax)
+lcPoly.boundary.plot(ax=ax, color='black')
+plotMEM('MEM8', ax)
+marg = 50
+ax.set_xlim(mems.total_bounds[0]-marg, mems.total_bounds[2]+marg)
+ax.set_ylim(mems.total_bounds[1]-marg, mems.total_bounds[3]+marg)
+
+## and to check the correlation on this?
+
+## we need to get the elevation at these points...
+
+(envOnly.index == mems.index).all() ## looks good
+
+
+plt.close('all')
+
+plt, ax = plt.subplots()
+ax.scatter(envOnly['DEM'], mems['MEM8'])
+
+X =  envOnly['DEM'].to_numpy().reshape(-1,1)
+Y =  mems['MEM8'].to_numpy().reshape(-1,1)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+
+stats.pearsonr(envOnly['DEM'], mems['MEM8'])
+
+stats.linregress(envOnly['DEM'], mems['MEM8'])
+
+## some correlation there, r = 0.40, so r2 ~ 0.16 or so?
+
+## do we need to report this in a bayesian way, also?
+
+## probably wouldn't take long, use gaussian error family
+## around the linear function
+
+## but let's wait on that...
+
+## how do we quickly do the correlation matrix for all 
+## MEMs with elevation?
+
+## pandas has builtin methods df.corr and df.corrwith
+
+envContinuousVars = envOnly.drop(['microcuenca','habitat','elevacion'], axis='columns')
+memPanda = pd.DataFrame(mems.drop('geometry', axis='columns'))
+
+memPanda.corrwith(envContinuousVars) ## doesn't work...why not?
+
+# Creating the first dataframe
+df1 = pd.DataFrame({"A":[1, 5, 7, 8],
+                    "B":[5, 8, 4, 3],
+                    "C":[10, 4, 9, 3]})
+# Creating the second dataframe
+df2 = pd.DataFrame({"a":[5, 3, 6, 4],
+                    "b":[11, 2, 4, 3],
+                    "c":[4, 3, 8, 5]})
+df1.corrwith(df2, axis = 0) ## also breaks
+
+## ah, that only works if the columns are named the same
+## so I think we have to do this the old fashioned way:
+
+memEnvCorrMat = pd.DataFrame(index=envContinuousVars.columns)
+memEnvCorrSigMat = pd.DataFrame(index=envContinuousVars.columns)
+for i in memPanda.columns:
+    memEnvCorrMat[i] = envContinuousVars.corrwith(memPanda.loc[:,i])
+    pvals_i = []
+    for j in envContinuousVars.columns:
+        _,_,_,p,_ = stats.linregress(envContinuousVars[j], memPanda.loc[:,i])
+        pvals_i += [p]
+    memEnvCorrSigMat[i] = pvals_i 
+
+
+memEnvCorrSigMat
+memEnvCorrMat
+
