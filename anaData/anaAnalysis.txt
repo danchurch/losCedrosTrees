@@ -12110,18 +12110,19 @@ write.csv(aa, file='sigMEM.csv', row.names=FALSE)
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
-from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt; plt.ion()
 import matplotlib.colors as mcolors
 import geopandas as gpd
 import rasterio
 import rasterio.plot
 import copy
-
+from sklearn.linear_model import LinearRegression
+from statsmodels.stats.multitest import multipletests
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
 hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 dem = rasterio.open("GIS/anaPlotDEM.tif")
 paths = gpd.read_file('GIS/PathsLC.geojson')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
 
 aa = pd.read_csv('sigMEM.csv', index_col='PsubP')
 mems = gpd.GeoDataFrame(aa, geometry=gpd.points_from_xy(aa.X, aa.Y))
@@ -12133,10 +12134,7 @@ mems.set_crs('EPSG:32717', inplace=True)
 
 plt.close('all')
 
-cmap = mcolors.ListedColormap(['black','white'])
-
 mem='MEM1'
-
 scale=50
 ms = mems[mem].abs()*scale
 marg = 650
@@ -12189,12 +12187,14 @@ edgeCols = [ cDict[i] for i in -aa ]
 
 ## great. can we make this into a function and repeat?
 
+## https://stackoverflow.com/questions/20057260/how-to-remove-gaps-between-subplots-in-matplotlib/45487279
 
-def plotMEM(mem, ax, scale=50, marg=650):
+def plotMEM(mem, ax, scale=50, marg=650, lx=745000, ly=10035500, fontsize='large'):
     mem=mem
     ax=ax
     scale=scale
     ms = mems[mem].abs()*scale
+    fontsize=fontsize
     marg = marg
     negPos = mems[mem].copy()
     negPos[negPos >= 0 ] = 1
@@ -12202,36 +12202,46 @@ def plotMEM(mem, ax, scale=50, marg=650):
     cDict = { 1 : "white", -1 : "black" }
     edgeCols = [ cDict[i] for i in negPos ]
     cmap = mcolors.ListedColormap(['white','black'])
-    mems.plot(column=mem, 
+    mems.plot(column=mem,
         c=negPos,
         cmap=cmap,
         edgecolors=edgeCols,
-        ax=ax, 
+        ax=ax,
         markersize = ms,
         ## these are to center our color map to -1,1 w/b scheme:
         vmin=-1., vmax=1.,
         )
     ax.set_xlim(mems.total_bounds[0]-marg, mems.total_bounds[2]+marg)
     ax.set_ylim(mems.total_bounds[1]-marg, mems.total_bounds[3]+marg)
-    ax.set_title(mem)
+    ax.text(lx,ly,mem, fontsize=fontsize)
 
+
+fontsize=12
 
 plt.close('all')
-scale=50
+
+scale=150
+
 mem = 'MEM12'
 fig, ax = plt.subplots()
-plotMEM(mem, ax)
+ax.grid(True)
+plotMEM(mem, ax, scale=scale)
 
 plt.close('all')
 fig, axes = plt.subplots(3,5, figsize=(10,15), sharex=True, sharey=True)
+#plt.subplots_adjust(wspace=0, hspace=0)
 memList = mems.columns.to_list()[:-1]
 flatAx = axes.ravel()
 flatAx[13].set_axis_off()
 flatAx[14].set_axis_off()
 for i,j in enumerate(memList):
     lcPoly.plot(ax=flatAx[i], color="slategrey")
-    plotMEM(j,flatAx[i])
+    plotMEM(j,flatAx[i], scale=scale)
 
+plt.tight_layout()
+
+
+plt.subplots_adjust(wspace=0, hspace=0)
 
 ## okay, that works pretty well. 
 ## tomorrow or whenever, catch up the notebook
@@ -12240,9 +12250,14 @@ for i,j in enumerate(memList):
 ## to start:
 ## MEM8 looks like a ridge-top vs. valley pattern, something to check
 
+for i in range(13,16):
+    print(i)
+
+list(range(13,15))
 ## plot it over the elevation gradient map:
 
 plt.close('all') 
+
 fig, ax = plt.subplots()
 rasterio.plot.show(dem, ax=ax)
 lcPoly.boundary.plot(ax=ax, color='black')
@@ -12285,35 +12300,112 @@ stats.linregress(envOnly['DEM'], mems['MEM8'])
 
 ## pandas has builtin methods df.corr and df.corrwith
 
-envContinuousVars = envOnly.drop(['microcuenca','habitat','elevacion'], axis='columns')
+
+envVarsForMEM = envOnly.drop(['microcuenca','habitat','elevacion'], axis='columns')
+envVarsForMEM = pd.concat([envVarsForMEM, pd.get_dummies(envOnly.habitat)], axis=1)
 memPanda = pd.DataFrame(mems.drop('geometry', axis='columns'))
 
-memPanda.corrwith(envContinuousVars) ## doesn't work...why not?
-
-# Creating the first dataframe
-df1 = pd.DataFrame({"A":[1, 5, 7, 8],
-                    "B":[5, 8, 4, 3],
-                    "C":[10, 4, 9, 3]})
-# Creating the second dataframe
-df2 = pd.DataFrame({"a":[5, 3, 6, 4],
-                    "b":[11, 2, 4, 3],
-                    "c":[4, 3, 8, 5]})
-df1.corrwith(df2, axis = 0) ## also breaks
 
 ## ah, that only works if the columns are named the same
 ## so I think we have to do this the old fashioned way:
 
-memEnvCorrMat = pd.DataFrame(index=envContinuousVars.columns)
-memEnvCorrSigMat = pd.DataFrame(index=envContinuousVars.columns)
+## works, env vars as rows ##
+memEnvCorrMat = pd.DataFrame(index=envVarsForMEM.columns)
+memEnvCorrSigMat = pd.DataFrame(index=envVarsForMEM.columns)
 for i in memPanda.columns:
-    memEnvCorrMat[i] = envContinuousVars.corrwith(memPanda.loc[:,i])
+    memEnvCorrMat[i] = envVarsForMEM.corrwith(memPanda.loc[:,i])
     pvals_i = []
-    for j in envContinuousVars.columns:
-        _,_,_,p,_ = stats.linregress(envContinuousVars[j], memPanda.loc[:,i])
+    for j in envVarsForMEM.columns:
+        _,_,_,p,_ = stats.linregress(envVarsForMEM[j], memPanda.loc[:,i])
+        pvals_i += [p]
+    memEnvCorrSigMat[i] = pvals_i 
+##########
+
+## flip them, rows are mem:
+memEnvCorrMat = pd.DataFrame(index=memPanda.columns)
+memEnvCorrSigMat = pd.DataFrame(index=memPanda.columns)
+for i in envVarsForMEM.columns:
+    memEnvCorrMat[i] = memPanda.corrwith(envVarsForMEM.loc[:,i])
+    pvals_i = []
+    for j in memPanda.columns:
+        _,_,_,p,_ = stats.linregress(memPanda[j], envVarsForMEM.loc[:,i])
         pvals_i += [p]
     memEnvCorrSigMat[i] = pvals_i 
 
-
 memEnvCorrSigMat
 memEnvCorrMat
+
+## spot check:
+
+def spotCheck(mem, envVar):
+    _,_,r,p,_ = stats.linregress(memPanda[mem], envVarsForMEM[envVar])
+    return(r, p)
+
+spotCheck("MEM1", "DEM")
+## etc. 
+## looks okay.
+
+## can we use the pvalues to mask to only the statistically
+## significant relationships?
+
+aa = memEnvCorrSigMat < 0.05
+memEnvCorrMat[aa]
+
+## works, but can we do a multiple correction, using statsmodels package:
+## https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html
+
+## so for example:
+aOrR, pAdj, _, _ = multipletests(memEnvCorrSigMat['slope'], 
+                                alpha=0.2, 
+                                method='fdr_bh', 
+                                returnsorted=False)
+
+for (columnName, columnData) in memEnvCorrSigMat.iteritems():
+    print('Colunm Name : ', columnName)
+    print('Column Values : ', columnData.values)
+
+
+memEnvCorrSigAdjMat = pd.DataFrame(index=memPanda.columns)
+for (columnName, columnData) in memEnvCorrSigMat.iteritems():
+    aOrR, pAdj, _, _ = multipletests(columnData, 
+                                alpha=0.2,
+                                method='fdr_bh', 
+                                returnsorted=False)
+    memEnvCorrSigAdjMat[columnName] = pAdj
+
+## look right?
+memEnvCorrSigMat 
+
+memEnvCorrSigAdjMat 
+
+## yup. Now maybe use an FDR < 0.1?:
+
+aa = memEnvCorrSigAdjMat < 0.1
+memEnvCorrMat[aa]
+
+## I wonder if we need to correct again for the fact 
+## that we are testing each environmental variable
+## separately?
+
+## ugh, at that point throws this process out, we'll have 
+## discarded too much information for it to be useful 
+## let's just stick with this correction for the moment. 
+
+### categorical variable - land use: ###
+
+## maybe break up the "habitat" variable into
+## dummy vars and make a linear model with them?
+
+envOnly.head()
+
+envOnly.habitat
+
+pd.get_dummies(envOnly.habitat)
+
+
+## okay, so how do we examine the correlation with 
+## landuse type? 
+
+## while we're at it, do the PCNMs pick up the 
+## "natural" cluster groups?
 
