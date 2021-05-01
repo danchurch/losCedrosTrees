@@ -12116,6 +12116,8 @@ import geopandas as gpd
 import rasterio
 import rasterio.plot
 import copy
+import shapely
+import shapely.validation
 from sklearn.linear_model import LinearRegression
 from statsmodels.stats.multitest import multipletests
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
@@ -12123,6 +12125,8 @@ hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 dem = rasterio.open("GIS/anaPlotDEM.tif")
 paths = gpd.read_file('GIS/PathsLC.geojson')
 envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+forest1990rast = rasterio.open("GIS/forest1990CotacachiCoded.tif")
+forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
 
 aa = pd.read_csv('sigMEM.csv', index_col='PsubP')
 mems = gpd.GeoDataFrame(aa, geometry=gpd.points_from_xy(aa.X, aa.Y))
@@ -12402,10 +12406,515 @@ envOnly.habitat
 
 pd.get_dummies(envOnly.habitat)
 
+## insert this above and rerun the above, in the 
+## correlations
 
-## okay, so how do we examine the correlation with 
-## landuse type? 
 
 ## while we're at it, do the PCNMs pick up the 
 ## "natural" cluster groups?
 
+
+
+######### deforestation map #############
+
+## let's look at the protective role of 
+## los Cedros. The lifespan of lc has spanned 
+## the late-80's to the present. 
+
+## we can get the forest cover data from this 
+## website:
+http://ide.ambiente.gob.ec/mapainteractivo/
+
+## the files are large. Can we bring them into memory,
+## clip them down to size? 
+
+## how much do we want to clip? we need a boundary...
+## let's say that we constrain our map to 
+## Carchi, Esmereldas, and Imbabura (and a small 
+## disputed area between them).
+
+## first, get these province polygons, and a compound
+## boundary from them:
+
+
+forest1990Path = ("/home/daniel/Documents/LosCed/GISfilesTooBigForGithub/"
+        "v_ff010_cobertura_vegetal_1990_a/v_ff010_cobertura_vegetal_1990_aPolygon.shp")
+forest1990 = gpd.read_file(forest1990Path) ## whoah that be big
+
+pathProvince = "/home/daniel/Documents/LosCed/Ecuador_GIS/limites_administrativas/nxprovincias.shp"
+aa = (gpd.read_file(pathProvince).explode().set_index('DPA_DESPRO')
+        .loc[['CARCHI','IMBABURA','ESMERALDAS','ZONA NO DELIMITADA']]
+        .drop(['DPA_PROVIN','DPA_VALOR','DPA_ANIO',
+                'REI_CODIGO','REN_CODIGO','PEE_CODIGO'], axis=1)
+    )
+## get rid of southern non-delimited regions:
+bb = aa.cx[:, 9950000:]
+## can we get some sort of union of all these?
+bb.insert(0, 'region', ['norte']*bb.shape[0])
+cc = bb.dissolve(by='region')
+
+## not perfect, still a multipolygon. not sure why
+## the large polygons won't merge. 
+
+## two questions - 
+## (1) why can't we single row geodataframe into a geoseries, or get a geoseries out with loc/iloc, just a pd.series?
+## (2) why is the above geometry still a multipolygon? We just want a simple polygon...
+
+## not sure why that is so complicated. 
+
+## anyway, might work. let's call this northern ecuador.  
+
+## can we clip our massive forest data with this? 
+## following: https://geopandas.org/gallery/plot_clip.html
+
+ee = gpd.clip(forest1990, cc)
+
+## ugh, the forest data is messy. not my job to clean this up...unless I have to
+## can we first clip with some coordinates?
+
+forest1990box = forest1990.cx[xmin:xmax, ymin:ymax]
+
+forest1990box.plot()
+## https://stackoverflow.com/questions/40385782/make-a-union-of-polygons-in-geopandas-or-shapely-into-a-single-geometry
+
+xmin, ymin, xmax, ymax = cc.total_bounds
+
+boardBox = shapely.geometry.Polygon([(xmin, ymin), (xmin, ymax), (xmax, ymax), (xmax, ymin), (xmin, ymin)])
+
+boardBoxGPD = gpd.GeoDataFrame([1], geometry=[boardBox], crs="EPSG:32717")
+
+boardBoxGPD.boundary.plot(ax=plt.gca(), color='purple')
+
+
+ee = gpd.clip(forest1990, boardBoxGPD)
+
+## not working - there are some invalidities, it is insisting on evaluating before 
+## doing the cut, even though they are out of my area of interest.
+ 
+## can we do this with ogr2ogr, in the shell?
+
+boardBoxGPD.drop(0, axis=1, inplace=True) ## integer column, confuses fiona
+boardBoxGPD.to_file('boundBoxNorthernEx.shp', driver='ESRI Shapefile')
+
+## in shell:
+ogr2ogr -f GeoJSON -clipsrc boundary.geojson datatobeclipped.geojson
+
+forest1990Path="/home/daniel/Documents/LosCed/GISfilesTooBigForGithub/v_ff010_cobertura_vegetal_1990_a/v_ff010_cobertura_vegetal_1990_aPolygon.shp"
+
+
+ogr2ogr \
+    -spat 599920 9987285 886203 10160819 \
+    -f "ESRI Shapefile" test.shp \
+    $forest1990Path
+
+## nope, some problems with the area_super column. Let's drop it and 
+## see what happens
+
+forest1990.drop("area_super", axis=1, inplace=True)
+#forest1990.to_file('forest1990.shp', driver='ESRI Shapefile')
+
+## and back to shell:
+
+ogr2ogr \
+    -spat 599920 9987285 886203 10160819 \
+    -f "ESRI Shapefile" test.shp \
+    forest1990.shp
+
+ogr2ogr \
+    -clipsrc -5.8 41 10 51.5 \
+    -f "ESRI Shapefile" \
+    test.shp \
+    forest1990.shp
+
+## have to remember to clear this file before doing commit
+
+## did this work?:
+
+littleForestbox = gpd.read_file('test.shp')
+
+littleForestbox.head()
+
+littleForestbox.shape
+
+littleForestbox.plot()
+
+ee = gpd.clip(littleForestbox, cc)
+
+
+## let's look a little closer at the invalidities
+## try this:
+
+forest1990 = gpd.read_file('forest1990.shp')
+vcheck = forest1990.is_valid
+## we might need this for later:
+#vcheck.to_pickle('forest1990vcheck.p')
+
+
+invals = forest1990[~vcheck] ## shit. thousands
+
+## which of these are in our bounding box?
+inValsNorth = invals.cx[xmin:xmax, ymin:ymax] ## shit 416
+
+## what does it look like if we remove these?
+
+smallForest = forest1990[vcheck].cx[xmin:xmax, ymin:ymax] 
+inValsNorth.plot()
+## yeah, something is weird. Let's not remove them unless we 
+## really need to.
+
+## this will almost certainly break things, but let's try:
+#buffForest = forest1990.buffer(0.00000001)
+
+buffInvalsNorth = inValsNorth.buffer(0.00000001)
+
+## yeah, none of that works. 
+
+## new approach - cotacachi canton?
+
+pathCanton = "/home/daniel/Documents/LosCed/Ecuador_GIS/limites_administrativas/nxcantones.shp"
+cotacachi = (gpd.read_file(pathCanton)[['DPA_DESCAN','geometry']]
+        .set_index('DPA_DESCAN')
+        .loc[['COTACACHI']]
+    )
+
+
+forest1990Path = ("/home/daniel/Documents/LosCed/GISfilesTooBigForGithub/"
+        "v_ff010_cobertura_vegetal_1990_a/v_ff010_cobertura_vegetal_1990_aPolygon.shp")
+forest1990 = gpd.read_file(forest1990Path) ## whoah that be big
+
+vcheck = pd.read_pickle('forest1990vcheck.p')
+
+invals = forest1990[~vcheck]
+
+cotacachi.total_bounds
+
+forest1990.total_bounds
+
+## maybe knock it down a little:
+halfForest = forest1990.cx[:, 10020000:]
+
+halfForest.shape
+forest1990.shape
+
+## now get every polygon in the all-Ecuador landcover file that 
+## contacts cotacachi?
+ 
+## there is an example here : 
+
+
+s = gpd.GeoSeries(
+    [
+        shapely.geometry.Polygon([(0, 0), (2, 2), (0, 2)]),
+        shapely.geometry.Polygon([(0, 0), (2, 2), (0, 2)]),
+        shapely.geometry.Polygon([(10, 10), (2, 2), (0, 2)]),
+    ]
+)
+
+s.intersection(shapely.geometry.Polygon([(0, 0), (1, 1), (0, 1)]))
+
+
+#forestXcotacachi = halfForest.geometry.intersects(cotacachi.loc[['COTACACHI']].geometry[0])
+
+## should work, but I want to see what's going on. Iterate manually through them:
+
+forestXcotacachi = []
+for i,j in enumerate(halfForest.geometry):
+    print(i)
+    test = j.intersects(cotacachi.loc[['COTACACHI']].geometry[0])
+    forestXcotacachi += [test]
+
+touchCot = halfForest[forestXcotacachi]
+
+#halfForest.to_pickle('halfForest.p')
+
+touchCot.to_pickle('touchCot1990.p')
+
+touchCot = pd.read_pickle('touchCot.p')
+
+len( forestXcotacachi )
+
+fig, ax = plt.subplots()
+touchCot.plot(ax=ax)
+cotacachi.boundary.plot(ax=ax, color='red')
+lcPoly.boundary.plot(ax=ax, color='purple')
+
+aa = touchCot.is_valid
+## much better, only 36 invalid polygons
+
+fig, ax = plt.subplots()
+touchCot[aa].plot(color='blue',ax=ax)
+touchCot[~aa].plot(color='red',ax=ax)
+cotacachi.boundary.plot(ax=ax, color='black')
+lcPoly.boundary.plot(ax=ax, color='purple')
+
+shapely.validation.explain_validity(touchCot.loc[305017].geometry)
+
+bb = touchCot.loc[305017].geometry.buffer(.00000001)
+
+
+## so strategies here:
+
+## constrict even farther, to Garcia Moreno, 
+## try rasterizing
+## fix manually with qgis. 
+
+## I don't really like any of them. I would like 
+## the entire canton, I am tired of artificial 
+## comparisons with tiny BPs in the Intag. LC
+## blows them out of the water for habitat
+## and diversity and this needs to be shown. 
+
+## rastering a polgon data set that was probably
+## vectorized from a raster seems silly. 
+
+## but correcting by hand may take a while. 
+## we will presumably have to repeat for the 
+## 2018 data set. Let's see:
+
+forest2018Path = ("/home/daniel/Documents/LosCed/GISfilesTooBigForGithub/"
+    "v_ff010_cobertura_vegetal_2018_a/v_ff010_cobertura_vegetal_2018_aPolygon.shp")
+
+forest2018 = gpd.read_file(forest2018Path)
+
+vcheck2018 = forest2018.is_valid
+
+vcheck1990 = pd.read_pickle('forest1990vcheck.p')
+
+sum(~vcheck2018) 
+sum(~vcheck1990) 
+
+## there are 1/2 the invalidities in general in this data
+## still over 1200 invalid polygons, but seems cleaner. 
+## wonder if this is due to better tech and GIS methods
+## or if the landscape has just been simplified so much
+## by cutting...
+
+## anyway, how many of these invalid polygons are in 
+## cotacachi canton?
+
+halfForest2018 = forest2018.cx[:, 10020000:]
+
+forest2018Xcotacachi = []
+for i,j in enumerate(halfForest2018.geometry):
+    print(i)
+    test = j.intersects(cotacachi.loc[['COTACACHI']].geometry[0])
+    forest2018Xcotacachi += [test]
+
+halfForest2018.head()
+
+halfForest2018.shape
+
+halfForest2018.plot()
+
+
+touchCot2018 = halfForest2018[forest2018Xcotacachi]
+
+touchCot2018.shape
+
+touchCot2018.to_pickle('touchCot2018.p')
+
+touchCot2018val = touchCot2018.is_valid
+
+len(touchCot2018val)
+
+sum(~touchCot2018val) ## 15 invalid polygons.
+## that's manageable. 
+
+fig, ax = plt.subplots()
+touchCot2018.plot(ax=ax)
+cotacachi.boundary.plot(color='red', ax=ax)
+touchCot2018[~touchCot2018val].plot(color='black', ax=ax)
+
+touchCot2018invals = touchCot2018[~touchCot2018val]
+
+## so not that many, but they are big and complex. repairing might
+## not be easy. And they can't be left out. 
+
+## explore options for rasterizing. Geopandas is probably not 
+## great here, I think it insists on all polygons being valid 
+## before attempting the the conversion. Try lower level 
+## osgeo tools.
+
+## let's write out the two maps of landuse polygons that 
+## touch cotacachi, from 1990 and 2018:
+
+touchCot1990 = pd.read_pickle('touchCot1990.p')
+touchCot2018 = pd.read_pickle('touchCot2018.p')
+#touchCot1990.to_file('touchCot1990.shp', driver='ESRI Shapefile')
+#touchCot2018.to_file('touchCot2018.shp', driver='ESRI Shapefile')
+
+## and then we want to use gdal tools to try to rasterize
+## https://gdal.org/programs/gdal_rasterize.html
+
+touchCot1990.head()
+touchCot1990.tail()
+
+## looks like there are different categorical systems:
+touchCot1990.cobertura_.unique()
+touchCot1990.cobertura1.unique()
+touchCot1990.cobertura0.unique()
+## I think we want "_" or "1" here.
+
+## just keep this
+
+aa = touchCot1990[["cobertura1","geometry"]].reset_index(drop=True)
+bb = pd.Categorical(aa['cobertura1'])
+aa["cob1codes"] = bb.codes
+
+aa.head()
+
+#aa.to_file('touchCot1990.shp', driver='ESRI Shapefile')
+
+## convert this to a number for the rasterization?
+
+gdal_rasterize
+
+gdal_rasterize -a cob1codes -tr 100 100 touchCot1990.shp touchCot1990.tif
+
+## that worked surprising well. 
+## maybe we should back up, and do the rasterization on the originals
+## let's see if that eats up my computer.
+
+forest1990Path = ("/home/daniel/Documents/LosCed/GISfilesTooBigForGithub/"
+        "v_ff010_cobertura_vegetal_1990_a/v_ff010_cobertura_vegetal_1990_aPolygon.shp")
+forest1990 = gpd.read_file(forest1990Path) ## whoah that be big
+aa = forest1990[["cobertura1","geometry"]]
+bb = pd.Categorical(aa['cobertura1'])
+aa.insert(1,"cob1codes",bb.codes)
+
+#aa.to_file('forest1990coded.shp', driver='ESRI Shapefile')
+
+## we need to keep track of these codes:
+codes1990 = bb.copy()
+codes1990category = (codes1990.categories
+                    .to_series()
+                    .reset_index(drop=True)
+                        )
+codes1990category.to_pickle('codes1990.p')
+
+
+## yeah, that breaks things. 
+
+## what if we change the extent, does that help?
+## get the extent of the cotacachi canton:
+
+cotacachi.total_bounds
+
+# [ 720706.87410164, 10022496.54190254,   810014.3900013 , 10064965.42180061]
+# xmin, ymin, xmax, ymax
+
+cotacachi.plot()
+
+## back in shell
+## Can we get down to a 30x30 m resolution? This was probably the original resolution. 
+gdal_rasterize \
+    -a cob1codes \
+    -te 720000 10020000 811000 10070000 \
+    -tr 30 30 \
+    forest1990coded.shp \
+    forest1990CotacachiCoded.tif
+
+
+## check it 
+forest1990rastTrimmed = rasterio.open("GIS/forest1990CotacachiCoded.tif")
+fig, ax = plt.subplots()
+rasterio.plot.show(forest1990rastTrimmed, ax=ax)
+cotacachi.boundary.plot(ax=ax, color="black")
+lcPoly.boundary.plot(ax=ax, color="purple")
+
+## looks good. repeat for the 2018 data:
+forest2018Path = ("/home/daniel/Documents/LosCed/GISfilesTooBigForGithub/"
+        "v_ff010_cobertura_vegetal_2018_a/v_ff010_cobertura_vegetal_2018_aPolygon.shp")
+forest2018 = gpd.read_file(forest2018Path) ## whoah that be big
+
+aa = forest2018[["cobertura0","geometry"]]
+bb = pd.Categorical(aa['cobertura0'])
+aa.insert(1,"cob0codes",bb.codes)
+#aa.to_file('forest2018coded.shp', driver='ESRI Shapefile')
+
+## codes are a little different:
+forest2018.cobertura_.unique()
+forest2018.cobertura0.unique()
+## pretty sure the most comparable codes are
+## cobertura0
+
+## we need to keep track of these codes, too:
+codes2018 = bb.copy()
+codes2018category = (codes2018.categories
+                    .to_series()
+                    .reset_index(drop=True)
+                        )
+codes2018category.to_pickle('codes2018.p')
+
+## in shell
+gdal_rasterize \
+    -a cob0codes \
+    -te 720000 10020000 811000 10070000 \
+    -tr 30 30 \
+    forest2018coded.shp \
+    forest2018CotacachiCoded.tif
+
+## check it 
+forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
+fig, ax = plt.subplots()
+rasterio.plot.show(forest2018rastTrimmed, ax=ax)
+cotacachi.boundary.plot(ax=ax, color="black")
+lcPoly.boundary.plot(ax=ax, color="purple")
+
+## can we also get the BP chontal and CC reserve on there?
+
+bpPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
+        "BP_and_parks/mireya/car_bosques_protectores.shp")
+
+ = gpd.read_file(bpPath).query("nombre == 'INTAG (EL CHONTAL)'")
+
+filt = (bps.nombre == 'INTAG (EL CHONTAL)')
+
+bps.query("nombre == 'INTAG (EL CHONTAL)'")
+
+## great. 
+
+## add these to the GIS files for the Ana study, clean up the big old files,
+## commit
+
+## eventually maybe we can get a loose estimate of the secondary forest in LC - 
+## this would be areas that are covered by lc in the 2018 data,
+## vs. the deforested areas of 1990
+
+########## old forest logistic regression #######
+
+## can we predict the old forest type by the elevation?
+
+## I think we are going to need to work in the bayes environment for this
+
+## using the notebook import list for bayes:
+
+import numpy as np 
+import matplotlib.pyplot as plt
+import pandas as pd
+import pymc3 as pm
+import scipy.spatial as sp
+import scipy.stats as stats
+import arviz as az
+from sklearn.linear_model import LinearRegression
+from scipy import stats
+
+## there is a good example to follow in the bayes book, ch4, p140. 
+
+## we need to know which sites are type 3 or type 4 old forest, 
+## and their elevation. 
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+cGroup = pd.read_csv('cGroup.csv', index_col="PsubP")
+elevGr = pd.concat([envOnly, cGroup], axis=1)[['elevacion', 'gr']]
+
+df = iris.query("species == ('setosa', 'versicolor')")
+
+elevGr.query("gr == (
+
+
+
+y_0 = pd.Categorical(df['species']).codes
+x_n = 'sepal_length'
+x_0 = df[x_n].values
+x_c = x_0 - x_0.mean()
