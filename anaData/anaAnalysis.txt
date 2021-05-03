@@ -12120,6 +12120,8 @@ import shapely
 import shapely.validation
 from sklearn.linear_model import LinearRegression
 from statsmodels.stats.multitest import multipletests
+from matplotlib.patches import Patch
+
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
 hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 dem = rasterio.open("GIS/anaPlotDEM.tif")
@@ -12792,6 +12794,7 @@ codes1990category = (codes1990.categories
                         )
 codes1990category.to_pickle('codes1990.p')
 
+codes1990
 
 ## yeah, that breaks things. 
 
@@ -12856,28 +12859,350 @@ gdal_rasterize \
 
 ## check it 
 forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
+xmin, ymin, xmax, ymax = forest2018rast.bounds
 fig, ax = plt.subplots()
+ccPoly.boundary.plot(ax=ax, color="purple")
 rasterio.plot.show(forest2018rastTrimmed, ax=ax)
 cotacachi.boundary.plot(ax=ax, color="black")
 lcPoly.boundary.plot(ax=ax, color="purple")
+chontalPoly.boundary.plot(ax=ax, color="purple")
+cebuPoly.boundary.plot(ax=ax, color="purple")
+ax.set_ylim(ymin, ymax)
+ax.set_xlim(xmin, xmax)
+
+def plotLandUse(rast, tit=''):
+    xmin, ymin, xmax, ymax = rast.bounds
+    fig, ax = plt.subplots()
+    ccPoly.boundary.plot(ax=ax, color="purple")
+    rasterio.plot.show(rast, ax=ax)
+    cotacachi.boundary.plot(ax=ax, color="black")
+    lcPoly.boundary.plot(ax=ax, color="purple")
+    chontalPoly.boundary.plot(ax=ax, color="purple")
+    cebuPoly.boundary.plot(ax=ax, color="purple")
+    ax.set_ylim(ymin, ymax)
+    ax.set_xlim(xmin, xmax)
+    ax.set_title(tit)
+
+plotLandUse(forest1990rast, 'Forest1990')
+plotLandUse(forest2018rast, 'Forest2018')
+
+
+plt.scatter(1,1,c=5)
+
+cbar = plt.gcf().colorbar(codes1990)
+help(rasterio.plot.show)
 
 ## can we also get the BP chontal and CC reserve on there?
 
+pathCanton = "/home/daniel/Documents/LosCed/Ecuador_GIS/limites_administrativas/nxcantones.shp"
 bpPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
         "BP_and_parks/mireya/car_bosques_protectores.shp")
-
- = gpd.read_file(bpPath).query("nombre == 'INTAG (EL CHONTAL)'")
-
-filt = (bps.nombre == 'INTAG (EL CHONTAL)')
-
-bps.query("nombre == 'INTAG (EL CHONTAL)'")
+snapPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
+        "BP_and_parks/mireya/snap.shp")
+chontalPoly = gpd.read_file(bpPath).query("nombre == 'INTAG (EL CHONTAL)'")
+cebuPoly = gpd.read_file(bpPath).query("nombre == 'CEBU'")
+ccPoly = (gpd.read_file(snapPath).query("nombre == 'Cotacachi Cayapas'")
+            .to_crs('EPSG:32717'))
+cotacachi = (gpd.read_file(pathCanton)[['DPA_DESCAN','geometry']]
+        .set_index('DPA_DESCAN')
+        .loc[['COTACACHI']])
 
 ## great. 
 
-## add these to the GIS files for the Ana study, clean up the big old files,
-## commit
+## we need to bring the color codes together.
 
-## eventually maybe we can get a loose estimate of the secondary forest in LC - 
+codes1990 = pd.read_pickle('codes1990.p')
+codes2018 = pd.read_pickle('codes2018.p')
+
+codes1990
+codes2018
+
+## we have some problems with the accents in the 1990 data, 
+## I can't even reliably replace them with the str tools, for some reason,
+## so let's replace them here:
+codes1990[11] = "PLANTACION FORESTAL"
+codes1990[12] = "PARAMO"
+codes1990[13] = "SIN INFORMACION"
+codes1990[15] = "VEGETACION ARBUSTIVA"
+codes1990[16] = "VEGETACION HERBACEA"
+
+## and update our pickled series with this:
+#codes1990.to_pickle('codes1990.p')
+
+## let's reshape these a bit:
+codes1990flip = pd.Series(data=codes1990.index, index=codes1990.values)
+codes2018flip = pd.Series(data=codes2018.index, index=codes2018.values)
+
+
+## best to use a color map that looks like the online version, 
+## I guess?
+## can change it later if we need to:
+
+## for 2018:
+
+codes2018flip
+
+## each landuse type (NOT the numbercodes of the raster bands)
+## needs a unique and informative color
+## let's color all agricultural land the same
+
+landUseColDict = pd.Series({
+"AREA POBLADA":"#191919",
+"AREA SIN COBERTURA VEGETAL":"#bfbac1",
+"ARTIFICIAL":"#1676cc",
+"BOSQUE NATIVO":"#4d701b",
+"GLACIAR":"#76acbf",
+"INFRAESTRUCTURA":"#676767",
+"NATURAL":"#53c1ea",
+"PARAMO":"#69d19b",
+"PLANTACION FORESTAL":"#9a3520",
+"TIERRA AGROPECUARIA":"#e3d686",
+"VEGETACION ARBUSTIVA":"#966b17",
+"VEGETACION HERBACEA":"#cec3ae",
+"CULTIVO ANUAL":"#e3d686",
+"CULTIVO PERMANENTE":"#e3d686",
+"CULTIVO SEMI PERMANENTE":"#e3d686",
+"PASTIZAL":"#67751b",
+"SIN INFORMACION":"#ffffff",
+})
+
+colrDF = pd.concat([codes1990flip, codes2018flip,landUseColDict], axis=1)
+colrDF.reset_index(drop=False, inplace=True)
+colrDF.columns=['landUse','codes1990', 'codes2018','co']
+colrDF['codes2018'] = colrDF['codes2018'].astype('Int32')
+colrDF['codes2018'] = colrDF['codes2018'].astype('Int32')
+
+## I think for simplicity with color scales, we need to fill 
+## in the NAs with a color - 
+
+## damn this is stupidly complicated...
+## anyway, how do we use this for colormaps?
+
+## if we want to plot the 2018 data?
+
+## so now what? A good tutorial is here: 
+## https://kodu.ut.ee/~kmoch/geopython2019/L4/raster.html#data-structures-recap-raster-and-vector
+
+forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
+forest1990rast = rasterio.open("GIS/forest1990CotacachiCoded.tif")
+
+
+
+forest1990band = forest1990rast.read(1)
+forest2018band = forest2018rast.read(1)
+
+## which land types are present in our little
+## bounding box?
+uVals2018 = np.unique(forest2018band).astype('int')
+
+## example for legend:
+
+from matplotlib.patches import Patch
+
+from matplotlib.patches import Patch
+
+list(zip(colrs2018.co, colrs2018.landUse))
+
+## make our color map, only types present in this 
+## subset of the map
+
+
+## we have to "patch up" our color map a bit,
+## pad it with colors/landuses that aren't in 
+## our subsetted data, so that the color map
+## has a length that equals the values of our
+## various pixels. If we have pixel values 
+## going from 0-11, we need twelve color assignments
+## so that our colormap doesn't try weird 
+## interpolations from the two sides of the map
+## being unequal. In this case, we'll use red 
+## as our filler color, since it's not used 
+## elsewhere:
+
+plt.close('all')
+
+def plot2018rast():
+    uVals2018 = np.unique(forest2018band).astype('int')
+    colrs2018 = (colrDF.dropna()
+                    .set_index('codes2018')
+                    .drop('codes1990', axis=1)
+                )
+    aa = ["#ff0000"]*max(uVals2018 + 1)
+    for i in uVals2018:
+        iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0] ## get our real colors
+        aa[i] = iCol ## put them where they belong 
+    cmap2018 = mcolors.ListedColormap(aa)
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrs2018.co, colrs2018.landUse) ]
+    fig, ax = plt.subplots()
+    ax.legend(handles=legend_patches, 
+                facecolor="white", 
+                edgecolor="white", 
+                loc="upper left", 
+                bbox_to_anchor=(1, 1))
+    rasterio.plot.show(forest2018rast, ax=ax, cmap=cmap2018)
+    ax.set_title('Land use 2018')
+
+
+
+#### repeat for 1990:
+
+## This is one is simpler, we have no 
+## gaps in our color map, so no padding 
+## with unused colors needed...
+
+#plt.close('all')
+
+def plot1990rast():
+    uVals1990 = np.unique(forest1990band).astype('int')
+    colrs1990 = (colrDF
+                    .drop('codes2018', axis=1)
+                    .set_index('codes1990')
+                )
+    cmap1990 = mcolors.ListedColormap(colrs1990.co.to_list())
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrs1990.co, colrs1990.landUse) ]
+    fig, ax = plt.subplots()
+    ax.legend(handles=legend_patches, 
+                facecolor="white", 
+                edgecolor="white", 
+                loc="upper left", 
+                bbox_to_anchor=(1, 1))
+    rasterio.plot.show(forest1990rast, ax=ax, cmap=cmap1990)
+    ax.set_title('Land use 1990')
+
+
+plt.close('all')
+
+plot1990rast()
+plot2018rast()
+
+## as per:
+## https://www.hatarilabs.com/ih-en/extract-point-value-from-a-raster-file-with-python-geopandas-and-rasterio-tutorial
+
+colrDF
+
+def getLandVal(rast):
+    x,y = plt.ginput(1)[0]
+    row, col = forest1990rast.index(x,y)
+    numV = rast.read(1)[row, col]
+    return(numV)
+
+
+getLandVal(forest2018rast)
+
+getLandVal(forest1990rast)
+
+colrDF
+
+plt.tight_layout()
+
+## toy example to explore how listed colormaps work:
+
+plt.close('all')
+cmapTest = mcolors.ListedColormap(['r','g','b','m','k'])
+#cmapTest = mcolors.ListedColormap(['r','g'])
+z1 = [1,1,3,2,6]
+z2 = [1,2,5,2.1,3]
+z3 = [4.5,2,4.5,2.1,3]
+fig, ax = plt.subplots(figsize=(10,10))
+ax.scatter(x=[1,]*len(z1),y=z1, s=500, cmap=cmapTest,
+            c=z1)
+ax.scatter(x=[1.5]*len(z2),y=z2, s=500, cmap=cmapTest,
+            c=z2)
+ax.scatter(x=[2]*len(z3),y=z3, s=500, cmap=cmapTest,
+            c=z3)
+
+## with our 1990 values:
+
+uVals1990
+
+colrs1990
+
+cmap1990
+
+#cmapTest = mcolors.ListedColormap(['r','g'])
+
+uVals2018 = np.unique(forest2018band).astype('int')
+colrs2018 = (colrDF.dropna()
+                .set_index('codes2018')
+                .drop('codes1990', axis=1)
+            )
+cmap2018 = mcolors.ListedColormap(colrs2018.co.to_list())
+
+pd.Series(uVals2018).rank()
+
+## we need a color map that will give us a 
+## value for all potential 2018 values, not 
+## just the ones for our map
+## we need one that goes at least to highest
+## value of uVals2018, with a non-info color wherever 
+## there is a gap in the uVals2018 sequence
+## let's use red (#ff0000)
+## this is getting really ridiculous
+
+aa = ["#ff0000"]*max(uVals2018 + 1)
+for i in uVals2018:
+    print(i)
+    iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0]
+    aa[i] = iCol
+
+## can we use this?
+cmap2018 = mcolors.ListedColormap(aa)
+
+
+cmap2018 = mcolors.ListedColormap(colrs2018.co.to_list())
+
+#
+ 
+
+def colrMapP():
+    z1 = uVals1990
+    z2 = uVals2018
+    fig, ax = plt.subplots(figsize=(10,10))
+    ax.scatter(x=[1.0,]*len(z1),y=z1, s=500, cmap=cmap1990,
+                c=z1)
+    ax.scatter(x=[1.5,]*len(z2),y=z2, s=500, cmap=cmap2018,
+                c=z2)
+    for i in uVals1990:
+        ax.text(x=0.95, y=i, s=i)
+        ax.text(x=1.05, y=i, s=colrs1990.loc[i]['landUse'])
+    for i in uVals2018:
+        ax.text(x=1.45, y=i, s=i)
+        ax.text(x=1.55, y=i, s=colrs2018.loc[i]['landUse'])
+    ax.set_xlim(0.8, 2.0)
+
+#plt.close('all')
+colrMapP()
+
+
+
+## lowest value takes first listed color
+## highest value takes last listed color
+## ones in the middle are unweighted, normalized
+## so, it doesn't matter how many datapoints, 
+## they take on the z value's relative position
+## between the two extremes. 
+
+## ugh, it is just not made for categorical values
+## but our raster format is forcing us to use a cmap, no?
+
+## so for our purposes, for the colors of each chart 
+## to match (1990 and 2018), we need the list of 
+## colors to be exactly as long as the number of 
+## possible landtypes, so no funny 
+## interpolation happens.
+
+## and the order matters very much, they need to 
+## listed in the same order in both cmaps.
+
+## but I kind of thought we met all these
+## requirements?
+
+## wow, that is a mess. update notebook
+
+## what data do we need to write about?
+
+
+## also maybe we can get a loose estimate of the secondary forest in LC - 
 ## this would be areas that are covered by lc in the 2018 data,
 ## vs. the deforested areas of 1990
 
