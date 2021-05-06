@@ -12115,20 +12115,30 @@ import matplotlib.colors as mcolors
 import geopandas as gpd
 import rasterio
 import rasterio.plot
+import rasterio.mask
+import rasterio.crs
 import copy
+import gdal
 import shapely
 import shapely.validation
 from sklearn.linear_model import LinearRegression
 from statsmodels.stats.multitest import multipletests
 from matplotlib.patches import Patch
 
+
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
 hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
 dem = rasterio.open("GIS/anaPlotDEM.tif")
 paths = gpd.read_file('GIS/PathsLC.geojson')
 envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
-forest1990rast = rasterio.open("GIS/forest1990CotacachiCoded.tif")
-forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
+cotacachi = gpd.read_file('GIS/cotacachiCanton.geojson')
+chontalPoly = gpd.read_file('GIS/ChontalBP.geojson')
+cebuPoly = gpd.read_file('GIS/cebuBP.geojson')
+#forest1990rast = rasterio.open("GIS/forest1990CotacachiCoded.tif")
+#forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
+cotacachiForest1990 = rasterio.open("cotacachiForest1990.tif")
+cotacachiForest2018 = rasterio.open("cotacachiForest2018.tif")
 
 aa = pd.read_csv('sigMEM.csv', index_col='PsubP')
 mems = gpd.GeoDataFrame(aa, geometry=gpd.points_from_xy(aa.X, aa.Y))
@@ -12929,6 +12939,8 @@ codes1990[16] = "VEGETACION HERBACEA"
 ## and update our pickled series with this:
 #codes1990.to_pickle('codes1990.p')
 
+codes1990 = pd.read_pickle('codes1990.p')
+codes2018 = pd.read_pickle('codes2018.p')
 ## let's reshape these a bit:
 codes1990flip = pd.Series(data=codes1990.index, index=codes1990.values)
 codes2018flip = pd.Series(data=codes2018.index, index=codes2018.values)
@@ -12971,6 +12983,9 @@ colrDF.reset_index(drop=False, inplace=True)
 colrDF.columns=['landUse','codes1990', 'codes2018','co']
 colrDF['codes2018'] = colrDF['codes2018'].astype('Int32')
 colrDF['codes2018'] = colrDF['codes2018'].astype('Int32')
+colrDF.iloc[13,2] = 13 ## add in a "SIN INFORMACION" to 2018 data
+#colrDF.to_pickle('forestRastColrDF.p')
+
 
 ## I think for simplicity with color scales, we need to fill 
 ## in the NAs with a color - 
@@ -12985,8 +13000,6 @@ colrDF['codes2018'] = colrDF['codes2018'].astype('Int32')
 
 forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
 forest1990rast = rasterio.open("GIS/forest1990CotacachiCoded.tif")
-
-
 
 forest1990band = forest1990rast.read(1)
 forest2018band = forest2018rast.read(1)
@@ -13028,10 +13041,10 @@ def plot2018rast():
                     .drop('codes1990', axis=1)
                 )
     aa = ["#ff0000"]*max(uVals2018 + 1)
-    for i in uVals2018:
-        iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0] ## get our real colors
-        aa[i] = iCol ## put them where they belong 
-    cmap2018 = mcolors.ListedColormap(aa)
+for i in uVals2018:
+    iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0] ## get our real colors
+    aa[i] = iCol ## put them where they belong 
+cmap2018 = mcolors.ListedColormap(aa)
     legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrs2018.co, colrs2018.landUse) ]
     fig, ax = plt.subplots()
     ax.legend(handles=legend_patches, 
@@ -13042,7 +13055,11 @@ def plot2018rast():
     rasterio.plot.show(forest2018rast, ax=ax, cmap=cmap2018)
     ax.set_title('Land use 2018')
 
+forest2018rast
 
+xmin, ymin, xmax, ymax = forest2018rast.bounds
+ax.set_xlim(xmin, xmax)
+ax.set_ylim(ymin, ymax)
 
 #### repeat for 1990:
 
@@ -13069,16 +13086,53 @@ def plot1990rast():
     rasterio.plot.show(forest1990rast, ax=ax, cmap=cmap1990)
     ax.set_title('Land use 1990')
 
+fig = plt.gcf()
+ax = plt.gca()
+
+pathCanton = "/home/daniel/Documents/LosCed/Ecuador_GIS/limites_administrativas/nxcantones.shp"
+bpPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
+        "BP_and_parks/mireya/car_bosques_protectores.shp")
+snapPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
+        "BP_and_parks/mireya/snap.shp")
+
+chontalPoly = gpd.read_file(bpPath).query("nombre == 'INTAG (EL CHONTAL)'")
+cebuPoly = gpd.read_file(bpPath).query("nombre == 'CEBU'")
+ccPoly = (gpd.read_file(snapPath).query("nombre == 'Cotacachi Cayapas'")
+            .to_crs('EPSG:32717'))
+cotacachi = (gpd.read_file(pathCanton)[['DPA_DESCAN','geometry']]
+        .set_index('DPA_DESCAN')
+        .loc[['COTACACHI']])
+
+## save these out, the ones we don't have already
+ccPoly.to_file("GIS/cotacachiCayapas.geojson", driver='GeoJSON')
+cotacachi.to_file("GIS/cotacachiCanton.geojson", driver='GeoJSON')
+chontalPoly.to_file("GIS/ChontalBP.geojson", driver='GeoJSON')
+cebuPoly.to_file("GIS/cebuBP.geojson", driver='GeoJSON')
+
+ccPoly = gpd.read_file("GIS/cotacachiCayapas.geojson", driver='GeoJSON')
+cotacachi = gpd.read_file("GIS/cotacachiCanton.geojson", driver='GeoJSON')
+chontalPoly = gpd.read_file("GIS/ChontalBP.geojson", driver='GeoJSON')
+cebuPoly = gpd.read_file("GIS/cebuBP.geojson", driver='GeoJSON')
 
 plt.close('all')
+fig, ax = plt.subplots()
 
-plot1990rast()
-plot2018rast()
+lcPoly.boundary.plot(ax=ax, color='r')
+ccPoly.boundary.plot(ax=ax, color='k')
+
+cotacachi.plot(ax=ax,  
+               missing_kwds={'facecolor':"white",
+                             "edgecolor":"black"
+                             })
+## yeah, doesn't work
+
+chontalPoly.boundary.plot(ax=ax, color = 'b')
+cebuPoly.boundary.plot(ax=ax, color = 'b')
+
+a, = [1,2,3]
 
 ## as per:
 ## https://www.hatarilabs.com/ih-en/extract-point-value-from-a-raster-file-with-python-geopandas-and-rasterio-tutorial
-
-colrDF
 
 def getLandVal(rast):
     x,y = plt.ginput(1)[0]
@@ -13173,38 +13227,709 @@ def colrMapP():
 #plt.close('all')
 colrMapP()
 
+plt.close('all')
+
+fig, ax = plt.subplots(figsize=(20,10))
+legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrs1990.co, colrs1990.landUse) ]
+ax.legend(handles=legend_patches, 
+            facecolor="white", 
+            edgecolor="white", 
+            loc="upper left", 
+            bbox_to_anchor=(1, 1)) 
+rasterio.plot.show(forest1990rast, ax=ax, cmap=cmap1990)
+lcPoly.boundary.plot(ax=ax, color='r')
+ccPoly.boundary.plot(ax=ax, color='k')
+cotacachi.boundary.plot(ax=ax, color='k')
+chontalPoly.boundary.plot(ax=ax, color = 'b')
+cebuPoly.boundary.plot(ax=ax, color = 'b')
+xmin, ymin, xmax, ymax = forest1990rast.bounds
+ax.set_xlim(xmin, xmax)
+ax.set_ylim(ymin, ymax)
+ax.set_title("1990 Cotacachi Canton land cover")
+anaPt.plot(ax=ax)
+paths.plot(color='red', linestyle='--', ax=ax)
 
 
-## lowest value takes first listed color
-## highest value takes last listed color
-## ones in the middle are unweighted, normalized
-## so, it doesn't matter how many datapoints, 
-## they take on the z value's relative position
-## between the two extremes. 
+def plotCotacachiRast(rast, colrDF, colormap, title=None):
+    fig, ax = plt.subplots(figsize=(20,10))
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrDF.co, colrDF.landUse) ]
+    ax.legend(handles=legend_patches, 
+                facecolor="white", 
+                edgecolor="white", 
+                loc="upper left", 
+                bbox_to_anchor=(1, 1)) 
+    rasterio.plot.show(rast, ax=ax, cmap=colormap)
+    lcPoly.boundary.plot(ax=ax, color='r')
+    ccPoly.boundary.plot(ax=ax, color='k', linestyle='--')
+    cotacachi.boundary.plot(ax=ax, color='k')
+    chontalPoly.boundary.plot(ax=ax, color = 'b')
+    cebuPoly.boundary.plot(ax=ax, color = 'b')
+    xmin, ymin, xmax, ymax = forest2018rast.bounds
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    if title is None: ax.set_title("")
+    if title is not None: ax.set_title(title + " Cotacachi canton land cover")
 
-## ugh, it is just not made for categorical values
-## but our raster format is forcing us to use a cmap, no?
+plotCotacachiRast(forest1990rast, colrs1990, cmap1990, "1990")
 
-## so for our purposes, for the colors of each chart 
-## to match (1990 and 2018), we need the list of 
-## colors to be exactly as long as the number of 
-## possible landtypes, so no funny 
-## interpolation happens.
-
-## and the order matters very much, they need to 
-## listed in the same order in both cmaps.
-
-## but I kind of thought we met all these
-## requirements?
-
-## wow, that is a mess. update notebook
-
-## what data do we need to write about?
+plotCotacachiRast(forest2018rast, colrs2018, cmap2018, "2018")
 
 
-## also maybe we can get a loose estimate of the secondary forest in LC - 
+#### mask rasters with Cotacachi canton boundary ####
+
+## not bad, but maybe try masking to cotacachi polygon?
+## we want to clip with the cotacachi polygon
+
+## an example here:
+## https://automating-gis-processes.github.io/CSC18/lessons/L6/clipping-raster.html
+
+forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
+forest1990rast = rasterio.open("GIS/forest1990CotacachiCoded.tif")
+
+forest1990maskArray, forest1990maskTransform = rasterio.mask.mask(dataset=forest1990rast, 
+                                                           shapes=cotacachi.geometry,
+                                                           nodata=13, ## = "SIN INFORMACION"
+                                                           crop=True
+                                                           )
+
+## looks good, but how to embed the geo info, and make a new georeffed raster?
+
+forest1990mask_meta = forest1990rast.meta.copy()
+
+forest1990mask_meta.update({"driver": "GTiff",
+           "height": forest1990maskArray.shape[1],
+           "width": forest1990maskArray.shape[2],
+           "transform": forest1990maskTransform,
+           "crs": rasterio.crs.CRS.from_epsg(32717)}
+          )
+
+## write it out:
+
+with rasterio.open("cotacachiForest1990.tif", "w", **forest1990mask_meta) as dest:
+    dest.write(forest1990maskArray)
+         
+## did that work?
+
+cotacachiForest1990 = rasterio.open("cotacachiForest1990.tif")
+
+fig, ax = plt.subplots()
+rasterio.plot.show(cotacachiForest1990, ax=ax)
+ax.set_title('1990')
+
+## looks great. We'll probably need to rework our colormaps for all the new zeros. 
+
+#### repeat with the 2018 data:
+
+forest2018maskArray, forest2018maskTransform = rasterio.mask.mask(dataset=forest2018rast, 
+                                                           shapes=cotacachi.geometry,
+                                                           nodata=13,
+                                                           crop=True
+                                                           )
+
+
+forest2018mask_meta = forest2018rast.meta.copy()
+
+forest2018mask_meta.update({"driver": "GTiff",
+           "height": forest2018maskArray.shape[1],
+           "width": forest2018maskArray.shape[2],
+           "transform": forest2018maskTransform,
+           "crs": rasterio.crs.CRS.from_epsg(32717)}
+          )
+
+with rasterio.open("cotacachiForest2018.tif", "w", **forest2018mask_meta) as dest:
+    dest.write(forest2018maskArray)
+
+forest2018mask_meta = forest2018rast.meta.copy()
+
+cotacachiForest2018 = rasterio.open("cotacachiForest2018.tif")
+
+fig, ax = plt.subplots()
+rasterio.plot.show(cotacachiForest2018)
+ax.set_title('2018')
+
+## also maybe we can get an estimate of the secondary forest in LC - 
 ## this would be areas that are covered by lc in the 2018 data,
 ## vs. the deforested areas of 1990
+
+#### zoom in a little to LC and Chontal BPs ####
+## can we get the boundaries 
+
+lcPoly.bounds
+chontalPoly.bounds
+
+## looks like we want something around:
+
+min(lcPoly.bounds.minx[0], chontalPoly.bounds.minx[0]) 
+min(lcPoly.bounds.miny[0], chontalPoly.bounds.miny[0]) 
+max(lcPoly.bounds.maxx[0], chontalPoly.bounds.maxx[0]) 
+max(lcPoly.bounds.maxy[0], chontalPoly.bounds.maxy[0]) 
+
+def plotBPs(rast, colrDF, colormap):
+    minx = 739306.4581787158
+    miny = 10031570.357894145
+    maxx = 761118.852
+    maxy = 10044637.5948
+    margin = 1000 ## buffer a little
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrDF.co, colrDF.landUse) ]
+    fig, ax = plt.subplots(figsize=(20,10))
+    ax.legend(handles=legend_patches, 
+                facecolor="white", 
+                edgecolor="white", 
+                loc="upper left", 
+                bbox_to_anchor=(1, 1)) 
+    rasterio.plot.show(rast, ax=ax, cmap=colormap)
+    lcPoly.boundary.plot(ax=ax, color='r')
+    chontalPoly.boundary.plot(ax=ax, color = 'b')
+    ax.set_xlim(minx-margin, maxx+margin)
+    ax.set_ylim(miny-margin, maxy+margin)
+ 
+
+colrDF = pd.read_pickle('forestRastColrDF.p')
+colrs1990 = (colrDF.set_index('codes1990')
+                .drop('codes2018', axis=1)
+            )
+cmap1990 = mcolors.ListedColormap(colrs1990.co.to_list())
+
+cotacachiForotacachiForest2018.read(1)
+uVals2018 = np.unique(cotacachiForest2018band).astype('int')
+colrs2018 = (colrDF.dropna()
+                .set_index('codes2018')
+                .drop('codes1990', axis=1)
+            )
+aa = ["#ff0000"]*max(uVals2018 + 1)
+for i in uVals2018:
+    ## get our real colors:
+    iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0]
+    aa[i] = iCol ## put them where they belong 
+cmap2018 = mcolors.ListedColormap(aa)
+cotacachiForest2018band = cotacachiForest2018.read(1)
+uVals2018 = np.unique(cotacachiForest2018band).astype('int')
+colrs2018 = (colrDF.dropna()
+                .set_index('codes2018')
+                .drop('codes1990', axis=1)
+            )
+aa = ["#ff0000"]*max(uVals2018 + 1)
+for i in uVals2018:
+    ## get our real colors:
+    iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0]
+    aa[i] = iCol ## put them where they belong 
+cmap2018 = mcolors.ListedColormap(aa)
+
+plotBPs(forest1990rast, colrs1990, cmap1990)
+
+plotBPs(forest2018rast, colrs2018, cmap2018)
+
+##### update plotter to match cotacachi canton mask #####
+
+## redo 37 or whatever. Can we do the above plotting with the 
+## masked rasters that just show cotacachi canton? I think
+## showing CCER is just distracting, subtracts from the 
+## severity of the situation by weighting half the image
+## with  the largest chunk of unbroken, actually-protected
+## forest in northern Ecuador.
+
+
+## color maps
+
+## 1990
+cotacachiForest1990 = rasterio.open("cotacachiForest1990.tif")
+cotacachiForest1990band = cotacachiForest1990.read(1)
+uVals1990 = np.unique(cotacachiForest1990band).astype('int')
+
+colrs1990 = (colrDF
+               .drop('codes2018', axis=1)
+               .set_index('codes1990')
+             )
+
+cmap1990 = mcolors.ListedColormap(colrs1990.co.to_list())
+
+## 2018
+cotacachiForest2018 = rasterio.open("cotacachiForest2018.tif")
+cotacachiForest2018band = cotacachiForest2018.read(1)
+uVals2018 = np.unique(cotacachiForest2018band).astype('int')
+colrs2018 = (colrDF.dropna()
+                .set_index('codes2018')
+                .drop('codes1990', axis=1)
+            )
+aa = ["#ff0000"]*max(uVals2018 + 1)
+for i in uVals2018:
+    ## get our real colors:
+    iCol = colrDF.query("codes2018 == " + str(i)).co.iloc[0] 
+    aa[i] = iCol ## put them where they belong 
+cmap2018 = mcolors.ListedColormap(aa)
+
+## check them:
+
+z1 = uVals1990
+z2 = uVals2018
+fig, ax = plt.subplots(figsize=(10,10))
+ax.scatter(x=[1.0,]*len(z1),y=z1, s=500, cmap=cmap1990,
+            c=z1)
+ax.scatter(x=[1.5,]*len(z2),y=z2, s=500, cmap=cmap2018,
+            c=z2)
+for i in uVals1990:
+    ax.text(x=0.95, y=i, s=i)
+    ax.text(x=1.05, y=i, s=colrs1990.loc[i]['landUse'])
+
+for i in uVals2018:
+    ax.text(x=1.45, y=i, s=i)
+    ax.text(x=1.55, y=i, s=colrs2018.loc[i]['landUse'])
+
+ax.set_xlim(0.8, 2.0)
+
+## looks good 
+## redo maps
+
+cotacachiForest1990 = rasterio.open("cotacachiForest1990.tif")
+cotacachiForest2018 = rasterio.open("cotacachiForest2018.tif")
+
+def plotCotacachiRast(rast, colrDF, colormap, title=None, ax=None):
+    if ax is None: fig, ax = plt.subplots(figsize=(20,10))
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrDF.co, colrDF.landUse) ]
+    ax.legend(handles=legend_patches,
+                facecolor="white",
+                edgecolor="white",
+                loc="upper left",
+                bbox_to_anchor=(1, 1))
+    rasterio.plot.show(rast, ax=ax, cmap=colormap)
+    lcPoly.boundary.plot(ax=ax, color='r')
+    chontalPoly.boundary.plot(ax=ax, color = 'b')
+    cebuPoly.boundary.plot(ax=ax, color = 'b')
+    xmin, ymin, xmax, ymax = forest2018rast.bounds
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    if title is None: ax.set_title("")
+    if title is not None: ax.set_title(title + " Cotacachi canton land cover")
+
+## does a single figure work better?
+plt.close('all')
+fig, axes = plt.subplots(2,1, sharex=True)
+plotCotacachiRast(cotacachiForest1990, colrs1990, cmap1990, title=None, ax=axes[0])
+plotCotacachiRast(cotacachiForest2018, colrs2018, cmap2018, title=None, ax=axes[1])
+## either way. 
+
+### stats from deforestation maps ###
+
+## how do we get our forest loss figures from these rasters?
+
+## should be as simple as summing the unique values of our band:
+
+## one example on the numpy manual:
+rng = np.random.RandomState(10)  
+a = np.hstack((rng.normal(size=1000),
+               rng.normal(loc=5, scale=2, size=1000)))
+plt.hist(a, bins='auto')  # arguments are passed to np.histogram
+plt.title("Histogram with 'auto' bins")
+plt.gca().text(0.5, 1.0, "Histogram with 'auto' bins")
+
+## apply to cotacachiForest1990band
+
+plt.hist(cotacachiForest1990band, bins='auto')
+## that didn't work at all...too computationally expensive
+
+## can we table our values? in pandas, this would be a pretty 
+## simple groupby...
+
+
+cotacachiForest2018band = cotacachiForest2018.read(1)
+
+
+## for 1990
+cotacachiForest1990band = cotacachiForest1990.read(1)
+uVals1990 = np.unique(cotacachiForest1990band).astype('int')
+cF1990BandSorted = np.sort(fa)
+## find number of pixels for each category of land use:
+breaks = np.searchsorted(cF1990BandSorted, uVals1990)
+breaks = np.concatenate([breaks, [len(fa)]])
+totals1990 = breaks[1:] - breaks[:-1] ## neat - subtract every element by the one before
+## how do we resurrect our land use codes/labels for this:
+colrDF = pd.read_pickle('forestRastColrDF.p').set_index('codes1990')
+landUsePixelSums1990 = (pd.Series(data=totals1990, 
+                                 index=colrDF.loc[uVals1990].landUse)
+                            .drop('SIN INFORMACION')
+                        )
+
+## 
+def makePixelTotals(raster, codes):
+    band = raster.read(1)
+    fa = band.flat
+    bandSorted = np.sort(fa)
+    uVals = np.unique(band).astype('int')
+    ## find number of pixels for each category of land use:
+    breaks = np.searchsorted(bandSorted, uVals)
+    breaks = np.concatenate([breaks, [len(fa)]])
+    totals = breaks[1:] - breaks[:-1] 
+    colrDF = pd.read_pickle('forestRastColrDF.p').set_index(codes)
+    landUsePixelSums1990 = pd.Series(data=totals, 
+                                     index=colrDF.loc[uVals].landUse)
+    return(landUsePixelSums1990)
+
+## are these the same size?
+landUseCotacachi1990 = makePixelTotals(cotacachiForest1990, 'codes1990')
+landUseCotacachi2018 = makePixelTotals(cotacachiForest2018, 'codes2018')
+landUseCotacachi1990.sum() ## 4219826
+landUseCotacachi2018.sum() ## 4219826
+## yup
+
+## what if we drop the no-info cells?
+landUseCotacachi1990 = makePixelTotals(cotacachiForest1990, 'codes1990').drop('SIN INFORMACION')
+landUseCotacachi2018 = makePixelTotals(cotacachiForest2018, 'codes2018').drop('SIN INFORMACION')
+landUseCotacachi1990.sum() ## 1874454
+landUseCotacachi2018.sum() ## 1874623
+## the 1990 dataset lost ~200 more cells. This makes sense, I probably shouldn't have lumped 
+## sin informacion with out-of-cotacachi pixels. Oh well, fix it later if it causes problems.
+
+landUseCotacachi1990.plot.bar()
+plt.tight_layout()
+
+## okay, what has been the percent forest loss in cotacachi?:
+
+landUseCotacachi1990.sum() ## 1874454
+landUseCotacachi2018.sum() ## 1874623
+
+landUseCotacachi1990['BOSQUE NATIVO'] / landUseCotacachi1990.sum() ## ~52 percent forest cover
+landUseCotacachi2018['BOSQUE NATIVO'] / landUseCotacachi2018.sum() ## ~43 percent forest cover
+## not quite 10% forest loss in 28 years. 
+
+## each cell is 30m x 30m, or 900 m^2. So in absolute area terms:
+
+landUseCotacachi1990['BOSQUE NATIVO'] * 900 ## 879673500 or 879,673,500 m^2 
+## or in hectares:
+landUseCotacachi1990['BOSQUE NATIVO'] * 900 / 10000 ## 87967.35 / 87,967 ha
+
+landUseCotacachi2018['BOSQUE NATIVO'] * 900 ## 717385500 or 717,385,500 m2
+landUseCotacachi2018['BOSQUE NATIVO'] * 900 / 10000 ## 71738.55 or 71,738 ha
+
+87967.35 - 71738.55 ## 16228.8 ha lost in 30 years. How big is los Cedros again?
+
+bpPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
+        "BP_and_parks/mireya/car_bosques_protectores.shp")
+
+lc = gpd.read_file(bpPath).query("nombre == 'LOS CEDROS'")
+lc.area_ha ## 5255.621582
+
+## so ~ an area of forest equivalent to 3 los Cedros have been lost in the last 30 years. 
+
+## can we calculate the same for Los Cedros and Chontal?
+
+## first update jupyter
+
+##### los cedros and chontal masks:
+
+## let's repeat the above pipeline for cutting the raster down to 
+## a polygon, this time with LC and Chontal BPs instead of the 
+## Cotacachi canton polygon:
+
+### LC
+
+##  LC 2018
+LC2018maskArray, LC2018maskTransform = rasterio.mask.mask(dataset=forest2018rast,
+                                                           shapes=lcPoly.geometry.explode(),
+                                                           nodata=13,
+                                                           crop=True
+                                                           )
+LC2018mask_meta = forest2018rast.meta.copy()
+LC2018mask_meta.update({"driver": "GTiff",
+           "height": LC2018maskArray.shape[1],
+           "width": LC2018maskArray.shape[2],
+           "transform": LC2018maskTransform,
+           })
+
+
+with rasterio.open("losCedrosForest2018.tif", "w", **LC2018mask_meta) as dest:
+    dest.write(LC2018maskArray)
+
+losCedrosForest2018 = rasterio.open("losCedrosForest2018.tif")
+
+rasterio.plot.show(losCedrosForest2018)
+
+## LC 1990
+LC1990maskArray, LC1990maskTransform = rasterio.mask.mask(dataset=forest1990rast,
+                                                           shapes=lcPoly.geometry.explode(),
+                                                           nodata=13,
+                                                           crop=True
+                                                           )
+LC1990mask_meta = forest1990rast.meta.copy()
+LC1990mask_meta.update({"driver": "GTiff",
+           "height": LC1990maskArray.shape[1],
+           "width": LC1990maskArray.shape[2],
+           "transform": LC1990maskTransform,
+           })
+with rasterio.open("losCedrosForest1990.tif", "w", **LC1990mask_meta) as dest:
+    dest.write(LC1990maskArray)
+
+
+losCedrosForest1990 = rasterio.open("losCedrosForest1990.tif")
+
+rasterio.plot.show(losCedrosForest1990)
+
+
+### Chontal BP
+
+## Chontal 2018
+BPC2018maskArray, BPC2018maskTransform = rasterio.mask.mask(dataset=forest2018rast,
+                                                           shapes=chontalPoly.geometry,
+                                                           nodata=13,
+                                                           crop=True
+                                                           )
+BPC2018mask_meta = forest2018rast.meta.copy()
+BPC2018mask_meta.update({"driver": "GTiff",
+           "height": BPC2018maskArray.shape[1],
+           "width": BPC2018maskArray.shape[2],
+           "transform": BPC2018maskTransform,
+           })
+
+with rasterio.open("chontalForest2018.tif", "w", **BPC2018mask_meta) as dest:
+    dest.write(BPC2018maskArray)
+
+chontalForest2018 = rasterio.open("chontalForest2018.tif")
+rasterio.plot.show(chontalForest2018)
+
+## Chontal 1990
+
+BPC1990maskArray, BPC1990maskTransform = rasterio.mask.mask(dataset=forest1990rast,
+                                                           shapes=chontalPoly.geometry,
+                                                           nodata=13,
+                                                           crop=True
+                                                           )
+
+BPC1990mask_meta = forest1990rast.meta.copy()
+BPC1990mask_meta.update({"driver": "GTiff",
+           "height": BPC1990maskArray.shape[1],
+           "width": BPC1990maskArray.shape[2],
+           "transform": BPC1990maskTransform,
+           })
+
+with rasterio.open("chontalForest1990.tif", "w", **BPC1990mask_meta) as dest:
+    dest.write(BPC1990maskArray)
+
+chontalForest1990 = rasterio.open("chontalForest1990.tif")
+rasterio.plot.show(chontalForest1990)
+
+
+## looks good. make our 2018 color maps: 
+
+def getColorMap(rast, yearCodes):
+    colrDF = pd.read_pickle('colrDF.p')
+    band = rast.read(1)
+    uVals = np.unique(band).astype('int')
+    colrs = colrDF.copy()
+    if yearCodes == "codes2018": colrs.dropna(inplace=True)
+    colrs.set_index(yearCodes, inplace=True)
+    aa = [ colrs.loc[i].co for i in uVals ]
+    listedCmap = mcolors.ListedColormap(aa) 
+    return(listedCmap)
+
+#def getColorMap(rast, yearCodes):
+#    colrDF = pd.read_pickle('colrDF.p')
+#    band = rast.read(1)
+#    uVals = np.unique(band).astype('int')
+#    print("uVals = ", uVals)
+#    colrs = colrDF.copy()
+#    if yearCodes == "codes2018": colrs.dropna(inplace=True)
+#    colrs.set_index(yearCodes, inplace=True)
+#    aa = [ colrs.loc[i].co if i in uVals else "#ff0000" for i in range(max(uVals) + 1)]
+#    listedCmap = mcolors.ListedColormap(aa) 
+#    return(listedCmap)
+
+
+
+
+BPCcmap2018 = getColorMap(chontalForest2018, "codes2018")
+LCcmap2018 = getColorMap(losCedrosForest2018, "codes2018")
+CCcmap2018 = getColorMap(cotacachiForest2018, "codes2018")
+CCcmap1990 = getColorMap(cotacachiForest1990, "codes1990")
+CCcmap1990 = getColorMap(cotacachiForest1990, "codes1990")
+
+LCcmap2018.colors
+BPCcmap2018.colors
+CCcmap2018.colors
+CCcmap1990.colors
+
+
+getLandVal(forest2018rast)
+
+LCcmap2018.colors
+BPCcmap2018.colors
+## they are the same...is that right? 
+
+CCcmap2018.colors
+
+## a BPC/LC plotter:
+def plotBPRast(rast, poly, yearCodes,  colormap, title=None, ax=None):
+    if ax is None: fig, ax = plt.subplots(figsize=(20,10))
+    yearColrsDF = (colrDF
+                .dropna()
+                .set_index(yearCodes)
+            )
+    #print(yearColrsDF)
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(yearColrsDF.co, yearColrsDF.landUse) ]
+    ax.legend(handles=legend_patches,
+                facecolor="white",
+                edgecolor="white",
+                loc="upper left",
+                bbox_to_anchor=(1, 1))
+    rasterio.plot.show(rast, ax=ax, cmap=colormap, )
+    poly.boundary.plot(ax=ax, color='r')
+    xmin, ymin, xmax, ymax = rast.bounds
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    if title is None: ax.set_title("")
+    if title is not None: ax.set_title(title)
+
+
+plotBPRast(chontalForest2018, chontalPoly, "codes2018", BPCcmap2018, title=None, ax=None)
+
+plotBPRast(chontalForest2018, chontalPoly, "codes2018", CCcmap2018, title=None, ax=None)
+
+fig, ax = plt.subplots()
+
+BPCcmap2018.colors
+
+
+rasterio.plot.show(chontalForest2018,  cmap=BPCcmap2018)
+
+mcolors.ListedColormap
+
+### try out boundaryNorm method
+
+
+plt.close('all')
+
+z = [1,4,5,1,4]
+cmap = mcolors.ListedColormap(['r', 'g', 'b'])
+boundary_norm = mcolors.BoundaryNorm([0,3,4.5,5], 3)
+fig, ax = plt.subplots()
+ax.scatter(x = range(1,6), y = [1]*5,
+            s=100,
+            c=z,
+            cmap=cmap, 
+            norm=boundary_norm,
+            )
+
+## great. How do we apply to our data?
+
+## can we automate the boundary creation?
+
+dd = getColorMap(cotacachiForest1990, 'codes1990')
+
+aa = np.unique(cotacachiForest1990.read(1))
+
+bb = aa - 0.5
+cc = np.append(bb,aa.max()+0.5)
+boundary_norm = mcolors.BoundaryNorm(cc, len(aa))
+
+dd.colors
+
+rasterio.plot.show(chontalForest2018,  cmap=BPCcmap2018, norm=boundary_norm)
+
+rasterio.plot.show(cotacachiForest2018,  
+                    cmap=dd, 
+                    norm=boundary_norm,
+                    )
+
+## doesn't work, the agro land is blue...
+
+
+rasterio.plot.show(chontalForest2018,  cmap=BPCcmap2018)
+
+rasterio.plot.show(chontalForest2018,  cmap=CCcmap1990)
+rasterio.plot.show(cotacachiForest2018,  cmap=CCcmap2018)
+rasterio.plot.show(cotacachiForest1990)
+rasterio.plot.show(cotacachiForest1990,  cmap=CCcmap1990)
+CCcmap2018.colors
+
+len(CCcmap2018.colors)
+len(np.unique(cotacachiForest2018.read(1)))
+max(np.unique(cotacachiForest2018.read(1)))
+
+np.unique(chontalForest2018.read(1))
+
+BPCcmap2018.colors
+
+CCcmap2018.colors
+
+## ugh, not sure. we might be able to come up with general 
+## solutions...
+
+## so just do individualized cmaps and plots for each?
+
+## first, let's update the maps we have on the jupyter
+## with the normboundary method:
+
+## 1990 cotacachi
+
+def getColorMap(rast, yearCodes):
+    rastband = rast.read(1)
+    uVals = np.unique(rastband).astype('int')
+    colrs = (colrDF.set_index(yearCodes)
+                 .loc[uVals]['co']
+                 .to_list()
+                 )
+    return(mcolors.ListedColormap(colrs))
+
+def getBoundaries(raster):
+    aa = np.unique(raster.read(1))
+    bb = aa - 0.5
+    cc = np.append(bb,aa.max()+0.5)
+    return(mcolors.BoundaryNorm(cc, len(aa)))
+
+plt.close('all')
+fig, axes = plt.subplots(2,1)
+cc1990cmap = getColorMap(cotacachiForest1990, 'codes1990')
+cc1990Bound = getBoundaries(cotacachiForest1990)
+rasterio.plot.show(cotacachiForest1990, cmap=cc1990cmap, norm=cc1990Bound, ax = axes[0])
+axes[0].set_title('1990')
+cc2018cmap = getColorMap(cotacachiForest2018, 'codes2018')
+cc2018Bound = getBoundaries(cotacachiForest2018)
+rasterio.plot.show(cotacachiForest2018, cmap=cc2018cmap, norm=cc2018Bound, ax = axes[1])
+axes[1].set_title('2018')
+
+
+
+plt.close('all')
+
+plotCotacachiRast(cotacachiForest1990, 'codes1990', title='1990', ax=None)
+plotCotacachiRast(cotacachiForest2018, 'codes2018', title='2018', ax=None)
+
+## can this function also work with our smaller rasters (LC and Chontal?)
+
+## works
+def plotRast(rast, yearCodes, title=None, ax=None, plotBPs=False):
+    if ax is None: fig, ax = plt.subplots(figsize=(20,10))
+    rastband = rast.read(1)
+    uVals = np.unique(rastband).astype('int')
+    colrDF_thisyear = colrDF.set_index(yearCodes)
+    colrDF_thisyear = colrDF_thisyear[colrDF_thisyear.index.notnull()].loc[uVals]
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrDF_thisyear.co, colrDF_thisyear.landUse) ]
+    ax.legend(handles=legend_patches,
+                facecolor="white",
+                edgecolor="black",
+                loc="upper left",
+                bbox_to_anchor=(1, 1))
+    colormap =  getColorMap(rast, yearCodes)
+    colorBounds = getBoundaries(rast)
+    rasterio.plot.show(rast, ax=ax, cmap=colormap, norm = colorBounds)
+    if plotBPs == True:
+            lcPoly.boundary.plot(ax=ax, color='r')
+            chontalPoly.boundary.plot(ax=ax, color = 'b')
+            cebuPoly.boundary.plot(ax=ax, color = 'b')
+    xmin, ymin, xmax, ymax = rast.bounds
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    if title is None: ax.set_title("")
+    if title is not None: ax.set_title(title)
+
+
+plt.close('all')
+
+plotRast(losCedrosForest2018, 'codes2018', title=None, ax=None, plotBPs=False)
+
+plotRast(losCedrosForest1990, 'codes1990', title=None, ax=None, plotBPs=False)
+
+plotRast(cotacachiForest1990, 'codes1990', title='1990', ax=None, plotBPs=True)
+plotRast(cotacachiForest1990, 'codes1990', title='1990', ax=None, plotBPs=False)
+plotRast(cotacachiForest2018, 'codes2018', title='2018', ax=None, plotBPs=True)
 
 ########## old forest logistic regression #######
 
