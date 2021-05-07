@@ -12139,6 +12139,10 @@ cebuPoly = gpd.read_file('GIS/cebuBP.geojson')
 #forest2018rast = rasterio.open("GIS/forest2018CotacachiCoded.tif")
 cotacachiForest1990 = rasterio.open("cotacachiForest1990.tif")
 cotacachiForest2018 = rasterio.open("cotacachiForest2018.tif")
+losCedrosForest1990 = rasterio.open("losCedrosForest1990.tif")
+losCedrosForest2018 = rasterio.open("losCedrosForest2018.tif")
+chontalForest1990 = rasterio.open("chontalForest1990.tif")
+chontalForest2018 = rasterio.open("chontalForest2018.tif")
 
 aa = pd.read_csv('sigMEM.csv', index_col='PsubP')
 mems = gpd.GeoDataFrame(aa, geometry=gpd.points_from_xy(aa.X, aa.Y))
@@ -13560,13 +13564,14 @@ def makePixelTotals(raster, codes):
     breaks = np.concatenate([breaks, [len(fa)]])
     totals = breaks[1:] - breaks[:-1] 
     colrDF = pd.read_pickle('forestRastColrDF.p').set_index(codes)
-    landUsePixelSums1990 = pd.Series(data=totals, 
+    landUsePixelSums = pd.Series(data=totals, 
                                      index=colrDF.loc[uVals].landUse)
-    return(landUsePixelSums1990)
+    return(landUsePixelSums)
 
 ## are these the same size?
 landUseCotacachi1990 = makePixelTotals(cotacachiForest1990, 'codes1990')
 landUseCotacachi2018 = makePixelTotals(cotacachiForest2018, 'codes2018')
+
 landUseCotacachi1990.sum() ## 4219826
 landUseCotacachi2018.sum() ## 4219826
 ## yup
@@ -13612,7 +13617,88 @@ lc.area_ha ## 5255.621582
 
 ## can we calculate the same for Los Cedros and Chontal?
 
-## first update jupyter
+landUseCotacachi1990 = makePixelTotals(cotacachiForest1990, 'codes1990').drop('SIN INFORMACION')
+landUseCotacachi2018 = makePixelTotals(cotacachiForest2018, 'codes2018').drop('SIN INFORMACION')
+landUseLosCedros1990 = makePixelTotals(losCedrosForest1990, 'codes1990').drop('SIN INFORMACION')
+landUseLosCedros2018 = makePixelTotals(losCedrosForest2018, 'codes2018').drop('SIN INFORMACION')
+landUseChontal1990 = makePixelTotals(chontalForest1990, 'codes1990').drop('SIN INFORMACION')
+landUseChontal2018 = makePixelTotals(chontalForest2018, 'codes2018').drop('SIN INFORMACION')
+## these BP rasters are created below
+
+landUseCotacachi1990['BOSQUE NATIVO'] / landUseCotacachi1990.sum()
+
+## now, the best way to visualize this? Stacked barcharts showing change
+
+## really, for publication, it would be good to get clever with 
+## d3js here. But let's do a basic barchart of comparisons between 
+## 1990 and 2018 with matplotlb
+
+## barchart comparisons of forest with absolute area:
+
+lu1990 = [ landUseCotacachi1990, landUseChontal1990, landUseLosCedros1990 ]
+lu2018 = [ landUseCotacachi2018, landUseChontal2018, landUseLosCedros2018 ]
+
+## absolute forest covers, m2:
+abs1990 = [ (i['BOSQUE NATIVO'] * 900/10000 ) for i in lu1990 ]
+abs2018 = [ (i['BOSQUE NATIVO'] * 900/10000 ) for i in lu2018 ]
+## percent forest 
+perc1990 = [ (i['BOSQUE NATIVO']*100 / i.sum() ) for i in lu1990 ]
+perc2018 = [ (i['BOSQUE NATIVO']*100 / i.sum() ) for i in lu2018 ]
+
+## works
+labels = ['Cotacachi', 'Chontal', 'Los Cedros']
+plt.close('all')
+x = np.arange(len(labels))  # the label locations
+width = 0.15  # the width of the bars
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width/2, abs1990, width, label='1990')
+rects2 = ax.bar(x + width/2, abs2018, width, label='2018')
+ax.set_ylabel('hectares')
+ax.set_title('Gain/loss of forest, hectares')
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.legend()
+
+## indev
+def barPlotForestChange(data1990, data2018, yUnits, ax=None, annotate=False):
+    labels = ['Cotacachi', 'Chontal', 'Los Cedros']
+    x = np.arange(len(labels))  # the label locations
+    width = 0.15  # the width of the bars
+    if ax is None: fig, ax = plt.subplots()
+    rects1 = ax.bar(x - width/2, data1990, width, label='1990')
+    rects2 = ax.bar(x + width/2, data2018, width, label='2018')
+    ax.set_ylabel(yUnits)
+    ax.set_title('Gain/loss of forest, ' + yUnits)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+    return(fig, ax, width, x)
+
+plt.close('all')
+fig, ax, width, xes = barPlotForestChange(abs1990, abs2018, "%")
+ax.grid(b=True, which='both', axis='y')
+
+fig, ax, width, xes = barPlotForestChange(perc1990, perc2018, "%")
+
+
+for i,j in enumerate (perc1990): 
+    ax.annotate(s=int(round(j, 2)),
+                xy=(x[i]-width,j ), 
+                xytext=(0,5),
+                textcoords = 'offset points',
+                )
+
+for i,j in enumerate (perc2018): 
+    ax.annotate(s=int(round(j, 2)),
+                xy=(x[i],j ), 
+                xytext=(0,5),
+                textcoords = 'offset points',
+                )
+
+
+## example here:
+## https://matplotlib.org/stable/gallery/lines_bars_and_markers/barchart.html#sphx-glr-gallery-lines-bars-and-markers-barchart-py
+
 
 ##### los cedros and chontal masks:
 
@@ -13662,7 +13748,6 @@ with rasterio.open("losCedrosForest1990.tif", "w", **LC1990mask_meta) as dest:
 losCedrosForest1990 = rasterio.open("losCedrosForest1990.tif")
 
 rasterio.plot.show(losCedrosForest1990)
-
 
 ### Chontal BP
 
@@ -13731,8 +13816,6 @@ def getColorMap(rast, yearCodes):
 #    aa = [ colrs.loc[i].co if i in uVals else "#ff0000" for i in range(max(uVals) + 1)]
 #    listedCmap = mcolors.ListedColormap(aa) 
 #    return(listedCmap)
-
-
 
 
 BPCcmap2018 = getColorMap(chontalForest2018, "codes2018")
