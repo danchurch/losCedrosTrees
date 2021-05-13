@@ -12112,6 +12112,7 @@ import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt; plt.ion()
 import matplotlib.colors as mcolors
+import statsmodels.api as sm
 import geopandas as gpd
 import rasterio
 import rasterio.plot
@@ -12123,6 +12124,8 @@ import shapely
 import shapely.validation
 from sklearn.linear_model import LinearRegression
 from statsmodels.stats.multitest import multipletests
+from patsy import dmatrices
+
 from matplotlib.patches import Patch
 
 
@@ -13512,6 +13515,89 @@ plotCotacachiRast(cotacachiForest1990, colrs1990, cmap1990, title=None, ax=axes[
 plotCotacachiRast(cotacachiForest2018, colrs2018, cmap2018, title=None, ax=axes[1])
 ## either way. 
 
+### can we plot our forest mem over this 1990 forest raster?
+
+def getColorMap(rast, yearCodes):
+    rastband = rast.read(1)
+    uVals = np.unique(rastband).astype('int')
+    colrs = (colrDF.set_index(yearCodes)
+                 .loc[uVals]['co']
+                 .to_list()
+                 )
+    return(mcolors.ListedColormap(colrs))
+
+def getBoundaries(raster):
+    aa = np.unique(raster.read(1))
+    bb = aa - 0.5
+    cc = np.append(bb,aa.max()+0.5)
+    return(mcolors.BoundaryNorm(cc, len(aa)))
+
+def plotRast(rast, yearCodes, title=None, ax=None, plotBPs=False):
+    if ax is None: fig, ax = plt.subplots(figsize=(20,10))
+    rastband = rast.read(1)
+    uVals = np.unique(rastband).astype('int')
+    colrDF_thisyear = colrDF.set_index(yearCodes)
+    colrDF_thisyear = colrDF_thisyear[colrDF_thisyear.index.notnull()].loc[uVals]
+    legend_patches = [ Patch(color=c, label=l) for c,l in zip(colrDF_thisyear.co, colrDF_thisyear.landUse) ]
+    ax.legend(handles=legend_patches,
+                facecolor="white",
+                edgecolor="black",
+                loc="upper left",
+                bbox_to_anchor=(1, 1))
+    colormap =  getColorMap(rast, yearCodes)
+    colorBounds = getBoundaries(rast)
+    rasterio.plot.show(rast, ax=ax, cmap=colormap, norm = colorBounds)
+    if plotBPs == True:
+            lcPoly.boundary.plot(ax=ax, color='r')
+            chontalPoly.boundary.plot(ax=ax, color = 'b')
+            cebuPoly.boundary.plot(ax=ax, color = 'b')
+    xmin, ymin, xmax, ymax = rast.bounds
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    if title is None: ax.set_title("")
+    if title is not None: ax.set_title(title)
+
+def plotMEM(mem, ax, scale=50, marg=650, lx=745000, ly=10035500, fontsize='large'):
+    mem=mem
+    ax=ax
+    scale=scale
+    ms = mems[mem].abs()*scale
+    fontsize=fontsize
+    marg = marg
+    negPos = mems[mem].copy()
+    negPos[negPos >= 0 ] = 1
+    negPos[negPos < 0 ] = -1
+    cDict = { 1 : "white", -1 : "black" }
+    edgeCols = [ cDict[i] for i in negPos ]
+    cmap = mcolors.ListedColormap(['white','black'])
+    mems.plot(column=mem,
+        c=negPos,
+        cmap=cmap,
+        edgecolors=edgeCols,
+        ax=ax,
+        markersize = ms,
+        ## these are to center our color map to -1,1 w/b scheme:
+        vmin=-1., vmax=1.,
+        )
+    ax.set_xlim(mems.total_bounds[0]-marg, mems.total_bounds[2]+marg)
+    ax.set_ylim(mems.total_bounds[1]-marg, mems.total_bounds[3]+marg)
+    ax.text(lx,ly,mem, fontsize=fontsize)
+
+mems = gpd.read_file('mems.geojson')
+
+
+plotMEM(mems, ax=ax)
+
+colrDF = pd.read_pickle('forestRastColrDF.p')
+fig, ax = plt.subplots(figsize=(20,20))
+plotRast(losCedrosForest1990, 'codes1990', title='Los Cedros 1990', ax=ax, plotBPs=False)
+
+
+
+
+plotRast(losCedrosForest2018, 'codes2018', title='Los Cedros 2018', ax=axes[1], plotBPs=False)
+plt.tight_layout()
+
 ### stats from deforestation maps ###
 
 ## how do we get our forest loss figures from these rasters?
@@ -13634,7 +13720,6 @@ landUseCotacachi1990['BOSQUE NATIVO'] / landUseCotacachi1990.sum()
 ## 1990 and 2018 with matplotlb
 
 ## barchart comparisons of forest with absolute area:
-
 lu1990 = [ landUseCotacachi1990, landUseChontal1990, landUseLosCedros1990 ]
 lu2018 = [ landUseCotacachi2018, landUseChontal2018, landUseLosCedros2018 ]
 
@@ -13680,7 +13765,6 @@ ax.grid(b=True, which='both', axis='y')
 
 fig, ax, width, xes = barPlotForestChange(perc1990, perc2018, "%")
 
-
 for i,j in enumerate (perc1990): 
     ax.annotate(s=int(round(j, 2)),
                 xy=(x[i]-width,j ), 
@@ -13699,6 +13783,7 @@ for i,j in enumerate (perc2018):
 ## example here:
 ## https://matplotlib.org/stable/gallery/lines_bars_and_markers/barchart.html#sphx-glr-gallery-lines-bars-and-markers-barchart-py
 
+## update notebook 
 
 ##### los cedros and chontal masks:
 
@@ -14014,6 +14099,7 @@ plotRast(cotacachiForest1990, 'codes1990', title='1990', ax=None, plotBPs=True)
 plotRast(cotacachiForest1990, 'codes1990', title='1990', ax=None, plotBPs=False)
 plotRast(cotacachiForest2018, 'codes2018', title='2018', ax=None, plotBPs=True)
 
+
 ########## old forest logistic regression #######
 
 ## can we predict the old forest type by the elevation?
@@ -14029,6 +14115,11 @@ import pymc3 as pm
 import scipy.spatial as sp
 import scipy.stats as stats
 import arviz as az
+
+import statsmodels.api as sm
+
+import statsmodels.api as sm
+
 from sklearn.linear_model import LinearRegression
 from scipy import stats
 
@@ -14043,11 +14134,315 @@ elevGr = pd.concat([envOnly, cGroup], axis=1)[['elevacion', 'gr']]
 
 df = iris.query("species == ('setosa', 'versicolor')")
 
-elevGr.query("gr == (
+## come back to this later...
+
+########## log linear model of landuse as predictor of cluster #########
+
+## just realized that the landuse/natural cluster relationship 
+## could be modeled as a contingency table and a log-linear model.
+
+## to make the contingency table, we need the cluster and the landuse of
+## each plot, I think we need a dataframe of plotname, habitat-type, and 
+## cluster number:
+
+help(pd.crosstab)
+
+envOnly[['habitat']]
+
+cGroup = pd.read_csv('cGroup.csv', index_col='PsubP')
+landUseClustDF = pd.concat([envOnly[['habitat']], cGroup], axis=1)
+landUseClustDF['gr'] = landUseClustDF['gr'].astype('category')
+#landUseClustDF.reset_index(inplace=True)
+
+help(pd.crosstab)  
+
+pdtab = pd.crosstab(index=landUseClustDF['gr'], columns=landUseClustDF['habitat'], margins=True)
+
+## or use the statsmodels package
+## https://www.statsmodels.org/stable/contingency_tables.html
+
+help(sm.stats.Table.from_data)
+
+table = sm.stats.Table.from_data(landUseClustDF)
+
+print(table.table_orig)
+
+print(table.fittedvalues)
+
+print(table.resid_pearson)
+
+## goodness of fit, chi square:
+print(table.test_nominal_association())
+
+## yeah, really far away from independent, 
+## but no surprise. How do we build the 
+## linear model? 
+
+## if there is no baked in function for doing
+## this from a table object, it seems like 
+## there must be a way to model this as 
+## 16 points of count data, each with 
+## a coeffecient from the two columns
+
+## or maybe just the "predictor" column, 
+## which is the "habitat" (landuse) variable.
+
+## I don't think we want to include the 
+## cluster group column influence, as this 
+## is a "dependent" or exogenous variable,
+## it represents the current ecological 
+## state of the site, didn't exist at the
+## time of the disturbance, shouldn't be 
+## included in the model. For the same reason, there
+## is no need for an interaction term between
+## the two columns.
+
+## but if we don't include the dependent 
+## variable here (=cluster type), then we
+## are simply modeling the abundance of the
+## habitat types, aren't we? at least, in 
+## model setup. It seems like you have 
+## to put both column types in as predictors
+## of abundance, then solve for the influence
+## of the "independent" variable of interest,
+## habitat/land-use. or maybe get an interaction 
+## term?
 
 
+## now my brain really hurts.
 
-y_0 = pd.Categorical(df['species']).codes
-x_n = 'sepal_length'
-x_0 = df[x_n].values
-x_c = x_0 - x_0.mean()
+## so something like:
+
+## Tij ~ Poisson(λij)  because count data
+## log(λi) = μ + αi + βj + α*β + γij   
+
+## make a model for λ:
+
+## μ is the average rate of observations, sort of an intercept 
+
+## αi is effect of habitat, β is the effect of cluster type,  γij is individual variance (sort of an error term)
+
+## do we need to accout for zero inflation? Don't think so.
+## zeros are totally explainable here, uncertainty is 
+## zero for zeros. 
+
+## so, how do we write this out? my brain still hurts.
+
+## in this case, the exogenous (y, dep) variable are the count data for each cell, 
+
+## For our data, the endogenous (x, indep) variable are the "habitat" type for each cell
+## AND the final ecological state, the cluster type. 
+
+## in this framework, we should have 20 data points (5 habitat types, 4 cluster types):
+
+aa = table.table_orig.reset_index()
+bb = pd.melt(aa, id_vars=['habitat'])
+
+print(table.table_orig)
+
+glm_Poisson = sm.GLM(exog, hab, family=sm.families.Poisson(link=sm.families.links.log()))
+
+
+## ugh. Not working. Let's look at an example:
+
+## https://www.statsmodels.org/stable/examples/notebooks/generated/discrete_choice_overview.html
+
+## looks like it would be best to use patsy, = R-like formulas
+
+## to get our design matrices using patsy:
+
+cGroup = pd.read_csv('cGroup.csv', index_col='PsubP')
+landUseClustDF = pd.concat([envOnly[['habitat']], cGroup], axis=1)
+landUseClusttable = sm.stats.Table.from_data(landUseClustDF)
+aa = landUseClusttable.table_orig
+aa.reset_index(inplace=True)
+landUseClustMelted = pd.melt(aa, id_vars=['habitat'])
+landUseClustMelted['gr'] = landUseClustMelted['gr'].astype('category')
+landUseClustMelted.columns = ['habitat','gr','count']
+
+landUseClustMelted.head()
+
+## so, what do we need to feed statsmodel?
+
+Y, X = dmatrices('count ~ gr + habitat', data=landUseClustMelted, return_type='dataframe')
+
+## can we do an interaction effect with dummy vars?
+Y, X = dmatrices('count ~ gr + habitat + gr*habitat', data=landUseClustMelted, return_type='dataframe')
+glm_Poisson = sm.GLM(Y, X, family=sm.families.Poisson(link=sm.families.links.log()))
+res = glm_Poisson.fit()
+
+## huh, perfect separation, says the model...makes sense...
+
+## maybe this is why the default table fills in zeroes with 0.5 values...
+## I thought that was weird and didn't use it. Let's try it:
+
+cGroup = pd.read_csv('cGroup.csv', index_col='PsubP')
+landUseClustDF = pd.concat([envOnly[['habitat']], cGroup], axis=1)
+landUseClusttable = sm.stats.Table.from_data(landUseClustDF)
+
+aa = pd.DataFrame(landUseClusttable.table, 
+            columns=landUseClusttable.table_orig.columns,
+            index=landUseClusttable.table_orig.index,
+            )
+aa.reset_index(inplace=True)
+landUseClustMelted = pd.melt(aa, id_vars=['habitat'])
+landUseClustMelted['gr'] = landUseClustMelted['gr'].astype('category')
+landUseClustMelted.columns = ['habitat','gr','count']
+Y, X = dmatrices('count ~ gr + habitat + gr*habitat', data=landUseClustMelted, return_type='dataframe')
+glm_Poisson = sm.GLM(Y, X, family=sm.families.Poisson(link=sm.families.links.log()))
+res = glm_Poisson.fit()
+
+## nope, this doesn't work. The indirect approach is not working. 
+## let's try multinomial logit. I think for this we take a more 
+## direct approach, with our natural cluster as a y var, and 
+## our land use as our x.
+
+## if this works, we could extend this to other variables, the MEMs, env vars, etc.
+
+landUseClustDF
+Y, X = dmatrices('gr ~ habitat', data=landUseClustDF, return_type='dataframe')
+
+mlogit_mod = sm.MNLogit(Y, X)
+
+mlogit_res = mlogit_mod.fit()
+
+print(mlogit_res.summary())
+
+print(mlogit_res.params)
+
+mlogit_mod.summary()
+
+## all of my pvalues are 1.000. WTF?
+## this is not working. 
+
+table.table_orig
+
+## should we jump over to Bayesian methods?
+
+## ugh, that requires so much more thought....
+
+## but I think there is a good example in the Martin book,
+## ch4, "softmax regression", p 164
+
+## gotta reload the bayes environment
+conda activate bayesAna
+
+import pymc3 as pm
+import theano.tensor as tt
+import pandas as pd
+import seaborn as sns
+
+## folowing martin's example
+iris = sns.load_dataset('iris')
+y_s = pd.Categorical(iris['species']).codes
+x_n = iris.columns[:-1]
+x_s = iris[x_n].values
+x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+
+x_s.shape
+
+y_s.shape
+
+with pm.Model() as model_s:
+    α = pm.Normal('α', mu=0, sd=5, shape=3)
+    β = pm.Normal('β', mu=0, sd=5, shape=(4,3))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_s, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_s)
+    trace_s = pm.sample(2000)
+
+## checking the model a bit:
+az.plot_forest(trace_s, var_names=['α', 'β'])
+
+data_pred = trace_s['μ'].mean(0)
+
+y_pred = [np.exp(point)/np.sum(np.exp(point), axis=0)
+          for point in data_pred]
+
+f'{np.sum(y_s == np.argmax(y_pred, axis=1)) / len(y_s):.2f}'
+
+## there is also an example at 
+## https://discourse.pymc.io/t/multivariate-multinomial-logistic-regression/5242/2
+
+from sklearn.preprocessing import LabelEncoder, Normalizer, StandardScaler
+import numpy as np
+import pymc3 as pm
+import theano.tensor as tt
+import arviz as az
+import pandas as pd
+import matplotlib.pyplot as plt
+import patsy
+
+data = pd.read_csv('/home/daniel/seaborn-data/iris.csv', header=0, names=[0, 1, 2, 3, 'TYPE'])
+data['TYPE']= LabelEncoder().fit_transform(data['TYPE'])
+y_obs = data['TYPE'].values
+x_n = data.columns[:-1]
+x = data[x_n].values
+x = StandardScaler().fit_transform(x)
+ndata = x.shape[0]
+nparam = x.shape[1]
+nclass = len(data['TYPE'].unique())
+print( y_obs.shape, x.shape )
+
+with pm.Model() as hazmat_model:
+    X_data = pm.Data('X_data', x)
+    y_obs_data = pm.Data('y_obs_data', y_obs)
+    alfa = pm.Normal('alfa', mu=0, sd=1, shape=nclass)
+    beta = pm.Normal('beta', mu=0, sd=1, shape=(nparam, nclass))
+    mu = tt.dot(X_data, beta) + alfa
+    p = tt.nnet.softmax(mu)
+    yl = pm.Categorical('obs', p=p, observed=y_obs_data)
+    trace = pm.sample()
+
+#fig, ax = plt.subplots()
+az.plot_trace(trace)
+
+pm.traceplot(idata)
+## okay that also works. Now what?
+
+## let's go with Martin's example, see if we can modify for our data:
+
+cGroup = pd.read_csv('cGroup.csv', index_col='PsubP')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+landUseClustDF = pd.concat([envOnly[['habitat']], cGroup], axis=1)
+landUseClustDF.reset_index(inplace=True)
+landUseClustDF.columns  = ['site','landUse', 'forestType']
+landUseClustDF.set_index('site', inplace=True)
+landUseClustDF.to_csv('landUseForesttypeDF.csv')
+
+landUseForestType = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+
+## maybe we stick with patsy? It was very convenient for the dummy vars
+Y, X = patsy.dmatrices('forestType ~ landUse', data=landUseForestType, return_type='dataframe')
+y_s = Y.astype('int')
+x_s = X.iloc[:,1:]
+x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+x_s.columns = ['BS','CLB','RCA', 'RG']
+
+with pm.Model() as model_s:
+    α = pm.Normal('α', mu=0, sd=5, shape=4)
+    β = pm.Normal('β', mu=0, sd=5, shape=(4,4))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_s, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_s)
+    trace_s = pm.sample(2000, init='adapt_diag')
+
+## model 
+
+## time to send out a question?
+
+## respond to cluh
+
+landUseClustDF 
+
+pdtab = pd.crosstab(index=landUseClustDF['gr'], columns=landUseClustDF['habitat'], margins=True)
+
+## format for markdown:
+
+| |BC  |BS  |CLB  |RCA  |RG  |All |
+--- | --- | --- | --- | --- | --- | ---                               
+| I  | 0 | 0 | 0 | 4 | 5  |  9 |
+| II | 0 | 0 | 0 | 0 | 15 | 15 |
+| III| 6 | 7 | 8 | 0 | 0  | 21 |
+| IV | 6 | 5 | 4 | 0 | 1  | 16 |
+| All| 12| 12| 12| 4 | 21 | 61 |
