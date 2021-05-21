@@ -12124,8 +12124,6 @@ import shapely
 import shapely.validation
 from sklearn.linear_model import LinearRegression
 from statsmodels.stats.multitest import multipletests
-from patsy import dmatrices
-
 from matplotlib.patches import Patch
 
 
@@ -14063,6 +14061,7 @@ plotCotacachiRast(cotacachiForest2018, 'codes2018', title='2018', ax=None)
 ## can this function also work with our smaller rasters (LC and Chontal?)
 
 ## works
+
 def plotRast(rast, yearCodes, title=None, ax=None, plotBPs=False):
     if ax is None: fig, ax = plt.subplots(figsize=(20,10))
     rastband = rast.read(1)
@@ -14098,6 +14097,69 @@ plotRast(losCedrosForest1990, 'codes1990', title=None, ax=None, plotBPs=False)
 plotRast(cotacachiForest1990, 'codes1990', title='1990', ax=None, plotBPs=True)
 plotRast(cotacachiForest1990, 'codes1990', title='1990', ax=None, plotBPs=False)
 plotRast(cotacachiForest2018, 'codes2018', title='2018', ax=None, plotBPs=True)
+
+### check old growth estimate numbers ###
+
+## while we're here, can we check Jose's old growth estimates?
+
+## we have the satellite data showing native forest data available 
+## while we're in this
+
+## get masked los cedros 1990 raster:
+
+losCedrosForest1990 = rasterio.open("losCedrosForest1990.tif")
+rasterio.plot.show(losCedrosForest1990)
+
+aa = makePixelTotals(losCedrosForest1990, 'codes1990').drop('SIN INFORMACION')
+lcPercs = aa.apply(lambda x: x / aa.sum())
+## or more simply
+lcPercs = aa / aa.sum()
+
+## landUse
+## BOSQUE NATIVO          0.957980
+## PASTIZAL               0.027991
+## TIERRA AGROPECUARIA    0.014029
+
+## so in 1990, the satellite data shows 95% forest cover
+## where does Jose get his 80% old growth ?
+
+## question sent. 
+
+## just curious, can we plot our points over this raster image?
+
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson').set_index('PsubP')
+
+losCedrosForest1990 = rasterio.open("losCedrosForest1990.tif")
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+
+aa = pd.concat([anaPt, envOnly], axis=1)
+
+
+fig, ax = plt.subplots()
+rasterio.plot.show(losCedrosForest1990, ax=ax)
+aa.plot(column='habitat', categorical=True, legend=True, ax=ax)
+
+anaPt.plot(column=
+
+pd.concat(
+
+
+#### weather data ####
+
+## why do we say there is no seasonal variation in our 
+## documents? 
+
+## there is a Garcia Moreno weather station, I think, website here:
+https://www.weather-atlas.com/en/ecuador/garcia-moreno-climate
+
+## they get their data from here:
+http://www.serviciometeorologico.gob.ec/
+
+## this leads us to the map of stations at:
+http://186.42.174.236/InamhiEmas/
+
+## but this website is not very useful. 
+
 
 
 ########## old forest logistic regression #######
@@ -14371,7 +14433,7 @@ import theano.tensor as tt
 import arviz as az
 import pandas as pd
 import matplotlib.pyplot as plt
-import patsy
+from patsy import dmatrices
 
 data = pd.read_csv('/home/daniel/seaborn-data/iris.csv', header=0, names=[0, 1, 2, 3, 'TYPE'])
 data['TYPE']= LabelEncoder().fit_transform(data['TYPE'])
@@ -14411,7 +14473,6 @@ landUseClustDF.set_index('site', inplace=True)
 landUseClustDF.to_csv('landUseForesttypeDF.csv')
 
 landUseForestType = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
-
 ## maybe we stick with patsy? It was very convenient for the dummy vars
 Y, X = patsy.dmatrices('forestType ~ landUse', data=landUseForestType, return_type='dataframe')
 y_s = Y.astype('int')
@@ -14427,14 +14488,10 @@ with pm.Model() as model_s:
     yl = pm.Categorical('yl', p=θ, observed=y_s)
     trace_s = pm.sample(2000, init='adapt_diag')
 
-## model 
+## and that don't work, bad initial energy
 
 ## time to send out a question?
-
-## respond to cluh
-
-landUseClustDF 
-
+## some text formating for discourse site:
 pdtab = pd.crosstab(index=landUseClustDF['gr'], columns=landUseClustDF['habitat'], margins=True)
 
 ## format for markdown:
@@ -14446,3 +14503,380 @@ pdtab = pd.crosstab(index=landUseClustDF['gr'], columns=landUseClustDF['habitat'
 | III| 6 | 7 | 8 | 0 | 0  | 21 |
 | IV | 6 | 5 | 4 | 0 | 1  | 16 |
 | All| 12| 12| 12| 4 | 21 | 61 |
+
+## side note get jose his polygon
+bpPath=("/home/daniel/Documents/LosCed/Ecuador_GIS/"
+        "BP_and_parks/mireya/car_bosques_protectores.shp")
+lc = gpd.read_file(bpPath).query("nombre == 'LOS CEDROS'")
+writePath=('/home/daniel/Desktop/losCedrosBP.shp')
+lc.to_file(writePath, driver='ESRI Shapefile')
+
+
+## and back to this... 
+## we know we can drop a column anyway, why not specifically 
+## drop the RCA column instead of the BC? Maybe this will help:
+ 
+landUseForestType = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+## use 
+
+luDummy = (pd.get_dummies(landUseForestType, columns=['landUse'])
+                    .drop(columns=['forestType','landUse_RCA']))
+
+y_s = landUseForestType['forestType'].astype('int')
+x_s = luDummy
+
+x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+
+with pm.Model() as model_s:
+    α = pm.Normal('α', mu=0, sd=5, shape=4)
+    β = pm.Normal('β', mu=0, sd=5, shape=(4,4))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_s, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_s)
+    trace_s = pm.sample(2000, init='adapt_diag')
+
+## and that don't work, bad initial energy. Jeezus I wish they 
+## had better error reporting with pymc3. everything is bad initial
+## energy. somehow appropriate. 
+
+## can we try statsmodel again, with this approach of dropping the RCA column?
+
+landUseForestType = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+Y = landUseForestType['forestType'] 
+luDummy = (pd.get_dummies(landUseForestType, columns=['landUse'])
+                    .drop(columns=['forestType','landUse_RCA']))
+
+#Y, X = dmatrices('forestType ~ landUse', data=landUseForestType, return_type='dataframe')
+
+mlogit_mod = sm.MNLogit(Y, luDummy)
+mlogit_res = mlogit_mod.fit(maxiter=100) ## doesn't converge but gives nice output
+
+mlogit_res = mlogit_mod.fit(maxiter=300) ## converges but goes to NaN on all results
+
+mlogit_res = mlogit_mod.fit(maxiter=1000) ## converges but goes to NaN on all results
+
+print(mlogit_res.summary())
+
+print(mlogit_res.params)
+
+## the maximum likelihood estimator is failing to converge unless I give it 
+## a lot iterations to do so. When it does, all results are NaN. If I do not 
+## allow it to converge, I get a standard, nice-looking report
+
+## can I still use these results? 
+
+## is this a problem of having empty (all-zero) rows?
+
+landUseForestType
+
+pdtab = pd.crosstab(index=landUseForestType['landUse'], 
+                    columns=landUseForestType['forestType'], 
+                    margins=False)
+
+zfilt = luDummy.sum(axis=1) != 0
+
+luDummyNoZeros = luDummy[zfilt]
+
+yNoZeros = Y[zfilt]
+
+(yNoZeros.index == luDummyNoZeros.index).all()
+
+mlogit_mod_noZeros = sm.MNLogit(yNoZeros, luDummyNoZeros)
+
+mlogit_noZ_res = mlogit_mod_noZeros.fit()
+
+mlogit_noZ_res = mlogit_mod_noZeros.fit(maxiter=300) 
+
+## nope, that's not the issue. 
+
+## I guess the real perfect separation in this dataset 
+## may not be RCA, but instead landuse category 2, which
+## is entirely populated by RG sites. Try removing this
+## category from our analysis?
+
+landUseForestType = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+
+type2filt = (landUseForestType['forestType'] != 2)
+luFt_no2 = landUseForestType[type2filt]
+Y = luFt_no2['forestType'] 
+
+## keep RCA for the moment...
+luDummy = (pd.get_dummies(landUseForestType, columns=['landUse'])
+                    .drop(columns=['forestType']))
+luDummy = luDummy[type2filt]
+mlogit_mod = sm.MNLogit(Y, luDummy)
+
+mlogit_res = mlogit_mod.fit(maxiter=100) ## nope, doesn't work. singular matrix?
+
+## keep going, what if we remove RCA?
+
+luDummy.drop(columns=['landUse_RCA'], inplace=True)
+ 
+mlogit_mod = sm.MNLogit(Y, luDummy)
+
+mlogit_res = mlogit_mod.fit(maxiter=100) ## nope
+
+## ah fucking hell. why is this so hard?
+
+## so again, the only model that seems to work is:
+landUseForestType = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+Y = landUseForestType['forestType'] 
+luDummy = (pd.get_dummies(landUseForestType, columns=['landUse'])
+                    .drop(columns=['forestType','landUse_RCA']))
+mlogit_mod = sm.MNLogit(Y, luDummy)
+mlogit_res = mlogit_mod.fit(maxiter=100) ## doesn't converge but gives nice output
+mlogit_res.summary()
+
+## so we will try to remove cluster group 2, and then use patsy to create 
+## the design matrix that should be most compatible with the statsmodels
+
+## no type 2 forest:
+luNo2 = (pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+            .query("forestType != 2"))
+luNo2['forestType'] = luNo2['forestType'].astype('category')
+## let patsy set it up for us
+_, X = dmatrices('forestType ~ landUse', data=luNo2, return_type='dataframe')
+X.drop(columns=['Intercept'], inplace = True)
+Y = luNo2['forestType']
+Y = Y[X.index]
+mlogit_mod = sm.MNLogit(Y, X)
+mlogit_res = mlogit_mod.fit(maxiter=100) ## meh, everything is NA
+
+mlogit_res.summary()
+
+## weird. No convergence, model is high significant (I think? LLR p-value),
+## but all the individual coefficients are p=1.00? zscores are all right on zero
+
+## try again, also remove the RCA plots?
+
+luNo2 = (pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+            .query("forestType != 2")
+            .query("landUse != 'RCA'"))
+luNo2['forestType'] = luNo2['forestType'].astype('category')
+## let patsy set it up for us
+_, X = dmatrices('forestType ~ landUse', data=luNo2, return_type='dataframe')
+
+
+mlogit_mod = sm.MNLogit(Y, X)
+mlogit_res = mlogit_mod.fit(maxiter=100) ## doesn't converge but gives nice output
+mlogit_res.summary()
+
+
+## ugh. try once again with the bayesian approach:
+
+iris = sns.load_dataset('iris')
+y_s = pd.Categorical(iris['species']).codes
+x_n = iris.columns[:-1]
+x_s = iris[x_n].values
+x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+
+x_s.shape
+y_s.shape
+
+
+landUseForesttypeDF.head()
+landUseForesttypeDF['forestType']
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pymc3 as pm
+import theano.tensor as tt
+import arviz as az
+import pandas as pd
+from patsy import dmatrices
+plt.ion()
+
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+y_sMe = pd.Categorical(landUseForesttypeDF['forestType']).codes
+_, X = dmatrices('forestType ~ landUse', data=landUseForesttypeDF, return_type='dataframe')
+X.drop(columns=['Intercept'], inplace=True)
+x_sMe = X.values
+
+
+with pm.Model() as model_sMe:
+    α = pm.Normal('α', mu=0, sd=5, shape=4)
+    β = pm.Normal('β', mu=0, sd=5, shape=(4,4))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_sMe, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_sMe)
+    trace_sMe = pm.sample(2000, init='adapt_diag')
+
+## whoah, did that actually run without errors?
+
+
+data_predMe = trace_sMe['μ'].mean(0)
+## this gets the posterior probabilities for each type of 
+## of forest, so each PusbP site has an array with four 
+## probabilities which should sum to one. Log-likelihoods
+## so has to be exponentiated:
+y_predMe = [np.exp(point)/np.sum(np.exp(point), axis=0)
+          for point in data_predMe]
+
+## then we take the forest type with the highest probability 
+## for each, because these are the predictions for each site:
+predictedForestType = pd.Series(np.argmax(y_predMe, axis=1), index=landUseForesttypeDF.index)
+## reformat our observed into series:
+observedForestType = pd.Series(y_sMe, index=landUseForesttypeDF.index)
+## how often are we right?
+(predictedForestType == observedForestType).sum()/len(predictedForestType)
+
+## great. Also curious, since the model can't really tell the two 
+## old types of forest apart, what if we lump these?
+
+predictedForestType
+
+np.unique(predictedForestType)
+
+aa = predictedForestType.copy()
+bb = observedForestType.copy()
+aa[aa == 3] = 2
+bb[bb == 3] = 2
+(aa == bb).sum()/len(bb)
+## 0.90
+
+## wow. When the old forest types are taken together as a single
+## type, land use from 1990 predicts ecological state 90% of the 
+## time in our system.
+
+## we might consider rerunning the model accordingly, but this 
+## might also be a 
+
+## check our r2:
+
+## posterior predictive:
+ppc = pm.sample_posterior_predictive(trace_sMe, samples=5000, model=model_sMe)
+az.r2_score(y_sMe, ppc['yl'])
+## pretty good, r2=0.642
+
+## what else? how do we describe this model mathematically? 
+
+## and how do we visualize the shifts in the priors?
+
+az.plot_trace(trace_sMe, var_names='α')
+aa = az.plot_trace(trace_sMe, var_names='β')
+
+## can we plot these smoothed histograms without the trace history plots on the right column?
+
+[ i.set_axis_off() for i in aa[:,1] ]
+
+## nope, have to do this before, and az starts a new figure.
+
+## should be simple enough to just plot a new histogram for each...
+
+## if I remember this right, the intercepts tell us 
+## where the model thinks a level/category in the  "belongs" 
+## relative to the other categories. Then we can interpret 
+## the coefficients as moving the needle towards one 
+## response state or another. 
+
+## So our forest types 1 and 2, the more disturbed forest 
+## types, are here modeled with negative intercepts, 
+## α =~  -1.65 for forest type 1
+## α =~  -3.14 for forest type 2
+trace_sMe['α'][:,0].mean() ## -1.6547276579370642
+trace_sMe['α'][:,1].mean() ## -3.1444516386563435
+## but they are not identical, so they have different intercepts.
+
+## and our forest types 3,4 - the "old forest" types are 
+## have nearly identical intercepts, around +2.5, because
+## the model can't really tell the apart, it can just see 
+## that they are different from the disturbed sites:
+
+trace_sMe['α'][:,2].mean() ## 2.32
+trace_sMe['α'][:,3].mean() ## 2.33
+
+## but I need to do a little more reading, make sure 
+## this is the correct way to do interpret these intercepts
+
+## can we visualize this a little better? To do one smoothed 
+## histogram:
+
+## forest type 1:
+
+plt.close('all')
+fig, ax = plt.subplots()
+
+X.columns
+
+y_sMe
+
+landUseForesttypeDF['forestType'].to_list()
+
+## works
+plt.close('all')
+fig, ax = plt.subplots()
+for i in range(4):
+    (pd.Series(trace_sMe['α'][:,i]
+       .copy())
+       .sort_values()
+       .reset_index(drop=True)
+       .plot.density(ax=ax, label=f'α{i+1}'))
+ax.set_xlim(-12,12)
+##
+
+### viz the multinomial function?
+observedForestType = pd.Series(y_sMe, index=landUseForesttypeDF.index)
+
+## to start, can we get some sort of scatterplot
+## of landuse and forest type:
+
+## data is here:
+observedForestType
+predictedForestType
+landUse = landUseForesttypeDF['landUse']
+## turn landUse into codes
+landUseCodes = pd.Series(pd.Categorical(landUse).codes, index=landUse.index)
+## our codes are confusing...can we fix them? 
+## is it as simple trading them out at this stage? 
+## we want to switch "3" and "4" codes so that they
+## graph pleasantly:
+landUseGraphCodes = landUseCodes.copy()
+landUseGraphCodes[landUseCodes == 3] = 4
+landUseGraphCodes[landUseCodes == 4] = 3
+## make a dataframe to not lose touch here:
+landUseCodeDF = pd.concat([landUse, landUseCodes, landUseGraphCodes], 
+    axis=1)
+landUseCodeDF.columns = ['landUse', 'landUseCodes', 'landUseGraphCodes']
+landUseCodeDF.drop_duplicates(inplace=True)
+## I think both need some jitter for both, so we can observe quantity of sites 
+landUseGraphCodesJit = landUseGraphCodes.apply(lambda x: x + np.random.normal(loc=0, scale=0.08))
+observedForestTypeJit = observedForestType.apply(lambda x: x + np.random.normal(loc=0, scale=0.03))
+predictedForestTypeJit = predictedForestType.apply(lambda x: x + np.random.normal(loc=-0.1, scale=0.03))
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(landUseGraphCodesJit, observedForestTypeJit, 
+            alpha=0.5, c='blue')
+## reset our labels:
+yForest = [ f'Forest type {i}' for i in range(1,5) ]
+xLandUse = [ landUseCodeDF.set_index('landUseGraphCodes')
+                .loc[i].loc['landUse'] for i in range(0,5) ]
+ax.scatter(landUseGraphCodesJit, predictedForestTypeJit, alpha=0.8, c='red')
+ax.set_yticks([0,1,2,3])
+ax.set_xticks([0,1,2,3,4])
+ax.set_yticklabels(yForest)
+ax.set_xticklabels(xLandUse)
+plt.tight_layout()
+
+## great. Now what about a line from our model results?
+## not sure. My brain hurts a bit on that. Something to think 
+## about, maybe get some help
+
+## almost out of time. Can we generate a heat map for the coefficients,
+## to summarize effect of the various land uses on ecological states?
+
+
+trace_sMe['β']
+
+trace_sMe['β'].shape
+
+## we want to average all the values for each landUse/clusterNumber
+## combination...
+
+trace_sMe['β'].mean(0)
+
+fig, ax = plt.subplots()
+plt.imshow(trace_sMe['β'].mean(0))
+
+## okay, how do we know what's what here?
+
+## ugh, finish later. 
