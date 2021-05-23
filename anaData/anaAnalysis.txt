@@ -14421,7 +14421,15 @@ data_pred = trace_s['μ'].mean(0)
 y_pred = [np.exp(point)/np.sum(np.exp(point), axis=0)
           for point in data_pred]
 
-f'{np.sum(y_s == np.argmax(y_pred, axis=1)) / len(y_s):.2f}'
+
+corrs = trace_s['β'].mean(0)
+corrLabs = corrs.round(2)
+
+landUse = ['BS', 'CLB', 'RCA', 'RG']
+forestType = [ f'ForestType{i}' for i in range(1,5) ]
+
+fig, ax = plt.subplots()
+im = ax.imshow(corrs)
 
 ## there is also an example at 
 ## https://discourse.pymc.io/t/multivariate-multinomial-logistic-regression/5242/2
@@ -14686,23 +14694,41 @@ import pandas as pd
 from patsy import dmatrices
 plt.ion()
 
+### works, but not necessary to drop a landuse with pymc3
+# landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+# y_sMe = pd.Categorical(landUseForesttypeDF['forestType']).codes
+# _, X = dmatrices('forestType ~ landUse', data=landUseForesttypeDF, return_type='dataframe')
+# X.drop(columns=['Intercept'], inplace=True)
+# x_sMe = X.values
+# 
+# with pm.Model() as model_sMe:
+#     α = pm.Normal('α', mu=0, sd=5, shape=4)
+#     β = pm.Normal('β', mu=0, sd=5, shape=(4,4))
+#     μ = pm.Deterministic('μ', α + pm.math.dot(x_sMe, β))
+#     θ = tt.nnet.softmax(μ)
+#     yl = pm.Categorical('yl', p=θ, observed=y_sMe)
+#     trace_sMe = pm.sample(2000, init='adapt_diag')
+### 
+
+## whoah, did that actually run without errors?
+
+### do this instead, keep all the levels of land use, easier to interpret: ###
 landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
 y_sMe = pd.Categorical(landUseForesttypeDF['forestType']).codes
-_, X = dmatrices('forestType ~ landUse', data=landUseForesttypeDF, return_type='dataframe')
-X.drop(columns=['Intercept'], inplace=True)
-x_sMe = X.values
-
+luDummy = (pd.get_dummies(landUseForesttypeDF, columns=['landUse']))
+luDummy.drop(columns=['forestType'], inplace=True)
+x_sMe = luDummy.values
 
 with pm.Model() as model_sMe:
     α = pm.Normal('α', mu=0, sd=5, shape=4)
-    β = pm.Normal('β', mu=0, sd=5, shape=(4,4))
+    β = pm.Normal('β', mu=0, sd=5, shape=(5,4))
     μ = pm.Deterministic('μ', α + pm.math.dot(x_sMe, β))
     θ = tt.nnet.softmax(μ)
     yl = pm.Categorical('yl', p=θ, observed=y_sMe)
     trace_sMe = pm.sample(2000, init='adapt_diag')
 
-## whoah, did that actually run without errors?
 
+##########
 
 data_predMe = trace_sMe['μ'].mean(0)
 ## this gets the posterior probabilities for each type of 
@@ -14804,14 +14830,20 @@ landUseForesttypeDF['forestType'].to_list()
 
 ## works
 plt.close('all')
+colrs = ['k','r','g','b']
 fig, ax = plt.subplots()
 for i in range(4):
     (pd.Series(trace_sMe['α'][:,i]
        .copy())
        .sort_values()
        .reset_index(drop=True)
-       .plot.density(ax=ax, label=f'α{i+1}'))
+       .plot.density(ax=ax, label=f'Forest Type {i+1}', color=colrs[i])
+    )
+
+ax.vlines(trace_sMe['α'].mean(0), ymin=0, ymax=0.15, colors=colrs, linestyles='dashed')
 ax.set_xlim(-12,12)
+ax.legend()
+
 ##
 
 ### viz the multinomial function?
@@ -14845,17 +14877,20 @@ predictedForestTypeJit = predictedForestType.apply(lambda x: x + np.random.norma
 plt.close('all')
 fig, ax = plt.subplots()
 ax.scatter(landUseGraphCodesJit, observedForestTypeJit, 
-            alpha=0.5, c='blue')
+            alpha=0.5, c='blue', label='observed')
 ## reset our labels:
 yForest = [ f'Forest type {i}' for i in range(1,5) ]
 xLandUse = [ landUseCodeDF.set_index('landUseGraphCodes')
                 .loc[i].loc['landUse'] for i in range(0,5) ]
-ax.scatter(landUseGraphCodesJit, predictedForestTypeJit, alpha=0.8, c='red')
+ax.scatter(landUseGraphCodesJit, predictedForestTypeJit, 
+            alpha=0.8, c='red', label='predicted')
 ax.set_yticks([0,1,2,3])
 ax.set_xticks([0,1,2,3,4])
 ax.set_yticklabels(yForest)
 ax.set_xticklabels(xLandUse)
+plt.legend()
 plt.tight_layout()
+
 
 ## great. Now what about a line from our model results?
 ## not sure. My brain hurts a bit on that. Something to think 
@@ -14863,7 +14898,6 @@ plt.tight_layout()
 
 ## almost out of time. Can we generate a heat map for the coefficients,
 ## to summarize effect of the various land uses on ecological states?
-
 
 trace_sMe['β']
 
@@ -14877,6 +14911,68 @@ trace_sMe['β'].mean(0)
 fig, ax = plt.subplots()
 plt.imshow(trace_sMe['β'].mean(0))
 
+trace_sMe['β'].mean(0)
 ## okay, how do we know what's what here?
 
-## ugh, finish later. 
+trace_sMe['α'].mean(0)
+
+## the model was made with our experimental matrix:
+
+luDummy.columns
+
+help(luDummy.columns.str.replace)
+
+luLabs = luDummy.columns.str.replace('landUse_','').to_list()
+## so we can assume this is the order of the landuse coefficients,
+
+trace_sMe['α'].mean(0)
+
+trace_sMe['β'].mean(0)
+
+## 
+
+coeffDF = pd.DataFrame(trace_sMe['β'].mean(0), 
+                columns = [ f'ForestType{i}' for i in range(1,5) ],
+                index  = luLabs,
+                )
+
+## not sure...how do we confirm...plot_trace seems to know the 
+## difference...
+
+az.plot_trace(trace_sMe, var_names='β')
+## actually, not really, doesn't label what is what...
+
+## from the matplotlib docs:
+
+plt.close('all')
+corrs = trace_sMe['β'].mean(0)
+corrLabs = corrs.round(2)
+forestType = [ f'{i}' for i in range(1,5) ]
+landUse = luDummy.columns.str.replace('landUse_','').to_list()
+fig, ax = plt.subplots()
+im = ax.imshow(corrs)
+## fix ticks
+ax.set_xticks(np.arange(len(forestType)))
+ax.set_yticks(np.arange(len(landUse)))
+ax.set_xticklabels(forestType)
+ax.set_yticklabels(landUse)
+# Loop over data dimensions and create text annotations.
+for i in range(len(landUse)):
+    for j in range(len(forestType)):
+        text = ax.text(j, i, corrLabs[i, j],
+                        ha="center", 
+                        va="center", 
+                        fontsize=20, 
+                        color="k")
+
+
+ax.set_xlabel('Forest Type')
+fig.tight_layout()
+plt.show()
+
+pd.Categorical(landUseForesttypeDF['forestType'])
+
+
+## meh, so go back to the martin example and check, because 
+## that is a model where the number of predictors does not 
+## equal the number of categories in the response
