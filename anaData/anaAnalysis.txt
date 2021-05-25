@@ -14973,6 +14973,104 @@ plt.show()
 pd.Categorical(landUseForesttypeDF['forestType'])
 
 
-## meh, so go back to the martin example and check, because 
-## that is a model where the number of predictors does not 
-## equal the number of categories in the response
+####### reviewing Ana field methods ########
+
+## back up, see if we understand Ana's methods
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt; plt.ion()
+import matplotlib.colors as mcolors
+import geopandas as gpd
+import rasterio
+import rasterio.plot
+import rasterio.mask
+import rasterio.crs
+import shapely
+plt.ion()
+
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
+anaPt.set_index('PsubP', inplace=True)
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+specObs = pd.read_csv('specObs.csv')
+
+
+def sdf(ser):
+    aa = specObs[ser].unique()
+    aa.sort()
+    return(aa)
+
+## there are four "sites", which are also called working blocks by ana:
+sdf('site')
+
+## these are then divided into "parcelas", which are independently numbered.
+sdf('parcela')
+
+## each of these are then divided into "subparcelas". We 
+sdf('PsubP')
+
+## so how were the "parcelas" or "sub-blocks" chosen?
+
+## can we get a map of the "sites"?
+
+## we need a geopandas with each of these categories, plus land use type:
+
+
+aa = (specObs[ ['site','parcela','subparcela','PsubP','habitat'] ]
+        .drop_duplicates()
+        .set_index('PsubP')
+    )
+aa = aa.astype('category')
+bb = pd.concat([aa,anaPt[['geometry']]], axis=1)
+sampleDesign = gpd.GeoDataFrame(bb, geometry='geometry')
+
+## join this with the geo info
+
+
+plt.close('all')
+fig, ax = plt.subplots()
+lcPoly.boundary.plot(color='k', ax=ax)
+sampleDesign.plot(column='site', ax=ax, legend=True)
+ax.set_xlim(744910, 749066)
+ax.set_ylim(10031233, 10035730)
+
+## need an lc poly
+
+## to me it looks like they realized they had 
+## insufficient covereage and went back to add
+## sample sites in areas of low coverage. 
+
+## while we're here, can we find the site that 
+## went from rg back to old forest? 
+
+## this is site 10.1:
+
+
+rg2oldPt = anaPt.loc[10.1]
+markerSty = {'marker':'o',
+             'markersize':20,
+             'markerfacecolor':'none',
+             'markeredgecolor':'purple',
+            }
+ax.plot(rg2oldPt['FinalRep_E'], rg2oldPt['FinalRep_N'], 
+            **markerSty)
+
+## 
+
+############ clean up accumulation curves and permanent plot data #########3
+
+## based on all that has happened, I think we need to clean up the 
+## species counts, modeled species richness for the study at large, 
+
+## what do we need for this?
+
+## we need to revisit the code for the section on collectors curves in the 
+## notes
+
+## and bring in the work from Danilo's data.
+
+## can we resurrect the Danilo analysis fairly quickly?:
+
+daniloTrees = pd.read_csv('Trees2014.csv', index_col='Numero')
+
+
