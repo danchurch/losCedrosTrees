@@ -13,7 +13,7 @@ Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
 12,Begoniaceae,Begonia parviflora Poepp. & Endl.,Begonia,parviflora,4,3,2
 12,Fabaceae,Inga aff. sapindoides Willd.,Inga,sapindoides_AFF,25,2,2
 13,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,4.5,2.5
-14,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,3.5,2
+14,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa,12,3.5,2
 15,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,4,1.1
 16,Solanaceae,Solanum leptopodum Van Heurck & Müll. Arg.,Solanum,leptopdoum,15,1,1
 17,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,2.5,3
@@ -44,7 +44,7 @@ Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
 42,Melastomataceae,Ossaea micrantha (Sw.) Macfad. ex Cogn.,Ossaea,micrantha,11,1,1.25
 43,Rubiaceae,Pentagonia sp.,Pentagonia,sp,43,1.5,2.1
 44,Euphorbiaceae,Acalypha diversifolia Jacq.,Acalypha,diversifolia,7,1,1.2
-45,Cardiopteridaceae ,Citronella cf. ilicifolia (Sleumer) R.A. Howard ,Citronella ,ilicifolia_CF,17,16,9
+45,Cardiopteridaceae ,Citronella cf. ilicifolia (Sleumer) R.A. Howard ,Citronella,ilicifolia_CF,17,16,9
 46,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,2,2
 47,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1,0.55
 48,Lauraceae,Rhodostemonodaphne cf. cyclops Madriñán ,Rhodostemonodaphne,cyclops_CF,34,1,1.5
@@ -58,17 +58,17 @@ Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
 56,Myrtaceae,Myrcia fallax (Rich.) DC. ,Myrcia,fallax,42,1.5,1.3
 57,Lauraceae,Persea pseudofasciculata L.E. Kopp ,Persea,pseudofasciculata,32,4,2.7
 58,Euphorbiaceae,Acalypha diversifolia Jacq.,Acalypha,diversifolia,7,2.5,1.9
-59,Moraceae,Clarisia biflora Ruiz & Pav.,Clarisia ,biflora,18,10,5.5
+59,Moraceae,Clarisia biflora Ruiz & Pav.,Clarisia,biflora,18,10,5.5
 60,Cyatheaceae,Alsophila cuspidata (Kunze) D.S. Conant ,Alsophila,cuspidata,1,10,1.8
 61,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,6,6
 62,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,7,5
-63,Clusiaceae,Garcinia madruno (Kunth) Hammel ,Garcinia ,madruno,37,7,3.8
+63,Clusiaceae,Garcinia madruno (Kunth) Hammel ,Garcinia,madruno,37,7,3.8
 64,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1.5,1.7
 65,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.8,0.7
 66,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,7,5
 67,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,1.7
 68,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,0.7,1.8
-69,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,1,2
+69,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa,12,1,2
 70,Melastomataceae,Miconia brevitheca Gleason ,Miconia,brevitheca,30,1.5,2.2
 71,Heliconiaceae,Heliconia aff. fragilis Abalo & G. Morales ,Heliconia,fragilis_AFF,6,2,1.6
 72,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,1,0.5
@@ -82,7 +82,7 @@ Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
 80,Lauraceae,Caryodaphnopsis theobromifolia (A.H. Gentry) van der Werff & H.G. Richt.,Caryodaphnopsis,theobromifolia,16,1.5,0.6
 81,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,2,0.6
 82,Gesneriaceae,Gasteranthus corallinus (Fritsch) Wiehler ,Gasteranthus,corallinus,5,1.4,0.7
-83,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,1.3,1.65
+83,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa,12,1.3,1.65
 84,Araceae,Anthurium sp.,Anthurium,sp,3,1.5,1.7
 85,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,1,1.3
 86,Malvaceae,Quararibea casasecae Fern. Alonso & Castrov.,Quararibea,casasecae,33,1,0.6
@@ -93,7 +93,7 @@ Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
 91,Fabaceae,Inga,Inga,sp0,24,1,0.6
 92,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,1.7,0.55
 93,Melastomataceae,Miconia cf. gracilis Triana ,Miconia,gracilis_CF,9,0.4,0.66
-94,Clusiaceae,Garcinia madruno (Kunth) Hammel ,Garcinia ,madruno,37,1.5,0.8
+94,Clusiaceae,Garcinia madruno (Kunth) Hammel ,Garcinia,madruno,37,1.5,0.8
 95,Tapisciaceae,Huertea glandulosa Ruiz & Pav.,Huertea,glandulosa,23,5,6
 96,Sapindaceae,Allophylus punctatus (Poepp.) Radlk.,Allophylus,punctatus,35,1.6,3.3
 97,Rubiaceae,Faramea aff. oblongifolia Standl.,Faramea,oblongifolia_AFF,41,0.4,0.5
@@ -107,7 +107,7 @@ Numero,Familia,NombreCientifico,Genus,Species,OTU,DAP,Altura
 105,Moraceae,Naucleopsis ulei (Warb.) Ducke ,Naucleopsis,ulei,39,3,0.7
 106,Piperaceae,Piper spoliatum Trel. & Yunck.,Piper,spoliatum,14,3,1.8
 107,Marattiaceae,Danaea erecta Tuomisto & R.C. Moran ,Danea,erecta,2,1.4,1.2
-108,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa ,12,0.7,1.15
+108,Rubiaceae,Palicourea demissa Standl.,Palicourea,demissa,12,0.7,1.15
 109,Moraceae,Ficus cuatrecasiana Dugand ,Ficus,cuatrecasiana,20,24,7.5
 110,Melastomataceae,Ossaea micrantha (Sw.) Macfad. ex Cogn.,Ossaea,micrantha,11,6,2.6
 111,Lauraceae,Nectandra lineatifolia (Ruiz & Pav.) Mez ,Nectandra,lineatifolia,31,7,3.25

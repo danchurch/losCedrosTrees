@@ -6558,15 +6558,19 @@ plt.savefig('lcTreeTurnover.svg')
 
 ## back in R:
 
-comM <- read.csv('comM.csv', row.names='PsubP')
+library(vegan)
 
-anaSAC <- specaccum(comM, method = "exact")
+comM <- read.csv('subParcelComm.csv', row.names='PsubP')
+
+aa <- specaccum(comM, method = "exact")
+anaSAC <- data.frame(aa$richness, aa$sd)
+colnames(anaSAC) <- c('richness', 'sd')
 
 #pdf(file="anaSubparcelSAC.pdf")
-plot(anaSAC)
+plot(aa)
 #dev.off()
 
-specpool(comM)
+anaSpeciesEstimators = specpool(comM)
 
 ################################################################################
 #    Species     chao  chao.se    jack1 jack1.se    jack2     boot  boot.se  n
@@ -6576,69 +6580,98 @@ specpool(comM)
 ## can we build a model to stretch this out the predicted 
 ## number of species?
 
-mod1 <- fitspecaccum(anaSAC, "lomolino")
+mod1 <- fitspecaccum(aa, "lomolino")
+anaPredYs <- predict(mod1, newdata=1:500)
 
-plot(anaSAC)
+## just checking, does our estimate of ~60 spp in a 
+## half hectare from Danilo's work line up with our 
+## general model of SAC here from Ana's plots?
+## each plot represents 0.09 hectare sampled... so we need
+## 0.5 ha * ( 1 plot / 0.09 ha ) = 
 
-predYs <- predict(mod1, newdata=1:500)
+0.5 / 0.09 ## = 5.5556. 
+
+predict(mod1, newdata=(0.5/0.09)) ## 96 spp
+
+## huh, we get a much higher prediction from Ana's overall
+## model than we observe with Danilo's data. 
+
+## how about a simple 1 ha estimate?
+
+predict(mod1, newdata=(1.0/0.09)) ## 147 spp
+
+## interesting. So I guess the permanent plot isn't 
+## necessarily the most representative spot as far 
+## as alpha diversity?
 
 #write.csv(predYs, file="predYs.csv", row.names=FALSE)
 
-
-
-
+write.csv(anaSAC, file='anaSAC.csv')
+write.csv(anaPredYs, file='anaPredYs.csv')
+write.csv(anaSpeciesEstimators, file='anaSpeciesEstimators.csv')
 
 ## good stuff. To port it over to pyplotter...
-## we need the richness and the sd:
 
-allSAC <- data.frame(anaSAC$richness, anaSAC$sd)
-colnames(allSAC) <- c('richness', 'sd')
-#write.csv(allSAC, file='allSAC.csv', row.names=FALSE)
 
-## and into python to plot...
+## look at these in pandas/matplotlib
+anaSAC = pd.read_csv('anaSAC.csv', index_col=0)
+anaPredYs = pd.read_csv('anaPredYs.csv', index_col=0).x
+anaSpeciesEstimators = pd.read_csv('anaSpeciesEstimators.csv', index_col=0).loc['All']
 
-allSAC = pd.read_csv('allSAC.csv')
-predYs = pd.read_csv('predYs.csv')
-predYs.columns = "richness"
+anaSAC
 
-meanSppEst = np.mean([516.3946,483.6557,566.8038,404.4403])
+anaPredYs
+
+anaSpeciesEstimators
+
+## can we make a nice plot with this?
 
 plt.close('all')
-colr='g'
+colr='b'
 fig, ax = plt.subplots(1,1)
-plt.plot(allSAC['richness'],
+ax.plot(anaSAC['richness'],
+            label='observed accumulation',
             color=colr)
-plt.fill_between(x=allSAC.index,
-                 y1=allSAC.richness - allSAC.sd,
-                 y2=allSAC.richness + allSAC.sd,
+ax.fill_between(x=anaSAC.index.to_numpy(),
+                 y1=anaSAC.richness - anaSAC.sd,
+                 y2=anaSAC.richness + anaSAC.sd,
                 alpha=0.4,
                 color=colr,
                 )
-plt.plot(list(range(61,301)),predYs.iloc[61:301,:], color=colr, linestyle=':')
-ax.set_xlim(-10,300)
-predYs.iloc[61:301,:]
-ax.hlines(500,
+ax.plot(anaPredYs.index.to_numpy(), anaPredYs, 
+            color=colr, 
+            linestyle=':',
+            label='SAC predicted values',
+            )
+## put the chao estimator on there:
+ax.hlines(anaSpeciesEstimators.chao,
     xmin = 0,
-    xmax = 301,
+    xmax = 500,
     linestyle = "--",
+    color = "r",
+    label='Chao estimate',
 )
-## each plot represents 0.09 hectare sampled...can we change the ticks?
-## if we want ticks for every 20 hectares sampled...
-## 20 hectares = 220 plots, too few ticks...
-## 50 plots = 50x.09ha/plot = 4.5 ha. So how about we put a tick for 
-## every 5 ha? 5 ha = 55.5 plots:
-## try 5 ticks, not counting zero: 
+ax.fill_between(x=anaPredYs.index,
+                 y1=anaSpeciesEstimators.chao - anaSpeciesEstimators["chao.se"],
+                 y2=anaSpeciesEstimators.chao + anaSpeciesEstimators["chao.se"],
+                alpha=0.2,
+                color='r',
+                )
+## each plot represents 0.09 hectare sampled
+## if we want ticks for every 20 hectares sampled
+## every 5 ha? 5 ha = 55.5 plots
 tk = np.arange(0,6)*55.5
 ax.set_xticks(tk)
 ## the ha values of this would be:
 tklabs = np.arange(0,6)*5
+tklabs[0] = 1
 ax.set_xticklabels(tklabs)
-ax.set_xlabels(['two', 'four','six', 'eight', 'ten'])
 ax.set_xlabel('Parceles medidas en hectareas (ha)')
 ax.set_ylabel('número de especies de arboles')
+ax.set_xlim(0,300)
+ax.legend(loc='lower right')
 
-## and our 
-
+## great. update notebook with this and the Danilo data below 
 
 #plt.savefig('anaSAC.svg')
 
@@ -14976,7 +15009,6 @@ pd.Categorical(landUseForesttypeDF['forestType'])
 ####### reviewing Ana field methods ########
 
 ## back up, see if we understand Ana's methods
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt; plt.ion()
@@ -14987,11 +15019,14 @@ import rasterio.plot
 import rasterio.mask
 import rasterio.crs
 import shapely
+import os
+import matplotlib.patches as mpatches
 plt.ion()
 
 anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
 anaPt.set_index('PsubP', inplace=True)
 lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+
 specObs = pd.read_csv('specObs.csv')
 
 
@@ -15071,6 +15106,344 @@ ax.plot(rg2oldPt['FinalRep_E'], rg2oldPt['FinalRep_N'],
 
 ## can we resurrect the Danilo analysis fairly quickly?:
 
-daniloTrees = pd.read_csv('Trees2014.csv', index_col='Numero')
+trees = pd.read_csv('Trees2014.csv', index_col='Numero')
+
+len(trees.NombreCientifico.unique())
+
+## can we make a single column out of our genus and species columns?
+## this would be cleaner than using the messy NombreCientifico column. 
+
+aa = trees['Genus'] + "_" + trees['Species']
+
+permPlotCCmat = pd.get_dummies(aa)
+
+permPlotCCmat.to_csv('permPlotCCmat.csv', index_label=False, index=False)
+
+## some of these have hanging white space...
+aa.str.contains(" ").any()
+aa[aa.str.contains(" ")]
+## fix these in the original and rerun the above
+
+
+## I think we actually need to be in R:
+R
+
+## okay, forget what specaccum needs...
+data(BCI)
+sp1 <- specaccum(BCI, method = "exact")
+## looks like they need species as columns.
+## so for us..back up, do a dummy mat in python and...
+
+library("vegan")
+
+trees = read.csv('Trees2014.csv')
+
+permPlotCCmat = read.csv('permPlotCCmat.csv')
+
+## now what? 
+## to estimate the number of species in ~1/2 ha: 
+specpool(permPlotCCmat)
+
+## but we want a full hectare, we can't really 
+## get there from here. 
+## Either way, it looks like the assymptote approaches
+## 60 species for this half-hectare. 
+
+daniloSpecaccum <- specaccum(permPlotCCmat, method = "exact")
+daniloSACmod <- fitspecaccum(daniloSpecaccum, "lomolino")
+daniloPredYs <- predict(daniloSACmod, newdata=1:500)
+
+## vgan has a builtin plotter for this. 
+plot(daniloSpecaccum)
+## But I think we should port this to matplotlib for better plotting 
+## we want the actual data points, the predicted data points, 
+## and the chao results
+
+daniloSAC <- data.frame(daniloSpecaccum$richness, daniloSpecaccum$sd)
+colnames(daniloSAC) <- c('richness', 'sd')
+daniloSpeciesEstimators = specpool(permPlotCCmat) 
+
+write.csv(daniloSAC, file='daniloSAC.csv')
+write.csv(daniloPredYs, file='daniloPredYs.csv')
+write.csv(daniloSpeciesEstimators, file='daniloSpeciesEstimators.csv')
+
+## look at these in pandas/matplotlib
+
+## back in python
+daniloSAC = pd.read_csv('daniloSAC.csv', index_col=0)
+daniloPredYs = pd.read_csv('daniloPredYs.csv', index_col=0).x
+daniloSpeciesEstimators = pd.read_csv('daniloSpeciesEstimators.csv', index_col=0)
+daniloSpeciesEstimators = pd.read_csv('daniloSpeciesEstimators.csv', index_col=0).loc['All']
+
+daniloSAC
+
+daniloPredYs
+
+daniloSpeciesEstimators
+
+## can we make a nice plot with this?
+
+plt.close('all')
+colr='g'
+fig, ax = plt.subplots()
+ax.plot(daniloSAC['richness'],
+            label='observed accumulation',
+            color=colr)
+ax.set_ylabel('número de especies de arboles')
+ax.fill_between(x=daniloSAC.index.to_numpy(),
+                 y1=daniloSAC.richness - daniloSAC.sd,
+                 y2=daniloSAC.richness + daniloSAC.sd,
+                alpha=0.4,
+                color=colr,
+                )
+ax.plot(daniloPredYs.index.to_numpy(), daniloPredYs, 
+            color=colr, 
+            linestyle=':',
+            label='SAC predicted values',
+            )
+## put the chao estimator on there:
+ax.hlines(daniloSpeciesEstimators.chao,
+    xmin = 0,
+    xmax = 500,
+    linestyle = "--",
+    color = "r",
+    label='Chao estimate',
+)
+ax.fill_between(x=daniloPredYs.index,
+                 y1=daniloSpeciesEstimators.chao - daniloSpeciesEstimators["chao.se"],
+                 y2=daniloSpeciesEstimators.chao + daniloSpeciesEstimators["chao.se"],
+                alpha=0.2,
+                color='r',
+                )
+ax.legend(loc='lower right')
+ax.set_ylabel('species')
+ax.set_xlabel('trees examined')
+ax.set_title('Permanent plot, 0.5 ha resample')
+
+
+
+
+## okay, good, that's Danilo's stuff. Can we clean up Ana's data for the 
+## notebook? what do we want to show? The above code, repeated for 
+## Ana's data. This is already, done above, at "### get nice species accumulation curves"
+
+## add both to notebook
+ 
+### clean up the by-landuse SAC and estimators:
+
+aa = pd.read_csv('envOnly.csv', index_col='PsubP')[['habitat']]
+subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
+bb = pd.concat([aa, subParcelComm], axis=1)
+bbGrouped = bb.groupby('habitat')
+habs = list(bbGrouped.groups.keys())
+
+for i in habs:
+    cc = bbGrouped.get_group(i)
+    observed = (cc != 0).any(axis=0).values
+    dd = cc.iloc[:,observed].copy()
+    dd.drop('habitat', axis=1, inplace=True)
+    dd.to_csv(f'{i}_comm.csv')
+
+## move over to R to use vegan...
+
+library(vegan)
+library(repr)
+
+
+files <- list.files()
+comm <- grep('_comm.csv', list.files())
+comms <- files[comm]
+comtitles <- sub("_comm.csv", "", comms)
+
+
+for (i in comms){
+    j <- j + 1
+    comm.i <- read.csv(i, header=TRUE, row.names=1)
+    print(i)
+    SAC <- specaccum(comm.i, method = "exact")
+    plot(SAC, main=comtitles[j], ylab='No. of Spp')
+    #capture.output(print(paste('Species estimates for', comtitles[j], sep=" ")),
+    #                file="habSRestimates.txt", append = TRUE)
+    #capture.output(specpool(comm.i),
+    #                file="habSRestimates.txt",
+    #                append = TRUE)
+    sacDF <- data.frame(cbind(SAC$richness, SAC$sd), row.names=SAC$sites)
+    colnames(sacDF) <- c('richness', 'sd')
+    #write.csv(sacDF, file=paste(comtitles[j], "SAC.csv", sep="_"))
+}
+
+## each habitat types needs two three things - observed data, predicted data, and species estimates.
+## get these out of R
+
+## for one
+files <- list.files()
+comm <- grep('_comm.csv', list.files())
+comms <- files[comm]
+comtitles <- sub("_comm.csv", "", comms)
+for (i in comms){
+    comm.i <- read.csv(i, header=TRUE, row.names=1)
+    specAccum.i <- specaccum(comm.i, method = "exact")
+    #SACmodelfit.i <- fitspecaccum(specAccum.i, "lomolino")
+    #predYs.i <- predict(SACmodelfit.i, newdata=1:500)
+    SACdf.i <- data.frame(specAccum.i$richness, specAccum.i$sd)
+    colnames(SACdf.i) <- c('richness', 'sd')
+    speciesEstimators.i = specpool(comm.i)
+    habtype=sub("_comm.csv", "", i)
+    print(habtype)
+    write.csv(SACdf.i, file=paste(habtype, "SAC.csv", sep="_"))
+    #write.csv(predYs.i, file=paste(habtype, "predYs.csv", sep="_"))
+    write.csv(speciesEstimators.i, file=paste(habtype, "specEst.csv", sep="_"))
+}
+
+i="RCA_comm.csv"
+
+
+comm.i <- read.csv(i, header=TRUE, row.names=1)
+
+specAccum.i <- specaccum(comm.i, method = "exact")
+speciesEstimators.i = specpool(comm.i)
+
+predYs.i <- predict(SACmodelfit.i, newdata=1:500)
+
+## meh, leave out the predictions, they seem to be failing on 
+## on some of these and I have no faith in the low-sample
+## numbers anyway.
+
+## did that work? go over to python and try plotting them.
+
+## let's see if we can make a function out of our plots for danilo/all-hab plots:
+
+
+## to plot one, with chao results
+
+## python:
+
+
+sacs = [ i for i in os.listdir() if "_SAC.csv" in i  ]
+specEsts = [ i.replace("_SAC.csv", "_specEst.csv") for i in sacs ]
+
+## brittle, but works for the moment
+
+colr='g'
+i = 0
+
+## works
+name_i = sacs[i].replace('_SAC.csv','') 
+sac_i = pd.read_csv(sacs[i], index_col=0)
+specEst_i = pd.read_csv(specEsts[i], index_col=0).loc['All']
+specEst_i.index = specEst_i.index.str.replace(".","_")
+plt.close('all')
+fig, ax = plt.subplots()
+ax.plot(sac_i['richness'],
+            color=colr)
+ax.set_ylabel('número de especies de arboles')
+ax.fill_between(x=sac_i.index.to_numpy(),
+                 y1=sac_i.richness - sac_i.sd,
+                 y2=sac_i.richness + sac_i.sd,
+                alpha=0.4,
+                color=colr,
+                )
+ax.set_title(f'{name_i}')
+ax.text(1, (sac_i['richness'].max()-3),
+            f'Expected species richness = {specEst_i.chao.round()} +/- {specEst_i.chao_se.round()}', 
+            #fontsize=15,
+        )
+
+sacs = [ i for i in os.listdir() if "_SAC.csv" in i  ]
+specEsts = [ i.replace("_SAC.csv", "_specEst.csv") for i in sacs ]
+
+## make a function
+
+def plotSACs(habtype, color='black', 
+                xUnits='ha', printChao=False, 
+                printTitle=False, ax=None):
+    if ax is None: fig, ax = plt.subplots()
+    sacName = (habtype +'_SAC.csv')
+    specEstName = (habtype + "_specEst.csv")
+    assert( (habtype +'_SAC.csv') in sacs)
+    assert( xUnits in ['ha','plots'])
+    sac_i = pd.read_csv(sacName, index_col=0)
+    sac_i['areaSampled'] = (sac_i.index * 0.09).to_list() 
+    if xUnits == 'ha': X = sac_i['areaSampled'] 
+    elif xUnits == 'plots': X = sac_i.index.to_list() 
+    specEst_i = pd.read_csv(specEstName, index_col=0).loc['All']
+    specEst_i.index = specEst_i.index.str.replace(".","_")
+    ax.plot(X, sac_i['richness'], color=color)
+    ax.set_ylabel('number of tree species')
+    ax.fill_between(x=X,
+                     y1=sac_i.richness - sac_i.sd,
+                     y2=sac_i.richness + sac_i.sd,
+                    alpha=0.4,
+                    color=color,
+                    )
+    if printTitle: ax.set_title(f'{habtype}')
+    if printChao:
+        ax.text(1, (sac_i['richness'].max()-3),
+                    f'Expected species richness = {specEst_i.chao.round()} +/- {specEst_i.chao_se.round()}', 
+            )
+
+
+sac_i = plotSACs('RG', xUnits='ha')
+
+sac_i = plotSACs('RG', xUnits='plots')
+
+sac_i
+
+fig, ax = plt.subplots()
+ax.plot(sac_i['areaSampled'], sac_i['richness'],
+            color='g')
+
+sac_i['richness']
+
+sac_i['areaSampled']
+
+
+
+plt.close('all')
+fig, ax = plt.subplots()
+plotSACs('BC', ax=ax, xUnits='ha', color='#E41A1C')
+plotSACs('BS', ax=ax, xUnits='ha', color='#377EB8')
+plotSACs('CLB', ax=ax, xUnits='ha', color='#4DAF4A')
+plotSACs('RCA', ax=ax, xUnits='ha', color='#984EA3')
+plotSACs('RG', ax=ax, xUnits='ha', color='#FF7F00')
+
+BC_patch = mpatches.Patch(color='#E41A1C', label='BC', alpha=0.4)
+BS_patch = mpatches.Patch(color='#377EB8', label='BS', alpha=0.4)
+CLB_patch = mpatches.Patch(color='#4DAF4A', label='CLB', alpha=0.4)
+RCA_patch = mpatches.Patch(color='#984EA3', label='RCA', alpha=0.4)
+RG_patch = mpatches.Patch(color='#FF7F00', label='RG', alpha=0.4)
+ax.legend(handles=[BC_patch, BS_patch, CLB_patch, RCA_patch, RG_patch])
+
+
+
+
+sac_i.index * 0.09
+
+plotSACs('RCA', ax=plt.gca(), color='r')
+
+## great but we want to change the ticks to subplots:
+## we want to show a tick for every hectare
+
+## each one of our ticks if currently a plot
+##  (0.09 ha / 1 subplot)
+## we have 
+
+ax = plt.gca()
+
+tk = np.arange(0,6)*55.5
+ot.se       6.934504
+boot.se       6.934504
+
+
+ax.set_xticks(tk)
+## the ha values of this would be:
+tklabs = np.arange(0,6)*5
+tklabs[0] = 1
+ax.set_xticklabels(tklabs)
+ax.set_xlabel('Parceles medidas en hectareas (ha)')
+ax.set_ylabel('número de especies de arboles')
+ax.set_xlim(0,300)
+ax.legend(loc='lower right')
+
 
 
