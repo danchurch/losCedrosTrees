@@ -15020,7 +15020,9 @@ import rasterio.mask
 import rasterio.crs
 import shapely
 import os
+import random
 import matplotlib.patches as mpatches
+from shapely.geometry import Point
 plt.ion()
 
 anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
@@ -15446,4 +15448,89 @@ ax.set_xlim(0,300)
 ax.legend(loc='lower right')
 
 
+## looks good
 
+
+### make gis for permanent plot ###
+
+## need to make a map of the permanent plot, 
+## maybe colored by the tree genus or family
+## can we make a georeffed polygon for the permanent plot?
+## and data for the trees that Danilo worked?
+
+## don't really have the coordinates for the permanent plot,
+## so have to see if Ana has this, if not we make 
+## our best guess. 
+
+## so let's start with a map of danilo's results
+
+## according to Roo, the numbering of our plots starts 
+## in the NE corner, and moves directly south, 11 plots,
+## with plots being 5 m apart in the N/S direction. 
+## After 11 plots, the numbering starts over again in 
+## the column to west, again in the north. 
+## the columns are 10m apart in the east/west direction.
+## the final, most southern plot in the western-most
+## column was not sampled, so a corner is missing. 
+## Can we plot this?
+
+## an array would look something like this:
+aa = np.arange(1,122).reshape(11,11).T
+## if we want to look at it as we have in the past,  with n as down:
+bb = np.flip(aa, axis=0)
+
+## but if we want to plot, 
+
+## we want an array of coordinate tuples, I think:
+
+
+
+for i in range(0,110,10): print(i)
+
+for i in range(0,55,5): print(i)
+
+len(range(0,110,10))
+
+len(range(0,55,5))
+
+
+aa = []
+for i in range(0,110,10):
+    aa += [ Point(i,j) for j in range(0,55,5) ]
+
+bb = gpd.GeoSeries(aa)
+## can we remove our last one?
+bb.drop(120, axis=0, inplace=True)
+bb.index = range(1,121)
+
+bb.plot()
+
+## we need to attach data:
+
+trees = pd.read_csv('Trees2014.csv', index_col='Numero')
+
+
+## bind the two 
+
+permGPD = gpd.GeoDataFrame(data=trees, geometry=bb)
+permGPD.Genus.unique()
+permGPD['genspp'] = permGPD.Genus + "_" + permGPD.Species
+
+len(trees.Genus.unique()) ## 36 genera
+len(trees.Familia.unique()) ## 25 families
+len(genspp.unique()) ## 43 species
+
+## generate random colors
+
+def genXKCDColors(nu):
+    Xcolors = random.choices(list(mcolors.XKCD_COLORS.values()), k=nu)
+    cmap = mcolors.ListedColormap(Xcolors)
+    return(cmap)
+ 
+
+cmap=genXKCDColors(len(trees.Genus.unique()))
+fig, ax = plt.subplots()
+permGPD.plot(ax=ax, column='Genus', cmap=cmap)
+
+
+## great. And for the Jena grant app, I'm going to also need a loscedros polygon with 
