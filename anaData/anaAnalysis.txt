@@ -15022,6 +15022,7 @@ import shapely
 import os
 import random
 import matplotlib.patches as mpatches
+from matplotlib.patches import Patch
 from shapely.geometry import Point
 plt.ion()
 
@@ -15533,4 +15534,78 @@ fig, ax = plt.subplots()
 permGPD.plot(ax=ax, column='Genus', cmap=cmap)
 
 
-## great. And for the Jena grant app, I'm going to also need a loscedros polygon with 
+## great. And for the Jena grant app, I'm going to also need a loscedros polygon 
+## plus some landmarks to make sure we're not completely off, trails and rivers. 
+## make a map for qgis 
+
+##### check elevations of different forest types ####
+
+## does it seem true that either old forest type can be shifted into 
+## type I or II (disturbed forest type?)
+
+## we need a dataframe with x-axis = type, y = elevation, of each PsubP site
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+elevLUDF = pd.concat([landUseForesttypeDF, envOnly], axis=1)[['landUse','forestType','elevacion']]
+
+
+fig, ax = plt.subplots()
+ax.scatter(elevLUDF.forestType, elevLUDF.elevacion)
+## looks fine, but need to work it a little...
+
+## set up colors for plotting, by historical land use
+landuseColDict = {
+          'BC':'#E41A1C',
+          'BS':'#377EB8',
+          'CLB':'#4DAF4A',
+          'RCA':'#984EA3',
+          'RG':'#FF7F00',
+           }
+landuseColrs = elevLUDF.landUse.apply(lambda x: landuseColDict[x])
+
+plt.close('all')
+fig, ax = plt.subplots()
+Xraw, Yraw = elevLUDF.forestType, elevLUDF.elevacion
+Xjitted = (Xraw
+            .apply(np.random.normal, args=(0.08,))
+            )
+breakUpData = [ Yraw[Xraw == i].to_list() for i in Xraw.unique() ]
+vio = ax.violinplot(breakUpData, showmeans=True)
+ax.scatter(Xjitted, Yraw, color=landuseColrs, s=100)
+ax.set_xticks([1,2,3,4])
+ax.set_xticklabels(
+        [ f'Type {i}' for i in range(1,5) ]
+        )
+ax.set_title('Forest type, history, and elevation')
+ax.set_ylabel('Elevation')
+ax.set_xlabel('Current forest type')
+## color dictionary for forestType:
+forestTypeColDict = {
+                      1:'k',
+                      2:'r',
+                      3:'g',
+                      4:'b',
+                    }
+## change violin patch color:
+for i,j in enumerate(vio['bodies']):
+    j.set_facecolors(forestTypeColDict[i+1])
+
+## legend for land use history:
+legend_patchesLU = [ Patch(color=j, label=i) for i,j in landuseColDict.items() ]
+ax.legend(handles=legend_patchesLU,
+            facecolor="white",
+            edgecolor="black",
+            loc="upper left",
+            bbox_to_anchor=(1, 1))
+
+plt.tight_layout()
+
+
+## update notes with this. 
+## seems like we still need to build 
+## a logit model that predicts forest
+## type by elevation
+
+#### logistic regression between forest types
+
