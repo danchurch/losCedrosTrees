@@ -15609,3 +15609,171 @@ plt.tight_layout()
 
 #### logistic regression between forest types
 
+## should be pretty simple to make a logistic model
+## of forest type as a function of elevation:
+
+## in bayesAna environment again.
+
+import numpy as np 
+import matplotlib.pyplot as plt
+import pandas as pd
+import pymc3 as pm
+import arviz as az
+
+import pymc3 as pm
+import numpy as np
+import pandas as pd
+import theano.tensor as tt
+import seaborn as sns
+import scipy.stats as stats
+from scipy.special import expit as logistic
+import matplotlib.pyplot as plt
+import arviz as az
+plt.ion()
+
+## there is an example in chapter4:
+
+####### iris logistic example ########
+dpath="/home/daniel/Documents/learn/Bayesian/martinBayesianAnalysis/Bayesian-Analysis-with-Python-Second-Edition/data"
+iris = pd.read_csv(dpath+"/iris.csv")
+df = iris.query("species == ('setosa', 'versicolor')")
+y_0 = pd.Categorical(df['species']).codes
+x_n = 'sepal_length' 
+x_0 = df[x_n].values
+x_c = x_0 - x_0.mean()
+
+with pm.Model() as model_0:
+    α = pm.Normal('α', mu=0, sd=10)
+    β = pm.Normal('β', mu=0, sd=10)
+    μ = α + pm.math.dot(x_c, β)    
+    θ = pm.Deterministic('θ', pm.math.sigmoid(μ))
+    bd = pm.Deterministic('bd', -α/β)
+    yl = pm.Bernoulli('yl', p=θ, observed=y_0)
+    trace_0 = pm.sample(1000)
+
+theta = trace_0['θ'].mean(axis=0)
+idx = np.argsort(x_c)
+plt.plot(x_c[idx], theta[idx], color='C2', lw=3)
+plt.vlines(trace_0['bd'].mean(), 0, 1, color='k')
+bd_hpd = az.hpd(trace_0['bd'])
+plt.fill_betweenx([0, 1], bd_hpd[0], bd_hpd[1], color='k', alpha=0.5)
+
+plt.scatter(x_c, np.random.normal(y_0, 0.02),
+            marker='.', color=[f'C{x}' for x in y_0])
+az.plot_hpd(x_c, trace_0['θ'], color='C2')
+plt.xlabel(x_n)
+plt.ylabel('θ', rotation=0)
+# use original scale for xticks
+locs, _ = plt.xticks()
+plt.xticks(locs, np.round(locs + x_0.mean(), 1))
+plt.savefig('B11197_04_04.png', dpi=300)
+
+#########
+
+## works. can we do this with our data?
+
+## the x axis will be elevation of site
+## the y will be the probability of either 
+## type III or type IV data
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+elevLUDF = pd.concat([landUseForesttypeDF, envOnly], axis=1)[['landUse','forestType','elevacion']]
+df = elevLUDF.query("forestType > 2")
+
+
+
+## switch the codes here to make a high θ mean
+## a high probability of type 3 forest. 
+## I think this is more intuitive, because this 
+## is the forest associated higher elevations
+
+## for colors, reuse the theme from elsewhere:
+
+forestTypeColDict = {
+                      1:'k',
+                      2:'r',
+                      3:'g',
+                      4:'b',
+                    }
+colrs = df['forestType'].apply(lambda x: forestTypeColDict[x])
+y_0 = pd.Series(index=df.index, dtype=int)
+y_0[df['forestType'] == 3] = 1
+x_n = 'elevacion' 
+x_0 = df[x_n].values
+x_c = x_0 - x_0.mean()
+
+with pm.Model() as model_0:
+    α = pm.Normal('α', mu=0, sd=10)
+    β = pm.Normal('β', mu=0, sd=10)
+    μ = α + pm.math.dot(x_c, β)    
+    θ = pm.Deterministic('θ', pm.math.sigmoid(μ))
+    bd = pm.Deterministic('bd', -α/β)
+    yl = pm.Bernoulli('yl', p=θ, observed=y_0)
+    trace_0 = pm.sample(2000, tune=1000)
+
+plt.close('all')
+theta = trace_0['θ'].mean(axis=0)
+idx = np.argsort(x_c)
+plt.plot(x_c[idx], theta[idx], color='k', lw=3, ls='--')
+plt.vlines(trace_0['bd'].mean(), 0, 1, color='k')
+bd_hpd = az.hpd(trace_0['bd'])
+plt.fill_betweenx([0, 1], bd_hpd[0], bd_hpd[1], color='k', alpha=0.5)
+plt.scatter(x_c, np.random.normal(y_0, 0.02),
+            marker='.', s= 200, color=colrs)
+az.plot_hpd(x_c, trace_0['θ'], color='y')
+plt.xlabel(x_n)
+plt.ylabel('θ', rotation=0)
+# use original scale for xticks
+locs, _ = plt.xticks()
+plt.xticks(locs, np.round(locs + x_0.mean(), 1))
+
+## great, use this
+## examine the model a bit
+
+ppc = pm.sample_posterior_predictive(trace_0, model=model_0)
+
+help(pm.sample_posterior_predictive)
+
+az.r2_score(y_0, ppc['yl']) ## wow, r2 = 0.93, +/- 0.13
+
+az.r2_score(y_0, ppc['yl'].T) ## wow, r2 = 0.93, +/- 0.13
+
+az.r2_score(y_0, ppc['yl'].mean(axis=0)) ## wow, r2 = 0.93, +/- 0.13
+
+ppc['yl'].mean(axis=0).shape
+
+## how do we check the predictions?
+
+dir(ppc['yl'])
+
+## our θ is the probability that a site is type 3
+## how often are we right/wrong?
+
+trace_0
+
+len(trace_0)
+
+trace_0.varnames
+
+trace_0['α'].mean()
+
+trace_0['β'].mean()
+
+az.plot_trace(trace_0, var_names=['α', 'β'])
+
+## this is what we need:
+bb = pd.Series(dtype=int, index=df.index)
+
+aa = trace_0['θ'].mean(axis=0)
+bb[aa > 0.5] = 1
+percentRight = (bb == y_0).sum()/len(y_0)
+print(f'Out of {len(y_0)} we got {(bb == y_0).sum()} right') 
+print(f'The model predicts the data {round(percentRight,3)*100}% of the time correctly')
+
+np.argsort(x_c)
+
+## update notebook:
+
+##### surface for alternate stable states #######
+
