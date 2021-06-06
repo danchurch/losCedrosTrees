@@ -15777,3 +15777,200 @@ np.argsort(x_c)
 
 ##### surface for alternate stable states #######
 
+## how to do a 3d surface plot with matplotlib?
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+
+## works
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+# Make data.
+X = np.arange(-5, 5, 0.25)
+Y = np.arange(-5, 5, 0.25)
+X, Y = np.meshgrid(X, Y)
+R = np.sqrt(X**2 + Y**2)
+Z = np.sin(R)
+# Plot the surface.
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+ax.set_zlim(-1.01, 1.01)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+## ok, tinker a bit:
+
+plt.close('all')
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+# Make data.
+X = np.arange(0.1, 8, 0.25)
+Y = np.arange(0.1, 8, 0.25)
+X, Y = np.meshgrid(X, Y)
+Z = -1/(X-3 + Y-3)**2
+#ax.elev=50
+#ax.azim=230
+##surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+##                       linewidth=0, antialiased=False)
+surf = ax.plot_surface(X, Y, Z, linewidth=0, antialiased=False)
+
+## don't think this will work. Too complicated. 
+## I think a nice schematic with inkscape is probably the 
+## way to go here.
+
+##### model of clusters as function of habitat and elevation  #######
+
+## so we have a strong predictor for predicting differences
+## between the old forest types III and IV (elevation), and among the 
+## anthropogenically disturbed site types I and II and old forest 
+## types (land use history/habitat). Let's put them together in 
+## one big model. 
+
+## using the bayes setup (in bayesAna environment):
+
+import numpy as np 
+import matplotlib.pyplot as plt
+import pandas as pd
+import pymc3 as pm
+import scipy.spatial as sp
+import geopandas as gpd
+import theano.tensor as tt
+#from theano import shared
+import rasterio
+import scipy.stats as stats
+import arviz as az
+from sklearn.linear_model import LinearRegression
+from scipy import stats
+plt.ion()
+
+## we want our 
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+y_s = landUseForesttypeDF['forestType']
+luDummy = (pd.get_dummies(landUseForesttypeDF, columns=['landUse']))
+luDummy.drop(columns=['forestType'], inplace=True)
+## elevation data
+#aa = pd.concat([luDummy, envOnly.elevacion], axis=1)
+#x_s = aa.values
+#x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+x_s = luDummy.values
+x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+
+with pm.Model() as model_s:
+    α = pm.Normal('α', mu=0, sd=5, shape=4)
+    β = pm.Normal('β', mu=0, sd=5, shape=(5,4))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_s, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_s)
+    trace_s = pm.sample(2000, init='adapt_diag')
+
+
+## this works:
+y_sMe = pd.Categorical(landUseForesttypeDF['forestType']).codes
+luDummy = (pd.get_dummies(landUseForesttypeDF, columns=['landUse']))
+luDummy.drop(columns=['forestType'], inplace=True)
+x_sMe = luDummy.values
+with pm.Model() as model_sMe:
+    α = pm.Normal('α', mu=0, sd=5, shape=4)
+    β = pm.Normal('β', mu=0, sd=5, shape=(5,4))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_sMe, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_sMe)
+    trace_sMe = pm.sample(2000, init='adapt_diag')
+## this works ^ ##
+
+## this seems to work, with elevation
+y_sMe = pd.Categorical(landUseForesttypeDF['forestType']).codes
+luDummy = (pd.get_dummies(landUseForesttypeDF, columns=['landUse']))
+luDummy.drop(columns=['forestType'], inplace=True)
+luElev = pd.concat([luDummy, envOnly.elevacion], axis=1)
+x_s = luElev.values
+x_s = (x_s - x_s.mean(axis=0)) / x_s.std(axis=0)
+
+with pm.Model() as model_sMe:
+    α = pm.Normal('α', mu=0, sd=5, shape=4)
+    β = pm.Normal('β', mu=0, sd=5, shape=(6,4))
+    μ = pm.Deterministic('μ', α + pm.math.dot(x_s, β))
+    θ = tt.nnet.softmax(μ)
+    yl = pm.Categorical('yl', p=θ, observed=y_sMe)
+    trace_sMe = pm.sample(2000, init='adapt_diag')
+
+## how do the intercepts look now?
+colrs = ['k','r','g','b']
+fig, ax = plt.subplots(figsize=(10,6))
+for i in range(4):
+    (pd.Series(trace_sMe['α'][:,i]
+       .copy())
+       .sort_values()
+       .reset_index(drop=True)
+       .plot.density(ax=ax, label=f'Forest Type {i+1}', color=colrs[i])
+    )
+
+ax.vlines(trace_sMe['α'].mean(0), ymin=0, ymax=0.15, colors=colrs, linestyles='dashed')
+ax.set_xlim(-12,12)
+ax.legend()
+ax.set_title('y-intercepts of forest type')
+## this moved the intercepts apart more, that's encouraging.
+
+## visualize the coefficients
+labs = luElev.columns.str.replace('landUse_','').to_list()
+coeffDF = pd.DataFrame(trace_sMe['β'].mean(0),
+                columns = [ f'ForestType{i}' for i in range(1,5) ],
+                index  = labs,
+                )
+
+print(coeffDF)
+
+plt.close('all')
+## friendly plot of correlations:
+coeffs = trace_sMe['β'].mean(0)
+coeffLabs = coeffs.round(2)
+forestType = [ f'{i}' for i in range(1,5) ]
+predictors = luElev.columns.str.replace('landUse_','').to_list()
+fig, ax = plt.subplots(figsize=(8,8))
+im = ax.imshow(coeffs)
+## fix ticks
+ax.set_xticks(np.arange(len(forestType)))
+ax.set_yticks(np.arange(len(predictors)))
+ax.set_xticklabels(forestType)
+ax.set_yticklabels(predictors)
+# Loop over data dimensions and create text annotations.
+for i in range(len(predictors)):
+    for j in range(len(forestType)):
+        text = ax.text(j, i, coeffLabs[i, j],
+                        ha="center",
+                        va="center",
+                        fontsize=20, 
+                        color="k")
+
+
+ax.set_xlabel('Forest Type')
+
+fig.tight_layout()
+
+
+## check the predictions
+
+data_predMe = trace_sMe['μ'].mean(0)
+## this gets the posterior probabilities for each type of 
+## of forest, so ebach PusbP site has an array with four 
+## probabilities which should sum to one. Log-likelihoods
+## so has to be exponentiated:
+y_predMe = [np.exp(point)/np.sum(np.exp(point), axis=0)
+          for point in data_predMe]
+## then we take the forest type with the highest probability 
+## for each, because these are the predictions for each site:
+predictedForestType = pd.Series(np.argmax(y_predMe, axis=1), index=landUseForesttypeDF.index)
+## reformat our observed into series:
+observedForestType = pd.Series(y_sMe, index=landUseForesttypeDF.index)
+## how often are we right?
+(predictedForestType == observedForestType).sum()/len(predictedForestType)
+## that bumps our predictive value up to 87% correct predictions
+
+
+## R2?
+ppc = pm.sample_posterior_predictive(trace_sMe, samples=5000, model=model_sMe)
+az.r2_score(y_sMe, ppc['yl'])
+## r2 - 0.88
+
+
+####### update environmental permanovas ##########
