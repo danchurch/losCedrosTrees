@@ -15974,3 +15974,30 @@ az.r2_score(y_sMe, ppc['yl'])
 
 
 ####### update environmental permanovas ##########
+
+## let's update the general permanovas to include 
+## all the extra data 
+
+## in R:
+
+library(vegan)
+
+envOnly <- read.csv('envOnly.csv', row.names='PsubP')
+subParcelComm <- read.csv('subParcelComm.csv', row.names='PsubP')
+
+all(row.names(envOnly) == row.names(subParcelComm))
+
+adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
+
+adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
+
+
+for (i in 1:ncol(envOnly)){
+    print(colnames(envOnly)[i])
+    print(adonis(subParcelComm ~ envOnly[,i]))
+}
+
+adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat
+adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
+adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
+adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
