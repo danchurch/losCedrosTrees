@@ -15997,7 +15997,802 @@ for (i in 1:ncol(envOnly)){
     print(adonis(subParcelComm ~ envOnly[,i]))
 }
 
-adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat
-adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
-adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
-adonis(subParcelComm ~ envOnly$elevacion*envOnly$habitat)
+###### model for watershed turnover #####
+
+## we never built a bayesian model specifically for 
+## turnover. How hard would this be?
+
+import numpy as np 
+import matplotlib.pyplot as plt; plt.ion()
+import pandas as pd
+import geopandas as gpd
+import pymc3 as pm
+import scipy.spatial as sp
+import scipy.stats as stats
+import theano.tensor as tt
+#from theano import shared
+import scipy.stats as stats
+import arviz as az
+from sklearn.linear_model import LinearRegression
+from scipy import stats
+
+
+## first question to answer would be, can we recreate the diagram, no problems?:
+
+psubpHopsDF= pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+psubpHopsNP = np.array(psubpHopsDF)
+psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
+## make the model from these two dist matrices
+## I guess we can just make a model from these:
+X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
+
+fig, ax = plt.subplots()
+ax.scatter(psubpHopsTriU, bcDist)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k')
+ax.set_title('Overall Microcuenca Turnover')
+
+## right, that's the shitty plot. The better one:
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+aa = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ]
+fig, ax = plt.subplots(figsize=(10,10))
+## that works...add points?
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.03,))
+            .apply( lambda x: x+1)
+            )
+ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+ax.violinplot(aa, showmeans=True)
+_=ax.set_xticklabels(['',0,1,2,3,4])
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
+[ np.mean(i) for i in aa ]
+
+## works. Can we modify our other model to use watershed hops
+## instead of absolute distance between comparisons?
+
+## original ##
+xx = physDist.copy()
+with pm.Model() as model_gamma:
+    γ = pm.Normal('γ', mu=1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.005) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=200, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, -γ + δ*xx))
+    y_pred = pm.Gamma('y_pred', mu=μ, sd=ε, observed=bcDist)
+    trace_g = pm.sample(init='adapt_diag')
+
+## we need to change the x-variable, 
+## and re-scale the variance, etc, to 
+
+## our x is watershed hops, XS or x
+## our y is BC dist
+
+plt.scatter (XS,YS)
+
+## toy plot to visualize priors:
+
+plt.close('all')
+fig, ax = plt.subplots()
+n=200
+kappa=0.3
+mu = xx/(xx+kappa)
+xx = np.linspace(0,4,n)
+mu = pd.Series(xx/(xx+kappa))
+## after doing a little arithmatic, let's try 
+gamma = pd.Series(np.random.normal(loc=-1.6, scale=0.1, size=n))
+## delta is hard, and the crux of what needs to change here.
+delta = pd.Series(np.random.normal(loc=-0.2, scale=0.05, size=n))
+ee = np.power(np.e, gamma + delta*xx)
+error = ee.apply(lambda x:  np.random.normal(loc=0, scale=x))
+ax.scatter(xx,mu+error)
+ax.plot(xx,mu)
+## something like that.
+## use these for priors, try model  
+
+xx = psubpHopsTriU
+with pm.Model() as model_watershed:
+    γ = pm.Normal('γ', mu=-1.6, sigma=0.1) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.2, sigma=0.05) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=0.3, sigma=0.1) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
+    trace_g = pm.sample(init='adapt_diag')
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+plt.scatter(XS,YS)
+
+az.plot_trace(trace_g, var_names = ['γ','δ','κ'])
+
+aa = pd.DataFrame({ "μ_m": trace_g['μ'].mean(0),
+                    "ε_m": trace_g['ε'].mean(0),
+                    "sheds": psubpHopsTriU,
+                    "bcDist": bcDist})
+model_Sort = aa.sort_values(by=['sheds'])
+
+ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_watershed)
+
+fig, ax = plt.subplots(figsize=(8,8))
+
+ax.scatter(model_Sort.sheds, model_Sort.bcDist, c='b', s=5)
+
+model_Sort.sheds
+
+ax.plot(model_Sort.sheds, 
+        model_Sort.μ_m, 
+        c='r', 
+        linestyle= "solid", 
+        linewidth=4)
+
+## this doesn't work, probably because of the binning of data ###
+az.plot_hpd(psubpHopsTriU, ppc['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+az.plot_hpd(psubpHopsTriU, ppc['y_pred'],  color='orange', ax=ax)
+#################################################################
+
+X, Y = model_Sort.sheds.to_numpy().reshape(-1,1), bcDist.reshape(-1,1)
+
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k', linewidth=4, linestyle= "dotted")
+
+## check the fit
+ppc = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_watershed)
+az.r2_score(bcDist, ppc['y_pred'])
+## it's good, r2=.68
+
+## how can we visualize this? 
+
+ppc['y_pred'].shape
+
+fig, ax = plt.subplots()
+ax.scatter(model_Sort.sheds, model_Sort.bcDist, c='b', s=5)
+
+## replot above nice violin plot, then...
+ppc['y_pred'].mean(axis=0).shape
+plt.scatter(xx+1,ppc['y_pred'].mean(axis=0))
+## what about plotting the function itself, using posteriors
+
+model_Sort
+
+## the model performs well, but poorly in the first watershed
+## so, what do we need to visualize this?
+## also do we need to fix this? 
+
+## maybe relax the mean and allow a simple linear model, 
+
+plt.close('all')
+fig, ax = plt.subplots()
+n=200
+kappa=0.3
+xx = np.linspace(0,4,n)
+m = 1/50
+b = 0.8
+mu = m*xx + b
+ax.scatter(xx, mu)
+ax.set_ylim(0,1.5)
+
+
+## we want a constricting variance. Maybe let's try the 
+## assymetric normal:
+
+alpha=-2
+γ = 0.2
+δ = -0.04
+α = 0.8
+β = 0.02
+mu = β*xx + α
+ε = γ + δ*xx
+error = stats.skewnorm.rvs([alpha], loc=0, scale=ε)
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(xx, mu+error)
+ax.plot(xx, mu)
+
+## looks reasonable. Build a model?
+
+xx = psubpHopsTriU 
+with pm.Model() as model_skewNormal:
+    γ = pm.Normal('γ', mu=0.2, sigma=0.1) ## initial spread of variance 
+    δ = pm.Normal('δ', mu=-0.04, sigma=0.01) ## slope, = rate of tightening of variance
+    α = pm.Normal('α', mu=0.8, sigma=0.2) ## intercept of mu, higher than 0.8 because skewNormal
+    β = pm.Normal('β', mu=0.02, sigma = 0.01) ## slope of mu
+    a = pm.Normal('a', mu=-2.0, sigma = 0.5) ## skewness parameter
+    μ = pm.Deterministic('μ', β*xx + α)
+    ε = pm.Deterministic('ε', γ + δ*xx)
+    y_pred = pm.SkewNormal('y_pred', mu=μ, sd=ε, alpha=a, observed=bcDist)
+    trace_sn = pm.sample(init='adapt_diag')
+
+
+## how does that look?
+
+aa = pd.DataFrame({ "μ_m": trace_sn['μ'].mean(0),
+                    "ε_m": trace_sn['ε'].mean(0),
+                    "sheds": psubpHopsTriU,
+                    "bcDist": bcDist})
+model_Sort = aa.sort_values(by=['sheds'])
+
+trace_sn['δ'].mean()
+
+fig, ax = plt.subplots()
+ax.scatter(model_Sort.sheds, model_Sort.bcDist, c='b', s=5)
+ax.scatter(model_Sort.sheds, model_Sort.μ_m, c='r', s=5)
+
+ax.plot(model_Sort.sheds, 
+        model_Sort.μ_m, 
+        c='r', 
+        linestyle= "solid", 
+        linewidth=4)
+
+az.plot_hpd(psubpHopsTriU, ppc['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+
+az.plot_hpd(psubpHopsTriU, ppc['y_pred'],  color='orange', ax=ax)
+
+ppc_lin = pm.sample_posterior_predictive(trace_g, samples=2000, model=model_watershed)
+az.r2_score(bcDist, ppc_lin['y_pred'])
+
+## ? won't plot. sleep.
+## so what do we need here? 
+ 
+## I think what is missing is the violin-style plot, as done with the raw data.
+## my confusion is how to visualize the variation. 
+## should be governed by our posterior ε:
+
+dir(trace_sn)
+
+trace_sn.varnames
+
+## we included ε in our sorted data frame, just for this reason.
+## sometimes I am smarter than I think. Or luckier. Probably just luckier.
+
+model_Sort.head()
+
+model_Sort.tail()
+
+model_Sort.ε_m
+
+model_Sort
+
+aa = model_Sort.groupby(by='sheds')
+## that worked, right?
+(aa.get_group(0).sheds == 0).all()
+(aa.get_group(1).sheds == 1).all()
+## yep
+## as far as μ and ε, are these the same?
+aa.agg('min') 
+aa.agg('max')
+## indeed...
+
+## okay, but this gives a single
+## error term that won't reflect the 
+## assymetric dist (the skew) that we've
+## intentionally introduced...
+
+## really we need the HPDs for each of these
+## spots...but the plot_hpd doesn't seem 
+## geared for this, fails above
+
+## backing up, we should be able to plot the
+## modeled posterior distribution using the 
+## scipy.stats dist functions themselves:
+
+## so for sheds=1, our skewNorm dist should look like:  
+
+aa = model_Sort.groupby(by='sheds')
+skewNormPostSummary = aa.agg('mean') 
+
+skewNormPostSummary
+
+skewNormPostSummary
+
+
+model_Sort.head()
+
+model_Sort
+
+help(stats.skewnorm)
+
+stats.skewnorm.rvs([alpha], loc=0, scale=ε)
+
+alpha=-1
+loc=0.9
+scale=0.1
+
+## computing the mean for a skew is a bit complication, it's not μ.
+## see here for the actual mean: https://docs.pymc.io/api/distributions/continuous.html#pymc3.distributions.continuous.SkewNormal
+
+## I think we can brute force it, right? Generate a bunch of values 
+## that represent our dist:
+
+## our "x" is really our y, and it runs from 0 to ~1.5:
+x = np.linspace(0,1.5,200)
+alpha=-5
+loc=0.9
+scale=0.1
+pdf = stats.skewnorm.pdf(x, [alpha], loc=loc, scale=scale)
+plt.close('all')
+fig, ax = plt.subplots()
+ax.plot(x, pdf, label=r'$\mu$ = {}, $\sigma$ = {}, $\alpha$ = {}'.format(loc, scale, alpha))
+ax.vlines(loc, ymin=0, ymax=8, color='r', linestyles='solid')
+ax.vlines(skewnorm.mean(alpha, loc=loc, scale=scale), 
+        ymin=0, ymax=8, color='k', linestyles='dashed')
+
+
+aa = np.round(pdf, 2)
+bb = aa[aa > 0]
+stats.mode(bb)
+
+
+## same with the binned mode. That long tail makes a difference, I guess. 
+
+## can we calculate the mean analytically, does it agree with our empirical version?
+
+## our mean is supposed to be:
+
+## μ + ε*(2/np.pi)**(1/2)*α/(1+α**2)
+
+## so in the case of sheds = 0:
+
+skewNormPostSummary
+mu = skewNormPostSummary.loc[0]['μ_m'].copy()
+ee = skewNormPostSummary.loc[0]['ε_m'].copy()
+alpha = trace_sn['a'].mean()  
+skme0 = mu + ee * (2/np.pi)**(1/2) * alpha/((1+alpha**2)**(1/2))
+
+print(skme0) ## 0.8497. 
+## That seems more reasonable, fits the observed data. but not the calculated mean...
+pdf.mean() ## 0.663333
+## maybe this has something to do numerous zeros, rounding errors, etc
+## just found a way to calculate moments in the scipy stats package:
+skewnorm.stats([alpha], loc=mu, scale=ee, moments='m') ## yup, 0.8497
+## awesome. 
+## this also works:
+skewnorm.mean(alpha, loc=mu, scale=ee)
+
+## add this to our summary dataframe:
+
+aa = model_Sort.groupby(by='sheds')
+skewNormPostSummary = aa.agg('mean') 
+skewNormPostSummary['postMean'] = pd.Series(skewnorm.mean(alpha, 
+                                    loc=skewNormPostSummary['μ_m'], 
+                                    scale=skewNormPostSummary['ε_m']))
+
+skewNormPostSummary['μ_m']
+skewNormPostSummary['ε_m']
+
+skewNormPostSummary
+
+## okay, what else can we do out of the box?
+## we need a hpdi of some kind...this should
+## be simple using the ppf or cdf functions
+
+stats.skewnorm.cdf(1.0,[alpha], loc=mu, scale=ee)
+
+stats.skewnorm.ppf(.05,[alpha], loc=mu, scale=ee)
+
+stats.skewnorm.ppf(.95,[alpha], loc=mu, scale=ee)
+stats.skewnorm.ppf(.99,[alpha], loc=mu, scale=ee)
+
+## actually, not really, of course. 
+
+## can we make a ton of points, then run the scipy.stats.bayes_mvs
+## function on it?
+
+aa = stats.skewnorm.rvs([alpha], loc=mu, scale=ee, size=4000)
+
+stats.bayes_mvs(aa, alpha=0.9)
+## nah. It is just trying to estimate the particular moments, so the mean
+## but maybe we can feed this to az? 
+
+## this works:
+az.plot_posterior({'zoop':stats.skewnorm.rvs([alpha], loc=mu, scale=ee, size=4000)})
+## but can I get the values themselves?
+
+## 95%
+pm.stats.hpd(ary=stats.skewnorm.rvs([alpha], loc=mu, scale=ee, size=4000),
+                credible_interval=0.95)
+
+## how can we use this to make a series for our dataframe?
+alpha = trace_sn['a'].mean()  
+
+skewNormPostSummary['hpd95'] = skewNormPostSummary.apply(lambda x: 
+                pm.stats.hpd(ary=stats.skewnorm.rvs([alpha], 
+                                                    loc=x['μ_m'], 
+                                                    scale=x['ε_m'], 
+                                                    size=4000),
+                                                    credible_interval=0.95),
+                        axis=1)
+
+## check with ax
+
+loc=0.981405
+scale=0.135400
+size=4000
+plt.close('all')
+aa = stats.skewnorm.rvs([alpha], 
+                       loc=loc, 
+                       scale=scale, 
+                       size=size)
+pm.stats.hpd(aa, credible_interval=0.94)
+az.plot_posterior({'':aa},credible_interval=0.95)
+
+## the credible intervals never quite agree between pm and arviviz...
+## even using exactly the same sample... ?
+
+## close enough. now what?
+
+
+skewNormPostSummary
+
+n=0
+aa = az.plot_posterior({f'{n}':stats.skewnorm.rvs([alpha], 
+                                loc=skewNormPostSummary['μ_m'][n], 
+                                scale=skewNormPostSummary['ε_m'][n], 
+                                size=4000)}, alpha=0.95)
+skewNormPostSummary
+
+## the hpd given by the ax.plot_posterior are different. Why? if we do this
+## individually, still happens?
+
+pm.stats.hpd(ary=stats.skewnorm.rvs([alpha], 
+                                    loc=x['μ_m'], 
+                                    scale=x['ε_m'], 
+                                    size=4000),
+                                    credible_interval=0.95))
+
+
+## 50%
+pm.stats.hpd(ary=stats.skewnorm.rvs([alpha], loc=mu, scale=ee, size=4000),
+                credible_interval=0.50)
+
+
+## I think that's what we needed. add these to the summary dataframe?
+
+alpha = trace_sn['a'].mean()  
+aa = model_Sort.groupby(by='sheds')
+skewNormPostSummary = aa.agg('mean') 
+skewNormPostSummary['postMean'] = pd.Series(skewnorm.mean(alpha, 
+                                    loc=skewNormPostSummary['μ_m'], 
+                                    scale=skewNormPostSummary['ε_m']))
+skewNormPostSummary.columns = ['μ_m', 'ε_m', 'meanBCobserved', 'postMean']
+skewNormPostSummary['hpd95'] = skewNormPostSummary.apply(lambda x: 
+                pm.stats.hpd(ary=stats.skewnorm.rvs([alpha], 
+                                                    loc=x['μ_m'], 
+                                                    scale=x['ε_m'], 
+                                                    size=4000),
+                                                    credible_interval=0.95),
+                        axis=1)
+skewNormPostSummary['hpd50'] = skewNormPostSummary.apply(lambda x: 
+                pm.stats.hpd(ary=stats.skewnorm.rvs([alpha], 
+                                                    loc=x['μ_m'], 
+                                                    scale=x['ε_m'], 
+                                                    size=4000),
+                                                    credible_interval=0.50),
+                        axis=1)
+
+
+skewNormPostSummary
+
+## how can we visualize this?
+
+## the new plan is to do a violin of samples from the skew normal distribution 
+## at each watershed hop 
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.03,))
+            .apply( lambda x: x+1)
+            )
+
+bb = skewNormPostSummary.apply(lambda x: 
+                    stats.skewnorm.rvs([alpha], 
+                        loc=x['μ_m'], 
+                        scale=x['ε_m'], 
+                        size=40000).tolist(),
+                    axis=1).to_list()
+plt.close('all')
+fig, ax = plt.subplots()
+ax.violinplot(bb, showmeans=True, showextrema=False, label='zoop')
+ax.scatter(XSjitted, YS, alpha=0.1, color='red')
+ax.set_ylim(0,1.2)
+_=ax.set_xticklabels(['',0,1,2,3,4])
+## that works...add points?
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
+
+## huh, our model doesn't actually predict much of a constriction 
+
+## what if we repeat all that without constricting variance?:
+## in variation with distance. But it does explain a lot of 
+## variance.
+## Is it any better than a horizontal line?
+
+## dunno. But how about a simpler model without constricting variance:
+
+xx = psubpHopsTriU 
+with pm.Model() as model_skewNormalNC:
+    α = pm.Normal('α', mu=0.8, sigma=0.2) ## intercept of mu,
+    β = pm.Normal('β', mu=0.02, sigma = 0.01) ## slope of mu
+    a = pm.Normal('a', mu=-2.0, sigma = 0.5) ## skewness parameter
+    μ = pm.Deterministic('μ', β*xx + α)
+    ε = pm.Normal('ε', mu=0.1, sd=0.05)
+    y_pred = pm.SkewNormal('y_pred', mu=μ, sd=ε, alpha=a, observed=bcDist)
+    trace_notConstrict = pm.sample(init='adapt_diag')
+
+az.plot_trace(trace_notConstrict, ['α', 'β'])
+az.plot_trace(trace_notConstrict, ['α', 'β'])
+
+az.plot_posterior(trace_notConstrict)
+
+aa = pd.DataFrame({ "μ_m": trace_notConstrict['μ'].mean(0),
+                    "ε_m": trace_notConstrict['ε'].mean(0),
+                    "sheds": psubpHopsTriU,
+                    "bcDist": bcDist})
+model_SortNC = aa.sort_values(by=['sheds'])
+aa = model_SortNC.groupby(by='sheds')
+skewNormNCPostSummary = aa.agg('mean') 
+skewNormNCPostSummary['postMean'] = pd.Series(skewnorm.mean(alpha, 
+                                    loc=skewNormNCPostSummary['μ_m'], 
+                                    scale=skewNormNCPostSummary['ε_m']))
+skewNormNCPostSummary['μ_m']
+skewNormNCPostSummary['ε_m']
+
+
+ppc_NC = pm.sample_posterior_predictive(trace_notConstrict, samples=2000, model=model_skewNormalNC)
+az.r2_score(bcDist, ppc_NC['y_pred']) 
+## r2=.01 shite
+
+ppc_skew = pm.sample_posterior_predictive(trace_sn, samples=2000, model=model_skewNormal)
+az.r2_score(bcDist, ppc_skew['y_pred'])
+## r2=.02 also shite
+
+ppc_skew['y_pred']
+
+plt.scatter(psubpHopsTriU, bcDist)
+
+## okay, unless we made a major mistake, there isn't a model here 
+## to be built.
+## it is possible that we made a major mistake, but can't find it
+
+## the figure is still cool, and basically shows that every 
+## watershed is really different. leave it at that. 
+
+## what we might check while our heads are in this is whether 
+## simple linear model might be a better fit than an assymptote,
+## for our original physical distance (not watershed) comparisons:
+
+specObs = pd.read_csv('specObs.csv', index_col='PsubP').sort_index()
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP').sort_index()
+subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
+pts = (gpd.read_file('GIS/ana30meterPlots.geojson')
+        .set_index('PsubP')
+        .sort_index()
+      )
+d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
+physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+
+lw=5
+fig, ax = plt.subplots(figsize=(10,10))
+ax.scatter(physDist, bcDist, s=100, alpha=0.3)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k', linewidth=lw)
+ax.set_title('Overall Turnover')
+## any lines from our function work well here?
+x = pd.Series(np.linspace(0,3700,500))
+y1 = x.apply(lambda x: x/(200+x))
+ax.plot(x,y1, color='red', linewidth=lw)
+
+## so to use a linear model with decreasing variance?
+## skewed normal for the variance...
+
+xx = physDist.copy()
+with pm.Model() as model_skewNormal:
+    a = pm.Normal('a', mu=-2.0, sigma = 0.5) ## skewness parameter
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.005) ## slope, rate of tightening of variance
+    α = pm.Normal('α', mu=0.9, sigma=0.2) ## intercept of mu,
+    β = pm.Normal('β', mu=0.0001, sigma = 0.00001) ## slope of mu
+    μ = pm.Deterministic('μ', α + β*xx )
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.SkewNormal('y_pred', mu=μ, sd=ε, alpha=a, observed=bcDist)
+    trace_sn = pm.sample(init='adapt_diag')
+
+ppc_skew['y_pred'].mean(axis=0).shape
+
+aa = ppc_skew['y_pred'].mean(axis=0)
+ax.plot(xx,aa, 'k')
+
+
+
+model_skewNormal
+
+alpha = trace_sn['a'].mean()
+aa = pd.DataFrame({ "μ_m": trace_sn['μ'].mean(0),
+                    "ε_m": trace_sn['ε'].mean(0),
+                    "physDist": physDist,
+                    "bcDist": bcDist})
+model_skewSort = aa.sort_values(by=['physDist'])
+## to get our means:
+
+getSkewMean(mu,ee,a)
+
+def getSkewMean(mu,ee,alpha):
+    mean = mu + ee * (2/np.pi)**(1/2) * alpha/((1+alpha**2)**(1/2))
+    return(mean)
+model_skewSort['skewMean'] = model_skewSort.apply(lambda x: getSkewMean(mu=x['μ_m'].item(), 
+                                           ee=x['ε_m'].item(), 
+                                           alpha=trace_sn['a'].mean()),
+                        axis=1)
+
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.scatter(model_skewSort.physDist,model_skewSort.bcDist, c='b', s=5)
+ax.plot(model_skewSort.physDist, 
+        model_skewSort.skewMean, 
+        c='r', 
+        linestyle= "solid", 
+        linewidth=4)
+az.plot_hpd(physDist, ppc['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+az.plot_hpd(physDist, ppc['y_pred'],  color='orange', ax=ax)
+
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k', linewidth=4, linestyle= "dotted")
+
+## okay, that worked pretty well. Let's update notebook, and stop futzing with models?
+
+ppc_skew = pm.sample_posterior_predictive(trace_sn, samples=2000, model=model_skewNormal)
+az.r2_score(bcDist, ppc_skew['y_pred'])
+
+## 0.06?? The fit looks great. What's the issue? 
+
+## or not. Jeezus, I read that wrong. R2 is .06. I think something is wrong. We need another
+## way to compare...p-values?
+
+## we have the same dataset, physdist as our x, BCdist as our y. 
+
+## So the plan (1) bring up old asymptote model, make sure R2 works
+## if not, there is a code error somewhere...
+
+## (2) let's compute some pvalues? What do we use?
+
+## for both we need the old asymptote, brought back to life:
+
+## asymptote:
+
+xx = physDist.copy()
+with pm.Model() as model_asymp:
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.005) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=200, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
+    trace_asymp = pm.sample(init='adapt_diag')
+ 
+
+az.plot_trace(trace_asymp, var_names = ['γ','δ','κ'])
+trace_asymp['γ'].mean()
+trace_asymp['δ'].mean()
+trace_asymp['κ'].mean()
+
+aa = pd.DataFrame({ "μ_m": trace_asymp['μ'].mean(0),
+                    "ε_m": trace_asymp['ε'].mean(0),
+                    "physDist": physDist,
+                    "bcDist": bcDist})
+asympSum = aa.sort_values(by=['physDist'])
+
+asymp_pp = pm.sample_posterior_predictive(trace_asymp, samples=2000, model=model_asymp)
+
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(asympSum.physDist, asympSum.bcDist, c='b', s=5)
+ax.plot(asympSum.physDist, 
+        asympSum.μ_m, 
+        c='r', 
+        linestyle= "solid", 
+        linewidth=4)
+az.plot_hpd(physDist, asymp_pp['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+az.plot_hpd(physDist, asymp_pp['y_pred'],  color='orange', ax=ax)
+X, Y = physDist.reshape(-1,1), bcDist.reshape(-1,1)
+ax.plot( X, LinearRegression().fit(X, Y).predict(X), c='k', linewidth=4, linestyle= "dotted")
+
+az.r2_score(bcDist, asymp_pp['y_pred'])
+## yeah, same. R2=.53
+
+## linear:
+xx = physDist.copy()
+with pm.Model() as model_linSkew:
+    a = pm.Normal('a', mu=-2.0, sigma = 0.5) ## skewness parameter
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.005) ## slope, rate of tightening of variance
+    α = pm.Normal('α', mu=0.9, sigma=0.2) ## intercept of mu,
+    β = pm.Normal('β', mu=0.0001, sigma = 0.00001) ## slope of mu
+    μ = pm.Deterministic('μ', α + β*xx )
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.SkewNormal('y_pred', mu=μ, sd=ε, alpha=a, observed=bcDist)
+    trace_linSkew = pm.sample(init='adapt_diag')
+
+linSkew_pp = pm.sample_posterior_predictive(trace_linSkew, samples=2000, model=model_linSkew)
+az.r2_score(bcDist, linSkew_pp['y_pred'])
+
+## gotta sort it by X for nice plotting
+aa = pd.DataFrame({ "μ_m": trace_linSkew['μ'].mean(0),
+                    "ε_m": trace_linSkew['ε'].mean(0),
+                    "physDist": physDist,
+                    "bcDist": bcDist})
+linSkewSum = aa.sort_values(by=['physDist'])
+## mu isn't our mean anymore, with the skew
+## to get the mean:
+
+def getSkewMean(mu,ee,alpha):
+    mean = mu + ee * (2/np.pi)**(1/2) * alpha/((1+alpha**2)**(1/2))
+    return(mean)
+
+linSkewSum['skewMean'] = linSkewSum.apply(lambda x: getSkewMean(mu=x['μ_m'].item(), 
+                                           ee=x['ε_m'].item(), 
+                                           alpha=trace_linSkew['a'].mean()),
+                        axis=1)
+
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(linSkewSum.physDist, linSkewSum.bcDist, c='b', s=5)
+az.plot_hpd(physDist, linSkew_pp['y_pred'], credible_interval=0.5, color='orange', ax=ax)
+az.plot_hpd(physDist, linSkew_pp['y_pred'],  color='orange', ax=ax)
+#ax.plot(physDist, linSkew_pp['y_pred'].mean(axis=0), 'ok') ## messy
+## use the analytical mean instead:
+ax.plot(linSkewSum['physDist'], linSkewSum['skewMean'], 'k')
+
+## ok, so now how do we get some pvalues?
+
+## seems like we want the distance between the oberved pt and 
+## the predicted from each model...
+
+## our predicted values from the asymp model are here:
+
+asympPredMean = asymp_pp['y_pred'].mean(axis=0)
+linPredMean = linSkew_pp['y_pred'].mean(axis=0)
+
+## how far, on average, are these predictions from the observed?
+
+## plot the dists of the difference:
+aa = asympPredMean - bcDist
+bb = linPredMean - bcDist
+plt.close('all')
+
+fig, ax = plt.subplots()
+az.plot_kde(aa, plot_kwargs={'color':'b'}, label='asymptote model', ax=ax)
+az.plot_kde(bb, plot_kwargs={'color':'r'}, label='linear model', ax=ax)
+ax.vlines(0,0,5.5,linestyles='dashed', color='k', label='Observed value')
+
+plt.close('all')
+
+fig, ax = plt.subplots()
+az.plot_kde(asympPredMean, plot_kwargs={'color':'b'}, label='asymptote model', ax=ax)
+ax.vlines(bcDist.mean(),0,10,linestyles='dashed', color='k', label='Observed value')
+fig, ax = plt.subplots()
+az.plot_kde(linPredMean, plot_kwargs={'color':'r'}, label='linear model', ax=ax)
+ax.vlines(bcDist.mean(),0,16,linestyles='dashed', color='k', label='Observed value')
+ax.vlines(0,0,5.5,linestyles='dashed', color='k', label='Observed value')
+  
+## that looks good, but how do we convert to a pvalue? 
+## we want to compute the probability that a model yields
+## a more extreme (higher) value than the observed:
+
+sum(asympPredMean > bcDist) / len(bcDist)  ## p=0.49
+sum(linPredMean > bcDist) / len(bcDist) ## p=0.4109
+
+
+## okay, well, stick with an asymptote model? 
+## any other good checks we can do? 
+
+## could try bayes factors...
+## meh, really need to write this damn paper. 
+## nobody cares about this model comparison. Just 
+## write. 
+
+## update notebook, sleep.
+
