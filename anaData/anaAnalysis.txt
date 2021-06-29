@@ -16796,3 +16796,39 @@ sum(linPredMean > bcDist) / len(bcDist) ## p=0.4109
 
 ## update notebook, sleep.
 
+############### fix accumulation curves ############
+
+import numpy as np
+import pandas as pd
+
+## somewhere I think I made an error in my arithmatic.
+## above I say the subplot size is 0.09 ha. I'm not 
+## sure where I got that. It looks like each plot had 
+## a 30m diameter. I think I misunderstood the shape
+## of the plot, and assumed this meant a 30x30=900m2 plot. 
+## Which is 900/100000
+
+900/10000 #= 0.09 
+
+## so that's where that number came from, I guess. 
+
+## really, it is a circle, so:
+
+np.pi * (30/2)**2 #706.86 m2. 
+
+np.pi * (30/2)**2 / 10000 ## 0.0707 ha
+
+## so we're a bit off on our calculations. Can these be fixed in the notebook?
+pi * (30/2)^2 / 10000 ## 0.0707 ha
+
+## if we want a 5 ha primary tick mark:
+
+## 5 ha = how many subplots:
+
+pArea = np.pi * (30/2)**2 / 10000
+
+5 / pArea ## 70.74
+
+## 7
+
+## notebook corrected. 
