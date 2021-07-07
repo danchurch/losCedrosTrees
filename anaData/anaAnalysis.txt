@@ -16015,7 +16015,7 @@ import scipy.stats as stats
 import arviz as az
 from sklearn.linear_model import LinearRegression
 from scipy import stats
-
+from scipy.stats import norm
 
 ## first question to answer would be, can we recreate the diagram, no problems?:
 
@@ -16832,3 +16832,63 @@ pArea = np.pi * (30/2)**2 / 10000
 ## 7
 
 ## notebook corrected. 
+
+
+###### plot posteriors over priors ########
+
+## it is recommended by Hobbs and Hooten to plot 
+## the shift (if any) from prior distributions to 
+## posteriors. I think the main instance where 
+## we need this would be our Km from our 
+## asymptotic model, this is the most ecologically
+## relevant stat, with priors generated from the 
+## lit. 
+
+## so back up, rebuild the model:
+
+specObs = pd.read_csv('specObs.csv', index_col='PsubP').sort_index()
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP').sort_index()
+subParcelComm = pd.read_csv("subParcelComm.csv", index_col='PsubP')
+pts = (gpd.read_file('GIS/ana30meterPlots.geojson')
+        .set_index('PsubP')
+        .sort_index()
+      )
+d = {'X': pts.geometry.x, 'Y': pts.geometry.y}
+physDist = sp.distance.pdist(pd.DataFrame(data=d), metric='euclidean')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+
+xx = physDist.copy()
+with pm.Model() as model_asymp:
+    γ = pm.Normal('γ', mu=-1.5, sigma = 0.5) ## analagous to initial spread of variance (natural log of)
+    δ = pm.Normal('δ', mu=-0.0006, sigma=0.005) ## slope, rate of tightening of variance
+    κ = pm.Normal('κ', mu=200, sigma = 10) ## same old k
+    μ = pm.Deterministic('μ', xx/(xx+κ))
+    ε = pm.Deterministic('ε', np.power(np.e, γ + δ*xx))
+    y_pred = pm.Normal('y_pred', mu=μ, sd=ε, observed=bcDist)
+    trace_asymp = pm.sample(init='adapt_diag')
+
+az.plot_trace(trace_asymp, var_names = ['γ','δ','κ'])
+
+## works, great. Now to plot our posterior distribution of Km, 
+
+trace_asymp.varnames
+
+trace_asymp['κ'].shape
+
+plt.close('all')
+
+fig, ax = plt.subplots(figsize=(6,6))
+az.plot_kde(trace_asymp['κ'], plot_kwargs={'color':'b'}, label='asymptote model', ax=ax) 
+## and  to show our prior on there:
+
+kapPrior = norm(loc = 200, scale = 10) ## norm from scipy stats
+x = np.linspace(kapPrior.ppf(0.01),kapPrior.ppf(0.99), 100)
+ax.plot(x, kapPrior.pdf(x),
+       'r-', lw=2, alpha=0.6, label='norm pdf')
+ax.set_xlabel(f'Km distance (m)')
+ax.legend()
+
+##  can we get the standard dev of our posterior? 
+az.summary(trace_asymp, var_names=['κ', 'γ','δ'])
+
+
