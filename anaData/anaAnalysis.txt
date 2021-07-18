@@ -16891,4 +16891,94 @@ ax.legend()
 ##  can we get the standard dev of our posterior? 
 az.summary(trace_asymp, var_names=['κ', 'γ','δ'])
 
+####### figure out boundary decision for forests  ########
+
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+elevLUDF = pd.concat([landUseForesttypeDF, envOnly], axis=1)[['landUse','forestType','elevacion']]
+df = elevLUDF.query("forestType > 2")
+
+forestTypeColDict = {
+                      1:'k',
+                      2:'r',
+                      3:'g',
+                      4:'b',
+                    }
+
+colrs = df['forestType'].apply(lambda x: forestTypeColDict[x])
+
+y_0 = pd.Series(index=df.index, dtype=int)
+y_0[df['forestType'] == 3] = 1
+x_n = 'elevacion'
+x_0 = df[x_n].values
+x_c = x_0 - x_0.mean()
+
+with pm.Model() as model_0:
+    α = pm.Normal('α', mu=0, sd=10)
+    β = pm.Normal('β', mu=0, sd=10)
+    μ = α + pm.math.dot(x_c, β)
+    θ = pm.Deterministic('θ', pm.math.sigmoid(μ))
+    bd = pm.Deterministic('bd', -α/β)
+    yl = pm.Bernoulli('yl', p=θ, observed=y_0)
+    trace_0 = pm.sample(2000)
+
+theta = trace_0['θ'].mean(axis=0)
+idx = np.argsort(x_c)
+fig, ax = plt.subplots(figsize=(8,8))
+ax.plot(x_c[idx], theta[idx], color='k', lw=3, ls='--')
+ax.vlines(trace_0['bd'].mean(), 0, 1, color='k')
+bd_hpd = az.hpd(trace_0['bd'])
+ax.fill_betweenx([0, 1], bd_hpd[0], bd_hpd[1], color='k', alpha=0.5)
+ax.scatter(x_c, np.random.normal(y_0, 0.02),
+            marker='.', s= 200, color=colrs)
+
+az.plot_hpd(x_c, trace_0['θ'], color='y')
+ax.set_xlabel(x_n)
+ax.set_ylabel('θ', rotation=0)
+# use original scale for xticks
+locs, _ = plt.xticks()
+plt.xticks(locs, np.round(locs + x_0.mean(), 1))
+
+ppc = pm.sample_posterior_predictive(trace_0, samples=3000, model=model_0)
+
+help(pm.sample_posterior_predictive)
+
+az.r2_score(y_0, ppc['yl'].mean(axis=0))
+
+
+aa = trace_0['bd'].mean() + x_0.mean()
+
+-49.762  20.871
+
+round((-49.762) + x_0.mean(), 1)
+
+round((-49.762) + x_0.mean())
+round((20.871) + x_0.mean())
+
+[ (az.hpd(trace_0['bd'], credible_interval=0.95)[i] + x_0.mean()) for i in [0,1] ] 
+
+az.hpd(trace_0['bd'])[0] + x_0.mean()
+
+az.hpd(trace_0['bd'])[1] + x_0.mean()
+
+az.hpd(trace_0['bd'])[1]
+
+az.hpd(trace_0['bd']) + x_0.mean()
+
+############# calculating MEM contributions to R2 ##########
+
+## MEM1
+0.02642861 / 0.19002882
+
+## MEM2 
+(0.05221215 - 0.02642861)
+(0.05221215 - 0.02642861) /  0.19002882
+
+
+############# resurrecting the juvenile combined ordinations #####
+
+## can we make a combined land-use/habitat and parent  clster results
+
+## think we did this above, but let's start again....
+
 
