@@ -16016,6 +16016,7 @@ import arviz as az
 from sklearn.linear_model import LinearRegression
 from scipy import stats
 from scipy.stats import norm
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 ## first question to answer would be, can we recreate the diagram, no problems?:
 
@@ -16974,11 +16975,160 @@ az.hpd(trace_0['bd']) + x_0.mean()
 (0.05221215 - 0.02642861)
 (0.05221215 - 0.02642861) /  0.19002882
 
+############# reforestation some extra calculations ########
 
-############# resurrecting the juvenile combined ordinations #####
+(87967.35 - 71738.55) / 87967.35 ## 0.18448663055099424
 
-## can we make a combined land-use/habitat and parent  clster results
+(5210.19 - 5094.72) / 5094.72 ## 0.02266464104013554 
 
-## think we did this above, but let's start again....
+(6919.65 - 6564.96) / 6919.65
+
+99.004610   93.929795
+
+
+############### mean bc from watershed crossings #############
+
+aa = [
+0.8803880579382168,
+0.8718442882110651,
+0.8910368558226932,
+0.881123053179186
+]
+
+np.mean(aa)
+
+np.std(aa)
+
+## need to recover our watershed groupings...
+
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+psubpHopsDF= pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+bcDist = sp.distance.pdist(subParcelComm, metric='brayCurtis')
+psubpHopsNP = np.array(psubpHopsDF)
+psubpHopsTriU = psubpHopsNP[np.triu_indices(psubpHopsNP.shape[0], k=1)]
+X, Y = psubpHopsTriU.reshape(-1,1), bcDist.reshape(-1,1)
+
+XS, YS = pd.Series(psubpHopsTriU), pd.Series(bcDist)
+grouped = [ YS[XS == i].to_list() for i in np.unique(psubpHopsTriU) ]
+fig, ax = plt.subplots(figsize=(10,10))
+## that works...add points?
+XSjitted = (XS
+            .apply(np.random.normal, args=(0.03,))
+            .apply( lambda x: x+1)
+            )
+ax.scatter(XSjitted, YS, alpha=0.15, color='red')
+ax.violinplot(grouped, showmeans=True)
+_=ax.set_xticklabels(['',0,1,2,3,4])
+ax.set_title('Overall Microcuenca Turnover')
+ax.set_ylabel('Bray-Curtis dissimilarity')
+ax.set_xlabel('distance in watershed hops')
+
+[ np.mean(i) for i in grouped ]
+
+## is there a way to distinguish among the various groups of 
+## comparisons? Can we just view the distributions?....
+
+help(stats.f_oneway)
+
+wat0, wat1, wat2, wat3, wat4 = grouped
+stats.f_oneway(wat0, wat1, wat2, wat3, wat4)
+
+## a tukey's test assume equal variance, I think, but we're not 
+## too far from that:
+tukey = pairwise_tukeyhsd(endog = YS, groups=XS, alpha=0.05)
+
+help(pairwise_tukeyhsd)
+
+print(tukey)
+
+## yeah, well, that is pretty much what I'd think, the only 
+## really clear message is that wat0 is different from all
+## the others.  
+
+## but I think we're violating some assumptions. Maybe a Kruskal 
+## test is what we're looking for?
+
+help(stats.kruskal)
+
+stats.kruskal(wat0, wat1, wat2, wat3, wat4)
+## still highly significant, basically same result anova
+
+## and if we want to do a bayesian style multi-comparison?
+## i think we would need to explore these distributions 
+## more. They look log-normal-ish...might be simple...
+
+## don't have the energy for this. If the editors ask for it,
+## will be happy to do it. 
+
+## for now, record the frequentist tests/model in the 
+## notebook, and mention briefly in the manuscript. 
+
+## report the mean, sd, sample size of all the groups. 
+
+pd.DataFrame({
+"meanBC": [ np.mean(i) for i in grouped ],
+"stdDevBC": [ np.std(i) for i in grouped ],
+"n": [ len(i) for i in grouped ]
+})
+
+
+## what is the combined average of all the groups besides
+## the wat0 group?
+
+zz = [1,2,3]
+yy, *xx = zz
+
+len(grouped[1:])
+
+
+ungrouped = sum(grouped[1:], [])
+np.mean(ungrouped)
+np.std(ungrouped)
+
+
+## how do we get std dev?
+
+
+lengthz
+
+
+sum(YS)/len(YS)
+
+
+############## figs tables ##########
+
+fig. 1A overall SAC
+fig. 1B 0.5 ha SAC
+fig. 1C by-habitat SAC
+fig. 2A asymptote bayes model (plus OLS)
+fig. 2B linear bayes model
+fig. 3(A,B?) hierarchical clustering, with plot name and type
+fig. 4 physical map
+fig. 5 height diagram 
+fig. 6 sig MEMs
+fig. 7A Juvenile communities by historical land-use
+fig. 7A Juvenile communities by ecological state
+fig. 8 land cover cotacachi 
+fig. 9 land cover Los Cedros
+fig. 10 land cover Chontal
+fig. 11 Schematic of equilibria
+
+supp. fig. 1 PPC comparison for asymptote vs. linear
+supp. fig. 2 Posterior shift for Km
+supp. fig. 3 predictions from land-use only model 
+supp. fig. 4 y-intercepts from land-use only model
+supp. fig. 5 logistic regresssion model
+supp. fig. 6 y-intercepts combined model
+supp. fig. 7 uncorrected juvenile NMS with outlier
+
+table 1 diversity estimators for surveys + half-hectare
+table 2 mean BC by watershed dataframe
+table 3 tukeys results from by-watershed groupings 
+table 4 indicator species analyses
+table 5 mem correlations
+
+supp. table 1 species lists (adult and juv, surveys + perm plot)
+supp. table 2 by-land-use species diversity estimators
+
 
 
