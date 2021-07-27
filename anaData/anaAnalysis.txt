@@ -17095,31 +17095,35 @@ lengthz
 sum(YS)/len(YS)
 
 
-############## figs tables ##########
+############## remake figs tables ##########
+
+## here's the list:
 
 fig. 1A overall SAC
 fig. 1B 0.5 ha SAC
 fig. 1C by-habitat SAC
 fig. 2A asymptote bayes model (plus OLS)
-fig. 2B linear bayes model
-fig. 3(A,B?) hierarchical clustering, with plot name and type
-fig. 4 physical map
-fig. 5 height diagram 
-fig. 6 sig MEMs
-fig. 7A Juvenile communities by historical land-use
-fig. 7A Juvenile communities by ecological state
-fig. 8 land cover cotacachi 
-fig. 9 land cover Los Cedros
-fig. 10 land cover Chontal
-fig. 11 Schematic of equilibria
+fig. 2B linear bayes model (plus OLS)
+fig. 3 hierarchical clustering with hab type
+fig. 4 NMS of clusters and eco types
+fig. 5 physical map
+fig. 6 height diagram 
+fig. 7 sig MEMs
+fig. 8A Juvenile communities by historical land-use
+fig. 8B Juvenile communities by ecological state
+fig. 9 land cover cotacachi 
+fig. 10 land cover Los Cedros
+fig. 11 land cover Chontal
+fig. 12 Schematic of equilibria
 
 supp. fig. 1 PPC comparison for asymptote vs. linear
 supp. fig. 2 Posterior shift for Km
-supp. fig. 3 predictions from land-use only model 
-supp. fig. 4 y-intercepts from land-use only model
-supp. fig. 5 logistic regresssion model
-supp. fig. 6 y-intercepts combined model
-supp. fig. 7 uncorrected juvenile NMS with outlier
+supp. fig. 3 Clusters NMS
+supp. fig. 4 predictions from land-use only model 
+supp. fig. 5 y-intercepts from land-use only model
+supp. fig. 6 logistic regresssion model
+supp. fig. 7 y-intercepts combined model
+supp. fig. 8 uncorrected juvenile NMS with outlier
 
 table 1 diversity estimators for surveys + half-hectare
 table 2 mean BC by watershed dataframe
@@ -17130,5 +17134,182 @@ table 5 mem correlations
 supp. table 1 species lists (adult and juv, surveys + perm plot)
 supp. table 2 by-land-use species diversity estimators
 
+## so go through these and make sure we have something 
+## pretty, accurate and useful for each
 
+## fig. 1A overall SAC
+## fig. 1B overall SAC
+## these are nice enough for the moment, except for the 
+## spanish labels. fix in notebook, export as svg.
+
+mu, sd = 3,4
+
+plt.rc('axes', titlesize=20)
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.set_title(f"μ = {mu:3.2f}")
+
+plt.rcParams.update(plt.rcParamsDefault)
+
+plt.rcParamsDefault
+#ax.set_title(f"μ = {mu:6.0f}")
+## fig. 1C by-habitat SAC
+## needs title
+
+## fig. 2A asymptote bayes model (plus OLS)
+## fig. 2B linear bayes model (plus OLS)
+## the legend for these need hand editing, because the alpha issue with the hpds
+## plus titles, matching axes, etc
+
+## fig. 3(A,B?) hierarchical clustering, with plot name and type
+
+## ugh, this is a mess. We need to revamp this figure creation:
+
+library(stats)
+library(vegan)
+
+sPC <- read.csv('subParcelComm.csv', row.names='PsubP')
+sPCBray <- vegdist(sPC)
+sPC.ward <- hclust(sPCBray, method='ward.D2')
+envOnly <- read.csv('envOnly.csv', row.names='PsubP')
+pts <- read.csv('pts.csv', row.names='PsubP')
+
+plot(sPC.ward)
+k=4
+clustGroups <- rect.hclust(sPC.ward, k=k, border=1:k)
+
+## get habitat type labels for tree
+
+envOnly[,'elevacion']
+
+## to recreat our cluster group membership:
+
+PsubP <- vector()
+gr <- vector()
+for (i in 1:k){
+    cmem.i <- as.numeric(attr(clustGroups[[i]], "names"))
+    PsubP <- c(PsubP, cmem.i)
+    gr <- c(gr, rep(i, length(cmem.i)))
+    }
+
+
+## ugh, so we need to make sure the beastly combo plotting works, 
+## or replace it. We can probably get rid of it and just show the 
+## plots of the dendrograms...
+
+lab <- vector(length = length(sPC.ward$labels))
+for (i in 1:length(sPC.ward$labels)){
+    ind <- which(row.names(envOnly)==sPC.ward$labels[i])
+    lab[i] <- as.character(envOnly$habitat[ind])
+}
+plot(sPC.ward, labels=lab)
+clustGroups <- rect.hclust(sPC.ward, k=k, border=1:k)
+
+## print those out as svgs, combine the labels in inksape:
+
+svg('graphics/clustPlotnumbers.svg', width=12)
+plot(sPC.ward)
+clustGroups <- rect.hclust(sPC.ward, k=k, border=1:k)
+dev.off() 
+
+svg('graphics/clustLanduse.svg', width=12)
+plot(sPC.ward, labels=lab)
+clustGroups <- rect.hclust(sPC.ward, k=k, border=1:k)
+dev.off() 
+
+## let's not spend too much time on this. Keep the ecological 
+## type figure the other can be 
+
+## fig. 4(A,B?) NMS of clusters and eco types
+## I think we need to move the cluster-only NMS to supp figs.
+## keep forest-type/habitat NMS
+
+## fig. 5 physical map
+
+anaPt = gpd.read_file('GIS/ana30meterPlots.geojson')
+## our cluster info is here:
+cGroup = pd.read_csv("cGroup.csv")
+## add this cluster info in
+anaPt = anaPt.merge(cGroup, on="PsubP")
+## make a vector for coloring the clustering results:
+cdik={
+1:"k",
+2:"r",
+3:"g",
+4:"b"
+}
+anaPt['clustCols'] = [ cdik[i] for i in anaPt.gr ]
+## where is our habitat data?:
+envOnly = pd.read_csv('envOnly.csv')
+anaPt = anaPt.merge(envOnly, on="PsubP")
+## set the habitat symbol
+msym_dik={
+'BC':'o',
+'BS':'p',
+'CLB':'s',
+'RCA':'^',
+'RG':'D',
+}
+anaPt['habSyms'] = [ msym_dik[i] for i in anaPt.habitat ]
+
+lcPoly = gpd.read_file('GIS/lcPoly.geojson')
+hydro = gpd.read_file('GIS/lcRiversStreams.geojson')
+dem = rasterio.open("GIS/anaPlotDEM.tif")
+paths = gpd.read_file('GIS/PathsLC.geojson')
+
+fig, ax = plt.subplots(figsize=(10,10))
+ax.ticklabel_format(useOffset=False, style='plain')
+for i in anaPt.habitat.unique():
+    anaPtI = anaPt[anaPt['habitat'] ==  i].reset_index()
+    anaPtI.plot(color=anaPtI.clustCols,
+                marker=anaPtI.habSyms[0],
+                ax=ax)
+
+hydro.plot(color='Blue', ax=ax)
+paths.plot(color='red', linestyle='--', ax=ax)
+lcPoly.boundary.plot(color='purple', linewidth=3, ax=ax)
+rasterio.plot.show(dem, ax=ax)
+fig, ax = plt.subplots(figsize=(10,10))
+
+ax.imshow(dem, cmap='Greys_r')
+
+
+## that didn't work, how can we get a color map?
+
+plt.close('all')
+fig, ax = plt.subplots(figsize=(10,10))
+image_hidden = ax.imshow(dem.read()[0])
+fig.colorbar(image_hidden, ax=ax)
+ax.ticklabel_format(useOffset=False, style='plain')
+rasterio.plot.show(dem, ax=ax)
+## that works, but screws up the coordinate system so 
+## that our geopandas won't plot over it.
+## we could fix that programatically, but I think 
+## it won't be elegant... let's just fix the resulting
+## png in gimp or inkscape. 
+
+## so to get the color bar: 
+fig, ax = plt.subplots(figsize=(10,10))
+image_hidden = ax.imshow(dem.read()[0])
+fig.colorbar(image_hidden, ax=ax)
+#plt.savefig('graphics/elevColorBar.svg')
+
+## and to get the map:
+plt.close('all')
+fig, ax = plt.subplots(figsize=(10,10))
+ax.ticklabel_format(useOffset=False, style='plain')
+hydro.plot(color='Blue', ax=ax)
+paths.plot(color='red', linestyle='--', ax=ax)
+lcPoly.boundary.plot(color='purple', linewidth=3, ax=ax)
+for i in anaPt.habitat.unique():
+    anaPtI = anaPt[anaPt['habitat'] ==  i].reset_index()
+    anaPtI.plot(color=anaPtI.clustCols,
+                marker=anaPtI.habSyms[0],
+                markersize=40,
+                ax=ax, zorder=2,
+                )
+rasterio.plot.show(dem, ax=ax, zorder=1)
+
+#plt.savefig('graphics/physMap.svg')
 
