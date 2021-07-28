@@ -16,7 +16,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="physMap_edited.2.svg">
+   sodipodi:docname="physMap_edited.svg">
   <defs
      id="defs2">
     <style
@@ -2261,7 +2261,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.72755824"
-     inkscape:cx="560.86354"
+     inkscape:cx="533.37433"
      inkscape:cy="597.29414"
      inkscape:document-units="mm"
      inkscape:current-layer="layer12"
@@ -3319,298 +3319,295 @@
        id="path785-3"
        transform="matrix(0.35277777,0,0,0.35277777,200.77186,29.296892)" />
     <g
-       id="g9306">
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="g8794"
+       transform="matrix(1.9644864,0,0,1.9644864,-311.88391,-135.48111)">
       <g
-         style="stroke-linecap:butt;stroke-linejoin:round"
-         transform="matrix(1.9644864,0,0,1.9644864,-311.88391,-123.29718)"
-         id="g8874">
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8794">
-          <g
-             transform="matrix(0.35277777,0,0,0.35277777,120.71427,32.727154)"
-             id="g1048-6"
-             clip-path="url(#pc62b98615b-9)"
-             style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1">
-            <use
-               id="use1046-0"
-               y="194.36449"
-               xlink:href="#C3_0_9b70a18810"
-               x="410.69586"
-               style="fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
-               width="100%"
-               height="100%" />
-          </g>
-          <text
-             id="text8609"
-             y="101.79285"
-             x="278.26309"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458302px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="101.79285"
-               x="278.26309"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607"
-               sodipodi:role="line">Bosque cerrado (BC)</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8788">
-          <g
-             transform="matrix(0.35277777,0,0,0.35277777,107.67718,-18.256511)"
-             id="g1000-6"
-             clip-path="url(#pc62b98615b-6)"
-             style="display:inline;fill:none;stroke:#000000;stroke-width:1.0006299;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
-            <use
-               id="use998-1"
-               y="321.10083"
-               xlink:href="#C2_0_d76d13c05e"
-               x="447.6514"
-               style="fill:none;stroke:#000000;stroke-width:1.0006299;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-               width="100%"
-               height="100%" />
-          </g>
-          <text
-             id="text8609-6"
-             y="95.882004"
-             x="279.79562"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="95.882004"
-               x="279.79562"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-5"
-               sodipodi:role="line">Bosque secundario (BS)</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8800">
-          <g
-             transform="matrix(0.35277777,0,0,0.35277777,105.60221,-3.8012343)"
-             id="g948-5"
-             clip-path="url(#pc62b98615b-3)"
-             style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1">
-            <use
-               id="use946-3"
-               y="315.99585"
-               xlink:href="#C1_0_981383cb78"
-               x="453.5332"
-               style="fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
-               width="100%"
-               height="100%" />
-          </g>
-          <text
-             id="text8609-6-8"
-             y="107.93916"
-             x="279.61765"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="107.93916"
-               x="279.61765"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-5-7"
-               sodipodi:role="line">Claro de Bosque (CLB)</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8806">
-          <use
-             id="use913-1"
-             y="308.00549"
-             xlink:href="#C0_0_a9b67973c1"
-             x="380.39902"
-             style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
-             width="100%"
-             height="100%"
-             transform="matrix(0.35277777,0,0,0.35277777,131.40232,5.3980257)" />
-          <text
-             id="text8609-6-8-9"
-             y="114.65366"
-             x="282.05597"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="114.65366"
-               x="282.05597"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-5-7-6"
-               sodipodi:role="line">Regeneración pastizal (RG)</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8811">
-          <path
-             transform="matrix(0.35277777,0,0,0.35277777,74.321034,5.1228677)"
-             id="path924-0"
-             style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round"
-             d="m 542.20425,323.70938 -3.16228,6.32456 h 6.32456 z"
-             clip-path="url(#pc62b98615b-2)"
-             inkscape:connector-curvature="0" />
-          <text
-             id="text8609-6-8-9-4"
-             y="121.42544"
-             x="283.45996"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="121.42544"
-               x="283.45996"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-5-7-6-1"
-               sodipodi:role="line">Regeneración cañaveral (RCA)</tspan></text>
-        </g>
+         transform="matrix(0.35277777,0,0,0.35277777,120.71427,32.727154)"
+         id="g1048-6"
+         clip-path="url(#pc62b98615b-9)"
+         style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1">
+        <use
+           id="use1046-0"
+           y="194.36449"
+           xlink:href="#C3_0_9b70a18810"
+           x="410.69586"
+           style="fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+           width="100%"
+           height="100%" />
       </g>
+      <text
+         id="text8609"
+         y="101.79285"
+         x="278.26309"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458302px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="101.79285"
+           x="278.26309"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607"
+           sodipodi:role="line">Bosque cerrado (BC)</tspan></text>
+    </g>
+    <g
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="g8788"
+       transform="matrix(1.9644864,0,0,1.9644864,-311.99096,-111.11325)">
       <g
-         style="stroke-linecap:butt;stroke-linejoin:round"
-         transform="matrix(1.9644864,0,0,1.9644864,-312.15762,-123.29718)"
-         id="g8849">
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8816">
-          <rect
-             y="127.03661"
-             x="263.98392"
-             height="1.4143028"
-             width="4.3071947"
-             id="rect5821-8-2-3-7"
-             style="display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-          <text
-             id="text8609-0"
-             y="128.19696"
+         transform="matrix(0.35277777,0,0,0.35277777,107.67718,-18.256511)"
+         id="g1000-6"
+         clip-path="url(#pc62b98615b-6)"
+         style="display:inline;fill:none;stroke:#000000;stroke-width:1.0006299;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+        <use
+           id="use998-1"
+           y="321.10083"
+           xlink:href="#C2_0_d76d13c05e"
+           x="447.6514"
+           style="fill:none;stroke:#000000;stroke-width:1.0006299;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           width="100%"
+           height="100%" />
+      </g>
+      <text
+         id="text8609-6"
+         y="95.882004"
+         x="279.79562"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="95.882004"
+           x="279.79562"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-5"
+           sodipodi:role="line">Bosque secundario (BS)</tspan></text>
+    </g>
+    <g
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="g8800"
+       transform="matrix(1.9644864,0,0,1.9644864,-311.88391,-123.29718)">
+      <g
+         transform="matrix(0.35277777,0,0,0.35277777,105.60221,-3.8012343)"
+         id="g948-5"
+         clip-path="url(#pc62b98615b-3)"
+         style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1">
+        <use
+           id="use946-3"
+           y="315.99585"
+           xlink:href="#C1_0_981383cb78"
+           x="453.5332"
+           style="fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+           width="100%"
+           height="100%" />
+      </g>
+      <text
+         id="text8609-6-8"
+         y="107.93916"
+         x="279.61765"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="107.93916"
+           x="279.61765"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-5-7"
+           sodipodi:role="line">Claro de Bosque (CLB)</tspan></text>
+    </g>
+    <g
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="g8806"
+       transform="matrix(1.9644864,0,0,1.9644864,-311.88391,-123.29718)">
+      <use
+         id="use913-1"
+         y="308.00549"
+         xlink:href="#C0_0_a9b67973c1"
+         x="380.39902"
+         style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+         width="100%"
+         height="100%"
+         transform="matrix(0.35277777,0,0,0.35277777,131.40232,5.3980257)" />
+      <text
+         id="text8609-6-8-9"
+         y="114.65366"
+         x="282.05597"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="114.65366"
+           x="282.05597"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-5-7-6"
+           sodipodi:role="line">Regeneración pastizal (RG)</tspan></text>
+    </g>
+    <g
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="g8811"
+       transform="matrix(1.9644864,0,0,1.9644864,-311.88391,-123.29718)">
+      <path
+         transform="matrix(0.35277777,0,0,0.35277777,74.321034,5.1228677)"
+         id="path924-0"
+         style="display:inline;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:round"
+         d="m 542.20425,323.70938 -3.16228,6.32456 h 6.32456 z"
+         clip-path="url(#pc62b98615b-2)"
+         inkscape:connector-curvature="0" />
+      <text
+         id="text8609-6-8-9-4"
+         y="121.42544"
+         x="283.45996"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="121.42544"
+           x="283.45996"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-5-7-6-1"
+           sodipodi:role="line">Regeneración cañaveral (RCA)</tspan></text>
+    </g>
+    <g
+       id="g8849"
+       transform="matrix(1.9644864,0,0,1.9644864,-312.15762,-123.29718)"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <g
+         id="g8816"
+         style="stroke-linecap:butt;stroke-linejoin:round">
+        <rect
+           style="display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect5821-8-2-3-7"
+           width="4.3071947"
+           height="1.4143028"
+           x="263.98392"
+           y="127.03661" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           x="276.31131"
+           y="128.19696"
+           id="text8609-0"><tspan
+             sodipodi:role="line"
+             id="tspan8607-4"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
              x="276.31131"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="128.19696"
-               x="276.31131"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-4"
-               sodipodi:role="line">Forest type I</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8821">
-          <rect
-             y="133.41702"
-             x="263.98392"
-             height="1.4143028"
-             width="4.3071947"
-             id="rect5821-8-2-3"
-             style="display:inline;opacity:0.91000001;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-          <text
-             id="text8609-0-8"
-             y="134.57738"
-             x="276.51337"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="134.57738"
-               x="276.51337"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-4-7"
-               sodipodi:role="line">Forest type II</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8826">
-          <rect
-             y="139.79747"
-             x="263.98392"
-             height="1.4143028"
-             width="4.3071947"
-             id="rect5821-8"
-             style="display:inline;opacity:0.91000001;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-          <text
-             id="text8609-0-0"
-             y="140.95782"
-             x="276.71542"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="140.95782"
-               x="276.71542"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-4-8"
-               sodipodi:role="line">Forest type III</tspan></text>
-        </g>
-        <g
-           style="stroke-linecap:butt;stroke-linejoin:round"
-           id="g8831">
-          <rect
-             y="146.17792"
-             x="263.98392"
-             height="1.4143028"
-             width="4.3071947"
-             id="rect5821-8-2"
-             style="display:inline;opacity:0.91000001;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-          <text
-             id="text8609-0-6"
-             y="147.33827"
-             x="277.0105"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-             xml:space="preserve"><tspan
-               y="147.33827"
-               x="277.0105"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-               id="tspan8607-4-2"
-               sodipodi:role="line">Forest type IV</tspan></text>
-        </g>
+             y="128.19696">Forest type I</tspan></text>
       </g>
       <g
-         style="stroke-linecap:butt;stroke-linejoin:round"
-         transform="matrix(1.9644864,0,0,1.9644864,-312.3094,-124.33672)"
-         id="g8888">
-        <path
-           inkscape:connector-curvature="0"
-           clip-path="url(#pc62b98615b-59)"
-           d="m 149.23888,235.51398 h 27.32346"
-           style="fill:none;stroke:#0000ff;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round"
-           id="path591-0"
-           transform="matrix(0.35277777,0,0,0.35277777,212.70485,74.186089)"
-           sodipodi:nodetypes="cc" />
-        <path
-           inkscape:connector-curvature="0"
-           clip-path="url(#pc62b98615b-30)"
-           d="m 211.88382,309.09686 h -2.86119 -6.84161 -20.68561"
-           style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:5.55, 2.4;stroke-dashoffset:0"
-           id="path812-7"
-           transform="matrix(0.35277777,0,0,0.35277777,200.78484,43.813741)"
-           sodipodi:nodetypes="cccc" />
-        <path
-           style="fill:none;stroke:#800080;stroke-width:1.05833328;stroke-linecap:butt;stroke-linejoin:round"
-           d="M 276.28395,161.68413 H 264.06118"
-           id="path827-8"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cc" />
+         id="g8821"
+         style="stroke-linecap:butt;stroke-linejoin:round">
+        <rect
+           style="display:inline;opacity:0.91000001;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect5821-8-2-3"
+           width="4.3071947"
+           height="1.4143028"
+           x="263.98392"
+           y="133.41702" />
         <text
            xml:space="preserve"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-           x="279.79684"
-           y="153.26228"
-           id="text8609-0-6-4"><tspan
+           x="276.51337"
+           y="134.57738"
+           id="text8609-0-8"><tspan
              sodipodi:role="line"
-             id="tspan8607-4-2-7"
+             id="tspan8607-4-7"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-             x="279.79684"
-             y="153.26228">Path</tspan></text>
-        <text
-           xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-           x="288.52087"
-           y="157.62619"
-           id="text8609-0-6-9"><tspan
-             sodipodi:role="line"
-             id="tspan8607-4-2-3"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-             x="288.52087"
-             y="157.62619">River/Perennial Stream</tspan></text>
-        <text
-           xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-           x="288.03098"
-           y="162.35376"
-           id="text8609-0-6-92"><tspan
-             sodipodi:role="line"
-             id="tspan8607-4-2-8"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
-             x="288.03098"
-             y="162.35376">Los Cedros Boundary</tspan></text>
+             x="276.51337"
+             y="134.57738">Forest type II</tspan></text>
       </g>
+      <g
+         id="g8826"
+         style="stroke-linecap:butt;stroke-linejoin:round">
+        <rect
+           style="display:inline;opacity:0.91000001;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect5821-8"
+           width="4.3071947"
+           height="1.4143028"
+           x="263.98392"
+           y="139.79747" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           x="276.71542"
+           y="140.95782"
+           id="text8609-0-0"><tspan
+             sodipodi:role="line"
+             id="tspan8607-4-8"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+             x="276.71542"
+             y="140.95782">Forest type III</tspan></text>
+      </g>
+      <g
+         id="g8831"
+         style="stroke-linecap:butt;stroke-linejoin:round">
+        <rect
+           style="display:inline;opacity:0.91000001;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect5821-8-2"
+           width="4.3071947"
+           height="1.4143028"
+           x="263.98392"
+           y="146.17792" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           x="277.0105"
+           y="147.33827"
+           id="text8609-0-6"><tspan
+             sodipodi:role="line"
+             id="tspan8607-4-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+             x="277.0105"
+             y="147.33827">Forest type IV</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g8888"
+       transform="matrix(1.9644864,0,0,1.9644864,-312.3094,-124.33672)"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <path
+         sodipodi:nodetypes="cc"
+         transform="matrix(0.35277777,0,0,0.35277777,212.70485,74.186089)"
+         id="path591-0"
+         style="fill:none;stroke:#0000ff;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round"
+         d="m 149.23888,235.51398 h 27.32346"
+         clip-path="url(#pc62b98615b-59)"
+         inkscape:connector-curvature="0" />
+      <path
+         sodipodi:nodetypes="cccc"
+         transform="matrix(0.35277777,0,0,0.35277777,200.78484,43.813741)"
+         id="path812-7"
+         style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:5.55, 2.4;stroke-dashoffset:0"
+         d="m 211.88382,309.09686 h -2.86119 -6.84161 -20.68561"
+         clip-path="url(#pc62b98615b-30)"
+         inkscape:connector-curvature="0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path827-8"
+         d="M 276.28395,161.68413 H 264.06118"
+         style="fill:none;stroke:#800080;stroke-width:1.05833328;stroke-linecap:butt;stroke-linejoin:round" />
+      <text
+         id="text8609-0-6-4"
+         y="153.26228"
+         x="279.79684"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="153.26228"
+           x="279.79684"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-4-2-7"
+           sodipodi:role="line">Path</tspan></text>
+      <text
+         id="text8609-0-6-9"
+         y="157.62619"
+         x="288.52087"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="157.62619"
+           x="288.52087"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-4-2-3"
+           sodipodi:role="line">River/Perennial Stream</tspan></text>
+      <text
+         id="text8609-0-6-92"
+         y="162.35376"
+         x="288.03098"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;display:inline;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         xml:space="preserve"><tspan
+           y="162.35376"
+           x="288.03098"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11666656px;line-height:3.17499995px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:0.34999999;stroke-linecap:butt;stroke-linejoin:round"
+           id="tspan8607-4-2-8"
+           sodipodi:role="line">Los Cedros Boundary</tspan></text>
     </g>
   </g>
   <g

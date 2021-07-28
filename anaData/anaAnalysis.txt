@@ -17313,3 +17313,130 @@ rasterio.plot.show(dem, ax=ax, zorder=1)
 
 #plt.savefig('graphics/physMap.svg')
 
+## fig. 6 height diagram 
+
+## This is a pretty fresh one. Title needs enlarged, legend needs
+## labels for violins, maybe change numbers to roman numerals.
+## Pretty minor stuff. 
+
+## can wait till tomorrow. As much as anything can wait in this fucked up world. 
+
+import os
+import openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt; plt.ion(); plt.rc('axes', titlesize=15)
+import matplotlib.colors as mcolors
+from matplotlib.patches import Patch
+import pickle
+from sklearn.linear_model import LinearRegression
+import scipy.spatial as sp
+import geopandas as gpd
+import rasterio
+import rasterio.plot
+import rasterio.mask
+import copy
+import random
+import math
+import networkx
+from pysheds.grid import Grid
+import shapely
+from statsmodels.stats.multitest import multipletests
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from scipy import stats
+
+## etc
+specObs = pd.read_csv('specObs.csv')
+psubpHopsDF= pd.read_csv('psubpHopsDF.csv', index_col='PsubP')
+subParcelComm = pd.read_csv('subParcelComm.csv', index_col='PsubP')
+envOnly = pd.read_csv('envOnly.csv', index_col='PsubP')
+landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
+watershedDistMat = pd.read_csv('watershedDistMat.csv', header=0, index_col=0)
+watershedDistMat.columns = watershedDistMat.columns.astype('int')
+
+
+elevLUDF = pd.concat([landUseForesttypeDF, envOnly], axis=1)[['landUse','forestType','elevacion']]
+## set up colors for plotting, by historical land use
+landuseColDict = {
+          'BC':'#E41A1C',
+          'BS':'#377EB8',
+          'CLB':'#4DAF4A',
+          'RCA':'#984EA3',
+          'RG':'#FF7F00',
+           }
+
+landuseColrs = elevLUDF.landUse.apply(lambda x: landuseColDict[x])
+
+plt.close('all')
+fig, ax = plt.subplots(figsize=(8,8))
+Xraw, Yraw = elevLUDF.forestType, elevLUDF.elevacion
+Xjitted = (Xraw
+            .apply(np.random.normal, args=(0.08,))
+            )
+breakUpData = [ Yraw[Xraw == i].to_list() for i in Xraw.unique() ]
+vio = ax.violinplot(breakUpData, showmeans=True)
+ax.scatter(Xjitted, Yraw, color=landuseColrs, s=150)
+ax.set_xticks([1,2,3,4])
+ax.set_title('Current forest type, history, and elevation')
+ax.set_ylabel('Elevation')
+ax.set_xlabel('Current forest type')
+## color dictionary for forestType:
+forestTypeColDict = {
+                      1:'k',
+                      2:'r',
+                      3:'g',
+                      4:'b',
+                    }
+## change violin patch color:
+for i,j in enumerate(vio['bodies']):
+    j.set_facecolors(forestTypeColDict[i+1])
+
+## legend for land use history:
+legend_patchesLU = [ Patch(color=j, label=i) for i,j in landuseColDict.items() ]
+luLeg = ax.legend(handles=legend_patchesLU,
+                    title="Land-use/habitat",
+                    facecolor="white",
+                    edgecolor="black",
+                    loc="upper right",
+                    bbox_to_anchor=(1, 1))
+
+plt.tight_layout()
+
+
+## legend for forest type
+romanDict = { 1:'I', 2:'II', 3:'III', 4:'IV' }
+colzNParr = [ i.get_facecolor() for i in vio['bodies'] ]
+colz = [ tuple(i.flatten().tolist()) for i in colzNParr ]
+forestLegPatches = [ Patch(color=j, label=romanDict[i+1]) for i,j in enumerate(colz) ]
+ax.legend(handles=forestLegPatches,
+            facecolor="white",
+            edgecolor="black",
+            title="Forest type",
+            loc="upper left",
+            bbox_to_anchor=(0, 1))
+## add back in the old legend:
+ax.add_artist(luLeg)
+
+
+## tick labels need roman numerals, too:
+ax.set_xticklabels(
+        [ f'Type {romanDict[i]}' for i in range(1,5) ]
+        )
+
+## and still needs a little editing in inkscape...
+## ugh, that turned out to be not minor at all
+
+## fig. 7 sig MEMs
+
+## needs title, scientific notation corrected, x-axis units corrected
+## think that's it.
+ 
+#### fig. 8A Juvenile communities by historical land-use ####
+
+## change title, change cluster legend title, change square to circle
+
+2:40 call aaron
+
+#### fig. 8B Juvenile communities by ecological state ####
+
+
