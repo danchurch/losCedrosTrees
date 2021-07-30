@@ -17104,26 +17104,28 @@ fig. 1B 0.5 ha SAC
 fig. 1C by-habitat SAC
 fig. 2A asymptote bayes model (plus OLS)
 fig. 2B linear bayes model (plus OLS)
-fig. 3 hierarchical clustering with hab type
-fig. 4 NMS of clusters and eco types
-fig. 5 physical map
-fig. 6 height diagram 
-fig. 7 sig MEMs
-fig. 8A Juvenile communities by historical land-use
-fig. 8B Juvenile communities by ecological state
-fig. 9 land cover cotacachi 
-fig. 10 land cover Los Cedros
-fig. 11 land cover Chontal
+fig. 3 Turnover by watershed-crossings
+fig. 4 hierarchical clustering with hab type
+fig. 5 NMS of clusters and eco types
+fig. 6 physical map
+fig. 7 height diagram 
+fig. 8 sig MEMs
+fig. 9A Juvenile communities by historical land-use
+fig. 9B Juvenile communities by ecological state
+fig. 10A,B land cover cotacachi 
+fig. 11A,B,C,D land cover Los Cedros and BP Chontal
 fig. 12 Schematic of equilibria
 
 supp. fig. 1 PPC comparison for asymptote vs. linear
 supp. fig. 2 Posterior shift for Km
 supp. fig. 3 Clusters NMS
 supp. fig. 4 predictions from land-use only model 
-supp. fig. 5 y-intercepts from land-use only model
-supp. fig. 6 logistic regresssion model
-supp. fig. 7 y-intercepts combined model
-supp. fig. 8 uncorrected juvenile NMS with outlier
+supp. fig. 5 logistic regresssion model
+supp. fig. 6 predictions from land-use and elevation model 
+supp. fig. 7 MEM1 over physMap
+supp. fig. 8 MEM2 with physMap
+supp. fig. 9 MEM8 with physMap
+supp. fig. 10 uncorrected juvenile NMS with outlier
 
 table 1 diversity estimators for surveys + half-hectare
 table 2 mean BC by watershed dataframe
@@ -17402,7 +17404,6 @@ luLeg = ax.legend(handles=legend_patchesLU,
 
 plt.tight_layout()
 
-
 ## legend for forest type
 romanDict = { 1:'I', 2:'II', 3:'III', 4:'IV' }
 colzNParr = [ i.get_facecolor() for i in vio['bodies'] ]
@@ -17439,4 +17440,69 @@ ax.set_xticklabels(
 
 #### fig. 8B Juvenile communities by ecological state ####
 
+## done 
 
+#### fig. 9A,B land cover cotacachi ####
+
+## fix scientific notation coordinates 
+## combine 1990 and 2018 as A,B
+
+#### fig. 10A,B land cover cotacachi ####
+
+## fix scientific notation coordinates 
+## combine 1990 and 2018 as A,B
+
+## just checking some rates for the past 28 years:
+
+## cotacachi:
+
+(lambda x: x + 1)(3)
+
+(lambda y,a: 1 - ( (y/a)**(1/28)))(71738,87967)
+
+1 - (71738/87967)**(1/28)
+
+1 - (71738/87967)**(1/28)
+
+y,a = 71738, 87967 
+
+
+
+cotRate = defo(y,a)
+
+a*(1-cotRate)**(28)
+
+
+defo = lambda y,a: 1 - (y/a)**(1/28)
+
+## apply to Los Cedros
+defo(5210.19, 5094.72)
+
+## apply to Chontal
+defo(6564.96, 6919.65)
+
+#### fig. 9A,B land cover cotacachi ####
+#### fig. 10A,B,C,D land cover LC and BP Chontal ####
+
+## fix scientific notation coordinates 
+## Cotacachi - combine 1990 and 2018 as A,B
+## LC and BP Chontal - combine all figs, 1990 and 2018 for each
+## change the color of pasture to be more visible
+
+pArea = np.pi * (30/2)**2 / 10000
+
+pArea * 4
+
+## fig. 3 Turnover by watershed-crossings
+
+## needs bigger title 
+
+############ supp figs ###########
+
+## supp. fig. 1 PPC comparison for asymptote vs. linear
+
+## supp. fig. 2 Posterior shift for Km
+
+## supp. fig. 3 Clusters NMS
+
+## supp. fig. 4 predictions from land-use only model 
