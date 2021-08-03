@@ -17130,10 +17130,10 @@ supp. fig. 10 uncorrected juvenile NMS with outlier
 table 1 diversity estimators for surveys + half-hectare
 table 2 mean BC by watershed dataframe
 table 3 tukeys results from by-watershed groupings 
-table 4 indicator species analyses
+table 4A,B indicator species analyses
 table 5 mem correlations
 
-supp. table 1 species lists (adult and juv, surveys + perm plot)
+supp. table 1 species lists (adult and juv surveys + perm plot)
 supp. table 2 by-land-use species diversity estimators
 
 ## so go through these and make sure we have something 
@@ -17356,7 +17356,6 @@ landUseForesttypeDF = pd.read_csv('landUseForesttypeDF.csv', index_col='site')
 watershedDistMat = pd.read_csv('watershedDistMat.csv', header=0, index_col=0)
 watershedDistMat.columns = watershedDistMat.columns.astype('int')
 
-
 elevLUDF = pd.concat([landUseForesttypeDF, envOnly], axis=1)[['landUse','forestType','elevacion']]
 ## set up colors for plotting, by historical land use
 landuseColDict = {
@@ -17506,3 +17505,204 @@ pArea * 4
 ## supp. fig. 3 Clusters NMS
 
 ## supp. fig. 4 predictions from land-use only model 
+
+## supp. fig. 7 MEM1 over physMap
+## supp. fig. 8 MEM2 with physMap
+## add rivers to these
+## title, legend.
+## add color bar in inkscape
+
+##### tables #####
+
+## table 1 diversity estimators for surveys + half-hectare
+
+plotType,SpeciesObserved,chao,chao.se,jack1,jack1.se,jack2,boot,boot.se,n
+SurveyPlots,343,516.3946,39.15056,483.6557,21.60728,566.8038,404.4403,10.54889,61
+PermanentPlot,43,65.37603,13.79745,61.84298,4.322875,72.72672,51.39211,2.194646,121
+
+
+## table 2 mean BC by watershed dataframe
+
+## table 3 tukeys results from by-watershed groupings 
+
+## weird class that outputs from statsmodels, so just enter by hand:
+
+group1,group2,meandiff,p-adj,lower,upper,reject
+0,1,0.0601,0.001,0.0408,0.0795,True
+0,2,0.0516,0.001,0.0319,0.0713,True
+0,3,0.0708,0.001,0.0495,0.0921,True
+0,4,0.0609,0.001,0.0287,0.093,True
+1,2,-0.0085,0.4759,-0.0228,0.0057,False
+1,3,0.0106,0.393,-0.0058,0.0271,False
+1,4,0.0007,0.9,-0.0284,0.0299,False
+2,3,0.0192,0.0158,0.0024,0.036,True
+2,4,0.0093,0.9,-0.0201,0.0386,False
+3,4,-0.0099,0.9,-0.0404,0.0205,False
+
+## table 4 indicator species analyses
+
+## not working in notebook, wake this data back up from the grave...
+
+## in R
+
+library(indicspecies)
+
+## get data
+comM <- read.csv('subParcelComm.csv', row.names="PsubP")
+cldf <- read.csv('cGroup.csv', row.names='PsubP')
+envOnly <- read.csv('envOnly.csv', row.names=('PsubP'))
+## general plant observation dataframe
+
+## check:
+row.names(comM)
+row.names(cldf)
+row.names(envOnly)
+
+row.names(comM) == row.names(cldf)
+row.names(cldf) == row.names(envOnly)
+## looks okay
+
+cldf
+
+## clean up extra column of com matrix, careful with this
+comM <- comM[,-1] ## get rid of PsubP
+
+habIndSpp <- multipatt(comM, envOnly$habitat, func = 'r.g', control=how(nperm=9999))
+
+clustIndSpp <- multipatt(comM, cldf$gr, func = 'r.g', control=how(nperm=9999))
+
+## what are these things? Probably lists...
+
+class(habIndSpp)
+
+str(habIndSpp)
+
+## yup, that's messy. Let's do this by hand off the outputs from the 
+## multipatt command:
+
+## land-use/habitat:
+Group BC
+species,rpb.g,p.value,sig code
+Moraceae.Pseudolmedia.rigida,0.423,0.0317,*
+Moraceae.Ficus.subandina,0.406,0.0490,*
+
+Group BS
+species,rpb.g,p.value,sig code
+Rubiaceae.Psychotria.paeonia,0.478,0.0148,*
+Lauraceae.Persea.pseudofasciculata,0.432,0.0351,*
+Myrtaceae.Myrcia.aff..aliena,0.425,0.0377,*
+
+Group CLB
+species,rpb.g,p.value,sig code
+Lauraceae.Endlicheria.cf..chalisea,0.431,0.0268,*
+
+Group RCA
+species,rpb.g,p.value,sig code
+Boraginaceae.Cordia.colombiana,0.894,0.0001,***
+Actinidaceae.Saurauia.sp.1,0.694,0.0003,***
+Melastomataceae.Miconia.aff..brevitheca,0.683,0.0004,***
+Moraceae.Ficus.caldasiana,0.667,0.0033,**
+Staphyleaceae.Turpinia.occidentalis,0.663,0.0006,***
+Moraceae.Clarisia.biflora,0.645,0.0022,**
+Lauraceae.Nectandra.membranacea,0.610,0.0027,**
+Verbenaceae.Aegiphila.alba,0.594,0.0020,**
+Moraceae.Ficus.andicola,0.539,0.0191,*
+Lauraceae.Caryodaphnopsis.theobromifolia,0.535,0.0099,**
+Lauraceae.Nectandra.aff..membranacea,0.513,0.0106,*
+
+Group RG
+species,rpb.g,p.value,sig code
+Cecropiaceae.Cecropia.andina,0.662,0.0018,**
+Cecropiaceae.Cecropia.ficifolia,0.580,0.0035,**
+Cecropiaceae.Cecropia.sp.2,0.427,0.0310,*
+Melastomataceae.Meriania.tomentosa,0.415,0.0426,*
+
+Group BC+BS
+species,rpb.g,p.value,sig code
+Lauraceae.Aniba.aff..hostmanniana,0.411,0.0471,*
+
+Group RCA+RG
+species,rpb.g,p.value,sig code
+Solanaceae.Solanum.lepidotum,0.529,0.0060,**
+Solanaceae.Cestrum.megalophyllum,0.423,0.0268,*
+
+Group BC+BS+CLB
+species,rpb.g,p.value,sig code
+Cyatheaceae.Alsophila.erinacea,0.42,0.0423,*
+
+Signif. codes, 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+##### forest type indicators #######
+Group I
+species,rpb.g,p.value,sig code
+Boraginaceae.Cordia.colombiana,0.661,0.0001,***
+Melastomataceae.Meriania.tomentosa,0.641,0.0001,***
+Actinidaceae.Saurauia.sp.1,0.545,0.0003,***
+Cyatheaceae.Cyathea.halonata,0.458,0.0033,**
+Fab.Caesalpiniaceae.Senna.dariensis,0.449,0.0046,**
+Moraceae.Ficus.caldasiana,0.420,0.0206,*
+Melastomataceae.Leandra.subseriata,0.370,0.0150,*
+Melastomataceae.Miconia.aff..brevitheca,0.368,0.0270,*
+Piperaceae.Piper.fuliginosum,0.356,0.0500,*
+Staphyleaceae.Turpinia.occidentalis,0.346,0.0426,*
+
+Group II
+species,rpb.g,p.value,sig code
+Cecropiaceae.Cecropia.andina,0.811,0.0001,***
+Cecropiaceae.Cecropia.sp.2,0.500,0.0009,***
+Melastomataceae.sp.1,0.468,0.0051,**
+Fab.Faboideae.Dussia.lehmannii,0.334,0.0444,*
+
+Group III
+species,rpb.g,p.value,sig code
+Myristicaceae.Otoba.gordoniifolia,0.524,0.0007,***
+Cyatheaceae.Alsophila.erinacea,0.515,0.0015,**
+Lauraceae.Persea.aff..pseudofasciculata,0.494,0.0022,**
+Clusiaceae.Vismia.lauriformis,0.440,0.0065,**
+Melastomataceae.Conostegia.aff..centronioides,0.418,0.0083,**
+Arecaceae.Wettinia.aff..oxycarpa,0.403,0.0115,*
+Lauraceae.Persea.pseudofasciculata,0.386,0.0217,*
+Rubiaceae.Psychotria.paeonia,0.373,0.0264,*
+Moraceae.Ficus.dulciaria,0.354,0.0300,*
+
+Group IV
+species,rpb.g,p.value,sig code
+Burseraceae.Dacryodes.cupularis,0.754,0.0001,***
+Burseraceae.Protium.ecuadorense,0.638,0.0001,***
+Clusiaceae.Garcinia.macrophylla,0.613,0.0001,***
+Lauraceae.Beilschmiedia.aff..costaricensis,0.448,0.0018,**
+Melastomataceae.Conostegia.superba,0.444,0.0024,**
+Lauraceae.Ocotea.stenoneura,0.369,0.0454,*
+Lecythidaceae.Gustavia.dodsonii,0.362,0.0290,*
+Styracaceae.Styrax.weberbaueri,0.361,0.0408,*
+Moraceae.Pseudolmedia.rigida,0.355,0.0263,*
+
+Group I+II
+species,rpb.g,p.value,sig code
+Cecropiaceae.Cecropia.ficifolia,0.520,0.0005,***
+Solanaceae.Solanum.lepidotum,0.447,0.0055,**
+Cecropiaceae.Cecropia.reticulata,0.371,0.0244,*
+Verbenaceae.Aegiphila.alba,0.348,0.0465,*
+Urticaceae.Urera.caracasana,0.341,0.0370,*
+
+Group I+IV
+species,rpb.g,p.value,sig code
+Lauraceae.Caryodaphnopsis.theobromifolia,0.416,0.0092,**
+Moraceae.Clarisia.biflora,0.403,0.0157,*
+
+Group II+III
+species,rpb.g,p.value,sig code
+Annonaceae.Guatteria.megalophylla,0.411,0.0133,*
+Moraceae.Ficus.cuatrecasana,0.364,0.0299,*
+
+Group III+IV
+species,rpb.g,p.value,sig code
+Lauraceae.Aniba.aff..hostmanniana,0.401,0.0138,*
+Capparaceae.Capparis.sp.,0.385,0.0267,*
+Euphorbiaceae.Hieronyma.asperifolia,0.383,0.0226,*
+Lecythidaceae.Eschweilera.integrifolia,0.379,0.0199,*
+Lauraceae.Ocotea.insularis,0.366,0.0295,*
+Rubiaceae.Faramea.oblongifolia,0.362,0.0291,*
+Moraceae.Helicostylis.tovarensis,0.346,0.0444,*
+
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

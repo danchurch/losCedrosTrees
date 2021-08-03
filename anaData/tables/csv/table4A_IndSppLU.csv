@@ -1,0 +1,50 @@
+Group BC
+species,rpb.g,p.value,sig code
+Moraceae.Pseudolmedia.rigida,0.423,0.0317,*
+Moraceae.Ficus.subandina,0.406,0.0490,*
+
+Group BS
+species,rpb.g,p.value,sig code
+Rubiaceae.Psychotria.paeonia,0.478,0.0148,*
+Lauraceae.Persea.pseudofasciculata,0.432,0.0351,*
+Myrtaceae.Myrcia.aff..aliena,0.425,0.0377,*
+
+Group CLB
+species,rpb.g,p.value,sig code
+Lauraceae.Endlicheria.cf..chalisea,0.431,0.0268,*
+
+Group RCA
+species,rpb.g,p.value,sig code
+Boraginaceae.Cordia.colombiana,0.894,0.0001,***
+Actinidaceae.Saurauia.sp.1,0.694,0.0003,***
+Melastomataceae.Miconia.aff..brevitheca,0.683,0.0004,***
+Moraceae.Ficus.caldasiana,0.667,0.0033,**
+Staphyleaceae.Turpinia.occidentalis,0.663,0.0006,***
+Moraceae.Clarisia.biflora,0.645,0.0022,**
+Lauraceae.Nectandra.membranacea,0.610,0.0027,**
+Verbenaceae.Aegiphila.alba,0.594,0.0020,**
+Moraceae.Ficus.andicola,0.539,0.0191,*
+Lauraceae.Caryodaphnopsis.theobromifolia,0.535,0.0099,**
+Lauraceae.Nectandra.aff..membranacea,0.513,0.0106,*
+
+Group RG
+species,rpb.g,p.value,sig code
+Cecropiaceae.Cecropia.andina,0.662,0.0018,**
+Cecropiaceae.Cecropia.ficifolia,0.580,0.0035,**
+Cecropiaceae.Cecropia.sp.2,0.427,0.0310,*
+Melastomataceae.Meriania.tomentosa,0.415,0.0426,*
+
+Group BC+BS
+species,rpb.g,p.value,sig code
+Lauraceae.Aniba.aff..hostmanniana,0.411,0.0471,*
+
+Group RCA+RG
+species,rpb.g,p.value,sig code
+Solanaceae.Solanum.lepidotum,0.529,0.0060,**
+Solanaceae.Cestrum.megalophyllum,0.423,0.0268,*
+
+Group BC+BS+CLB
+species,rpb.g,p.value,sig code
+Cyatheaceae.Alsophila.erinacea,0.42,0.0423,*
+
+Signif. codes, 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 

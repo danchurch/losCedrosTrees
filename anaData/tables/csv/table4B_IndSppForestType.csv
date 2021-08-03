@@ -1,0 +1,73 @@
+Group I
+species,rpb.g,p.value,sig code
+Boraginaceae.Cordia.colombiana,0.661,0.0001,***
+Melastomataceae.Meriania.tomentosa,0.641,0.0001,***
+Actinidaceae.Saurauia.sp.1,0.545,0.0003,***
+Cyatheaceae.Cyathea.halonata,0.458,0.0033,**
+Fab.Caesalpiniaceae.Senna.dariensis,0.449,0.0046,**
+Moraceae.Ficus.caldasiana,0.420,0.0206,*
+Melastomataceae.Leandra.subseriata,0.370,0.0150,*
+Melastomataceae.Miconia.aff..brevitheca,0.368,0.0270,*
+Piperaceae.Piper.fuliginosum,0.356,0.0500,*
+Staphyleaceae.Turpinia.occidentalis,0.346,0.0426,*
+
+Group II
+species,rpb.g,p.value,sig code
+Cecropiaceae.Cecropia.andina,0.811,0.0001,***
+Cecropiaceae.Cecropia.sp.2,0.500,0.0009,***
+Melastomataceae.sp.1,0.468,0.0051,**
+Fab.Faboideae.Dussia.lehmannii,0.334,0.0444,*
+
+Group III
+species,rpb.g,p.value,sig code
+Myristicaceae.Otoba.gordoniifolia,0.524,0.0007,***
+Cyatheaceae.Alsophila.erinacea,0.515,0.0015,**
+Lauraceae.Persea.aff..pseudofasciculata,0.494,0.0022,**
+Clusiaceae.Vismia.lauriformis,0.440,0.0065,**
+Melastomataceae.Conostegia.aff..centronioides,0.418,0.0083,**
+Arecaceae.Wettinia.aff..oxycarpa,0.403,0.0115,*
+Lauraceae.Persea.pseudofasciculata,0.386,0.0217,*
+Rubiaceae.Psychotria.paeonia,0.373,0.0264,*
+Moraceae.Ficus.dulciaria,0.354,0.0300,*
+
+Group IV
+species,rpb.g,p.value,sig code
+Burseraceae.Dacryodes.cupularis,0.754,0.0001,***
+Burseraceae.Protium.ecuadorense,0.638,0.0001,***
+Clusiaceae.Garcinia.macrophylla,0.613,0.0001,***
+Lauraceae.Beilschmiedia.aff..costaricensis,0.448,0.0018,**
+Melastomataceae.Conostegia.superba,0.444,0.0024,**
+Lauraceae.Ocotea.stenoneura,0.369,0.0454,*
+Lecythidaceae.Gustavia.dodsonii,0.362,0.0290,*
+Styracaceae.Styrax.weberbaueri,0.361,0.0408,*
+Moraceae.Pseudolmedia.rigida,0.355,0.0263,*
+
+Group I+II
+species,rpb.g,p.value,sig code
+Cecropiaceae.Cecropia.ficifolia,0.520,0.0005,***
+Solanaceae.Solanum.lepidotum,0.447,0.0055,**
+Cecropiaceae.Cecropia.reticulata,0.371,0.0244,*
+Verbenaceae.Aegiphila.alba,0.348,0.0465,*
+Urticaceae.Urera.caracasana,0.341,0.0370,*
+
+Group I+IV
+species,rpb.g,p.value,sig code
+Lauraceae.Caryodaphnopsis.theobromifolia,0.416,0.0092,**
+Moraceae.Clarisia.biflora,0.403,0.0157,*
+
+Group II+III
+species,rpb.g,p.value,sig code
+Annonaceae.Guatteria.megalophylla,0.411,0.0133,*
+Moraceae.Ficus.cuatrecasana,0.364,0.0299,*
+
+Group III+IV
+species,rpb.g,p.value,sig code
+Lauraceae.Aniba.aff..hostmanniana,0.401,0.0138,*
+Capparaceae.Capparis.sp.,0.385,0.0267,*
+Euphorbiaceae.Hieronyma.asperifolia,0.383,0.0226,*
+Lecythidaceae.Eschweilera.integrifolia,0.379,0.0199,*
+Lauraceae.Ocotea.insularis,0.366,0.0295,*
+Rubiaceae.Faramea.oblongifolia,0.362,0.0291,*
+Moraceae.Helicostylis.tovarensis,0.346,0.0444,*
+
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
