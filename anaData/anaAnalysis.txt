@@ -620,6 +620,8 @@ subParcelComm = bdfDummyGroup.agg(np.sum)
 #subParcelComm.to_csv("subParcelComm.csv")
 #subParcelComm.to_pickle('subParcelComm.p')
 
+
+
 ####### find x,y for all the PsubP values ##########
 
 ## read in the csv for the gps data:
@@ -17707,11 +17709,310 @@ Moraceae.Helicostylis.tovarensis,0.346,0.0444,*
 
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-
-##### fix github to ssh ####
-
-git remote set-url origin git@github.com:<Username>/<Project>.git
+##### side note fix github to ssh ####
 
 git remote set-url origin git@github.com:danchurch/losCedrosTrees.git
 
+## I guess I need to do this with any other repo I want to access 
+## after that?
+
+################################
+
+## table 5 table 5 mem correlations
+
+## done and done
+
+ 
+#### supp. table 2 by-land-use species diversity estimators
+
+## skip to this one because it will be simpler than the 
+## species tables
+
+## in R
+
+library(vegan)
+files <- list.files()
+comm <- grep('_comm.csv', list.files())
+comms <- files[comm]
+
+sink('spRichByHab.txt')
+for (i in comms){
+    comm.i <- read.csv(i, header=TRUE, row.names=1)
+    specAccum.i <- specaccum(comm.i, method = "exact")
+    SACdf.i <- data.frame(specAccum.i$richness, specAccum.i$sd)
+    colnames(SACdf.i) <- c('richness', 'sd')
+    speciesEstimators.i = specpool(comm.i)
+    habtype=sub("_comm.csv", "", i)
+    write.csv(SACdf.i, file=paste(habtype, "SAC.csv", sep="_"))
+    write.csv(speciesEstimators.i, file=paste(habtype, "specEst.csv", sep="_"))
+    print(i)
+    print(speciesEstimators.i)
+    readline("press enter")
+}
+sink()
+
+i="BC_comm.csv"
+i="BS_comm.csv"
+i="CLB_comm.csv"
+i="RCA_comm.csv"
+i="RG_comm.csv"
+
+comm.i <- read.csv(i, header=TRUE, row.names=1)
+specAccum.i <- specaccum(comm.i, method = "exact")
+
+SACdf.i <- data.frame(specAccum.i$richness, specAccum.i$sd)
+
+specAccum.i <- specaccum(comm.i, method = "exact")
+speciesEstimators.i = specpool(comm.i)
+
+## ok, so to get a table out of this...
+## just sink it, and hand edit
+
+## here's the doozy
+## supp. table 1 species lists (adult and juv surveys + perm plot)
+
+## how do we get these? 
+## seems like our specObs is a good place to start:
+
+## back to python...
+
+## to get the adult trees
+
+specObs = pd.read_csv('specObs.csv')
+
+specObs.columns
+
+specObs[ ['familia', 'genero', 'especie'] ].drop_duplicates()
+
+adult = (
+specObs[ ['familia', 'genero', 'especie'] ]
+    .drop_duplicates()
+)
+
+adult['familia'].str.contains('Indet').sum() ## 19 Indeterminado spp
+
+adult[adult['familia'].str.contains('Indet')] ## all "Indeterminado", not "Indeterminada"
+
+
+## and for the juveniles?
+
+help(pd.read_csv)
+
+juvSpecObs = pd.read_csv('juvSpecObs.csv', index_col="PsubP")
+
+juv = (
+juvSpecObs[['familia', 'genero', 'especie']]
+                .drop_duplicates()
+)
+
+juv[juv['familia'].str.contains('Indet')] ## all "Indeterminada", not "Indeterminado"
+
+## fuck. Are these different? 
+## they are probably the same numbering system, because they 
+## reach the same maximal value of sp. 19, and the adult
+## unknowns contain at least one example of every number,
+## whereas the juvenile has gaps:
+
+aa = adult[adult['familia'].str.contains('Indet')] 
+bb = juv[juv['familia'].str.contains('Indet')] 
+aa.sort_values(by='genero')
+bb.sort_values(by='genero')
+
+## makes me think that they identified the adults first,
+## defined their unknown numbers, then looked for matches
+## later in the juvenile data.
+
+## let's operate on that assumption for now. So change the 
+## juv to "Indeterminado":
+
+juv['familia'].str.contains('Indet')
+
+juv[juv['familia'].str.contains('Indet')] ## all "Indeterminada", not "Indeterminado"
+
+## we need a column that indicates where we got the species
+
+## combine these, drop dups again:
+
+help(pd.concat)
+
+comboJuvAdultSpecies = pd.concat([adult, juv], ignore_index=True).drop_duplicates()
+
+comboJuvAdultSpecies.shape
+
+comboJuvAdultSpecies.head()
+
+
+comboJuvAdultSpecies.to_csv('comboJuvAdultSpecies.csv')
+
+## how about the species from the perm plot?
+
+trees = pd.read_csv('Trees2014.csv', index_col='Numero')
+
+trees.Familia.unique()
+
+trees.Genus.unique()
+
+trees.genspp.unique()
+
+trees['genspp'] = trees.Genus + "_" + trees.Species
+
+permSpec = trees[['Familia','Genus', 'Species']].drop_duplicates()
+
+## these names are formatted a bit differently than our other 
+## tables... is it worth trying to bring this into compliance?
+
+## that will be a task...does it need to be done?
+
+## what are the differences?
+
+## 1. CF and AFF are all caps in Danilos data
+## and lowercase in Ana's data. Danilo's data
+## has no periods following these abbrevations,
+## Ana's data does.
+
+## 2. underscores are used in Danilo's data instead of spaces 
+## in the ana data
+
+## 1. "sp" in Danilo's data has no period, and the numbers
+## used obviously do not point to the same OTU as the Ana
+## data. 
+
+## so what is the best approach? if we concat, are there
+## duplicates?
+  
+permSpec
+
+comboJuvAdultSpecies 
+
+comboJuvAdultSpecies.columns = ['family','genus','species']
+permSpec.columns = ['family','genus','species']
+
+comboSurvPermSpecList = pd.concat([permSpec, comboJuvAdultSpecies], ignore_index=True)
+
+comboSurvPermSpecList.duplicated().sum()
+
+## some duplicate rows, 11. 
+## not insignificant, given that there are only 43 species directly observed in the perm plot.
+
+## examine them:
+
+sharedSpp = comboSurvPermSpecList[ comboSurvPermSpecList.duplicated() ]
+
+comboSurvPermSpecList[ ~comboSurvPermSpecList.duplicated() ]
+
+## so what's not shared, in the permanent plot?
+
+s1 = pd.merge(permSpec, comboJuvAdultSpecies, how='inner', on=['family'])
+ 
+## to get shared rows
+s1 = pd.merge(permSpec, comboJuvAdultSpecies, how='inner', on= ['family','genus','species'])
+
+s1 = pd.merge(permSpec, comboJuvAdultSpecies, how='left', on= ['family','genus','species'])
+
+## we want to find those rows permSpec not shared with the survey species...
+
+## so...add an identity row, so that each row knows what dataframe it came from...
+
+permSpec['study'] = 'perm'
+
+comboJuvAdultSpecies['study'] = 'surv'
+
+## and get an outer join that retains this id:
+
+aa = pd.merge(permSpec, comboJuvAdultSpecies, how='left', on= ['family','genus','species'])
+aa.drop('study_x', axis=1, inplace=True)
+aa.fillna('no', inplace=True)
+
+## to see those 
+aa[aa['study_y'].isna()]
+
+## looks like the best thing here is to keep these lists separate, and note 
+## in the permanent plot when the species was pretty definitively observed
+## elsewhere.
+
+## but to definitively say this, we still need to resolve the above
+## stylistic differences in the species names
+
+## so clean these up:
+
+
+## CF and AFF are all caps in Danilos data
+## and lowercase in Ana's data. 
+
+## question 1 what is the formatting of Ana's data?
+## I see sp. in genus and species columns
+
+## Danilo's data has no periods following these abbrevations,
+## Ana's data does.
+
+permSpec['study'] = 'perm'
+
+comboJuvAdultSpecies['family'].str.contains('sp').sum() ## 0
+comboJuvAdultSpecies['genus'].str.contains('sp').sum() ## 63
+comboJuvAdultSpecies['species'].str.contains('sp').sum() ## 51
+
+genSp = comboJuvAdultSpecies['genus'].str.contains('sp') 
+
+
+speSp = comboJuvAdultSpecies['species'].str.contains('sp')
+
+## how much overlap?
+
+comboJuvAdultSpecies[genSp]
+
+comboJuvAdultSpecies[speSp]
+
+sppNA = comboJuvAdultSpecies['species'].isna()
+
+comboJuvAdultSpecies[sppNA].genus.to_list() 
+
+comboJuvAdultSpecies['family'].isna().sum()
+
+comboJuvAdultSpecies['family'].str.contains('Indet').sum()
+
+famFilt = comboJuvAdultSpecies['family'].str.contains('Indet')
+
+comboJuvAdultSpecies[famFilt]
+
+## yup, everywhere there is a missing species, this is because 
+## the sp. delegation went to the genus column. Not sure 
+## why I did that, probably a bit too late to fix that. 
+
+## so for this exercise, what do we need?  
+
+## we need to reformat the text in the danilo table to match
+## that from the Ana, for both aesthetics and possibly for
+## queries
+
+## and we need check for matches manually, after cleaning up,
+
+## every where we see "sp" in danilo data, change to "sp.":
+
+comboJuvAdultSpecies.to_csv('comboJuvAdultSpecies.csv', index=False)
+
+permSpec['family'].str.contains('sp')
+
+permSpec['genus'].str.contains('sp').any()
+permSpec['genus'].str.contains('sp').sum()
+
+permSp = permSpec['species'].str.contains('sp')
+
+permSpec[permSp]
+
+#permSpec.to_csv('permSpec.csv', index=False)
+
+permSpec['species']
+
+permSpec['species'].str.replace('sp', 'sp. ', regex=False)
+
+permSpec['species'].str.replace('sp', 'sp.', regex=False)
+
+(
+    permSpec['species']
+    .str.replace('sp', 'sp.', regex=False)
+    .str.replace('sp\. [0-9]', 'sp.', regex=True)
+)
+
+
+.str.strip()
 
