@@ -17768,6 +17768,8 @@ speciesEstimators.i = specpool(comm.i)
 ## ok, so to get a table out of this...
 ## just sink it, and hand edit
 
+######### species lists ###########
+
 ## here's the doozy
 ## supp. table 1 species lists (adult and juv surveys + perm plot)
 
@@ -17779,10 +17781,6 @@ speciesEstimators.i = specpool(comm.i)
 ## to get the adult trees
 
 specObs = pd.read_csv('specObs.csv')
-
-specObs.columns
-
-specObs[ ['familia', 'genero', 'especie'] ].drop_duplicates()
 
 adult = (
 specObs[ ['familia', 'genero', 'especie'] ]
@@ -17799,7 +17797,6 @@ adult[adult['familia'].str.contains('Indet')] ## all "Indeterminado", not "Indet
 help(pd.read_csv)
 
 juvSpecObs = pd.read_csv('juvSpecObs.csv', index_col="PsubP")
-
 juv = (
 juvSpecObs[['familia', 'genero', 'especie']]
                 .drop_duplicates()
@@ -17825,21 +17822,23 @@ bb.sort_values(by='genero')
 ## let's operate on that assumption for now. So change the 
 ## juv to "Indeterminado":
 
-juv['familia'].str.contains('Indet')
-
 juv[juv['familia'].str.contains('Indet')] ## all "Indeterminada", not "Indeterminado"
 
-## we need a column that indicates where we got the species
+## change it
+juv['familia'] = juv['familia'].str.replace('Indeterminada', 'Indeterminado')
+
+## check it
+juv[juv['familia'].str.contains('Indet')] 
 
 ## combine these, drop dups again:
 
-help(pd.concat)
-
 comboJuvAdultSpecies = pd.concat([adult, juv], ignore_index=True).drop_duplicates()
 
-comboJuvAdultSpecies.shape
+## check unknowns
+comboJuvAdultSpecies[comboJuvAdultSpecies['familia'].str.contains('Indet')].sort_values('genero')
+## looks good, all are represented 
 
-comboJuvAdultSpecies.head()
+comboJuvAdultSpecies.shape ## 387 species
 
 
 comboJuvAdultSpecies.to_csv('comboJuvAdultSpecies.csv')
@@ -17853,8 +17852,6 @@ trees.Familia.unique()
 trees.Genus.unique()
 
 trees.genspp.unique()
-
-trees['genspp'] = trees.Genus + "_" + trees.Species
 
 permSpec = trees[['Familia','Genus', 'Species']].drop_duplicates()
 
@@ -17879,10 +17876,6 @@ permSpec = trees[['Familia','Genus', 'Species']].drop_duplicates()
 
 ## so what is the best approach? if we concat, are there
 ## duplicates?
-  
-permSpec
-
-comboJuvAdultSpecies 
 
 comboJuvAdultSpecies.columns = ['family','genus','species']
 permSpec.columns = ['family','genus','species']
@@ -17941,6 +17934,7 @@ aa[aa['study_y'].isna()]
 
 ## question 1 what is the formatting of Ana's data?
 ## I see sp. in genus and species columns
+
 
 ## Danilo's data has no periods following these abbrevations,
 ## Ana's data does.
@@ -18016,3 +18010,76 @@ permSpec['species'].str.replace('sp', 'sp.', regex=False)
 
 .str.strip()
 
+
+## to review, the steps were:
+
+specObs = pd.read_csv('specObs.csv')
+adult = (
+specObs[ ['familia', 'genero', 'especie'] ]
+    .drop_duplicates()
+)
+juvSpecObs = pd.read_csv('juvSpecObs.csv', index_col="PsubP")
+juv = (
+juvSpecObs[['familia', 'genero', 'especie']]
+                .drop_duplicates()
+)
+juv['familia'] = juv['familia'].str.replace('Indeterminada', 'Indeterminado')
+comboJuvAdultSpecies = pd.concat([adult, juv], ignore_index=True).drop_duplicates()
+trees = pd.read_csv('Trees2014.csv', index_col='Numero')
+permSpec = trees[['Familia','Genus', 'Species']].drop_duplicates()
+comboJuvAdultSpecies.columns = ['family','genus','species']
+permSpec.columns = ['family','genus','species']
+permSpec['study'] = 'perm'
+comboJuvAdultSpecies['study'] = 'surv'
+
+aa = (
+pd.merge(permSpec, comboJuvAdultSpecies, how='left', on= ['family','genus','species'])
+    .drop('study_x', axis=1)
+    .fillna('no')
+)
+
+aa['species'] = (
+                aa['species']
+                .str.replace('sp', 'sp. ', regex=False)
+                .str.strip()
+                )
+## causes problems with names with sp in them...
+
+aa['species'].str.replace('(\w+)_CF', ' zoop')
+
+aa['species']
+
+permSpec['species']
+
+permSpec['species'].str.contains('oliatum')
+
+## meh, fuckit, do some hand edits and rerun the search for 
+## duplicates tomorrow.
+
+## for hand-edits:
+#permSpec.to_csv('permSpec_toEdit.csv', index=False)
+
+## now edited:
+
+permSpec = pd.read_csv('permSpec_Edited.csv')#, index=False)
+
+## and rerun the search for duplicates:
+
+permSpecSurv = (
+pd.merge(permSpec, comboJuvAdultSpecies, how='left', on= ['family','genus','species'])
+    .drop('study_x', axis=1)
+    .fillna('no')
+)
+
+## did that change the number of samples also observed from the 
+## surveys?:
+
+(permSpecSurv.study_y == 'surv').sum()
+
+## nope. Still 11. 
+
+## anyway, it's in better shape. Both of these can probably be pushed to the 
+## draft now
+
+## so bring up the comboJuvAdultSpecies and check hand edits
+ 
