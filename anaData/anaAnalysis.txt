@@ -18083,3 +18083,7 @@ pd.merge(permSpec, comboJuvAdultSpecies, how='left', on= ['family','genus','spec
 
 ## so bring up the comboJuvAdultSpecies and check hand edits
  
+## Morelos-Juarez and Mika point out the importance of Brosimum utile for
+## spider monkeys...do we have this tree?
+
+
