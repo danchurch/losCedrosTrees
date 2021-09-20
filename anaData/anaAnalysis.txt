@@ -1,3 +1,6 @@
+## jupyter notebook is here:
+https://nbviewer.jupyter.org/github/danchurch/losCedrosTrees/blob/master/anaData/MariscalDataExploration.ipynb
+
 ## if we're using R, for big community matrices:
 smat <- function(mat){return(mat[1:3,1:3])}
 
@@ -18085,5 +18088,152 @@ pd.merge(permSpec, comboJuvAdultSpecies, how='left', on= ['family','genus','spec
  
 ## Morelos-Juarez and Mika point out the importance of Brosimum utile for
 ## spider monkeys...do we have this tree?
+
+################# find density of trees #######################
+
+## jose needs to know how many trees in a hectare etc.
+
+## for that, we need the table with all the observations, then 
+## split by site. 
+
+## I think we just need the number of observations, this is basically
+## the same as 
+
+import numpy as np
+import geopandas as gpd
+import pandas as pd
+import openpyxl
+  
+specObs = pd.read_csv('specObs.csv')
+specObs.PsubP.unique().shape ## 61 rows
+specObs.shape ## 2737 rows
+specObs.genusSpecies
+nuAdultsPerSite = specObs.groupby('PsubP').count().site
+areaHa = np.pi * (30/2)**2 / 10000
+nuAdultsPerSite = specObs.groupby('PsubP').count().site
+nuPerHA = nuAdultsPerSite / areaHa
+overallMeannuPerHA = nuPerHA.mean() ## mean 634.8 adult trees/ha
+nuPerHA.max() ## 1216.7 adult trees/ha
+
+## at la planada ( https://www.forestgeo.si.edu/sites/neotropics/la-planada )
+
+## we've got ~130,000-140,000 stems in 25ha 
+## stems are any woody stem > 1 cm
+
+140000 / 25 ## = 5600 stems, that is a lot. 5x our numbers
+
+## but not comparable, this is everythig over 1 cm, 
+
+## what should we send Jose? 
+## barplots and map
+
+## can we plot these? 
+
+### back up a minute. 
+### we have data for everything over 5 cm, it looks like:
+wb = openpyxl.load_workbook("CedrosFinalReview.7022012.xlsx")
+
+## does that give us the same numbers as above? It shouldn't,
+## my understanding is that the specObs matrix is just for >10cm
+## so good to check, for both reasons: 
+
+sheet = wb['Base dat final 6 29 2012']
+row1 = sheet[1]
+colnames = [ i.value for i in row1]
+
+df = (pd.DataFrame(sheet.values, columns=colnames)
+        .drop(0,0)
+        .set_index('Guia')
+        .dropna('index', how='all')
+        .dropna('columns', how='all')
+        .rename({'No de individuo':'NoIndiv'}, axis='columns')
+    ) [[
+        'DAP1',
+        'Subparcela',
+        'Parcela',
+        'NoIndiv'
+        ]]
+
+## make a psubp column:
+df['PsubP'] = (df.Parcela.astype(str) + "." + df.Subparcela.astype(str)).astype('float64')
+
+## does this match our previous results for PsubP?
+
+oldPsubP = pd.read_csv('envOnly.csv').PsubP
+
+PsubP.unique().shape
+oldPsubP.unique().shape
+## same total plots
+
+PsubP.isin(oldPsubP).all()
+oldPsubP.isin(PsubP).all()
+## looks good.
+
+
+## so what do we want to do with this? With psubp we can attach spatial data
+## but really 
+
+## first let's squish down to observation totals per site:
+
+
+aa = specObs.groupby('PsubP').count().site
+
+nuAdultsPerSite = df.groupby('PsubP').count().Subparcela
+
+
+(aa == nuAdultsPerSite).all() ## all are the same. This is the same data. 
+## This means there is some confusion around our adult data. 
+
+## we have some very small dap, ~5 cm:
+df.DAP1.min()
+
+nuPerHA = nuAdultsPerSite / areaHa
+
+overallMeannuPerHA = nuPerHA.mean() ## mean 634.8 adult trees/ha
+
+nuPerHA.max() ## 1216.7 adult trees/ha
+
+## okay, either way, we have some numbers for jose. 
+## do we want to send anything else his way?
+
+## we should probably add some geo data to this:
+
+anaPt = (gpd.read_file('GIS/ana30meterPlots.geojson')
+                        .set_index('PsubP')
+                        [['geometry']])
+
+
+overallMeannuPerHA
+
+
+anaPt.shape
+
+nuPerHA.shape
+
+aa = anaPt.merge(nuPerHA, left_index=True, right_index=True)
+
+aa.shape ## works. save out and send
+
+## how about the seedling data?
+
+juvComm = pd.read_csv('juvComm.csv', index_col='PsubP')
+
+## I think we just need row sums:
+
+dir(juvComm)
+
+juvComm.sum(axis='columns')
+
+## and so, what was the area of the seedling plots?
+## I think it was 5m x 5m
+
+## if it is actually 10x10:
+#areaHAjuv = 100 / 10000 
+
+areaHAjuv = 25 / 10000 
+
+juvComm.sum(axis='columns') / areaHAjuv
+
+
 
 
