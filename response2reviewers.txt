@@ -1,0 +1,86 @@
+
+
+##############################################################
+
+Reviewer 1 
+
+1. How large were the subplots? I know that you answer this question later in the manuscript but as a reader, it is a question I had as I tried to visualize your design. The size of your plots needs to be included here. This is a simple fix.
+
+Our plot sizes are explained in line 261-262, at the end of section 2.2.2.:
+"Juvenile trees were surveyed within a square subplot of size 5m x 5m, centered within the larger 30m circular plot."
+
+However, this comment signals that our description may not suffice and we have added a diagram in the supplemental figures, which is now supplemental figure 1. 
+
+2. Why were juvenile trees in the BS plot not surveyed? Again, the answer to this question needs to come sooner rather than later so that the reader does not question why that plot was not sampled. This is a simple fix.
+
+This was apparently a decision made due to time and labor constraints. We agree with Reviewer 1 that this is a weakness in the study, but it is one that regrettably cannot now be remedied, given the historical nature of the data set. 
+
+We have added the following sentence to our methods section (line 257):
+
+Due to time constraints, juvenile trees from BS and CLR plots were not sampled. 
+
+And added the following to our discussion (line 853):
+
+Additionally, plots with a history of non-athropogenic disturbance (BS and CLR plots) were not sampled for juvenile trees, meaning that we cannot comment directly on the importance of environmental filtering on seedlings due to "natural" successional patterns. 
+
+
+
+3.  I am not familiar with watershed crossings so including the link for readers is helpful for understanding how the watershed delineations were made. 
+
+The link is included in the text, so we are uncertain how to proceed here. Perhaps there are some software issues at work here...
+
+4. Forest types III and IV need to be defined first as “two distinct natural forest types…” If not, the reader is initially confused about why a logistic regression model is being used on these two forest types, in particular. In your manuscript you introduce them first and define them second. That just needs to be reversed.
+
+As requested, we have reversed the order of the these two sentences (line 388, section 2.3.6) to the following:
+
+"Hierarchical clustering of tree communities and NMS ordinations both indicated two distinct “natural” forest types occurring within the extent of the survey, which were designated Forest types III and IV (see results)." 
+
+5. Bosque Cerrado is BC not CB. The letters just need to be switched here.
+
+Corrected.
+
+6. No action required.
+7. No action required. 
+#############################################################
+
+Reviewer 2 
+
+1. Figure and Supplemental Figure do not have captions. This is a major problem.
+
+We are uncertain why this occurred, probably due to some sort of version or software error. Figure captions are present in the version that we see accompanying the reviewer comment, so we're not sure how to proceed here. As concerns the supplementary figure captions, we will attempt to re-upload the supplementary material file, which is updated due to other revisions, anyway. Perhaps this will fix the issue. 
+
+2. The results of the spatial analysis of environmental factors in MEMs 1, 2, and 8 were analyzed, but I was unable to determine how these factors were related to the changes in forest types classification and transition. The analysis of this spatial distribution is indicated to be used to understand the spatial scale at which the tree community changes, but I could not read how it was specifically utilized in the discussion.
+
+In this manuscript we propose using small watersheds as informative spatial units for mapping biodiversity in the tropical Andes. We engaged an MEM-style analysis in an attempt to uncover some of the possible mechanisms as to why this unit (the "microcuenca" or "micro-watershed") works. We can't say (and really, we don't think) we have exhaustively observed all the natural processes that make each microcuenca so different from the next, but the MEM analysis we are trying find a few well quantified examples of these highly local processes that give support to using a small-watershed-based approach to analyzing biodiversity in the tropical andes, rather than simple Euclidean-distance-based approaches. So MEMs 1,2, 8 are example of likely ecological filtering processes or dispersal limitation at work in our system - they correlate with highly local changes in elevation and relative position to rivers and streams. What ties them all together is (1) their small scale, they all probably act locally enough to create the high amount of change we see over very small spaces and (2) their correlation to watershed (topographical) characteristcs - local elevation changes, proximity to water, rivers as dispersal barriers, etc. 
+
+Our original language in the discussion was as follows:
+
+"""
+We hypothesized that this fine-scale, watershed-based community turnover is due to high dispersal limitation and high micro-site variability that result from the complex, dramatic topography of the Andes. This microsite variation is visible to some degree in our Moran’s eigenvector maps and their environmental correlations (fig. 8, supp. figs 7-9, table 5): we see that environmental variables vary on scales that can be well understood in terms of change within and among small watersheds, and that these spatio-environmental patterns may explain up to 19% of variance in the plant community. This fraction may represent much of the environmental filtering that is occurring within the tree community at los Cedros
+
+
+3. Did the RCA and RG plots begin to regenerate to forest at approximately the same time? Also, if it is agricultural land, was there any significant difference in the years of its use between the plots?
+
+In general, regeneration at sites began around the time of the establishment of the reserve in 1992, though some acquisitions were made as late as 1995, and some as early as 1988. 
+
+4. The impact of fire on forest succession is likely to be significant, but is there any influence of fire disturbance in the test plots?
+
+In line 202 The we originally stated: 
+Given the rainfall and high humidity it is unlikely that large-scale deforestation resulted from fire at Los Cedros.
+
+This now states:
+Given the rainfall and high humidity it is unlikely that large-scale deforestation resulted from fire at Los Cedros. Additionally, fire scares were not observed in the vicinity of the study, neither within nor outside the study plots. 
+
+5. Table 4: What is the significance of indicator species across the first sorting groups, Group I and IV, Group II and III?
+
+The multipattern indicator species command automatically tests all combinations of sites for indicator species, and we reported these results. We focused our interest on 
+
+An indicator 
+
+
+6. In Tables 4A and 4B, the species names are confusing. For example, could it be made easier to read by separating the family name and species name with a slash?
+
+ 
+
+7. In Supplemental Figure 3, the species are color-coded by forest type, but it would be better if the symbols were changed for each land use history.
+
