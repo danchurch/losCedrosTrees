@@ -9,7 +9,7 @@ Reviewer 1
 Our plot sizes are explained in line 261-262, at the end of section 2.2.2.:
 "Juvenile trees were surveyed within a square subplot of size 5m x 5m, centered within the larger 30m circular plot."
 
-However, this comment signals that our description may not suffice and we have added a diagram in the supplemental figures, which is now supplemental figure 1. 
+However, this comment signals that our description may not suffice, we have added a diagram in the supplemental figures, which is now supplemental figure 1. 
 
 2. Why were juvenile trees in the BS plot not surveyed? Again, the answer to this question needs to come sooner rather than later so that the reader does not question why that plot was not sampled. This is a simple fix.
 
@@ -21,8 +21,7 @@ Due to time constraints, juvenile trees from BS and CLR plots were not sampled.
 
 And added the following to our discussion (line 853):
 
-Additionally, plots with a history of non-athropogenic disturbance (BS and CLR plots) were not sampled for juvenile trees, meaning that we cannot comment directly on the importance of environmental filtering on seedlings due to "natural" successional patterns. 
-
+Additionally, plots with a history of non-anthropogenic disturbance (BS and CLR plots) were not sampled for juvenile trees, meaning that we cannot comment directly on the importance of environmental filtering on seedlings due to "natural" successional patterns. 
 
 
 3.  I am not familiar with watershed crossings so including the link for readers is helpful for understanding how the watershed delineations were made. 
@@ -39,29 +38,58 @@ As requested, we have reversed the order of the these two sentences (line 388, s
 
 Corrected.
 
-6. No action required.
-7. No action required. 
+6. The results are well presented and understandable to the reader.  The analyses seem appropriate for the hypothesis being addressed.
+
+No action required.
+
+7. The authors do a thorough job of discussing and giving meaning to the results.  Even though the authors never examined soils, they did a good job of discussing their importance.
+
+No action required. 
+
 #############################################################
 
 Reviewer 2 
 
 1. Figure and Supplemental Figure do not have captions. This is a major problem.
 
-We are uncertain why this occurred, probably due to some sort of version or software error. Figure captions are present in the version that we see accompanying the reviewer comment, so we're not sure how to proceed here. As concerns the supplementary figure captions, we will attempt to re-upload the supplementary material file, which is updated due to other revisions, anyway. Perhaps this will fix the issue. 
+We are uncertain why this occurred, probably due to some sort of versioning- or software error. Figure captions are present in the version that we see accompanying the reviewer comment, so we're not sure how to proceed here. As concerns the supplementary figure captions, we will attempt to re-upload the supplementary material file, which is updated due to other revisions, anyway. Perhaps this will fix the issue. 
 
 2. The results of the spatial analysis of environmental factors in MEMs 1, 2, and 8 were analyzed, but I was unable to determine how these factors were related to the changes in forest types classification and transition. The analysis of this spatial distribution is indicated to be used to understand the spatial scale at which the tree community changes, but I could not read how it was specifically utilized in the discussion.
 
 In this manuscript we propose using small watersheds as informative spatial units for mapping biodiversity in the tropical Andes. We engaged an MEM-style analysis in an attempt to uncover some of the possible mechanisms as to why this unit (the "microcuenca" or "micro-watershed") works. We can't say (and really, we don't think) we have exhaustively observed all the natural processes that make each microcuenca so different from the next, but the MEM analysis we are trying find a few well quantified examples of these highly local processes that give support to using a small-watershed-based approach to analyzing biodiversity in the tropical andes, rather than simple Euclidean-distance-based approaches. So MEMs 1,2, 8 are example of likely ecological filtering processes or dispersal limitation at work in our system - they correlate with highly local changes in elevation and relative position to rivers and streams. What ties them all together is (1) their small scale, they all probably act locally enough to create the high amount of change we see over very small spaces and (2) their correlation to watershed (topographical) characteristcs - local elevation changes, proximity to water, rivers as dispersal barriers, etc. 
 
-Our original language in the discussion was as follows:
+We have attempted to clarify. Our original language in the discussion was as follows (line 889, section 4.3):
 
 """
-We hypothesized that this fine-scale, watershed-based community turnover is due to high dispersal limitation and high micro-site variability that result from the complex, dramatic topography of the Andes. This microsite variation is visible to some degree in our Moran’s eigenvector maps and their environmental correlations (fig. 8, supp. figs 7-9, table 5): we see that environmental variables vary on scales that can be well understood in terms of change within and among small watersheds, and that these spatio-environmental patterns may explain up to 19% of variance in the plant community. This fraction may represent much of the environmental filtering that is occurring within the tree community at los Cedros
+We hypothesized that this fine-scale, watershed-based community turnover is due to high dispersal limitation and high micro-site variability that result from the complex, dramatic topography of the Andes. This microsite variation is visible to some degree in our Moran’s eigenvector maps and their environmental correlations (fig. 8, supp. figs 7-9, table 5): we see that environmental variables vary on scales that can be well understood in terms of change within and among small watersheds, and that these spatio-environmental patterns may explain up to 19% of variance in the plant community. This fraction may represent much of the environmental filtering that is occurring within the tree community at los Cedros.
+"""
+
+This has been changed to say the following:
+
+"""
+We hypothesized that this fine-scale, watershed-based community turnover is due to high dispersal limitation and high micro-site variability that result from the complex, dramatic topography of the Andes. This microsite variation is visible to some degree in our Moran’s eigenvector maps and their environmental correlations (fig. 8, supp. figs 7-9, table 5). These MEM maps show spatially explicit patterns of difference in tree community that are acting on very small distances, close the scale of the micro-watersheds we have delineated, and that correlate with watershed characteristcs, such as local elevation changes, proximity to water, hill tops and rivers as possible dispersal barriers. These observed spatio-environmental patterns may explain up to 19% of variance in the plant community. This fraction may represent much of the environmental filtering that is occurring within the tree community at los Cedros.
+"""
 
 
 3. Did the RCA and RG plots begin to regenerate to forest at approximately the same time? Also, if it is agricultural land, was there any significant difference in the years of its use between the plots?
 
-In general, regeneration at sites began around the time of the establishment of the reserve in 1992, though some acquisitions were made as late as 1995, and some as early as 1988. 
+All regenerated sites were selected to be comparable among their use-class ("RG", "RCA", etc), using oral histories (interviews) that were collected. Ana and her botanical team also estimated tree ages at sites using growth form to augment oral history. However, available information on the history of each site was highly informal and often incomplete, and tree age estimates are also not perfect substitutes for explicit records of land-use. We acknowledge that this represents an inevitable weakness in the study, but the situation probably cannot be improved at this point, as additional time has gone by and local memories of the land-use history are now even more removed from the pre-reserve occupation of these sites, as are the tree morphologies after decades of growth. 
+
+We attempt to clarify our methods in this regard. The original language contained in section 2.1, line 206:
+
+"""
+Land acquisitions to build the reserve were made between 1988-1995. Tracts purchased by Los Cedros were usually developed or deforested only in small proportions of their total area, usually for small-scale mixed (“finca”) agriculture or for cattle and mule pasture. In some cases, these small-scale clearings were made for assertion of legal rights over land rather than agricultural production at scale (Jose DeCoux, pers. comm.). Following their acquisition by Los Cedros, all former agricultural and pasture sites were selectively grazed for several months by cattle, to reduce competition from graminoids for protected tree seedlings. Tree seedlings were not planted, but were allowed to reestablish by encroachment from adjacent forest and other sources during and after selective grazing. This method is known informally by some workers in the region as “reforestation by cattle rotation”, and is intended to release naturally regenerated tree seedlings from intensive competition from pasture grasses (Goosem et al., 2013) without the use of herbicides. 
+"""
+
+This has been changed to say:
+
+"""
+Land acquisitions to build the reserve were made between 1988-1995. Records of ownership and land-use prior to the establishment of the reserve are generally not available or are not highly reliable, so oral histories of anthropogenically altered sites were collected from Los Cedros staff and the community. Tracts purchased by Los Cedros were usually developed or deforested only in small proportions of their total area, usually for small-scale mixed (“finca”) agriculture or for cattle and mule pasture. In some cases, these small-scale clearings were made for assertion of legal rights over land rather than agricultural production at scale (Jose DeCoux, pers. comm.). Though acquisitions were made during the period of 1988-1995, use of these sites by previous landowners often apparently continued for years. Prior to abandonment to forest regeneration, sites of intensive agricultural use are understood to usually have been in use for longer periods of time compared to the pastured sites, as agricultural sites were often the sites of small homesteads or fincas. In contrast, pasture sites were often cleared merely to establish ownership before sale, or for temporary hosting of cattle herds. 
+
+Once under active management by Reserva Los Cedros, all sites began regeneration to the forest at approximately the same time. The approximate time of abandonment of agriculture or grazing for all sites was 6-7 years prior to the initiation of the survey. All former agricultural and pasture sites were selectively grazed by cattle, to reduce competition from graminoids for protected tree seedlings. Tree seedlings were not planted, but were allowed to re-establish by encroachment from adjacent forest during and after selective grazing. This method is known informally by some workers in the region as “reforestation by cattle rotation”, and is intended to release naturally regenerated tree seedlings from intensive competition from pasture grasses (Goosem et al., 2013) without the use of herbicides.
+
+Size and growth forms were used to estimate tree age, to corroborate oral history of each area of anthropogenic alteration. However, given the informal/incomplete historical record that was available, it was not possible to recover the exact length of human settlement prior to abandonment for most areas. Sites of plots were selected to be comparable among their qualitatively-classified use-history (see survey methods below). 
+"""
 
 4. The impact of fire on forest succession is likely to be significant, but is there any influence of fire disturbance in the test plots?
 
@@ -73,14 +101,28 @@ Given the rainfall and high humidity it is unlikely that large-scale deforestati
 
 5. Table 4: What is the significance of indicator species across the first sorting groups, Group I and IV, Group II and III?
 
-The multipattern indicator species command automatically tests all combinations of sites for indicator species, and we reported these results. We focused our interest on 
+The multipattern indicator species command automatically tests all combinations of sites for indicator species, and we reported all results. Our interest was not in these two groups (indicator species shared between Groups I-IV, and indicator species shared between Groups II-III), so we did not discuss this result. Specifically to the reviewers question, we can postulate that indicator species that are shared across Group I/IV or II/IV are pioneer-generalists, in the sense that they may be able to colonize both natural gaps and anthropogenic clearings (i.e. they are "indifferent" to the origin of the gap/clearing). There is also always the possibility of a false positive in the statistical test. 
 
-An indicator 
+However, as Reviewer 2 notes, this discussion is not part of our analysis and would require additional thought and literature review on what is known about these species or close congeners. If this is of sufficient interest, we are happy to develop this in the manuscript also, though we are aware that the manuscript is already quite long! Alternatively, these two groups can be dropped from the table if they are merely confusing the reader. Our goal was merely to report the entirety of the statistical test results. We await further suggestions here. 
 
 
 6. In Tables 4A and 4B, the species names are confusing. For example, could it be made easier to read by separating the family name and species name with a slash?
 
- 
+Edits to name formatting have been made, to enhance readability. 
 
 7. In Supplemental Figure 3, the species are color-coded by forest type, but it would be better if the symbols were changed for each land use history.
+
+Symbols have been changed to give each land use history its own unique symbol. 
+
+update word doc with all text changes mentioned
+insert supp. fig. "zero" into microsoft document
+update supp. fig. numbers in captions in microsoft
+update in-text citations of supplemental figures to reflect this in microsoft
+do Ana edits in microsoft 
+
+install zotero
+update citation style
+new supplemental materials file
+
+supp. fig. 8
 
