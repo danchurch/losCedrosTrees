@@ -2,24 +2,24 @@
 <!-- Created with matplotlib (https://matplotlib.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    height="1279.3335pt"
    version="1.1"
    viewBox="0 0 1395.4812 1279.3335"
    width="1395.4812pt"
    id="svg963"
    sodipodi:docname="cotacachiForest_combined.svg"
-   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   inkscape:export-filename="/home/daniel/Documents/analyses/losCedrosTrees/anaData/graphics/png/Fig9AB_cotacachiForest_combined.png"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:export-filename="/home/daniel/Documents/analyses/losCedrosTrees/anaData/graphics/png/Fig10AB_cotacachiForest_combined.png"
    inkscape:export-xdpi="200"
-   inkscape:export-ydpi="200">
+   inkscape:export-ydpi="200"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata967">
     <rdf:RDF>
@@ -28,7 +28,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,21 +40,23 @@
      guidetolerance="10"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:window-width="1528"
-     inkscape:window-height="836"
+     inkscape:window-width="1212"
+     inkscape:window-height="656"
      id="namedview965"
      showgrid="false"
      inkscape:zoom="0.35355339"
-     inkscape:cx="481.52843"
-     inkscape:cy="875.95004"
-     inkscape:window-x="72"
-     inkscape:window-y="27"
+     inkscape:cx="-100.40916"
+     inkscape:cy="759.43268"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg963"
      fit-margin-top="10"
      fit-margin-left="10"
      fit-margin-right="10"
-     fit-margin-bottom="10" />
+     fit-margin-bottom="10"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt" />
   <defs
      id="defs4"
      style="stroke-linecap:butt;stroke-linejoin:round">
@@ -6953,24 +6954,46 @@
   </g>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:50px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.99212599;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:50px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;opacity:0.91;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.992126;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
      x="622.73907"
      y="31.703125"
      id="text3458"><tspan
        sodipodi:role="line"
        id="tspan3456"
-       style="font-size:32px;line-height:18px;stroke-width:0.99212599;stroke-linecap:butt;stroke-linejoin:round"
+       style="font-size:32px;line-height:18px;stroke-width:0.992126;stroke-linecap:butt;stroke-linejoin:round"
        x="626.64532"
        y="31.703125">1990 forest cover, Cotacachi canton </tspan></text>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:50px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;opacity:0.91000001;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.99212599;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:50px;font-family:Manjari;-inkscape-font-specification:'Manjari, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;opacity:0.91;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.992126;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
      x="624.10626"
      y="698.43658"
      id="text3458-9"><tspan
        sodipodi:role="line"
        id="tspan3456-4"
-       style="font-size:31.99999809px;line-height:18px;stroke-width:0.99212599;stroke-linecap:butt;stroke-linejoin:round"
+       style="font-size:32px;line-height:18px;stroke-width:0.992126;stroke-linecap:butt;stroke-linejoin:round"
        x="628.01251"
        y="698.43658">2018 forest cover, Cotacachi canton </tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:40.7993px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:1.01999;stroke-linecap:butt;stroke-linejoin:round"
+     x="88.188263"
+     y="112.44196"
+     id="text3717"><tspan
+       sodipodi:role="line"
+       id="tspan3715"
+       style="stroke-width:1.01999"
+       x="88.188263"
+       y="112.44196">(a)</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:40.7993px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:1.01999;stroke-linecap:butt;stroke-linejoin:round"
+     x="87.218742"
+     y="773.47357"
+     id="text3717-3"><tspan
+       sodipodi:role="line"
+       id="tspan3715-6"
+       style="stroke-width:1.01999"
+       x="87.218742"
+       y="773.47357">(b)</tspan></text>
 </svg>

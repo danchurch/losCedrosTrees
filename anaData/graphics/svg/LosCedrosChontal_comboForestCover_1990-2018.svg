@@ -2,24 +2,24 @@
 <!-- Created with matplotlib (https://matplotlib.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    height="1198.7812pt"
    version="1.1"
    viewBox="0 0 1108.1531 1198.7813"
    width="1108.1531pt"
    id="svg950"
    sodipodi:docname="LosCedrosChontal_comboForestCover_1990-2018.svg"
-   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   inkscape:export-filename="/home/daniel/Documents/analyses/losCedrosTrees/anaData/graphics/png/Fig10A-B_LosCedrosChontal_comboForestCover_1990-2018.png"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:export-filename="/home/daniel/Documents/analyses/losCedrosTrees/anaData/graphics/png/Fig11A-D_LosCedrosChontal_comboForestCover_1990-2018.png"
    inkscape:export-xdpi="200"
-   inkscape:export-ydpi="200">
+   inkscape:export-ydpi="200"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata954">
     <rdf:RDF>
@@ -28,7 +28,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,21 +40,23 @@
      guidetolerance="10"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:window-width="1528"
-     inkscape:window-height="836"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
      id="namedview952"
      showgrid="false"
      inkscape:zoom="0.34766083"
-     inkscape:cx="634.99676"
-     inkscape:cy="685.24332"
-     inkscape:window-x="72"
-     inkscape:window-y="27"
+     inkscape:cx="642.86794"
+     inkscape:cy="684.57525"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg950"
      fit-margin-top="10"
      fit-margin-left="10"
      fit-margin-right="10"
-     fit-margin-bottom="10" />
+     fit-margin-bottom="10"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt" />
   <defs
      id="defs4"
      style="stroke-linecap:butt;stroke-linejoin:round">
@@ -8551,4 +8552,59 @@
       </g>
     </g>
   </g>
+  <text
+     xml:space="preserve"
+     style="font-size:40.7993px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:1.01999"
+     x="82.573647"
+     y="87.653809"
+     id="text3717"><tspan
+       sodipodi:role="line"
+       id="tspan3715"
+       style="stroke-width:1.01999"
+       x="82.573647"
+       y="87.653809">(a)</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:40.7993px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:1.01999;stroke-linecap:butt;stroke-linejoin:round"
+     x="584.8042"
+     y="87.653809"
+     id="text3717-3"><tspan
+       sodipodi:role="line"
+       id="tspan3715-6"
+       style="stroke-width:1.01999"
+       x="584.8042"
+       y="87.653809">(b)</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:30px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:0.75"
+     x="621.81763"
+     y="95.164474"
+     id="text7510"><tspan
+       sodipodi:role="line"
+       id="tspan7508"
+       style="stroke-width:0.75"
+       x="621.81763"
+       y="95.164474" /></text>
+  <text
+     xml:space="preserve"
+     style="font-size:40.7993px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:1.01999;stroke-linecap:butt;stroke-linejoin:round"
+     x="82.573647"
+     y="1146.8506"
+     id="text3717-3-7"><tspan
+       sodipodi:role="line"
+       id="tspan3715-6-5"
+       style="stroke-width:1.01999"
+       x="82.573647"
+       y="1146.8506">(c)</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:40.7993px;line-height:1.25;font-family:sans-serif;word-spacing:0px;stroke-width:1.01999;stroke-linecap:butt;stroke-linejoin:round"
+     x="584.8042"
+     y="1146.8506"
+     id="text3717-3-7-3"><tspan
+       sodipodi:role="line"
+       id="tspan3715-6-5-5"
+       style="stroke-width:1.01999"
+       x="584.8042"
+       y="1146.8506">(d)</tspan></text>
 </svg>
