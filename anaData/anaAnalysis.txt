@@ -18103,6 +18103,7 @@ import numpy as np
 import geopandas as gpd
 import pandas as pd
 import openpyxl
+import matplotlib.pyplot as plt; plt.ion()
   
 specObs = pd.read_csv('specObs.csv')
 specObs.PsubP.unique().shape ## 61 rows
@@ -18191,6 +18192,10 @@ nuPerHA = nuAdultsPerSite / areaHa
 
 overallMeannuPerHA = nuPerHA.mean() ## mean 634.8 adult trees/ha
 
+overallMeannuPerHA_stdev = nuPerHA.std()
+
+overallMeannuPerHA_stdev ## 194.3
+
 nuPerHA.max() ## 1216.7 adult trees/ha
 
 ## okay, either way, we have some numbers for jose. 
@@ -18230,10 +18235,58 @@ juvComm.sum(axis='columns')
 ## if it is actually 10x10:
 #areaHAjuv = 100 / 10000 
 
+## turns out it was the 5m x 5m, so go with this:
 areaHAjuv = 25 / 10000 
 
 juvComm.sum(axis='columns') / areaHAjuv
 
+(juvComm.sum(axis='columns') / areaHAjuv).max() ## 26,400/ha jeezus
 
+(juvComm.sum(axis='columns') / areaHAjuv).mean() ## 8746 / ha
+
+## great, that is what we need.
+
+## so what can we do here...
+## a distribution plot and csv for adults and jovenes
+
+## so for the juveniles:
+
+juvCommStemDensity = juvComm.sum(axis='columns') / areaHAjuv
+
+## we want a nice histogram and kernel density plot. I think pandas 
+## can do both for us?
+
+plt.close('all')
+fig, ax = plt.subplots()
+ax.hist(juvCommStemDensity, bins=12, density=True)
+
+ax.hist(juvCommStemDensity, bins=12, density=False)
+
+juvCommStemDensity.plot.density(ax=ax)
+
+dir(juvCommStemDensity.plot)
+
+## summary stats
+juvCommStemDensity.mean() ## 8745.9 
+juvCommStemDensity.std() ## 5810.5
+juvCommStemDensity.min() ## 400
+juvCommStemDensity.max() ## 26400
+
+## meh, fuckit. They need stats:
+
+## out of 61 sites, each 30m^2 diameter circles
+
+## adult average density:
+nuPerHA.mean() # 634.8
+nuPerHA.std()  # 194.3
+nuPerHA.min()  # 325.4
+nuPerHA.max()  # 1216.6
+## 634.8 adult trees/hectare, (+/- 194.3 stdev)
+
+
+
+
+
+## juvenile density
 
 
